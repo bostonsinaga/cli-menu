@@ -10,14 +10,14 @@ namespace namespace cli_menu {
   private:
     VEC_STR *names;
     VEC_INT *types;
-    VEC_BOL *required;
+    VEC_BOO *required;
     VEC_STR *descriptions;
 
   public:
     Parameters(
       VEC_STR names_in,
       VEC_INT types_in,
-      VEC_BOL required_in,
+      VEC_BOO required_in,
       VEC_STR descriptions_in
     ) {
       names = &names_in;
@@ -28,7 +28,7 @@ namespace namespace cli_menu {
 
     VEC_STR *getNames() { return names; }
     VEC_INT *getTypes() { return types; }
-    VEC_BOL *getRequired() { return required; }
+    VEC_BOO *getRequired() { return required; }
     VEC_STR *getDescriptions() { return descriptions; }
   };
 
@@ -56,7 +56,7 @@ namespace namespace cli_menu {
     std::string *description;
     Parameters *parameters;
     Toggles *toggles;
-    std::function<VEC_STR, VEC_DBL, VEC_BOL> *callback;
+    std::function<VEC_STR, VEC_DOU, VEC_BOO> *callback;
 
   public:
     Command(
@@ -64,7 +64,7 @@ namespace namespace cli_menu {
       std::string description_in,
       Parameters *parameters_in,
       Toggles *toggles_in,
-      std::function<VEC_STR, VEC_DBL, VEC_BOL> callback_in
+      std::function<VEC_STR, VEC_DOU, VEC_BOO> callback_in
     ) {
       name = &name_in;
       description = &description_in;
