@@ -10,26 +10,42 @@ namespace namespace cli_menu {
   private:
     VEC_STR *names;
     VEC_INT *types;
-    VEC_BOO *required;
+    VEC_BOO *obligatories;
     VEC_STR *descriptions;
 
   public:
     Parameters(
       VEC_STR names_in,
       VEC_INT types_in,
-      VEC_BOO required_in,
+      VEC_BOO obligatories_in,
       VEC_STR descriptions_in
     ) {
       names = &names_in;
       types = &types_in;
-      required = &required_in;
+      obligatories = &obligatories_in;
       descriptions = &descriptions_in;
     }
 
     VEC_STR *getNames() { return names; }
     VEC_INT *getTypes() { return types; }
-    VEC_BOO *getRequired() { return required; }
+    VEC_BOO *getObligatories() { return obligatories; }
     VEC_STR *getDescriptions() { return descriptions; }
+
+    std::string getName(int index) {
+      return Util::getIndexOfVector<VEC_STR>(names, index, "");
+    }
+
+    int getType(int index) {
+      return Util::getIndexOfVector<VEC_INT>(types, index, "");
+    }
+
+    bool getObligatory(int index) {
+      return Util::getIndexOfVector<VEC_BOO>(obligatories, index, false);
+    }
+
+    std::string getDescription(int index) {
+      return Util::getIndexOfVector<VEC_STR>(descriptions, index, "");
+    }
   };
 
   class Toggles {
@@ -48,6 +64,14 @@ namespace namespace cli_menu {
 
     VEC_STR *getNames() { return names; }
     VEC_STR *getDescriptions() { return descriptions; }
+
+    std::string getName(int index) {
+      return Util::getIndexOfVector<VEC_STR>(names, index, "");
+    }
+
+    std::string getDescription(int index) {
+      return Util::getIndexOfVector<VEC_STR>(descriptions, index, "");
+    }
   };
 
   class Command {
