@@ -27,8 +27,14 @@ namespace cli_menu {
     }
   }
 
-  void cleanDuplicatesToName(VEC_STR *vecStr, std::sdtring *name) {
-
+  void Util::cleanDuplicatesToName(VEC_STR *vecStr, std::string name) {
+    bool first = false;
+    for (int i = 0; i < vecStr->size(); i++) {
+      if (vecStr->at(i) == name) {
+        if (first) cutVector(vecStr, i);
+        else first = true;
+      }
+    }
   }
 }
 
