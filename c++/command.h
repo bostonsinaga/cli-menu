@@ -6,6 +6,11 @@
 
 namespace namespace cli_menu {
 
+  typedef std::vector<Command*> VEC_COM;
+
+  // char, string, integer, float, object
+  enum {CHA, STR, INT, FLO, OBJ};
+
   class Parameters {
   private:
     VEC_STR *names;
@@ -25,6 +30,8 @@ namespace namespace cli_menu {
       obligatories = &obligatories_in;
       descriptions = &descriptions_in;
     }
+
+    int amount() { return names->size(); }
 
     VEC_STR *getNames() { return names; }
     VEC_INT *getTypes() { return types; }
@@ -61,6 +68,8 @@ namespace namespace cli_menu {
       names = &names_in;
       descriptions = &descriptions_in;
     }
+
+    int amount() { return names->size(); }
 
     VEC_STR *getNames() { return names; }
     VEC_STR *getDescriptions() { return descriptions; }
