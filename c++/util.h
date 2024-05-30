@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <cctype>
-#include <typeinfo>
 #include <functional>
 #include <type_traits>
 
@@ -27,58 +25,69 @@ namespace cli_menu {
       return defaultReturn;
     }
 
-    template <typename T> void cutVector(
-      std::vector<T> *vec,
-      int idx, bool ptrDel = true
-    ) {
-      if (ptrDel && std::is_pointer<T>::value) {
-        delete vec->at(idx);
-        vec->at(idx) = nullptr;
-      }
-
+    template <typename T> T cutVector(std::vector<T> *vec, int idx) {
+      T wasted = vec->at(idx);
       std::vector<T> tail = std::vector<T>(vec->begin() + idx + 1, vec->end());
       *vec = std::vector<T>(vec->begin(), vec->begin() + idx);
       vec->insert(vec->end(), tail.begin(), tail.end());
+      return wasted;
     }
 
-    template <typename T> void cleanDuplicateInsideVector(std::vector<T> *vec) {
+    template <typename T> std::vector<T> cleanDuplicateInsideVector(
+      std::vector<T> *vec,
+      // repeated and compared 'T' parameters
+      std::function<bool(T,T)> equalRule = [](T rep, T com)->bool { return false; }
+    ) {
+      std::vector<T> wastedVec;
+      bool first = false;
+
       for (int i = 0; i < vec->size(); i++) {
         for (int j = 0; j < vec->size(); j++) {
-          if (i != j && vec->at(i) == vec->at(j)) {
-            cutVector<T>(vec, j);
+          bool isEqual = vec->at(i) == vec->at(j);
+
+          if (i != j && (isEqual || equalRule(vec->at(i), vec->at(j)) )) {
+
+            // same address
+            if (isEqual && std::is_pointer<T>::value) {
+              cutVector<T>(vec, j);
+            }
+            // same value
+            else wastedVec.push_back(cutVector<T>(vec, j));
+
             j--;
           }
         }
       }
+
+      return wastedVec;
     }
 
-    template <typename T> void cleanDuplicateToMember(
+    template <typename T> std::vector<T> cleanDuplicateToMember(
       std::vector<T> *vec, T mem,
       // repeated and compared 'T' parameters
       std::function<bool(T,T)> equalRule = [](T rep, T com)->bool { return false; }
     ) {
-      bool first = false, isObject,
-           isPointer = std::is_pointer<T>::value;
-
-      int objectDigitIndex = 0;
-      if (isPointer) objectDigitIndex = 1;
-
-      isObject = std::isdigit(typeid(mem).name()[objectDigitIndex]);
+      std::vector<T> wastedVec;
+      bool first = false;
 
       for (int i = 0; i < vec->size(); i++) {
         bool isEqual = vec->at(i) == mem;
 
-        if (isObject && (isEqual || equalRule(vec->at(i), mem))) {
-          bool ptrDel = true;
-          if (isEqual && isPointer) ptrDel = false;
-          if (first) cutVector<T>(vec, i, ptrDel);
-          else first = true;
-        }
-        else if (!isObject && isEqual) {
-          if (first) cutVector<T>(vec, i);
+        if (isEqual || equalRule(vec->at(i), mem)) {
+
+          if (first) {
+            // same address
+            if (isEqual && std::is_pointer<T>::value) {
+              cutVector<T>(vec, i);
+            }
+            // same value
+            else wastedVec.push_back(cutVector<T>(vec, i));
+          }
           else first = true;
         }
       }
+
+      return wastedVec;
     }
 
     std::vector<int> getToMostVectorDifferences(std::vector<int> sizes) {
