@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__UTIL_H__
 #define __CLI_MENU__UTIL_H__
 
+#include <tuple>
 #include <string>
 #include <vector>
 #include <functional>
@@ -90,7 +91,7 @@ namespace cli_menu {
       return wastedVec;
     }
 
-    std::vector<int> getToMostVectorDifferences(std::vector<int> sizes) {
+    std::vector<int> getDifferencesToBiggestVector(std::vector<int> sizes) {
       int max = 0;
       for (auto &sz : sizes) if (sz > max) max = sz;
 
@@ -98,6 +99,116 @@ namespace cli_menu {
       for (auto &sz : sizes) { differences.push_back(max - sz); }
       
       return differences;
+    }
+
+    namespace {
+      namespace SECRET {
+        // calculate differences to the most vector
+        std::vector<int> continueDifferencesToBiggestVector(
+          int indexSize, bool calculate, bool reload
+        ) {
+          static std::vector<int> sizes;
+          if (reload) sizes = {};
+          sizes.push_back(indexSize);
+
+          if (calculate) {
+            int max = 0;
+            for (auto &sz : sizes) { if (sz > max) max = sz; }
+            std::vector<int> differences;
+            for (auto &sz : sizes) { differences.push_back(max - sz); }
+            return differences;
+          }
+          
+          return std::vector<int>{};
+        }
+
+        // helper meta function to convert a tuple to a tuple of vectors
+        template <typename... Types>
+        std::tuple<std::vector<Types>...> tuple_to_tuple_of_vectors(std::tuple<Types...>);
+      }
+    }
+
+    /**
+    * Templated class to represent vertices.
+    * Aims to hold tuple of vectors.
+    */
+    template <typename Tuple>
+    class Vertices {
+    public:
+      using tuple_type = decltype(tuple_to_tuple_of_vectors(std::declval<Tuple>()));
+      tuple_type v;
+    };
+
+    namespace {
+      namespace SECRET {
+        /** Continuation of 'offsetBiggestVector' */
+        
+        template<std::size_t I = 0, typename... T>
+        inline typename std::enable_if<I == sizeof...(T), void>::type
+        pushOffsetBiggestVector(
+          Vertices<std::tuple<T...>> *tupVecs,
+          std::tuple<T...> *tupDefVals,
+          std::vector<int> &differences
+        ) {}
+
+        template<std::size_t I = 0, typename... T>
+        inline typename std::enable_if<I < sizeof...(T), void>::type
+        pushOffsetBiggestVector(
+          Vertices<std::tuple<T...>> *tupVecs,
+          std::tuple<T...> *tupDefVals,
+          std::vector<int> &differences
+        ) {
+          if (I < sizeof...(T) - 1) {
+            for (auto &dif : differences) {
+              for (int i = 0; i < dif; i++) {
+                std::get<I>(tupVecs->v).push_back(std::get<I>(*tupDefVals));
+              }
+            }
+          }
+
+          pushOffsetBiggestVector<I + 1, T...>(tupVecs, tupDefVals, differences);
+        }
+      }
+    }
+
+    template<std::size_t I = 0, typename... T>
+    inline typename std::enable_if<I == sizeof...(T), void>::type
+    offsetBiggestVector(
+      Vertices<std::tuple<T...>> *tupVecs,
+      std::tuple<T...> *tupDefVals
+    ) {
+      std::vector<int> differences = SECRET::continueDifferencesToBiggestVector(
+        std::get<I - 1>(tupVecs->v).size(), true, false
+      );
+
+      SECRET::pushOffsetBiggestVector<0, T...>(tupVecs, tupDefVals, differences);
+    }
+
+    /**
+    * Usage example:
+    *
+    *   Vertices<std::tuple<int, std::string, char>> tupVecs;
+    *   std::tuple<int, std::string, char> tupDefVals = std::make_tuple(0, "", '\0');
+    *
+    *   std::get<0>(tupVecs.v) = {1, 2, 3};
+    *   std::get<1>(tupVecs.v) = {"one", "two", "three"};
+    *   std::get<2>(tupVecs.v) = {'a', 'b', 'c'};
+    *
+    *   offsetBiggestVector<0, int, std::string, char>(&tupVecs, &tupDefVals);
+    */
+    template<std::size_t I = 0, typename... T>
+    inline typename std::enable_if<I < sizeof...(T), void>::type
+    offsetBiggestVector(
+      Vertices<std::tuple<T...>> *tupVecs,
+      std::tuple<T...> *tupDefVals
+    ) {
+      /** 'tupVecs->v' as a tuple of vectors */
+
+      if (I < sizeof...(T) - 1) {
+        SECRET::continueDifferencesToBiggestVector(std::get<I>(tupVecs->v).size(), false, I == 0);
+      }
+
+      offsetBiggestVector<I + 1, T...>(tupVecs, tupDefVals);
     }
 
     void changeStringsCase(VEC_STR *vecStr, bool isUpper) {
