@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__UTIL_H__
 #define __CLI_MENU__UTIL_H__
 
-#include <tuple>
 #include <string>
 #include <vector>
 #include <functional>
@@ -10,8 +9,10 @@
 namespace cli_menu {
 
   // shortened types
+  typedef long long unsigned int LLUI;
   typedef std::vector<std::string> VEC_STR;
   typedef std::vector<double> VEC_DOU;
+  typedef std::vector<float> VEC_FLO;
   typedef std::vector<bool> VEC_BOO;
   typedef std::vector<int> VEC_INT;
 
@@ -91,36 +92,59 @@ namespace cli_menu {
       return wastedVec;
     }
 
-    std::vector<int> getDifferencesToBiggestVector(std::vector<int> sizes) {
-      int max = 0;
-      for (auto &sz : sizes) if (sz > max) max = sz;
+    std::vector<LLUI> getDifferencesToSize(
+      std::vector<LLUI> sizes,
+      LLUI targetSize
+    ) {
+      LLUI max = targetSize;
 
-      std::vector<int> differences;
+      for (auto &sz : sizes) {
+        if (targetSize > 0) {
+          if (sz > max && sz <= targetSize) max = sz;
+        }
+        else if (sz > max) max = sz;
+      }
+
+      std::vector<LLUI> differences;
       for (auto &sz : sizes) { differences.push_back(max - sz); }
       
       return differences;
     }
 
-    void changeStringsCase(VEC_STR *vecStr, bool isUpper) {
-      for (int i = 0; i < vecStr->size(); i++) {
+    namespace { namespace SECRET {
+      void changeStringCase(std::string &str, bool isUpper) {
         std::transform(
-          vecStr->at(i).begin(),
-          vecStr->at(i).end(),
-          vecStr->at(i).begin(),
+          str.begin(),
+          str.end(),
+          str.begin(),
           [&](unsigned char c) {
             if (isUpper) return std::toupper(c);
             else return std::tolower(c);
           }
         );
       }
+
+      void changeStringsCase(VEC_STR *vecStr, bool isUpper) {
+        for (int i = 0; i < vecStr->size(); i++) {
+          changeStringCase(vecStr->at(i), isUpper);
+        }
+      }
+    }}
+
+    void stringToLowercase(std::string str) {
+      SECRET::changeStringCase(str, false);
+    }
+
+    void stringToUppercase(std::string str) {
+      SECRET::changeStringCase(str, true);
     }
 
     void stringsToLowercase(VEC_STR *vecStr) {
-      changeStringsCase(vecStr, false);
+      SECRET::changeStringsCase(vecStr, false);
     }
 
     void stringsToUppercase(VEC_STR *vecStr) {
-      changeStringsCase(vecStr, true);
+      SECRET::changeStringsCase(vecStr, true);
     }
   };
 }
