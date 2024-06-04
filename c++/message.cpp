@@ -4,6 +4,7 @@
 #include "message.h"
 
 namespace cli_menu {
+
   void Message::printDots(int count) {
     std::cout << std::endl;
     for (int i = 0; i < count; i++) { std::cout << '.'; }
@@ -12,9 +13,10 @@ namespace cli_menu {
 
   std::string Message::fixTextBeginEnd(std::string text) {
     if (text.length() > 0) {
-      std::toUpper(text[0]);
-      if (text[text.length - 1] != '.') text += '.';
+      std::toupper(text[0]);
+      if (text[text.length() - 1] != '.') text.push_back('.');
     }
+    return text;
   }
 
   std::string Message::getObligatoryString(bool isRequired) {
@@ -54,11 +56,12 @@ namespace cli_menu {
     std::string version
   ) {
     int dotsCount = programName.length() * 2;
+    Util::stringToUppercase(programName);
 
-    std::cout << "Welcome to '" << std::toUpper(programName) << "'\n\n";
+    std::cout << "Welcome to '" << programName << "'\n\n";
 
-    if (version != "") std:cout << "version: " << version << std::endl;
-    if (author != "") std:cout << "author: " << author;
+    if (version != "") std::cout << "version: " << version << std::endl;
+    if (author != "") std::cout << "author: " << author;
 
     printDots(dotsCount);
 
@@ -77,8 +80,9 @@ namespace cli_menu {
     
     std::string comName = com->getName();
     int dotsCount = comName.length() * 2;
+    Util::stringToUppercase(comName);
 
-    std::cout << std::toUpper(comName) << ':';
+    std::cout << comName << ':';
     printDots(dotsCount);
 
     std::cout << fixTextBeginEnd(com->getDescription());
