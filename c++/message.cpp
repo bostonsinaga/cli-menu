@@ -13,9 +13,22 @@ namespace cli_menu {
 
   std::string Message::fixTextBeginEnd(std::string text) {
     if (text.length() > 0) {
-      std::toupper(text[0]);
-      if (text[text.length() - 1] != '.') text.push_back('.');
+
+      text[0] = std::toupper(text[0]);
+      char last = text[text.length() - 1];
+
+      if (last != '.' && last != ';' &&
+        last != '!' && last != '?' &&
+        last != ':' && last != ','
+      ) {
+        text.push_back('.');
+      }
+      else if (last == ',') {
+        text.pop_back();
+        text.push_back('.');
+      }
     }
+    
     return text;
   }
 
