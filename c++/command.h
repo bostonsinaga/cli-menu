@@ -1,15 +1,15 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include <functional>
 #include "util.h"
 
-namespace namespace cli_menu {
+namespace cli_menu {
 
-  typedef std::vector<Command*> VEC_COM;
+  // integer, float, char, string, object
+  enum {INT, FLO, CHA, STR, OBJ};
 
-  // char, string, integer, float, object
-  enum {CHA, STR, INT, FLO, OBJ};
+  // callback format ('Parameters' arguments and 'Toggles' states)
+  typedef std::function<void(VEC_STR*, VEC_BOO*)> CLBK;
 
   class Parameters {
   private:
@@ -17,70 +17,54 @@ namespace namespace cli_menu {
     VEC_INT *types;
     VEC_BOO *obligatories;
     VEC_STR *descriptions;
+    VEC_STR *arguments;
 
   public:
     Parameters(
       VEC_STR names_in,
       VEC_INT types_in,
       VEC_BOO obligatories_in,
-      VEC_STR descriptions_in
-    ) {
-      names = &names_in;
-      types = &types_in;
-      obligatories = &obligatories_in;
-      descriptions = &descriptions_in;
-    }
+      VEC_STR descriptions_in,
+      VEC_STR arguments_in
+    );
 
-    int amount() { return names->size(); }
+    int amount();
 
-    VEC_STR *getNames() { return names; }
-    VEC_INT *getTypes() { return types; }
-    VEC_BOO *getObligatories() { return obligatories; }
-    VEC_STR *getDescriptions() { return descriptions; }
+    VEC_STR *getNames();
+    VEC_INT *getTypes();
+    VEC_BOO *getObligatories();
+    VEC_STR *getDescriptions();
+    VEC_STR *getArguments();
 
-    std::string getName(int index) {
-      return Util::getIndexOfVector<VEC_STR>(names, index, "");
-    }
-
-    int getType(int index) {
-      return Util::getIndexOfVector<VEC_INT>(types, index, "");
-    }
-
-    bool getObligatory(int index) {
-      return Util::getIndexOfVector<VEC_BOO>(obligatories, index, false);
-    }
-
-    std::string getDescription(int index) {
-      return Util::getIndexOfVector<VEC_STR>(descriptions, index, "");
-    }
+    std::string getName(int index);
+    int getType(int index);
+    bool getObligatory(int index);
+    std::string getDescription(int index);
+    std::string getArgument(int index);
   };
 
   class Toggles {
   private:
     VEC_STR *names;
     VEC_STR *descriptions;
+    VEC_BOO *states;
 
   public:
     Toggles(
       VEC_STR names_in,
-      VEC_STR descriptions_in
-    ) {
-      names = &names_in;
-      descriptions = &descriptions_in;
-    }
+      VEC_STR descriptions_in,
+      VEC_BOO states_in
+    );
 
-    int amount() { return names->size(); }
+    int amount();
 
-    VEC_STR *getNames() { return names; }
-    VEC_STR *getDescriptions() { return descriptions; }
+    VEC_STR *getNames();
+    VEC_STR *getDescriptions();
+    VEC_BOO *getStates();
 
-    std::string getName(int index) {
-      return Util::getIndexOfVector<VEC_STR>(names, index, "");
-    }
-
-    std::string getDescription(int index) {
-      return Util::getIndexOfVector<VEC_STR>(descriptions, index, "");
-    }
+    std::string getName(int index);
+    std::string getDescription(int index);
+    bool getState(int index);
   };
 
   class Command {
@@ -89,7 +73,7 @@ namespace namespace cli_menu {
     std::string *description;
     Parameters *parameters;
     Toggles *toggles;
-    std::function<VEC_STR, VEC_DOU, VEC_BOO> *callback;
+    CLBK *callback;
 
   public:
     Command(
@@ -97,22 +81,18 @@ namespace namespace cli_menu {
       std::string description_in,
       Parameters *parameters_in,
       Toggles *toggles_in,
-      std::function<VEC_STR, VEC_DOU, VEC_BOO> callback_in
-    ) {
-      name = &name_in;
-      description = &description_in;
-      parameters = parameters_in;
-      toggles = toggles_in;
-      callback = &callback_in;
-    }
+      CLBK *callback_in
+    );
 
-    std::string getName() { return *name; }
-    std::string getDescription() { return *description; }
-    void execute() { callback(); }
+    std::string getName();
+    std::string getDescription();
+    void execute();
 
-    Parameters *getParameters() { return parameters; }
-    Toggles *getToggles() { return toggles; }
+    Parameters *getParameters();
+    Toggles *getToggles();
   };
+
+  typedef std::vector<Command*> VEC_COM;
 }
 
 #endif // __CLI_MENU__COMMAND_H__
