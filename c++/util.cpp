@@ -4,37 +4,58 @@
 #include "util.h"
 
 namespace cli_menu {
+
+  void Util::changeStringCase(std::string &str, bool isUpper) {
+    std::transform(
+      str.begin(),
+      str.end(),
+      str.begin(),
+      [&](unsigned char c) {
+        if (isUpper) return std::toupper(c);
+        else return std::tolower(c);
+      }
+    );
+  }
+
+  void Util::changeStringsCase(std::vector<std::string> *vecStr, bool isUpper) {
+    for (int i = 0; i < vecStr->size(); i++) {
+      changeStringCase(vecStr->at(i), isUpper);
+    }
+  }
+
+  std::vector<LLUI> Util::getDifferencesToSize(
+    std::vector<LLUI> sizes,
+    LLUI targetSize
+  ) {
+    LLUI max = targetSize;
+
+    for (auto &sz : sizes) {
+      if (targetSize > 0) {
+        if (sz > max && sz <= targetSize) max = sz;
+      }
+      else if (sz > max) max = sz;
+    }
+
+    std::vector<LLUI> differences;
+    for (auto &sz : sizes) { differences.push_back(max - sz); }
+    
+    return differences;
+  }
+
+  void Util::stringToLowercase(std::string str) {
+    changeStringCase(str, false);
+  }
+
+  void Util::stringToUppercase(std::string str) {
+    changeStringCase(str, true);
+  }
+
   void Util::stringsToLowercase(VEC_STR *vecStr) {
-    for (int i = 0; i < vecStr->size(); i++) {
-      vecStr->at(i) = std::toLower(vecStr->at(i));
-    }
+    changeStringsCase(vecStr, false);
   }
 
-  void Util::cutVector(VEC_STR *vecStr, int index) {
-    VEC_STR tail = VEC_STR(vecStr->begin() + index + 1, vecStr->end());
-    *vecStr = VEC_STR(vecStr->begin(), vecStr->begin() + index);
-    vecStr->insert(vecStr->end(), tail.begin(), tail.end());
-  }
-
-  void Util::cleanDuplicateStrings(VEC_STR *vecStr) {
-    for (int i = 0; i < vecStr->size(); i++) {
-      for (int j = 0; j < vecStr->size(); j++) {
-        if (i != j && vecStr->at(i) == vecStr->at(j)) {
-          cutVector(vecStr, j);
-          j--;
-        }
-      }
-    }
-  }
-
-  void Util::cleanDuplicatesToName(VEC_STR *vecStr, std::string name) {
-    bool first = false;
-    for (int i = 0; i < vecStr->size(); i++) {
-      if (vecStr->at(i) == name) {
-        if (first) cutVector(vecStr, i);
-        else first = true;
-      }
-    }
+  void Util::stringsToUppercase(VEC_STR *vecStr) {
+    changeStringsCase(vecStr, true);
   }
 }
 
