@@ -2,7 +2,6 @@
 #define __CLI_MENU__MESSAGE_H__
 
 #include <iostream>
-// #include <vector>
 #include "command.h"
 
 namespace cli_menu {
