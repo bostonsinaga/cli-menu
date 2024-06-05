@@ -13,21 +13,31 @@ namespace cli_menu {
 
   class Parameters {
   private:
-    VEC_STR *names;
-    VEC_INT *types;
-    VEC_BOO *obligatories;
-    VEC_STR *descriptions;
-    VEC_STR *arguments;
+    static VEC_STR names;
+    static VEC_INT types;
+    static VEC_BOO obligatories;
+    static VEC_STR descriptions;
+    static VEC_STR arguments;
+
+    static void balance();
 
   public:
     Parameters(
-      VEC_STR names_in,
-      VEC_INT types_in,
-      VEC_BOO obligatories_in,
-      VEC_STR descriptions_in,
-      VEC_STR arguments_in
+      VEC_STR &names_in,
+      VEC_INT &types_in,
+      VEC_BOO &obligatories_in,
+      VEC_STR &descriptions_in
     );
 
+    Parameters(
+      const VEC_STR &names_in,
+      const VEC_INT &types_in,
+      const VEC_BOO &obligatories_in,
+      const VEC_STR &descriptions_in
+    );
+
+    void setArguments(VEC_STR &arguments_in);
+    void setArguments(const VEC_STR &arguments_in);
     int amount();
 
     VEC_STR *getNames();
@@ -45,17 +55,25 @@ namespace cli_menu {
 
   class Toggles {
   private:
-    VEC_STR *names;
-    VEC_STR *descriptions;
-    VEC_BOO *states;
+    static VEC_STR names;
+    static VEC_STR descriptions;
+    static VEC_BOO states;
+
+    static void balance();
 
   public:
     Toggles(
-      VEC_STR names_in,
-      VEC_STR descriptions_in,
-      VEC_BOO states_in
+      VEC_STR &names_in,
+      VEC_STR &descriptions_in
     );
 
+    Toggles(
+      const VEC_STR &names_in,
+      const VEC_STR &descriptions_in
+    );
+
+    void setStates(VEC_BOO &states_in);
+    void setStates(const VEC_BOO &states_in);
     int amount();
 
     VEC_STR *getNames();
@@ -69,8 +87,8 @@ namespace cli_menu {
 
   class Command {
   private:
-    std::string *name;
-    std::string *description;
+    std::string name;
+    std::string description;
     Parameters *parameters;
     Toggles *toggles;
     CLBK *callback;
