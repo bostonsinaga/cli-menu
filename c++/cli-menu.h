@@ -3,6 +3,7 @@
 
 #include "util.h"
 #include "command.h"
+#include "message.h"
 #include "executor.h"
 
 #endif // __CLI_MENU_H__
