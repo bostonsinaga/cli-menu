@@ -42,12 +42,22 @@ namespace cli_menu {
     return differences;
   }
 
-  void Util::stringToLowercase(std::string str) {
+  void Util::changeStringToLowercase(std::string &str) {
     changeStringCase(str, false);
   }
 
-  void Util::stringToUppercase(std::string str) {
+  void Util::changeStringToUppercase(std::string &str) {
     changeStringCase(str, true);
+  }
+
+  void Util::getStringToLowercase(std::string str) {
+    changeStringCase(str, false);
+    return str;
+  }
+
+  void Util::getStringToUppercase(std::string str) {
+    changeStringCase(str, true);
+    return str;
   }
 
   void Util::stringsToLowercase(VEC_STR *vecStr) {

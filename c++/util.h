@@ -107,8 +107,12 @@ namespace cli_menu {
       LLUI targetSize
     );
 
-    static void stringToLowercase(std::string str);
-    static void stringToUppercase(std::string str);
+    static void changeStringToLowercase(std::string &str);
+    static void changeStringToUppercase(std::string &str);
+
+    static void getStringToLowercase(std::string str);
+    static void getStringToUppercase(std::string str);
+
     static void stringsToLowercase(VEC_STR *vecStr);
     static void stringsToUppercase(VEC_STR *vecStr);
   };
