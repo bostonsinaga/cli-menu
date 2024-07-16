@@ -56,8 +56,16 @@ namespace cli_menu {
     std::cout << "\n\n";
   }
 
-  void Message::printError(std::string text, std::string comName) {
+  void Message::print(Command *com) {
+    std::cerr
+      << Util::getStringToUppercase(com->getName())
+      << ": Error. Please follow the command format.\n\n";
+    printCommand(com);
+  }
+
+  void Message::print(std::string text, std::string comName) {
     if (text.length() > 0) {
+      Util::changeStringToUppercase(comName);
       std::cerr << comName << ": Error. " << fixTextBeginEnd(text);
     }
   }

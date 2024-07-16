@@ -13,7 +13,9 @@ namespace cli_menu {
     static void printCommand(Command *com);
 
   public:
-    static void printError(std::string text, std::string comName = "CLI Menu");
+    enum {HINT_MESSAGE, WARNING_MESSAGE, ERROR_MESSAGE};
+    static void print(int flag, Command *com);
+    static void print(int flag, std::string text, std::string comName = "CLI MENU");
 
     static void printMainHelp(
       VEC_COM &comms,
