@@ -13,13 +13,13 @@ namespace cli_menu {
 
   class Parameters {
   private:
-    static VEC_STR names;
-    static VEC_INT types;
-    static VEC_BOO obligatories;
-    static VEC_STR descriptions;
-    static VEC_STR arguments;
+    VEC_STR names;
+    VEC_INT types;
+    VEC_BOO obligatories;
+    VEC_STR descriptions;
+    VEC_STR arguments;
 
-    static void balance();
+    void balance();
 
   public:
     Parameters(
@@ -55,11 +55,11 @@ namespace cli_menu {
 
   class Toggles {
   private:
-    static VEC_STR names;
-    static VEC_STR descriptions;
-    static VEC_BOO states;
+    VEC_STR names;
+    VEC_STR descriptions;
+    VEC_BOO states;
 
-    static void balance();
+    void balance();
 
   public:
     Toggles(
