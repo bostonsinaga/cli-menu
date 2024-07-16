@@ -9,12 +9,6 @@ namespace cli_menu {
   // Parameters |
   //____________|
 
-  VEC_STR Parameters::names;
-  VEC_INT Parameters::types;
-  VEC_BOO Parameters::obligatories;
-  VEC_STR Parameters::descriptions;
-  VEC_STR Parameters::arguments;
-
   Parameters::Parameters(
     VEC_STR &names_in,
     VEC_INT &types_in,
@@ -96,10 +90,6 @@ namespace cli_menu {
   //_________|
   // Toggles |
   //_________|
-
-  VEC_STR Toggles::names;
-  VEC_STR Toggles::descriptions;
-  VEC_BOO Toggles::states;
 
   Toggles::Toggles(
     VEC_STR &names_in,
