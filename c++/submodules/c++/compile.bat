@@ -1,1 +1,0 @@
-ninja -C test/build

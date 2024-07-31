@@ -1,1 +1,0 @@
-g++ generator.cpp -o generator

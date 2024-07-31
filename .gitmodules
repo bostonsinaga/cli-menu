@@ -1,3 +1,0 @@
-[submodule "submodules"]
-	path = c++/submodules
-	url = https://github.com/bostonsinaga/mini-tools.git

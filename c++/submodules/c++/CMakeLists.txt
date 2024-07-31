@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 3.10)
-project(mini-tools)
-add_executable(mini-tools ${CMAKE_CURRENT_SOURCE_DIR}/test/number-test.cpp)
-set(sub_dir ${CMAKE_CURRENT_SOURCE_DIR}/includes/algorithms/geometrics)
-add_subdirectory(${sub_dir})
-target_link_libraries(mini-tools ${sub_dir})

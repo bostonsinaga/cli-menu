@@ -1,1 +1,0 @@
-g++ number-test.cpp -o number-test.exe

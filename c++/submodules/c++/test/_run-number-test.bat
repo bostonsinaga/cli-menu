@@ -1,1 +1,0 @@
-_generate-seeds.bat & number-test.exe

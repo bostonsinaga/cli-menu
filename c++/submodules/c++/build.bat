@@ -1,1 +1,0 @@
-cmake -B test/build -S .
