@@ -1,1 +1,1 @@
-git submodule add https://github.com/bostonsinaga/mini-tools.git ./mini-tools
+git submodule add https://github.com/bostonsinaga/mini-tools.git ./libs/mini-tools
