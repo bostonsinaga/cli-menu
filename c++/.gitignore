@@ -1,3 +1,2 @@
-libs/*
-!libs/fetch.bat
+libs/
 test/climenu.exe
