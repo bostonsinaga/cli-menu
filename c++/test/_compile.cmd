@@ -1,1 +1,0 @@
-g++ ../includes/util.cpp ../includes/command.cpp ../includes/message.cpp ../includes/executor.cpp main.cpp -o climenu
