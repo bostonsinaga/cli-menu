@@ -58,14 +58,14 @@ namespace cli_menu {
 
   void Message::print(Command *com) {
     std::cerr
-      << Util::getStringToUppercase(com->getName())
+      << mt_uti::StrTools::getStringToUppercase(com->getName())
       << ": Error. Please follow the command format.\n\n";
     printCommand(com);
   }
 
   void Message::print(std::string text, std::string comName) {
     if (text.length() > 0) {
-      Util::changeStringToUppercase(comName);
+      mt_uti::StrTools::changeStringToUppercase(comName);
       std::cerr << comName << ": Error. " << fixTextBeginEnd(text);
     }
   }
@@ -77,7 +77,7 @@ namespace cli_menu {
     std::string version
   ) {
     int dotsCount = programName.length() * 2;
-    Util::stringToUppercase(programName);
+    mt_uti::StrTools::stringToUppercase(programName);
 
     std::cout << "Welcome to '" << programName << "'\n\n";
 
@@ -101,7 +101,7 @@ namespace cli_menu {
     
     std::string comName = com->getName();
     int dotsCount = comName.length() * 2;
-    Util::stringToUppercase(comName);
+    mt_uti::StrTools::stringToUppercase(comName);
 
     std::cout << comName << ':';
     printDots(dotsCount);
