@@ -36,7 +36,7 @@ namespace cli_menu {
   }
   
   void Parameters::balance() {
-    std::vector<LLUI> differences = Util::getDifferencesToSize({
+    std::vector<LLUI> differences = mt_uti::StrTools::getDifferencesToSize({
       types.size(),
       obligatories.size(),
       descriptions.size(),
@@ -68,23 +68,23 @@ namespace cli_menu {
   VEC_STR *Parameters::getArguments() { return &arguments; }
 
   std::string Parameters::getName(int index) {
-    return Util::getIndexOfVector<std::string>(&names, index, "");
+    return mt_uti::VecTools::getAt<std::string>(&names, index, "");
   }
 
   int Parameters::getType(int index) {
-    return Util::getIndexOfVector<int>(&types, index, 0);
+    return mt_uti::VecTools::getAt<int>(&types, index, 0);
   }
 
   bool Parameters::getObligatory(int index) {
-    return Util::getIndexOfVector<bool>(&obligatories, index, false);
+    return mt_uti::VecTools::getAt<bool>(&obligatories, index, false);
   }
 
   std::string Parameters::getDescription(int index) {
-    return Util::getIndexOfVector<std::string>(&descriptions, index, "");
+    return mt_uti::VecTools::getAt<std::string>(&descriptions, index, "");
   }
 
   std::string Parameters::getArgument(int index) {
-    return Util::getIndexOfVector<std::string>(&arguments, index, "");
+    return mt_uti::VecTools::getAt<std::string>(&arguments, index, "");
   }
 
   //_________|
@@ -110,7 +110,7 @@ namespace cli_menu {
   }
 
   void Toggles::balance() {
-    std::vector<LLUI> differences = Util::getDifferencesToSize({
+    std::vector<LLUI> differences = mt_uti::StrTools::getDifferencesToSize({
       descriptions.size(), states.size()
     }, names.size());
 
@@ -135,15 +135,15 @@ namespace cli_menu {
   VEC_BOO *Toggles::getStates() { return &states; }
 
   std::string Toggles::getName(int index) {
-    return Util::getIndexOfVector<std::string>(&names, index, "");
+    return mt_uti::VecTools::getAt<std::string>(&names, index, "");
   }
 
   std::string Toggles::getDescription(int index) {
-    return Util::getIndexOfVector<std::string>(&descriptions, index, "");
+    return mt_uti::VecTools::getAt<std::string>(&descriptions, index, "");
   }
 
   bool Toggles::getState(int index) {
-    return Util::getIndexOfVector<bool>(&states, index, "");
+    return mt_uti::VecTools::getAt<bool>(&states, index, "");
   }
 
   //_________|

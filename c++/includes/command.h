@@ -1,12 +1,12 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include "util.h"
+#include <string>
+#include <vector>
+#include <functional>
+#include "mini-tools.h"
 
 namespace cli_menu {
-
-  // integer, float, char, string, object
-  enum {INT, FLO, CHA, STR, OBJ};
 
   // callback format ('Parameters' arguments and 'Toggles' states)
   typedef std::function<void(VEC_STR*, VEC_BOO*)> CLBK;
