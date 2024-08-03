@@ -7,7 +7,5 @@ add_subdirectory(${minitools_dir})
 add_subdirectory(includes)
 add_subdirectory(test)
 
-target_include_directories(TEST PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/${minitools_dir}
-  ${CMAKE_CURRENT_SOURCE_DIR}/includes
-)
+target_include_directories(cli-menu PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${minitools_dir})
+target_include_directories(TEST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
