@@ -1,11 +1,8 @@
-project(cli-menu)
-
 set (SOURCES
   # HEADERS
   cli-menu.h
 
   # SOURCES
-  util.cpp
   command.cpp
   message.cpp
   executor.cpp
