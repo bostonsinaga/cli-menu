@@ -48,7 +48,7 @@ namespace cli_menu {
 
     // useless 'lineCount'
     if (lineCount <= 0) {
-      Message::print(Message::ERROR_MESSAGE, "the 'lineCount' cannot be zero or less");
+      Message::print(Message::ERROR, "the 'lineCount' cannot be zero or less");
       return;
     }
 
@@ -83,13 +83,13 @@ namespace cli_menu {
     if (!selCom) {
 
       Message::print(
-        Message::ERROR_MESSAGE,
+        Message::ERROR,
         "the command is not recognized",
         programName
       );
 
       Message::print(
-        Message::HINT_MESSAGE,
+        Message::HINT,
         "please type '--help' for a list of available commands",
         programName
       );
@@ -133,7 +133,7 @@ namespace cli_menu {
         lineFlagsPrev == tog_fg &&
         lineFlags[i] == arg_fg
       ) {
-        Message::print(Message::ERROR_MESSAGE, selCom);
+        Message::print(Message::ERROR, selCom);
         return;
       }
 
@@ -169,7 +169,7 @@ namespace cli_menu {
             orders.push_back(j);
             selUsed[j] = true;
           }
-          else Message::print(Message::ERROR_MESSAGE, selCom);
+          else Message::print(Message::ERROR, selCom);
           break;
         }
       }
