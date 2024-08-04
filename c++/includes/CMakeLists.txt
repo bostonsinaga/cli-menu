@@ -1,6 +1,4 @@
 set (SOURCES
-  # HEADERS
-  # SOURCES
   command.cpp
   message.cpp
   executor.cpp
