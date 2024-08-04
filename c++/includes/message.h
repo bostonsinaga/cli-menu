@@ -10,25 +10,8 @@ namespace cli_menu {
     static void printDots(int count);
     static std::string setTextCapitalBeginPeriodEnd(std::string text);
     static std::string getObligatoryString(bool isRequired);
+    static std::string getColoredTag(int flag);
     static void printCommand(Command *com);
-
-    static getColoredTag(int flag) {
-      switch (flag) {
-        case WARNING: {
-          return "\033[34mHINT. \033[0m";
-        }
-        case WARNING: {
-          return "\033[33mWARNING. \033[0m";
-        }
-        case ERROR: {
-          return "\033[31mERROR. \033[0m";
-        }
-        case SUCCEED: {
-          return "\033[32mSUCCEED. \033[0m";
-        }
-        default: return "\033[35mCANCELED. \033[0m";
-      }
-    }
 
   public:
     enum {HINT, WARNING, ERROR, SUCCEED, CANCELED};

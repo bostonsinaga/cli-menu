@@ -37,6 +37,24 @@ namespace cli_menu {
     else return "<opt>";
   }
 
+  std::string Message::getColoredTag(int flag) {
+    switch (flag) {
+      case WARNING: {
+        return "\033[34mHINT. \033[0m";
+      }
+      case WARNING: {
+        return "\033[33mWARNING. \033[0m";
+      }
+      case ERROR: {
+        return "\033[31mERROR. \033[0m";
+      }
+      case SUCCEED: {
+        return "\033[32mSUCCEED. \033[0m";
+      }
+      default: return "\033[35mCANCELED. \033[0m";
+    }
+  }
+
   void Message::printCommand(Command *com) {
 
     std::cout << "--" << com->getName();
