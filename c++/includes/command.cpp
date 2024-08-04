@@ -10,10 +10,10 @@ namespace cli_menu {
   //____________|
 
   Parameters::Parameters(
-    VEC_STR &names_in,
-    VEC_INT &types_in,
-    VEC_BOO &obligatories_in,
-    VEC_STR &descriptions_in
+    mt::VEC_STR &names_in,
+    mt::VEC_INT &types_in,
+    mt::VEC_BOL &obligatories_in,
+    mt::VEC_STR &descriptions_in
   ) {
     names = names_in;
     types = types_in;
@@ -23,10 +23,10 @@ namespace cli_menu {
   }
 
   Parameters::Parameters(
-    const VEC_STR &names_in,
-    const VEC_INT &types_in,
-    const VEC_BOO &obligatories_in,
-    const VEC_STR &descriptions_in
+    const mt::VEC_STR &names_in,
+    const mt::VEC_INT &types_in,
+    const mt::VEC_BOL &obligatories_in,
+    const mt::VEC_STR &descriptions_in
   ) {
     names = names_in;
     types = types_in;
@@ -36,7 +36,7 @@ namespace cli_menu {
   }
   
   void Parameters::balance() {
-    std::vector<LLUI> differences = mt_uti::StrTools::getDifferencesToSize({
+    std::vector<mt::ULLI> differences = mt_uti::StrTools::getDifferencesToSize({
       types.size(),
       obligatories.size(),
       descriptions.size(),
@@ -49,23 +49,23 @@ namespace cli_menu {
     for (int i = 0; i < differences[3]; i++) { arguments.push_back(""); }
   }
 
-  void Parameters::setArguments(VEC_STR &arguments_in) {
+  void Parameters::setArguments(mt::VEC_STR &arguments_in) {
     arguments = arguments_in;
     balance();
   }
 
-  void Parameters::setArguments(const VEC_STR &arguments_in) {
+  void Parameters::setArguments(const mt::VEC_STR &arguments_in) {
     arguments = arguments_in;
     balance();
   }
 
   int Parameters::amount() { return names.size(); }
 
-  VEC_STR *Parameters::getNames() { return &names; }
-  VEC_INT *Parameters::getTypes() { return &types; }
-  VEC_BOO *Parameters::getObligatories() { return &obligatories; }
-  VEC_STR *Parameters::getDescriptions() { return &descriptions; }
-  VEC_STR *Parameters::getArguments() { return &arguments; }
+  mt::VEC_STR *Parameters::getNames() { return &names; }
+  mt::VEC_INT *Parameters::getTypes() { return &types; }
+  mt::VEC_BOL *Parameters::getObligatories() { return &obligatories; }
+  mt::VEC_STR *Parameters::getDescriptions() { return &descriptions; }
+  mt::VEC_STR *Parameters::getArguments() { return &arguments; }
 
   std::string Parameters::getName(int index) {
     return mt_uti::VecTools::getAt<std::string>(&names, index, "");
@@ -92,8 +92,8 @@ namespace cli_menu {
   //_________|
 
   Toggles::Toggles(
-    VEC_STR &names_in,
-    VEC_STR &descriptions_in
+    mt::VEC_STR &names_in,
+    mt::VEC_STR &descriptions_in
   ) {
     names = names_in;
     descriptions = descriptions_in;
@@ -101,8 +101,8 @@ namespace cli_menu {
   }
 
   Toggles::Toggles(
-    const VEC_STR &names_in,
-    const VEC_STR &descriptions_in
+    const mt::VEC_STR &names_in,
+    const mt::VEC_STR &descriptions_in
   ) {
     names = names_in;
     descriptions = descriptions_in;
@@ -110,7 +110,7 @@ namespace cli_menu {
   }
 
   void Toggles::balance() {
-    std::vector<LLUI> differences = mt_uti::StrTools::getDifferencesToSize({
+    std::vector<mt::ULLI> differences = mt_uti::StrTools::getDifferencesToSize({
       descriptions.size(), states.size()
     }, names.size());
 
@@ -118,21 +118,21 @@ namespace cli_menu {
     for (int i = 0; i < differences[1]; i++) { states.push_back(false); }
   }
 
-  void Toggles::setStates(VEC_BOO &states_in) {
+  void Toggles::setStates(mt::VEC_BOL &states_in) {
     states = states_in;
     balance();
   }
 
-  void Toggles::setStates(const VEC_BOO &states_in) {
+  void Toggles::setStates(const mt::VEC_BOL &states_in) {
     states = states_in;
     balance();
   }
 
   int Toggles::amount() { return names.size(); }
 
-  VEC_STR *Toggles::getNames() { return &names; }
-  VEC_STR *Toggles::getDescriptions() { return &descriptions; }
-  VEC_BOO *Toggles::getStates() { return &states; }
+  mt::VEC_STR *Toggles::getNames() { return &names; }
+  mt::VEC_STR *Toggles::getDescriptions() { return &descriptions; }
+  mt::VEC_BOL *Toggles::getStates() { return &states; }
 
   std::string Toggles::getName(int index) {
     return mt_uti::VecTools::getAt<std::string>(&names, index, "");

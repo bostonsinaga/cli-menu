@@ -132,26 +132,26 @@ namespace cli_menu {
 
     /** Values to be filled in */
 
-    VEC_STR arguments;
-    VEC_BOO states;
-    VEC_INT argsOrders, statsOrders;
+    mt::VEC_STR arguments;
+    mt::VEC_BOL states;
+    mt::VEC_INT argsOrders, statsOrders;
 
     /** Iterate 'lineStrings' */
 
     Parameters *selPar = selCom->getParameters();
     Toggles *selTog = selCom->getToggles();
 
-    VEC_STR *selParNames = selPar->getNames(),
+    mt::VEC_STR *selParNames = selPar->getNames(),
             *selTogNames = selTog->getNames();
 
-    VEC_BOO selParUsed = VEC_BOO(selParNames->size(), false),
-            selTogUsed = VEC_BOO(selTogNames->size(), false);
+    mt::VEC_BOL selParUsed = mt::VEC_BOL(selParNames->size(), false),
+            selTogUsed = mt::VEC_BOL(selTogNames->size(), false);
 
     auto iterSelCom = [&](
       int lineCtr,
-      VEC_STR *selNames,
-      VEC_INT &orders,
-      VEC_BOO &selUsed,
+      mt::VEC_STR *selNames,
+      mt::VEC_INT &orders,
+      mt::VEC_BOL &selUsed,
     ) {
       for (int j = 0; j < selNames->size(); j++) {
         if (lineStrings[lineCtr] == selNames->at(j)) {
