@@ -3,7 +3,11 @@
 
 int main(int argc, char *argv[]) {
 
-  cli_menu::Message::printError("please don't waste a time!");
+  cli_menu::Message::print(
+    cli_menu::Message::ERROR,
+    "please don't waste a time!",
+    argv[0]
+  );
 
   return 0;
 }
