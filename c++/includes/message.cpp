@@ -39,7 +39,7 @@ namespace cli_menu {
 
   std::string Message::getColoredTag(int flag) {
     switch (flag) {
-      case WARNING: {
+      case HINT: {
         return "\033[34mHINT. \033[0m";
       }
       case WARNING: {
@@ -51,8 +51,11 @@ namespace cli_menu {
       case SUCCEED: {
         return "\033[32mSUCCEED. \033[0m";
       }
-      default: return "\033[35mCANCELED. \033[0m";
+      case CANCELED: {
+        return "\033[35mCANCELED. \033[0m";
+      }
     }
+    return "";
   }
 
   void Message::printCommand(Command *com) {
@@ -97,7 +100,7 @@ namespace cli_menu {
     std::string version
   ) {
     int dotsCount = programName.length() * 2;
-    mt_uti::StrTools::stringToUppercase(programName);
+    mt_uti::StrTools::getStringToUppercase(programName);
 
     std::cout << "Welcome to '" << programName << "'\n\n";
 
@@ -121,7 +124,7 @@ namespace cli_menu {
     
     std::string comName = com->getName();
     int dotsCount = comName.length() * 2;
-    mt_uti::StrTools::stringToUppercase(comName);
+    mt_uti::StrTools::getStringToUppercase(comName);
 
     std::cout << comName << ':';
     printDots(dotsCount);
