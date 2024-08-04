@@ -1,9 +1,6 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include <string>
-#include <vector>
-#include <functional>
 #include <memory>
 #include "mini-tools.h"
 
