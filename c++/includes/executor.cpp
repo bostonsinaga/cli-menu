@@ -16,22 +16,32 @@ namespace cli_menu {
   }
 
   bool Executor::testDashSign(std::string &input, int dashCount) {
-    bool isIt = false;
+    bool isIt = false, anyNonSpace = false;
+
     if (input.length() > dashCount) {
       for (int i = 0; i < dashCount; i++) {
+
+        if (!anyNonSpace) {
+          if (input[i] == ' ') continue;
+          else anyNonSpace = true;
+        }
+
         if (input[i] == '-') isIt = true;
-        else isIt = false;
+        else {
+          isIt = false;
+          break;
+        }
       }
     }
     return isIt;
   }
 
   bool Executor::isParameter(std::string &input) {
-    return isParameter(input, 2);
+    return testDashSign(input, 2);
   }
 
   bool Executor::isToggle(std::string &input) {
-    return isParameter(input, 1);
+    return testDashSign(input, 1);
   }
 
   void Executor::iterate(int lineCount, char* lineArgs[]) {
