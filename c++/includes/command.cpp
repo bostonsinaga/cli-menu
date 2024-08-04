@@ -32,7 +32,7 @@ namespace cli_menu {
     }, names.size());
 
     mt_uti::VecTools<int>::concat(
-      types, std::vector<int>(differences[0], NUMBER)
+      types, std::vector<int>(differences[0], TEXT)
     );
 
     mt_uti::VecTools<bool>::concat(
@@ -66,7 +66,7 @@ namespace cli_menu {
   }
 
   int Parameters::getType(int index) {
-    return mt_uti::VecTools<int>::getAt(types, index, NUMBER);
+    return mt_uti::VecTools<int>::getAt(types, index, TEXT);
   }
 
   bool Parameters::getObligatory(int index) {
@@ -85,18 +85,18 @@ namespace cli_menu {
     mt::VEC_STR retTypes(types.size());
 
     for (int i = 0; i < retTypes.size(); i++) {
-      if (types[i] == NUMBER) retTypes[i] = "NUMBER";
-      else retTypes[i] = "TEXT";
+      if (types[i] == TEXT) retTypes[i] = "TEXT";
+      else retTypes[i] = "NUMBER";
     }
 
     return retTypes;
   }
 
   std::string Parameters::getStringifiedType(int index) {
-    if (mt_uti::VecTools<int>::getAt(types, index, NUMBER) == NUMBER) {
-      return "NUMBER";
+    if (mt_uti::VecTools<int>::getAt(types, index, TEXT) == TEXT) {
+      return "TEXT";
     }
-    return "TEXT";
+    return "NUMBER";
   }
 
   //_________|

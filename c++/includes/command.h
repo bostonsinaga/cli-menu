@@ -27,7 +27,7 @@ namespace cli_menu {
     }
 
   public:
-    enum {NUMBER, TEXT};
+    enum {TEXT, NUMBER};
 
     Parameters(
       mt::CR_VEC_STR names_in,
