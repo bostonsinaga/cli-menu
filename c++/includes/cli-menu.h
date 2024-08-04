@@ -5,4 +5,6 @@
 #include "message.h"
 #include "executor.h"
 
+namespace cm = cli_menu;
+
 #endif // __CLI_MENU_H__
