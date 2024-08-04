@@ -8,14 +8,32 @@ namespace cli_menu {
   class Message {
   private:
     static void printDots(int count);
-    static std::string fixTextBeginEnd(std::string text);
+    static std::string setTextCapitalBeginPeriodEnd(std::string text);
     static std::string getObligatoryString(bool isRequired);
     static void printCommand(Command *com);
 
+    static getColoredTag(int flag) {
+      switch (flag) {
+        case WARNING: {
+          return "\033[34mHINT. \033[0m";
+        }
+        case WARNING: {
+          return "\033[33mWARNING. \033[0m";
+        }
+        case ERROR: {
+          return "\033[31mERROR. \033[0m";
+        }
+        case SUCCEED: {
+          return "\033[32mSUCCEED. \033[0m";
+        }
+        default: return "\033[35mCANCELED. \033[0m";
+      }
+    }
+
   public:
-    enum {HINT_MESSAGE, WARNING_MESSAGE, ERROR_MESSAGE};
-    static void print(int flag, Command *com);
-    static void print(int flag, std::string text, std::string comName = "CLI MENU");
+    enum {HINT, WARNING, ERROR, SUCCEED, CANCELED};
+    static void print(int flag, std::string text, std::string comName = "");
+    static void printCommandError(Command *com);
 
     static void printMainHelp(
       VEC_COM &comms,

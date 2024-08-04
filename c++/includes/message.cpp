@@ -11,7 +11,7 @@ namespace cli_menu {
     std::cout << std::endl;
   }
 
-  std::string Message::fixTextBeginEnd(std::string text) {
+  std::string Message::setTextCapitalBeginPeriodEnd(std::string text) {
     if (text.length() > 0) {
 
       text[0] = std::toupper(text[0]);
@@ -56,17 +56,19 @@ namespace cli_menu {
     std::cout << "\n\n";
   }
 
-  void Message::print(Command *com) {
+  void Message::printCommandError(Command *com) {
     std::cerr
       << mt_uti::StrTools::getStringToUppercase(com->getName())
-      << ": Error. Please follow the command format.\n\n";
+      << ": " << getColoredTag(ERROR) << "Please follow the command format.\n\n";
+
     printCommand(com);
   }
 
-  void Message::print(std::string text, std::string comName) {
+  void Message::print(int flag, std::string text, std::string comName) {
     if (text.length() > 0) {
       mt_uti::StrTools::changeStringToUppercase(comName);
-      std::cerr << comName << ": Error. " << fixTextBeginEnd(text);
+      if (comName != "") std::cout << comName << ": ";
+      std::cout << getColoredTag(flag) << setTextCapitalBeginPeriodEnd(text);
     }
   }
 
@@ -106,7 +108,7 @@ namespace cli_menu {
     std::cout << comName << ':';
     printDots(dotsCount);
 
-    std::cout << fixTextBeginEnd(com->getDescription());
+    std::cout << setTextCapitalBeginPeriodEnd(com->getDescription());
     printDots(dotsCount);
 
     Parameters *params = com->getParameters();
