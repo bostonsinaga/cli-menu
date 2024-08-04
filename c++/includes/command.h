@@ -4,12 +4,13 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <memory>
 #include "mini-tools.h"
 
 namespace cli_menu {
 
   // callback format ('Parameters' arguments and 'Toggles' states)
-  typedef std::function<void(mt::VEC_STR*, mt::VEC_BOL*)> CLBK;
+  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC_BOL)> CALLBACK;
 
   class Parameters {
   private:
@@ -18,39 +19,45 @@ namespace cli_menu {
     mt::VEC_BOL obligatories;
     mt::VEC_STR descriptions;
     mt::VEC_STR arguments;
+    void balanceSize();
 
-    void balance();
+    ~Parameters() {
+      names = {};
+      types = {};
+      obligatories = {};
+      descriptions = {};
+      arguments = {};
+    }
 
   public:
-    Parameters(
-      mt::VEC_STR &names_in,
-      mt::VEC_INT &types_in,
-      mt::VEC_BOL &obligatories_in,
-      mt::VEC_STR &descriptions_in
-    );
+    enum {NUMBER, TEXT};
 
     Parameters(
-      const mt::VEC_STR &names_in,
-      const mt::VEC_INT &types_in,
-      const mt::VEC_BOL &obligatories_in,
-      const mt::VEC_STR &descriptions_in
+      mt::CR_VEC_STR names_in,
+      mt::CR_VEC_INT types_in,
+      mt::CR_VEC_BOL obligatories_in,
+      mt::CR_VEC_STR descriptions_in
     );
 
-    void setArguments(mt::VEC_STR &arguments_in);
-    void setArguments(const mt::VEC_STR &arguments_in);
+    void remove() { delete this; }
+
+    void setArguments(mt::CR_VEC_STR arguments_in);
     int amount();
 
-    mt::VEC_STR *getNames();
-    mt::VEC_INT *getTypes();
-    mt::VEC_BOL *getObligatories();
-    mt::VEC_STR *getDescriptions();
-    mt::VEC_STR *getArguments();
+    mt::VEC_STR getNames();
+    mt::VEC_INT getTypes();
+    mt::VEC_BOL getObligatories();
+    mt::VEC_STR getDescriptions();
+    mt::VEC_STR getArguments();
 
     std::string getName(int index);
     int getType(int index);
     bool getObligatory(int index);
     std::string getDescription(int index);
     std::string getArgument(int index);
+
+    mt::VEC_STR getStringifiedTypes();
+    std::string getStringifiedType(int index);
   };
 
   class Toggles {
@@ -58,27 +65,28 @@ namespace cli_menu {
     mt::VEC_STR names;
     mt::VEC_STR descriptions;
     mt::VEC_BOL states;
+    void balanceSize();
 
-    void balance();
+    ~Toggles() {
+      names = {};
+      descriptions = {};
+      states = {};
+    }
 
   public:
     Toggles(
-      mt::VEC_STR &names_in,
-      mt::VEC_STR &descriptions_in
+      mt::CR_VEC_STR names_in,
+      mt::CR_VEC_STR descriptions_in
     );
 
-    Toggles(
-      const mt::VEC_STR &names_in,
-      const mt::VEC_STR &descriptions_in
-    );
+    void remove() { delete this; }
 
-    void setStates(mt::VEC_BOL &states_in);
-    void setStates(const mt::VEC_BOL &states_in);
+    void setStates(mt::CR_VEC_BOL states_in);
     int amount();
 
-    mt::VEC_STR *getNames();
-    mt::VEC_STR *getDescriptions();
-    mt::VEC_BOL *getStates();
+    mt::VEC_STR getNames();
+    mt::VEC_STR getDescriptions();
+    mt::VEC_BOL getStates();
 
     std::string getName(int index);
     std::string getDescription(int index);
@@ -91,16 +99,26 @@ namespace cli_menu {
     std::string description;
     Parameters *parameters;
     Toggles *toggles;
-    CLBK *callback;
+    std::shared_ptr<CALLBACK> callback;
+
+    ~Command() {
+      parameters->remove();
+      toggles->remove();
+      name = "";
+      description = "";
+      callback.reset();
+    }
 
   public:
     Command(
-      std::string name_in,
-      std::string description_in,
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
       Parameters *parameters_in,
       Toggles *toggles_in,
-      CLBK *callback_in
+      const std::shared_ptr<CALLBACK> &callback_in
     );
+
+    void remove() { delete this; }
 
     std::string getName();
     std::string getDescription();

@@ -69,14 +69,14 @@ namespace cli_menu {
     lineCount = lineStrings.size();
 
     // input command name
-    std::string lineName = lineStrings[0];
+    std::string firstWord = lineStrings[0];
 
     /** Command selection */
 
     Command *selCom = nullptr;
     
     for (auto &com : commands) {
-      if (com->getName() == lineName) selCom = com;
+      if (com->getName() == firstWord) selCom = com;
     }
 
     // command not found
@@ -105,15 +105,15 @@ namespace cli_menu {
     for (int i = 0; i < lineCount; i++) {
 
       bool dashedFirst = lineStrings[i][0] == '-',
-           dashedSecond = lineStrings[i][1] == '-';
+        dashedSecond = lineStrings[i][1] == '-';
 
       if (dashedFirst && dashedSecond) {
         lineFlags[i] = par_fg;
-        lineFlags[i] = lineFlags[i].substr(2);
+        lineStrings[i] = lineStrings[i].substr(2);
       }
       else if (dashedFirst) {
         lineFlags[i] = tog_fg;
-        lineFlags[i] = lineFlags[i].substr(1);
+        lineStrings[i] = lineStrings[i].substr(1);
       }
       else lineFlags[i] = arg_fg;
     }
@@ -133,7 +133,7 @@ namespace cli_menu {
         lineFlagsPrev == tog_fg &&
         lineFlags[i] == arg_fg
       ) {
-        Message::print(Message::ERROR, selCom);
+        Message::printCommandError(selCom);
         return;
       }
 
@@ -151,25 +151,25 @@ namespace cli_menu {
     Parameters *selPar = selCom->getParameters();
     Toggles *selTog = selCom->getToggles();
 
-    mt::VEC_STR *selParNames = selPar->getNames(),
-            *selTogNames = selTog->getNames();
+    mt::VEC_STR selParNames = selPar->getNames(),
+      selTogNames = selTog->getNames();
 
-    mt::VEC_BOL selParUsed = mt::VEC_BOL(selParNames->size(), false),
-            selTogUsed = mt::VEC_BOL(selTogNames->size(), false);
+    mt::VEC_BOL selParUsed = mt::VEC_BOL(selParNames.size(), false),
+      selTogUsed = mt::VEC_BOL(selTogNames.size(), false);
 
     auto iterSelCom = [&](
       int lineCtr,
-      mt::VEC_STR *selNames,
+      mt::VEC_STR &selNames,
       mt::VEC_INT &orders,
-      mt::VEC_BOL &selUsed,
+      mt::VEC_BOL &selUsed
     ) {
-      for (int j = 0; j < selNames->size(); j++) {
-        if (lineStrings[lineCtr] == selNames->at(j)) {
+      for (int j = 0; j < selNames.size(); j++) {
+        if (lineStrings[lineCtr] == selNames.at(j)) {
           if (!selUsed[j]) {
             orders.push_back(j);
             selUsed[j] = true;
           }
-          else Message::print(Message::ERROR, selCom);
+          else Message::printCommandError(selCom);
           break;
         }
       }
@@ -192,13 +192,13 @@ namespace cli_menu {
 
         if (argsOrders[i] > argsOrders[j]) {
 
-          int buffer = argsOrders[j];
+          int bufferInt = argsOrders[j];
           argsOrders[j] = argsOrders[i];
-          argsOrders[i] = buffer;
+          argsOrders[i] = bufferInt;
 
-          std::string buffer = arguments[j];
+          std::string bufferStr = arguments[j];
           arguments[j] = arguments[i];
-          arguments[i] = buffer;
+          arguments[i] = bufferStr;
         }
       }
     }

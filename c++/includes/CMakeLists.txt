@@ -1,7 +1,5 @@
 set (SOURCES
   # HEADERS
-  cli-menu.h
-
   # SOURCES
   command.cpp
   message.cpp
