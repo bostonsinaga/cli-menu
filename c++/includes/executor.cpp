@@ -5,12 +5,7 @@
 
 namespace cli_menu {
 
-  Executor::Executor(std::string programName_in, VEC_COM &commands_in) {
-    programName = programName_in;
-    commands = commands_in;
-  }
-
-  Executor::Executor(std::string programName_in, const VEC_COM &commands_in) {
+  Executor::Executor(mt::CR_STR programName_in, const VEC_COM &commands_in) {
     programName = programName_in;
     commands = commands_in;
   }
@@ -33,6 +28,7 @@ namespace cli_menu {
         }
       }
     }
+
     return isIt;
   }
 
@@ -44,18 +40,18 @@ namespace cli_menu {
     return testDashSign(input, 1);
   }
 
+  /**
+   * If 'lineCount' is less than 'lineArgs' actual count,
+   * the rest of 'lineArgs' will be ignored.
+   */
   void Executor::iterate(int lineCount, char* lineArgs[]) {
 
     // useless 'lineCount'
-    if (lineCount <= 0) {
-      Message::print(Message::ERROR, "the 'lineCount' cannot be zero or less");
+    if (lineCount <= 1) {
+      Message::print(Message::ERROR, "no argument");
+      Message::print(Message::HINT, "type '--help' for available commands");
       return;
     }
-
-    /**
-     * If 'lineCount' is less than 'lineArgs' actual count,
-     * the rest of 'lineArgs' will be ignored.
-     */
 
     /** Conversion to 'std::string' */
 
@@ -66,17 +62,17 @@ namespace cli_menu {
       lineStrings.push_back(lineArgs[i]);
     }
 
-    lineCount = lineStrings.size();
-
-    // input command name
-    std::string firstWord = lineStrings[0];
+    lineCount--;
 
     /** Command selection */
 
     Command *selCom = nullptr;
-    
-    for (auto &com : commands) {
-      if (com->getName() == firstWord) selCom = com;
+
+    for (Command *com : commands) {
+      if (com->getName() == lineStrings[0]) {
+        selCom = com;
+        break;
+      }
     }
 
     // command not found
@@ -123,7 +119,6 @@ namespace cli_menu {
     bool lineFlagsPrev = lineFlags[0];
 
     for (int i = 1; i < lineCount; i++) {
-
       // fix
       if (lineFlagsPrev == par_fg) {
         lineFlags[i] = arg_fg;
@@ -143,8 +138,8 @@ namespace cli_menu {
     /** Values to be filled in */
 
     mt::VEC_STR arguments;
-    mt::VEC_BOL states;
-    mt::VEC_INT argsOrders, statsOrders;
+    mt::VEC_BOL conditions;
+    mt::VEC_INT argsOrders, condsOrders;
 
     /** Iterate 'lineStrings' */
 
@@ -182,30 +177,47 @@ namespace cli_menu {
       else if (lineFlags[i] == arg_fg) {
         arguments.push_back(lineStrings[i]);
       }
-      else iterSelCom(i, selTogNames, statsOrders, selTogUsed);
+      else iterSelCom(i, selTogNames, condsOrders, selTogUsed);
     }
+
+    conditions = selTogUsed;
 
     /** Improve results */
 
-    for (int i = 0; i < argsOrders.size(); i++) {
-      for (int j = 1; j < argsOrders.size(); j++) {
+    // for (int i = 0; i < argsOrders.size(); i++) {
+    //   for (int j = i+1; j < argsOrders.size(); j++) {
+    //     if (argsOrders[i] > argsOrders[j]) {
+    //       std::swap(arguments[i], arguments[j]);
+    //       std::swap(argsOrders[i], argsOrders[j]);
+    //     }
+    //   }
+    // }
 
-        if (argsOrders[i] > argsOrders[j]) {
+    // for (int i = 0; i < condsOrders.size(); i++) {
+    //   for (int j = i+1; j < condsOrders.size(); j++) {
+    //     if (condsOrders[i] > condsOrders[j]) {
+    //       std::swap(conditions[i], conditions[j]);
+    //       std::swap(condsOrders[i], condsOrders[j]);
+    //     }
+    //   }
+    // }
 
-          int bufferInt = argsOrders[j];
-          argsOrders[j] = argsOrders[i];
-          argsOrders[i] = bufferInt;
+    // TEST DISPLAY //
 
-          std::string bufferStr = arguments[j];
-          arguments[j] = arguments[i];
-          arguments[i] = bufferStr;
-        }
-      }
+    for (int i = 0; i < selParNames.size(); i++) {
+      std::cout << selParNames[i] << ": "
+        << arguments[i] << std::endl;
     }
 
-    for (int i = 0; i < statsOrders.size(); i++) {
-      
+    std::cout << std::endl;
+
+    for (int i = 0; i < selTogNames.size(); i++) {
+      std::cout << selTogNames[i] << ": "
+        << conditions[i] << std::endl;
     }
+
+    // release memories
+    for (Command *com : commands) com->remove();
   }
 }
 

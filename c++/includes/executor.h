@@ -15,8 +15,7 @@ namespace cli_menu {
     bool isToggle(std::string &input);
 
   public:
-    Executor(std::string programName_in, VEC_COM &commands_in);
-    Executor(std::string programName_in, const VEC_COM &commands_in);
+    Executor(mt::CR_STR programName_in, const VEC_COM &commands_in);
     void iterate(int lineCount, char* lineArgs[]);
   };
 }

@@ -11,7 +11,7 @@ namespace cli_menu {
 
   Parameters::Parameters(
     mt::CR_VEC_STR names_in,
-    mt::CR_VEC_INT types_in,
+    mt::CR_VEC_BOL types_in,
     mt::CR_VEC_BOL obligatories_in,
     mt::CR_VEC_STR descriptions_in
   ) {
@@ -31,8 +31,8 @@ namespace cli_menu {
       arguments.size()
     }, names.size());
 
-    mt_uti::VecTools<int>::concat(
-      types, std::vector<int>(differences[0], TEXT)
+    mt_uti::VecTools<bool>::concat(
+      types, std::vector<bool>(differences[0], TEXT)
     );
 
     mt_uti::VecTools<bool>::concat(
@@ -56,7 +56,7 @@ namespace cli_menu {
   int Parameters::amount() { return names.size(); }
 
   mt::VEC_STR Parameters::getNames() { return names; }
-  mt::VEC_INT Parameters::getTypes() { return types; }
+  mt::VEC_BOL Parameters::getTypes() { return types; }
   mt::VEC_BOL Parameters::getObligatories() { return obligatories; }
   mt::VEC_STR Parameters::getDescriptions() { return descriptions; }
   mt::VEC_STR Parameters::getArguments() { return arguments; }
@@ -65,8 +65,8 @@ namespace cli_menu {
     return mt_uti::VecTools<std::string>::getAt(names, index, "");
   }
 
-  int Parameters::getType(int index) {
-    return mt_uti::VecTools<int>::getAt(types, index, TEXT);
+  bool Parameters::getType(int index) {
+    return mt_uti::VecTools<bool>::getAt(types, index, TEXT);
   }
 
   bool Parameters::getObligatory(int index) {
@@ -93,7 +93,7 @@ namespace cli_menu {
   }
 
   std::string Parameters::getStringifiedType(int index) {
-    if (mt_uti::VecTools<int>::getAt(types, index, TEXT) == TEXT) {
+    if (mt_uti::VecTools<bool>::getAt(types, index, TEXT) == TEXT) {
       return "TEXT";
     }
     return "NUMBER";

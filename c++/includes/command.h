@@ -12,7 +12,7 @@ namespace cli_menu {
   class Parameters {
   private:
     mt::VEC_STR names;
-    mt::VEC_INT types;
+    mt::VEC_BOL types;
     mt::VEC_BOL obligatories;
     mt::VEC_STR descriptions;
     mt::VEC_STR arguments;
@@ -30,10 +30,10 @@ namespace cli_menu {
     enum {TEXT, NUMBER};
 
     Parameters(
-      mt::CR_VEC_STR names_in,
-      mt::CR_VEC_INT types_in,
-      mt::CR_VEC_BOL obligatories_in,
-      mt::CR_VEC_STR descriptions_in
+      mt::CR_VEC_STR names_in = {},
+      mt::CR_VEC_BOL types_in = {},
+      mt::CR_VEC_BOL obligatories_in = {},
+      mt::CR_VEC_STR descriptions_in = {}
     );
 
     void remove() { delete this; }
@@ -42,13 +42,13 @@ namespace cli_menu {
     int amount();
 
     mt::VEC_STR getNames();
-    mt::VEC_INT getTypes();
+    mt::VEC_BOL getTypes();
     mt::VEC_BOL getObligatories();
     mt::VEC_STR getDescriptions();
     mt::VEC_STR getArguments();
 
     std::string getName(int index);
-    int getType(int index);
+    bool getType(int index);
     bool getObligatory(int index);
     std::string getDescription(int index);
     std::string getArgument(int index);
@@ -72,8 +72,8 @@ namespace cli_menu {
 
   public:
     Toggles(
-      mt::CR_VEC_STR names_in,
-      mt::CR_VEC_STR descriptions_in
+      mt::CR_VEC_STR names_in = {},
+      mt::CR_VEC_STR descriptions_in = {}
     );
 
     void remove() { delete this; }
