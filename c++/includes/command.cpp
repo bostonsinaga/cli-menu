@@ -17,7 +17,7 @@ namespace cli_menu {
     name = name_in;
     description = description_in;
     callback = callback_in;
-    if (!Command::main) Command::setMain(this);
+    if (!Command::ultimate) Command::setUltimate(this);
   }
 
   Command::~Command() {
@@ -123,10 +123,10 @@ namespace cli_menu {
     delete this;
   }
 
-  Command *Command::main = nullptr;
+  Command *Command::ultimate = nullptr;
 
-  void Command::setMain(Command *newMain) {
-    main = newMain;
+  void Command::setUltimate(Command *newUltimate) {
+    ultimate = newUltimate;
   }
 
   void Command::pullData(
@@ -135,13 +135,13 @@ namespace cli_menu {
     mt::CR_VEC_BOL &CONDITIONS
   ) {
     for () {
-      
+
     }
   }
 
   void Command::execute() {
-    if (main) {
-      Command *root = main->getHolder();
+    if (ultimate) {
+      Command *root = ultimate->getHolder();
       mt::CR_VEC_STR TEXTS;
       mt::CR_VEC_DBL NUMBERS;
       mt::CR_VEC_BOL CONDITIONS;
@@ -151,7 +151,7 @@ namespace cli_menu {
       }
 
       pullData(TEXTS, NUMBERS, CONDITIONS);
-      (*main->callback)(TEXTS, NUMBERS, CONDITIONS);
+      (*ultimate->callback)(TEXTS, NUMBERS, CONDITIONS);
     }
   }
 

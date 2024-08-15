@@ -21,7 +21,7 @@ namespace cli_menu {
     std::shared_ptr<CALLBACK> callback;
     Command *holder;
     VEC_COM items;
-    static Command *main;
+    static Command *ultimate;
 
     void setItems(CR_VEC_COM newItems);
 
@@ -60,7 +60,7 @@ namespace cli_menu {
     void setHolder(Command *newHolder, bool addBack = true);
 
     void remove();
-    static void setMain(Command *newMain);
+    static void setUltimate(Command *newUltimate);
     static void execute();
   };
 
