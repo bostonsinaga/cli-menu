@@ -29,11 +29,17 @@ namespace cli_menu {
 
   std::string Command::getName() { return name; }
   std::string Command::getDescription() { return description; }
-  Command *getHolder() { return holder; }
+  Command *Command::getHolder() { return holder; }
   VEC_COM Command::getItems() { return items; }
 
   Command *Command::getItem(int index) {
     return mt_uti::VecTools<Command*>::getAt(items, index, nullptr);
+  }
+
+  Command *Command::getRoot() {
+    Command *root = this;
+    while (root->holder) root = root->holder;
+    return root;
   }
 
   void Command::setItems(CR_VEC_COM newItems) {
@@ -129,28 +135,23 @@ namespace cli_menu {
     ultimate = newUltimate;
   }
 
-  void Command::pullData(
+  void deepPull(
     mt::CR_VEC_STR &TEXTS,
     mt::CR_VEC_DBL &NUMBERS,
     mt::CR_VEC_BOL &CONDITIONS
   ) {
-    for () {
-
+    for (Command *com : items) {
+      com->pullData(TEXTS, NUMBERS, CONDITIONS);
     }
   }
 
   void Command::execute() {
     if (ultimate) {
-      Command *root = ultimate->getHolder();
       mt::CR_VEC_STR TEXTS;
       mt::CR_VEC_DBL NUMBERS;
       mt::CR_VEC_BOL CONDITIONS;
 
-      while (root->getHolder()) {
-        root = root->getHolder();
-      }
-
-      pullData(TEXTS, NUMBERS, CONDITIONS);
+      ultimate->getRoot()->pullData(TEXTS, NUMBERS, CONDITIONS);
       (*ultimate->callback)(TEXTS, NUMBERS, CONDITIONS);
     }
   }
@@ -184,6 +185,22 @@ namespace cli_menu {
 
   void Parameter::match(mt::VEC_STR &tests) {
 
+  }
+
+  void Parameter::pullData(
+    mt::CR_VEC_STR &TEXTS,
+    mt::CR_VEC_DBL &NUMBERS,
+    mt::CR_VEC_BOL &CONDITIONS
+  ) {
+    if (type == TEXT) {
+      TEXTS.push_back();
+    }
+    else {
+      NUMBERS.push_back();
+    }
+
+    CONDITIONS.push_back(false);
+    deepPull(TEXTS, NUMBERS, CONDITIONS);
   }
 
   //_________|

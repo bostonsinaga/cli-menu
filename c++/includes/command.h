@@ -25,15 +25,21 @@ namespace cli_menu {
 
     void setItems(CR_VEC_COM newItems);
 
-    void pullData(
+    virtual void pullData(
       mt::CR_VEC_STR &TEXTS,
       mt::CR_VEC_DBL &NUMBERS,
       mt::CR_VEC_BOL &CONDITIONS
-    );
+    ) {}
 
   protected:
     virtual ~Command();
     bool matchItems(mt::CR_STR test);
+
+    void deepPull(
+      mt::CR_VEC_STR &TEXTS,
+      mt::CR_VEC_DBL &NUMBERS,
+      mt::CR_VEC_BOL &CONDITIONS
+    );
 
   public:
     Command(
@@ -44,9 +50,10 @@ namespace cli_menu {
 
     std::string getName();
     std::string getDescription();
-    Command *getHolder();
     VEC_COM getItems();
     Command *getItem(int index);
+    Command *getHolder();
+    Command *getRoot();
 
     VEC_COM setItemsRelease(CR_VEC_COM newItems);
     void setItemsReplace(CR_VEC_COM newItems);
@@ -68,7 +75,14 @@ namespace cli_menu {
   private:
     std::string argument;
     bool type = false;
+
     ~Parameters();
+
+    void pullData(
+      mt::CR_VEC_STR &TEXTS,
+      mt::CR_VEC_DBL &NUMBERS,
+      mt::CR_VEC_BOL &CONDITIONS
+    );
 
   public:
     enum {TEXT, NUMBER};
