@@ -5,98 +5,185 @@
 
 namespace cli_menu {
 
-  //____________|
-  // Parameters |
-  //____________|
+  //_________|
+  // COMMAND |
+  //_________|
 
-  Parameters::Parameters(
-    mt::CR_VEC_STR names_in,
-    mt::CR_VEC_BOL types_in,
-    mt::CR_VEC_BOL obligatories_in,
-    mt::CR_VEC_STR descriptions_in
+  Command::Command(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    const std::shared_ptr<CALLBACK> &callback_in
   ) {
-    names = names_in;
-    types = types_in;
-    obligatories = obligatories_in;
-    descriptions = descriptions_in;
-    balanceSize();
+    name = name_in;
+    description = description_in;
+    callback = callback_in;
+    if (!Command::main) Command::setMain(this);
   }
 
-  void Parameters::balanceSize() {
-
-    mt::VEC_ULLI differences = mt_uti::VecTools<mt::ULLI>::getDifferencesToSize({
-      types.size(),
-      obligatories.size(),
-      descriptions.size(),
-      arguments.size()
-    }, names.size());
-
-    mt_uti::VecTools<bool>::concat(
-      types, std::vector<bool>(differences[0], TEXT)
-    );
-
-    mt_uti::VecTools<bool>::concat(
-      obligatories, std::vector<bool>(differences[1], false)
-    );
-
-    mt_uti::VecTools<std::string>::concat(
-      descriptions, std::vector<std::string>(differences[2], "No description.")
-    );
-
-    mt_uti::VecTools<std::string>::concat(
-      arguments, std::vector<std::string>(differences[3], "")
-    );
+  Command::~Command() {
+    name = "";
+    description = "";
+    tier = 0;
+    callback.reset();
   }
 
-  void Parameters::setArguments(mt::CR_VEC_STR arguments_in) {
-    arguments = arguments_in;
-    balanceSize();
+  std::string Command::getName() { return name; }
+  std::string Command::getDescription() { return description; }
+  Command *getHolder() { return holder; }
+  VEC_COM Command::getItems() { return items; }
+
+  Command *Command::getItem(int index) {
+    return mt_uti::VecTools<Command*>::getAt(items, index, nullptr);
   }
 
-  int Parameters::amount() { return names.size(); }
-
-  mt::VEC_STR Parameters::getNames() { return names; }
-  mt::VEC_BOL Parameters::getTypes() { return types; }
-  mt::VEC_BOL Parameters::getObligatories() { return obligatories; }
-  mt::VEC_STR Parameters::getDescriptions() { return descriptions; }
-  mt::VEC_STR Parameters::getArguments() { return arguments; }
-
-  std::string Parameters::getName(int index) {
-    return mt_uti::VecTools<std::string>::getAt(names, index, "");
+  void Command::setItems(CR_VEC_COM newItems) {
+    items = newItems;
+    for (Command *com : items) com->setHolder(this, false);
   }
 
-  bool Parameters::getType(int index) {
-    return mt_uti::VecTools<bool>::getAt(types, index, TEXT);
+  VEC_COM Command::setItemsRelease(CR_VEC_COM newItems) {
+    VEC_COM oldItems = items;
+    setItems(newItems);
+    return oldItems;
   }
 
-  bool Parameters::getObligatory(int index) {
-    return mt_uti::VecTools<bool>::getAt(obligatories, index, false);
+  void Command::setItemsReplace(CR_VEC_COM newItems) {
+    cleanItems();
+    setItems(newItems);
   }
 
-  std::string Parameters::getDescription(int index) {
-    return mt_uti::VecTools<std::string>::getAt(descriptions, index, "");
-  }
-
-  std::string Parameters::getArgument(int index) {
-    return mt_uti::VecTools<std::string>::getAt(arguments, index, "");
-  }
-
-  mt::VEC_STR Parameters::getStringifiedTypes() {
-    mt::VEC_STR retTypes(types.size());
-
-    for (int i = 0; i < retTypes.size(); i++) {
-      if (types[i] == TEXT) retTypes[i] = "TEXT";
-      else retTypes[i] = "NUMBER";
+  void Command::addItem(Command *com) {
+    if (com) {
+      com->setHolder(this, false);
+      items.push_back(com);
     }
-
-    return retTypes;
   }
 
-  std::string Parameters::getStringifiedType(int index) {
-    if (mt_uti::VecTools<bool>::getAt(types, index, TEXT) == TEXT) {
-      return "TEXT";
+  void Command::cleanItems() {
+    for (Command *com : items) com->remove();
+  }
+
+  void Command::removeItem(Command *com) {
+    if (!com) return;
+
+    for (int i = 0; i < items.size(); i++) {
+      if (items[i] == com) {
+        items[i]->remove();
+        mt_uti::cutSingle<Command*>(items, i);
+        break;
+      }
     }
+  }
+
+  void Command::removeItem(int index) {
+    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      items[i]->remove();
+      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      break;
+    }
+  }
+
+  void releaseItem(Command *com) {
+    if (!com) return;
+
+    for (int i = 0; i < items.size(); i++) {
+      if (items[i] == com) {
+        item[i]->holder = nullptr;
+        mt_uti::cutSingle<Command*>(items, i);
+        break;
+      }
+    }
+  }
+
+  void releaseItem(int index) {
+    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      item[i]->holder = nullptr;
+      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      break;
+    }
+  }
+
+  void Command::setHolder(Command *newHolder, bool addBack) {
+    if (newHolder) {
+      if (holder) holder->releaseItem(this);
+      if (addBack) newHolder->addItem(this);
+      holder = newHolder;
+      tier = holder->tier + 1;
+    }
+  }
+
+  bool Command::matchItems(mt::CR_STR test) {
+    for (Command *com : items) {
+      if (com->getName() == test) return true;
+    }
+  }
+
+  void Command::remove() {
+    cleanItems();
+    delete this;
+  }
+
+  Command *Command::main = nullptr;
+
+  void Command::setMain(Command *newMain) {
+    main = newMain;
+  }
+
+  void Command::pullData(
+    mt::CR_VEC_STR &TEXTS,
+    mt::CR_VEC_DBL &NUMBERS,
+    mt::CR_VEC_BOL &CONDITIONS
+  ) {
+    for () {
+      
+    }
+  }
+
+  void Command::execute() {
+    if (main) {
+      Command *root = main->getHolder();
+      mt::CR_VEC_STR TEXTS;
+      mt::CR_VEC_DBL NUMBERS;
+      mt::CR_VEC_BOL CONDITIONS;
+
+      while (root->getHolder()) {
+        root = root->getHolder();
+      }
+
+      pullData(TEXTS, NUMBERS, CONDITIONS);
+      (*main->callback)(TEXTS, NUMBERS, CONDITIONS);
+    }
+  }
+
+  //___________|
+  // PARAMETER |
+  //___________|
+
+  Parameter::Parameter(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_BOL type_in,
+    const std::shared_ptr<CALLBACK> &callback_in
+  ):
+  Command::Command(name_in, description_in, callback_in) {
+    type = type_in;
+  }
+
+  Parameter::~Parameter() {
+    argument = "";
+    type = false;
+  }
+
+  bool Parameter::getType() { return type; }
+  std::string Parameter::getArgument() { return argument; }
+
+  std::string Parameter::getStringifiedType() {
+    if (type == TEXT) return "TEXT";
     return "NUMBER";
+  }
+
+  void Parameter::match(mt::VEC_STR &tests) {
+
   }
 
   //_________|
@@ -149,37 +236,6 @@ namespace cli_menu {
   bool Toggles::getState(int index) {
     return mt_uti::VecTools<bool>::getAt(states, index, "");
   }
-
-  //_________|
-  // Command |
-  //_________|
-
-  Command::Command(
-    mt::CR_STR name_in,
-    mt::CR_STR description_in,
-    Parameters *parameters_in,
-    Toggles *toggles_in,
-    const std::shared_ptr<CALLBACK> &callback_in
-  ) {
-    name = name_in;
-    description = description_in;
-    parameters = parameters_in;
-    toggles = toggles_in;
-    callback = callback_in;
-  }
-
-  std::string Command::getName() { return name; }
-  std::string Command::getDescription() { return description; }
-
-  void Command::execute() {
-    (*callback)(
-      parameters->getArguments(),
-      toggles->getStates()
-    );
-  }
-
-  Parameters *Command::getParameters() { return parameters; }
-  Toggles *Command::getToggles() { return toggles; }
 }
 
 #endif // __CLI_MENU__COMMAND_CPP__

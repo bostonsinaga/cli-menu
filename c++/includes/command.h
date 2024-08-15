@@ -6,126 +6,101 @@
 
 namespace cli_menu {
 
-  // callback format ('Parameters' arguments and 'Toggles' states)
-  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC_BOL)> CALLBACK;
+  // callback format
+  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC_DBL, mt::CR_VEC_BOL)> CALLBACK;
 
-  class Parameters {
-  private:
-    mt::VEC_STR names;
-    mt::VEC_BOL types;
-    mt::VEC_BOL obligatories;
-    mt::VEC_STR descriptions;
-    mt::VEC_STR arguments;
-    void balanceSize();
-
-    ~Parameters() {
-      names = {};
-      types = {};
-      obligatories = {};
-      descriptions = {};
-      arguments = {};
-    }
-
-  public:
-    enum {TEXT, NUMBER};
-
-    Parameters(
-      mt::CR_VEC_STR names_in = {},
-      mt::CR_VEC_BOL types_in = {},
-      mt::CR_VEC_BOL obligatories_in = {},
-      mt::CR_VEC_STR descriptions_in = {}
-    );
-
-    void remove() { delete this; }
-
-    void setArguments(mt::CR_VEC_STR arguments_in);
-    int amount();
-
-    mt::VEC_STR getNames();
-    mt::VEC_BOL getTypes();
-    mt::VEC_BOL getObligatories();
-    mt::VEC_STR getDescriptions();
-    mt::VEC_STR getArguments();
-
-    std::string getName(int index);
-    bool getType(int index);
-    bool getObligatory(int index);
-    std::string getDescription(int index);
-    std::string getArgument(int index);
-
-    mt::VEC_STR getStringifiedTypes();
-    std::string getStringifiedType(int index);
-  };
-
-  class Toggles {
-  private:
-    mt::VEC_STR names;
-    mt::VEC_STR descriptions;
-    mt::VEC_BOL states;
-    void balanceSize();
-
-    ~Toggles() {
-      names = {};
-      descriptions = {};
-      states = {};
-    }
-
-  public:
-    Toggles(
-      mt::CR_VEC_STR names_in = {},
-      mt::CR_VEC_STR descriptions_in = {}
-    );
-
-    void remove() { delete this; }
-
-    void setStates(mt::CR_VEC_BOL states_in);
-    int amount();
-
-    mt::VEC_STR getNames();
-    mt::VEC_STR getDescriptions();
-    mt::VEC_BOL getStates();
-
-    std::string getName(int index);
-    std::string getDescription(int index);
-    bool getState(int index);
-  };
+  class Command;
+  typedef std::vector<Command*> VEC_COM;
+  typedef CR_VEC_COM const VEC_COM &;
 
   class Command {
   private:
-    std::string name;
-    std::string description;
-    Parameters *parameters;
-    Toggles *toggles;
-    std::shared_ptr<CALLBACK> callback;
+    std::string name, description;
+    int tier = 0;
 
-    ~Command() {
-      parameters->remove();
-      toggles->remove();
-      name = "";
-      description = "";
-      callback.reset();
-    }
+    std::shared_ptr<CALLBACK> callback;
+    Command *holder;
+    VEC_COM items;
+    static Command *main;
+
+    void setItems(CR_VEC_COM newItems);
+
+    void pullData(
+      mt::CR_VEC_STR &TEXTS,
+      mt::CR_VEC_DBL &NUMBERS,
+      mt::CR_VEC_BOL &CONDITIONS
+    );
+
+  protected:
+    virtual ~Command();
+    bool matchItems(mt::CR_STR test);
 
   public:
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      Parameters *parameters_in,
-      Toggles *toggles_in,
       const std::shared_ptr<CALLBACK> &callback_in
     );
 
-    void remove() { delete this; }
-
     std::string getName();
     std::string getDescription();
-    void execute();
+    Command *getHolder();
+    VEC_COM getItems();
+    Command *getItem(int index);
 
-    Parameters *getParameters();
-    Toggles *getToggles();
+    VEC_COM setItemsRelease(CR_VEC_COM newItems);
+    void setItemsReplace(CR_VEC_COM newItems);
+
+    void addItem(Command *com);
+    void cleanItems();
+    void removeItem(Command *com);
+    void removeItem(int index);
+    void releaseItem(Command *com);
+    void releaseItem(int index);
+    void setHolder(Command *newHolder, bool addBack = true);
+
+    void remove();
+    static void setMain(Command *newMain);
+    static void execute();
   };
 
-  typedef std::vector<Command*> VEC_COM;
+  class Parameter {
+  private:
+    std::string argument;
+    bool type = false;
+    ~Parameters();
+
+  public:
+    enum {TEXT, NUMBER};
+
+    Parameters(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL type_in,
+      const std::shared_ptr<CALLBACK> &callback_in
+    );
+
+    bool getType();
+    std::string getStringifiedType();
+    std::string getArgument();
+    void match(mt::VEC_STR &tests);
+  };
+
+  class Toggles {
+  private:
+    bool condition;
+    ~Toggles() { condition = false; }
+
+  public:
+    Toggles(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      const std::shared_ptr<CALLBACK> &callback_in
+    );
+
+    bool getCondition();
+    void match(mt::VEC_STR &tests);
+  };
 }
 
 #endif // __CLI_MENU__COMMAND_H__
