@@ -7,33 +7,45 @@
 namespace cli_menu {
 
   // callback format
-  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC_DBL, mt::CR_VEC_BOL)> CALLBACK;
+  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
+
+  class DashTest {
+  public:
+    static bool isSingle(mt::CR_STR str);
+    static bool isDouble(mt::CR_STR str);
+    static bool cleanSingle(std::string &str);
+    static bool cleanDouble(std::string &str);
+  };
 
   class Command;
   typedef std::vector<Command*> VEC_COM;
-  typedef CR_VEC_COM const VEC_COM &;
+  typedef const VEC_COM& CR_VEC_COM;
 
   class Command {
   private:
     std::string name, description;
-    int tier = 0;
-
     std::shared_ptr<CALLBACK> callback;
     Command *holder;
     VEC_COM items;
-    static Command *ultimate;
 
     void setItems(CR_VEC_COM newItems);
+
+  protected:
+    int tier = 0;
+    static Command *ultimate;
+    virtual ~Command();
+
+    static bool cleanCapturedPositionalInputs(
+      mt::VEC_STR &inputs,
+      mt::CR_SZ startIdx,
+      mt::CR_SZ endIdx
+    );
 
     virtual void pullData(
       mt::CR_VEC_STR &TEXTS,
       mt::CR_VEC_DBL &NUMBERS,
       mt::CR_VEC_BOL &CONDITIONS
     ) {}
-
-  protected:
-    virtual ~Command();
-    bool matchItems(mt::CR_STR test);
 
     void deepPull(
       mt::CR_VEC_STR &TEXTS,
@@ -75,8 +87,7 @@ namespace cli_menu {
   private:
     std::string argument;
     bool type = false;
-
-    ~Parameters();
+    ~Parameter();
 
     void pullData(
       mt::CR_VEC_STR &TEXTS,
@@ -87,7 +98,7 @@ namespace cli_menu {
   public:
     enum {TEXT, NUMBER};
 
-    Parameters(
+    Parameter(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_BOL type_in,
@@ -97,23 +108,29 @@ namespace cli_menu {
     bool getType();
     std::string getStringifiedType();
     std::string getArgument();
-    void match(mt::VEC_STR &tests);
+    bool match(mt::VEC_STR &inputs);
   };
 
-  class Toggles {
+  class Toggle {
   private:
     bool condition;
-    ~Toggles() { condition = false; }
+    ~Toggle();
+
+    void pullData(
+      mt::CR_VEC_STR &TEXTS,
+      mt::CR_VEC_DBL &NUMBERS,
+      mt::CR_VEC_BOL &CONDITIONS
+    );
 
   public:
-    Toggles(
+    Toggle(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       const std::shared_ptr<CALLBACK> &callback_in
     );
 
     bool getCondition();
-    void match(mt::VEC_STR &tests);
+    bool match(mt::VEC_STR &inputs);
   };
 }
 

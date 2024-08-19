@@ -4,6 +4,41 @@
 #include "command.h"
 
 namespace cli_menu {
+  using namespace mt_uti;
+
+  //___________|
+  // DASH TEST |
+  //___________|
+
+  bool DashTest::isSingle(mt::CR_STR str) {
+    if (str.length() > 1 && str[0] == '-') {
+      return true;
+    }
+    return false;
+  }
+
+  bool DashTest::isDouble(mt::CR_STR str) {
+    if (str.length() > 2 &&
+      str[0] == '-' && str[1] == '-'
+    ) { return true; }
+    return false;
+  }
+
+  bool DashTest::cleanSingle(std::string &str) {
+    if (isSingle(str)) {
+      str = str.substr(1);
+      return true;
+    }
+    return false;
+  }
+
+  bool DashTest::cleanDouble(std::string &str) {
+    if (isDouble(str)) {
+      str = str.substr(2);
+      return true;
+    }
+    return false;
+  }
 
   //_________|
   // COMMAND |
@@ -33,7 +68,7 @@ namespace cli_menu {
   VEC_COM Command::getItems() { return items; }
 
   Command *Command::getItem(int index) {
-    return mt_uti::VecTools<Command*>::getAt(items, index, nullptr);
+    return VecTools<Command*>::getAt(items, index, nullptr);
   }
 
   Command *Command::getRoot() {
@@ -75,16 +110,16 @@ namespace cli_menu {
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == com) {
         items[i]->remove();
-        mt_uti::cutSingle<Command*>(items, i);
+        VecTools<Command*>::cutSingle(items, i);
         break;
       }
     }
   }
 
   void Command::removeItem(int index) {
-    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+    if (VecTools<Command*>::hasIndex(items, index)) {
       items[i]->remove();
-      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      VecTools<Command*>::cutSingle(items, index);
       break;
     }
   }
@@ -95,16 +130,16 @@ namespace cli_menu {
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == com) {
         item[i]->holder = nullptr;
-        mt_uti::cutSingle<Command*>(items, i);
+        VecTools<Command*>::cutSingle(items, i);
         break;
       }
     }
   }
 
   void releaseItem(int index) {
-    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+    if (VecTools<Command*>::hasIndex(items, index)) {
       item[i]->holder = nullptr;
-      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      VecTools<Command*>::cutSingle(items, index);
       break;
     }
   }
@@ -115,12 +150,6 @@ namespace cli_menu {
       if (addBack) newHolder->addItem(this);
       holder = newHolder;
       tier = holder->tier + 1;
-    }
-  }
-
-  bool Command::matchItems(mt::CR_STR test) {
-    for (Command *com : items) {
-      if (com->getName() == test) return true;
     }
   }
 
@@ -135,9 +164,28 @@ namespace cli_menu {
     ultimate = newUltimate;
   }
 
-  void deepPull(
+  bool Command::::cleanCapturedPositionalInputs(mt::VEC_STR &inputs) {
+    if (this == Command::ultimate) {
+      mt::VEC_INT usedIndexes;
+
+      for (int i = 0; inputs.size(); i++) {
+        if (inputs[i].length() == 0) {
+          usedIndexes.push_back(i);
+        }
+      }
+
+      VecTools<std::string>::cutIndexes(
+        inputs, usedIndexes
+      );
+
+      return true;
+    }
+    return false;
+  }
+
+  void Command::deepPull(
     mt::CR_VEC_STR &TEXTS,
-    mt::CR_VEC_DBL &NUMBERS,
+    mt::CR_VEC2_DBL &NUMBERS,
     mt::CR_VEC_BOL &CONDITIONS
   ) {
     for (Command *com : items) {
@@ -183,75 +231,117 @@ namespace cli_menu {
     return "NUMBER";
   }
 
-  void Parameter::match(mt::VEC_STR &tests) {
-
-  }
-
   void Parameter::pullData(
     mt::CR_VEC_STR &TEXTS,
-    mt::CR_VEC_DBL &NUMBERS,
+    mt::CR_VEC2_DBL &NUMBERS,
     mt::CR_VEC_BOL &CONDITIONS
   ) {
     if (type == TEXT) {
-      TEXTS.push_back();
+      TEXTS.push_back(argument);
     }
     else {
-      NUMBERS.push_back();
+      NUMBERS.push_back(
+        Reader::parseNumbers<double>(argument)
+      );
     }
 
     CONDITIONS.push_back(false);
     deepPull(TEXTS, NUMBERS, CONDITIONS);
   }
 
-  //_________|
-  // Toggles |
-  //_________|
+  bool Parameter::match(mt::VEC_STR &inputs) {
 
-  Toggles::Toggles(
+    bool incomplete = false;
+    int begin = 0, end = inputs.size() - 1;
+
+    if (tier <= Command::ultimate->tier) {
+      begin = tier;
+      end = tier + 1;
+      if (begin >= inputs.size()) return false;
+      else if (end >= inputs.size()) incomplete = true;
+    }
+
+    for (int i = begin; i < end; i++) {
+
+      int j = i + 1;
+      std::string testName = inputs[i];
+
+      if (DashTest::cleanSingle(testName) &&
+        testName == name
+      ) {
+        inputs[i] = "";
+
+        if (!incomplete) {
+          argument = inputs[j];
+          inputs[j] = "";
+        }
+
+        if (!Command::cleanCapturedPositionalInputs(inputs)) {
+          if (tier > Command::ultimate->tier) {
+            VecTools<std::string>::cutInterval(inputs, i, j);
+          }
+        }
+
+        return !incomplete;
+      }
+    }
+    return false;
+  }
+
+  //________|
+  // TOGGLE |
+  //________|
+
+  Toggle::Toggle(
     mt::CR_VEC_STR names_in,
-    mt::CR_VEC_STR descriptions_in
+    mt::CR_VEC_STR descriptions_in,
+    const std::shared_ptr<CALLBACK> &callback_in
+  ):
+  Command(name_in, description_in, callback_in) {}
+
+  Toggle::~Toggle() { condition = false; }
+
+  void Toggle::pullData(
+    mt::CR_VEC_STR &TEXTS,
+    mt::CR_VEC2_DBL &NUMBERS,
+    mt::CR_VEC_BOL &CONDITIONS
   ) {
-    names = names_in;
-    descriptions = descriptions_in;
-    balanceSize();
+    CONDITIONS.push_back(condition);
+    TEXTS.push_back("");
+    NUMBERS.push_back({});
+    deepPull(TEXTS, NUMBERS, CONDITIONS);
   }
 
-  void Toggles::balanceSize() {
+  bool Toggle::getCondition() { return condition; }
 
-    mt::VEC_ULLI differences = mt_uti::VecTools<mt::ULLI>::getDifferencesToSize({
-      descriptions.size(), states.size()
-    }, names.size());
+  bool Toggle::match(mt::VEC_STR &inputs) {
+    int begin = 0, end = inputs.size();
 
-    mt_uti::VecTools<std::string>::concat(
-      descriptions, std::vector<std::string>(differences[0], "No description.")
-    );
+    if (tier <= Command::ultimate->tier) {
+      begin = tier;
+      end = tier + 1;
+      if (begin >= inputs.size()) return false;
+    }
 
-    mt_uti::VecTools<bool>::concat(
-      states, std::vector<bool>(differences[1], false)
-    );
-  }
+    for (int i = begin; i < end; i++) {
+      std::string testName = inputs[i];
 
-  void Toggles::setStates(mt::CR_VEC_BOL states_in) {
-    states = states_in;
-    balanceSize();
-  }
+      if (DashTest::cleanDouble(testName) &&
+        testName == name
+      ) {
+        condition = true;
+        inputs[i] = "";
 
-  int Toggles::amount() { return names.size(); }
+        if (!Command::cleanCapturedPositionalInputs(inputs)) {
+          if (tier > Command::ultimate->tier) {
+            VecTools<std::string>::cutSingle(inputs, i);
+          }
+        }
 
-  mt::VEC_STR Toggles::getNames() { return names; }
-  mt::VEC_STR Toggles::getDescriptions() { return descriptions; }
-  mt::VEC_BOL Toggles::getStates() { return states; }
-
-  std::string Toggles::getName(int index) {
-    return mt_uti::VecTools<std::string>::getAt(names, index, "");
-  }
-
-  std::string Toggles::getDescription(int index) {
-    return mt_uti::VecTools<std::string>::getAt(descriptions, index, "");
-  }
-
-  bool Toggles::getState(int index) {
-    return mt_uti::VecTools<bool>::getAt(states, index, "");
+        return true;
+      }
+    }
+    return false;
   }
 }
 
