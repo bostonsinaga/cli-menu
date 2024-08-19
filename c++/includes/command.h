@@ -9,6 +9,9 @@ namespace cli_menu {
   // callback format
   typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
 
+  // inheritance flags
+  enum {COMMAND, PARAMETER, TOGGLE};
+
   class DashTest {
   public:
     static bool isSingle(mt::CR_STR str);
@@ -60,11 +63,12 @@ namespace cli_menu {
       const std::shared_ptr<CALLBACK> &callback_in
     );
 
-    std::string getName();
-    std::string getDescription();
-    VEC_COM getItems();
+    std::string getName() { return name; }
+    std::string getDescription() { return description; }
+    VEC_COM getItems() { return items; }
+    Command *getHolder() { return holder; }
+
     Command *getItem(int index);
-    Command *getHolder();
     Command *getRoot();
 
     VEC_COM setItemsRelease(CR_VEC_COM newItems);
@@ -79,6 +83,7 @@ namespace cli_menu {
     void setHolder(Command *newHolder, bool addBack = true);
 
     void remove();
+    virtual int getInheritanceFlag() { return COMMAND; }
     static void setUltimate(Command *newUltimate);
     static void execute();
   };
@@ -87,7 +92,11 @@ namespace cli_menu {
   private:
     std::string argument;
     bool type = false;
-    ~Parameter();
+
+    ~Parameter() {
+      argument = "";
+      type = false;
+    }
 
     void pullData(
       mt::CR_VEC_STR &TEXTS,
@@ -109,12 +118,13 @@ namespace cli_menu {
     std::string getStringifiedType();
     std::string getArgument();
     bool match(mt::VEC_STR &inputs);
+    int getInheritanceFlag() { return PARAMETER; }
   };
 
   class Toggle {
   private:
     bool condition;
-    ~Toggle();
+    ~Toggle() { condition = false; }
 
     void pullData(
       mt::CR_VEC_STR &TEXTS,
@@ -131,6 +141,7 @@ namespace cli_menu {
 
     bool getCondition();
     bool match(mt::VEC_STR &inputs);
+    int getInheritanceFlag() { return TOGGLE; }
   };
 }
 
