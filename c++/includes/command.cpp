@@ -62,11 +62,6 @@ namespace cli_menu {
     callback.reset();
   }
 
-  std::string Command::getName() { return name; }
-  std::string Command::getDescription() { return description; }
-  Command *Command::getHolder() { return holder; }
-  VEC_COM Command::getItems() { return items; }
-
   Command *Command::getItem(int index) {
     return VecTools<Command*>::getAt(items, index, nullptr);
   }
@@ -218,11 +213,6 @@ namespace cli_menu {
     type = type_in;
   }
 
-  Parameter::~Parameter() {
-    argument = "";
-    type = false;
-  }
-
   bool Parameter::getType() { return type; }
   std::string Parameter::getArgument() { return argument; }
 
@@ -298,8 +288,6 @@ namespace cli_menu {
     const std::shared_ptr<CALLBACK> &callback_in
   ):
   Command(name_in, description_in, callback_in) {}
-
-  Toggle::~Toggle() { condition = false; }
 
   void Toggle::pullData(
     mt::CR_VEC_STR &TEXTS,
