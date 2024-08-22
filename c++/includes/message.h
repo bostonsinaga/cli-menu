@@ -7,22 +7,22 @@
 namespace cli_menu {
   class Message {
   private:
-    static void printDots(int count);
-    static std::string setTextCapitalBeginPeriodEnd(std::string text);
-    static std::string getObligatoryString(bool isRequired);
-    static std::string getColoredTag(int flag);
-    static void printCommand(Command *com);
+    static void printDecoration(CR_INT count, CR_CHR ch = '.');
+    static void setTextCapitalBeginPeriodEnd(std::string &text);
+    static std::string getObligatoryString(CR_BOL isRequired);
+    static std::string getColoredTag(CR_INT flag);
+    static void printCommandList(Command *com, std::string contiStr = "");
 
   public:
     enum {HINT, WARNING, ERROR, SUCCEED, CANCELED};
-    static void print(int flag, std::string text, std::string comName = "");
+
+    static void print(CR_INT flag, std::string text, CR_STR comName = "");
     static void printCommandError(Command *com);
 
     static void printMainHelp(
-      VEC_COM &comms,
-      std::string programName,
-      std::string author = "",
-      std::string version = "1.0"
+      Command *comProgram,
+      CR_STR author = "",
+      CR_STR version = "1.0"
     );
     
     static void printSubHelp(Command *com);
