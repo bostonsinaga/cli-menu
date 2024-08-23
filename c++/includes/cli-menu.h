@@ -1,8 +1,12 @@
 #ifndef __CLI_MENU_H__
 #define __CLI_MENU_H__
 
+#include "base.h"
 #include "command.h"
+#include "parameter.h"
+#include "toggle.h"
 #include "message.h"
+#include "executor.h"
 
 /**
  * These 3 parameters have the same size.
