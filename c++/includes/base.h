@@ -2,11 +2,15 @@
 #define __CLI_MENU__BASE_H__
 
 #include "mini-tools.h"
+#define assertm(exp, msg) assert(((void)msg, exp))
 
 namespace cli_menu {
 
   // inheritance flags
   enum {COMMAND, PARAMETER, TOGGLE};
+
+  // callback format
+  typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
 
   class Command;
   typedef std::vector<Command*> VEC_COM;
@@ -18,7 +22,7 @@ namespace cli_menu {
     static bool isDouble(mt::CR_STR str);
     static bool cleanSingle(std::string &str);
     static bool cleanDouble(std::string &str);
-    static std::string getString(Command *com);
+    static std::string getString(Command *command);
   };
 }
 
