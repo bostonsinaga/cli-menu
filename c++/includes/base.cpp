@@ -33,12 +33,12 @@ namespace cli_menu {
     return false;
   }
 
-  std::string DashTest::getString(Command *com) {
-    if (com) {
-      if (com->getInheritanceFlag() == PARAMETER) {
+  std::string DashTest::getString(Command *command) {
+    if (command) {
+      if (command->getInheritanceFlag() == PARAMETER) {
         return "-";
       }
-      else if (com->getInheritanceFlag() == TOGGLE) {
+      else if (command->getInheritanceFlag() == TOGGLE) {
         return "--";
       }
       else return "";
