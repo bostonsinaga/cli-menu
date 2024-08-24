@@ -3,6 +3,7 @@
 
 #include "base.h"
 #include "command.h"
+#include "program.h"
 #include "parameter.h"
 #include "toggle.h"
 #include "message.h"
