@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__BASE_CPP__
 #define __CLI_MENU__BASE_CPP__
 
+#include "base.h"
+
 namespace cli_menu {
 
   bool DashTest::isSingle(mt::CR_STR str) {
