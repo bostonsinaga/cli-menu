@@ -34,19 +34,6 @@ namespace cli_menu {
     }
     return false;
   }
-
-  std::string DashTest::getString(Command *command) {
-    if (command) {
-      if (command->getInheritanceFlag() == PARAMETER) {
-        return "-";
-      }
-      else if (command->getInheritanceFlag() == TOGGLE) {
-        return "--";
-      }
-      else return "";
-    }
-    else return "";
-  }
 }
 
 #endif // __CLI_MENU__BASE_CPP__
