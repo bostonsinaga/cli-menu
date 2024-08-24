@@ -7,7 +7,7 @@
 namespace cli_menu {
 
   // inheritance flags
-  enum {COMMAND, PARAMETER, TOGGLE};
+  enum {COMMAND, PROGRAM, PARAMETER, TOGGLE};
 
   // callback format
   typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
