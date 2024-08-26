@@ -9,6 +9,8 @@
 #include "message.h"
 #include "executor.h"
 
+namespace cm = cli_menu;
+
 /**
  * These 3 parameters have the same size.
  * The index represents the input sequence.
@@ -32,8 +34,29 @@
  *   DBL[copy_flag] == {0}
  *   BOL[copy_flag] == true   --> argument
  */
-#define CLI_MENU_PARAMS (mt::CR_VEC_STR TEXTS, mt::CR_VEC2_DBL NUMBERS, mt::CR_VEC_BOL CONDITIONS)
 
-namespace cm = cli_menu;
+#ifndef CM_FUNCTION
+#define CM_FUNCTION(NAME) void NAME(\
+  mt::CR_VEC_STR TEXTS,\
+  mt::CR_VEC2_DBL NUMBERS,\
+  mt::CR_VEC_BOL CONDITIONS\
+)
+#endif
+
+#ifndef CLI_MENU_FUNCTION
+#define CLI_MENU_FUNCTION(NAME) void NAME(\
+  mt::CR_VEC_STR TEXTS,\
+  mt::CR_VEC2_DBL NUMBERS,\
+  mt::CR_VEC_BOL CONDITIONS\
+)
+#endif
+
+#ifndef CM_CALLBACK
+#define CM_CALLBACK(FUNCTION) std::make_shared<cm::CALLBACK>(FUNCTION)
+#endif
+
+#ifndef CLI_MENU_CALLBACK
+#define CLI_MENU_CALLBACK(FUNCTION) std::make_shared<cm::CALLBACK>(FUNCTION)
+#endif
 
 #endif // __CLI_MENU_H__
