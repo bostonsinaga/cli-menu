@@ -9,9 +9,10 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_BOL type_in,
-    const std::shared_ptr<CALLBACK> &callback_in
+    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL required_in
   ):
-  Command::Command(name_in, description_in, callback_in) {
+  Command::Command(name_in, description_in, callback_in, required_in) {
     type = type_in;
   }
 
@@ -20,39 +21,45 @@ namespace cli_menu {
     return "NUMBER";
   }
 
-  std::string Parameter::getName(bool withSubname) {
-    if (withSubname) {
-      return name + "[" + getStringifiedType() + "]";
-    }
-    return name;
+  std::string Parameter::getFullName() {
+    return "-" + getName() + "[" + getStringifiedType() + "]";
   }
 
   void Parameter::pullData(
-    mt::CR_VEC_STR &TEXTS,
-    mt::CR_VEC2_DBL &NUMBERS,
-    mt::CR_VEC_BOL &CONDITIONS
+    ParamData &paramData,
+    mt::VEC_UI &usedIndexes
   ) {
     if (type == TEXT) {
-      TEXTS.push_back(argument);
+      paramData.texts.push_back(argument);
     }
     else {
-      NUMBERS.push_back(
-        Reader::parseNumbers<double>(argument)
+      paramData.numbers.push_back(
+        mt_uti::Scanner<double>::parseNumbers(argument)
       );
     }
 
-    CONDITIONS.push_back(false);
-    deepPull(TEXTS, NUMBERS, CONDITIONS);
+    paramData.conditions.push_back(false);
+    deepPull(paramData, usedIndexes);
   }
 
   bool Parameter::match(mt::VEC_STR &inputs) {
 
     bool incomplete = false;
-    int begin = 0, end = inputs.size() - 1;
+    std::string thisName = getName();
 
-    if (tier <= Command::ultimate->tier) {
-      begin = tier;
-      end = tier + 1;
+    int begin = 0,
+      end = inputs.size() - 1;
+
+    mt::UI ultiTier = 0,
+      thisTier = this->getTier();
+
+    if (getUltimate()) {
+      ultiTier = getUltimate()->getTier();
+    }
+
+    if (thisTier <= ultiTier) {
+      begin = thisTier;
+      end = thisTier + 1;
       if (begin >= inputs.size()) return false;
       else if (end >= inputs.size()) incomplete = true;
     }
@@ -63,7 +70,7 @@ namespace cli_menu {
       std::string testName = inputs[i];
 
       if (DashTest::cleanSingle(testName) &&
-        testName == name
+        testName == thisName
       ) {
         inputs[i] = "";
 
@@ -72,9 +79,9 @@ namespace cli_menu {
           inputs[j] = "";
         }
 
-        if (!Command::cleanCapturedPositionalInputs(inputs)) {
-          if (tier > Command::ultimate->tier) {
-            VecTools<std::string>::cutInterval(inputs, i, j);
+        if (!cleanCapturedPositionalInputs(inputs)) {
+          if (thisTier > ultiTier) {
+            mt_uti::VecTools<std::string>::cutInterval(inputs, i, j);
           }
         }
 
@@ -85,4 +92,4 @@ namespace cli_menu {
   }
 }
 
-#define __CLI_MENU__PARAMETER_CPP__
+#endif // __CLI_MENU__PARAMETER_CPP__

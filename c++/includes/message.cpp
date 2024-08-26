@@ -5,39 +5,36 @@
 
 namespace cli_menu {
 
-  void Message::printDecoration(CR_INT count, CR_CHR ch) {
-    std::cout << std::endl;
-    for (int i = 0; i < count; i++) { std::cout << ch; }
-    std::cout << std::endl;
-  }
+  // set text to start with a capital letter and end with a period
+  std::string Message::tidyUpText(mt::CR_STR text) {
+    std::string retStr = text;
 
-  void Message::setTextCapitalBeginPeriodEnd(std::string &text) {
-    if (text.length() > 0) {
+    if (!text.empty()) {
 
-      text[0] = std::toupper(text[0]);
-      char last = text[text.length() - 1];
+      const char last = retStr[text.length() - 1];
+      retStr[0] = std::toupper(retStr[0]);
 
       if (last != '.' && last != ';' &&
         last != '!' && last != '?' &&
         last != ':' && last != ','
       ) {
-        text.push_back('.');
+        retStr.push_back('.');
       }
       else if (last == ',') {
-        text.pop_back();
-        text.push_back('.');
+        retStr.pop_back();
+        retStr.push_back('.');
       }
     }
-    
-    return text;
+
+    return retStr;
   }
 
-  std::string Message::getObligatoryString(CR_BOL isRequired) {
+  std::string Message::getObligatoryString(mt::CR_BOL isRequired) {
     if (isRequired) return "<req>";
     else return "<opt>";
   }
 
-  std::string Message::getColoredTag(CR_INT flag) {
+  std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
       case HINT: {
         return "\033[34mHINT. \033[0m";
@@ -58,50 +55,96 @@ namespace cli_menu {
     return "";
   }
 
-  void Message::printCommandList(
-    Command *com,
-    std::string contiStr
+  void Message::print(
+    mt::CR_INT flag,
+    std::string text,
+    std::string name
   ) {
-    if (com) {
-      contiStr += DashTest::getString(com) + com->getName(true)
-        + '<' getObligatoryString(com->isRequired()) + "> ";
+    if (text.length() > 0) {
+      std::cout << std::endl;
+      mt_uti::StrTools::changeStringToUppercase(name);
+      if (name != "") std::cout << name << ": ";
+      std::cout << getColoredTag(flag) << tidyUpText(text);
+    }
+  }
 
-      for (Command *com : startCom->getItems()) {
-        printCommandList(com, contiStr);
+  void Message::printDecoration(mt::CR_INT count, mt::CR_CHR ch) {
+    std::cout << std::endl;
+    for (int i = 0; i < count; i++) { std::cout << ch; }
+    std::cout << std::endl;
+  }
+
+  void Message::printDevError(
+    mt::CR_STR funName,
+    mt::CR_STR paramTypeName,
+    mt::CR_STR customMessage
+  ) {
+    print(ERROR,
+      customMessage + " '" + paramTypeName + "'",
+      "cli_menu::" + funName
+    );
+  }
+
+  void Message::printCommandList(
+    Command *command,
+    std::string continueString
+  ) {
+    if (command) {
+      continueString += command->getFullName() +
+        "<" + getObligatoryString(command->isRequired()) + "> ";
+
+      for (Command *com : command->getItems()) {
+        printCommandList(com, continueString);
       }
 
-      std::cout << contiStr << std::endl;
+      std::cout << continueString << std::endl;
     }
+    else printDevError("Message::printCommandList", "Command");
   }
 
-  void Message::printCommandError(Command *com) {
-    std::cerr
-      << mt_uti::StrTools::getStringToUppercase(com->getName())
-      << ": " << getColoredTag(ERROR) << "Please follow the format.\n\n";
-    printCommandList(com);
-  }
-
-  void Message::print(CR_INT flag, std::string text, CR_STR comName) {
-    if (text.length() > 0) {
-      mt_uti::StrTools::changeStringToUppercase(comName);
-      if (comName != "") std::cout << comName << ": ";
-      std::cout << getColoredTag(flag) << setTextCapitalBeginPeriodEnd(text);
+  void Message::printCommandError(Command *command) {
+    if (command) {
+      std::cerr
+        << mt_uti::StrTools::getStringToUppercase(command->getName())
+        << ": " << getColoredTag(ERROR) << "Please follow the format.\n\n";
+      printCommandList(command);
     }
+    else printDevError("Message::printCommandError", "Command");
   }
 
-  void Message::printMainHelp(
-    Command *comProgram,
-    CR_STR author,
-    CR_STR version
+  void Message::printProgramError(
+    Program *program,
+    mt::CR_BOL isEmpty
   ) {
-    std::string programName = comProgram->getName();
+    if (!program) {
+      printDevError("Message::printProgramError", "Program");
+      return;
+    }
+
+    std::string about;
+    if (isEmpty) about = "no input provided";
+    else about = "invalid inputs";
+
+    print(ERROR,
+      about + ". Please type '--help' or '--menu' for available commands",
+      program->getName()
+    );
+  }
+
+  void Message::printMainHelp(Program *program) {
+    if (!program) {
+      printDevError("Message::printMainHelp", "Program");
+      return;
+    }
+
+    std::string programName = program->getName();
     int decorDotsCount = programName.length() * 2;
     mt_uti::StrTools::changeStringToUppercase(programName);
 
     std::cout << "Welcome to '" << programName << "'\n\n";
 
-    if (version != "") std::cout << "version: " << version << std::endl;
-    if (author != "") std::cout << "author: " << author;
+    std::cout << "version: " << program->getVersion().stringify() << std::endl;
+    std::cout << "author: " << program->getAuthor();
 
     printDecoration(decorDotsCount);
 
@@ -114,41 +157,32 @@ namespace cli_menu {
 
     printDecoration(decorDotsCount);
 
-    for (Command *com : comProgram->getItems()) {
+    for (Command *com : program->getItems()) {
       printCommandList(com);
     }
   }
 
-  void Message::printSubHelp(Command *com) {
-    
-    std::string comName = com->getName();
-    int decorDotsCount = comName.length() * 2;
-    mt_uti::StrTools::changeStringToUppercase(comName);
-
-    std::cout << comName << ':';
-    printDecoration(decorDotsCount);
-
-    std::cout << setTextCapitalBeginPeriodEnd(com->getDescription());
-    printDecoration(decorDotsCount);
-
-    Parameters *params = com->getParameters();
-    Toggles *togs = com->getToggles();
-
-    printCommandList(com);
-    printDecoration(decorDotsCount);
-
-    for (int i = 0; i < params->amount(); i++) {
-      std::cout
-        << '-' << params->getName(i) << getObligatoryString(params->getObligatory(i))
-        << ": " << params->getDescription(i) << "\n\n";
+  void Message::printSubHelp(Command *command) {
+    if (!command) {
+      printDevError("Message::printSubHelp", "Command");
+      return;
     }
 
-    std::cout << "Optional Toggles:\n\n";
+    if (command->getInheritanceFlag() == PROGRAM) {
+      printDevError("Message::printSubHelp", "Program", "cannot use");
+    }
+    else {
+      std::string comName = command->getName();
+      int decorDotsCount = comName.length() * 2;
+      mt_uti::StrTools::changeStringToUppercase(comName);
 
-    for (int i = 0; i < togs->amount(); i++) {
-      std::cout << "--" << togs->getName(i) << ": " << togs->getDescription(i);
-      if (i == togs->amount() - 1) std::cout << std::endl;
-      else std::cout << "\n\n";
+      std::cout << comName << ':';
+      printDecoration(decorDotsCount);
+
+      std::cout << tidyUpText(command->getDescription());
+      printDecoration(decorDotsCount);
+
+      printCommandList(command);
     }
   }
 }

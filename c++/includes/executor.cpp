@@ -5,78 +5,75 @@
 
 namespace cli_menu {
 
-  Executor::create(
-    mt::CR_INT argc, char *argv[]
+  Program *Executor::program = nullptr;
+  mt::VEC_STR Executor::inputs = {};
+  mt::VEC_UI Executor::usedIndexes = {};
+
+  void Executor::create(
+    Program *program_in,
+    mt::CR_INT argc,
+    char *argv[]
   ) {
-    if (Command::program) {
+    if (program_in) {
+      program = program_in;
+
       for (int i = 1; i < argc; i++) {
         inputs.push_back(argv[i]);
       }
 
-      if (inputs <= 1) {
-        Message::printProgramError(true);
+      if (inputs.size() <= 1) {
+        Message::printProgramError(program, true);
       }
     }
-    else abort("Executor::create");
+    else Message::printDevError("Executor::create", "Program");
   }
 
-  Executor::end() {
-    if (Command::program) {
-      Command::program->remove();
+  void Executor::end() {
+    if (program) {
+      program->remove();
       inputs = {};
     }
-    else abort("Executor::end");
-  }
-
-  void Executor::abort(mt::CR_STR funName) {
-    assertm(Command::program, "not specified [" + funName + "]");
+    else Message::printDevError("Executor::end", "Program");
   }
 
   void Executor::match(
     Command *command,
     Command *ultimateHook
   ) {
-    for (int i = 0; i < command->items->size(); i++) {
-      if (command->items[i]->match(inputs)) {
+    for (int i = 0; i < command->getNumberOfItems(); i++) {
+      if (command->getItem(i)->match(inputs)) {
 
-        if (command->items[i]->isUltimate()) {
-          ultimateHook = command->items[i];
+        if (command->getItem(i)->isUltimate()) {
+          ultimateHook = command->getItem(i);
         }
 
         usedIndexes.push_back(i);
-        match(command->items[i], inputs, usedIndexes);
+        match(command->getItem(i), ultimateHook);
       }
     }
   }
 
   void Executor::execute() {
-    if (Command::program) {
+    if (program) {
       Command *ultimate;
+      ParamData paramData;
 
-      mt::CR_VEC_STR TEXTS;
-      mt::CR_VEC_DBL NUMBERS;
-      mt::CR_VEC_BOL CONDITIONS;
-
-      match(Command::program, ultimate);
+      match(program, ultimate);
       int tierEnd = usedIndexes.size() - 1;
 
       if (ultimate) {
         if (ultimate->getTier() <= tierEnd) {
-
-          Command::program->pullData(
-            TEXTS, NUMBERS, CONDITIONS, usedIndexes
-          );
-
-          (*ultimate->callback)(TEXTS, NUMBERS, CONDITIONS);
+          program->pullData(paramData, usedIndexes);
+          ultimate->run(paramData);
         }
         else if (tierEnd >= 0) {
           // open dialog..
         }
-        else Message::printProgramError(false);
+        else Message::printProgramError(program, false);
       }
-      else assertm(ultimate, "not specified");
+      else Message::printDevError("Executor::execute", "Command::ultimate");
     }
-    else abort("Executor::execute");
+    else Message::printDevError("Executor::execute", "Program");
   }
 }
 

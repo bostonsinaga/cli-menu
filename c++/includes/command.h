@@ -1,80 +1,85 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include <memory>
-#include "mini-tools.h"
+#include "base.h"
 
 namespace cli_menu {
+
+  class Command;
+  typedef std::vector<Command*> VEC_COM;
+  typedef const VEC_COM& CR_VEC_COM;
 
   class Command {
   private:
     std::string name, description;
-    std::shared_ptr<CALLBACK> callback;
-    Command *holder;
+    SP_CALLBACK callback;
+    Command *holder, *ultimate;
     VEC_COM items;
 
+    mt::UI tier = 0;
+    bool required = false;
+
     void setItems(CR_VEC_COM newItems);
+    void spreadUltimateDown(Command *newUltimate);
 
   protected:
-    int tier = 0;
-    Command *ultimate;
-    static Command *program;
     virtual ~Command();
 
-    static bool cleanCapturedPositionalInputs(
-      mt::VEC_STR &inputs,
-      mt::CR_SZ startIdx,
-      mt::CR_SZ endIdx
-    );
-
-    virtual void pullData(
-      mt::CR_VEC_STR &TEXTS,
-      mt::CR_VEC_DBL &NUMBERS,
-      mt::CR_VEC_BOL &CONDITIONS
-    ) {}
-
-    void deepPull(
-      mt::CR_VEC_STR &TEXTS,
-      mt::CR_VEC_DBL &NUMBERS,
-      mt::CR_VEC_BOL &CONDITIONS
-    );
-
   public:
+    Command() {}
+
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      const std::shared_ptr<CALLBACK> &callback_in
+      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
     );
 
-    virtual std::string getName(CR_INT fully = false) {
-      return name;
-    }
-
+    virtual mt::USI getInheritanceFlag() { return COMMAND; }
+    virtual std::string getFullName() { return name; }
+    std::string getName() { return name; }
     std::string getDescription() { return description; }
+
+    mt::UI getTier() { return tier; }
+    size_t getNumberOfItems() { return items.size(); }
+
     VEC_COM getItems() { return items; }
     Command *getHolder() { return holder; }
+    Command *getUltimate() { return ultimate; }
 
-    Command *getItem(CR_INT index);
-    Command *getProgram();
+    Command *getItem(mt::CR_INT index);
     Command *getRoot();
 
     VEC_COM setItemsRelease(CR_VEC_COM newItems);
     void setItemsReplace(CR_VEC_COM newItems);
 
-    void addItem(Command *com);
+    void addItem(Command *command);
     void cleanItems();
-    void removeItem(Command *com);
+    void removeItem(Command *command);
     void removeItem(int index);
-    void releaseItem(Command *com);
+    void releaseItem(Command *command);
     void releaseItem(int index);
     void setHolder(Command *newHolder, bool addBack = true);
-
     void remove();
+    void setAsUltimate();
+
     bool isRequired();
-    virtual int getInheritanceFlag() { return COMMAND; }
-    void setUltimate(Command *newUltimate);
-    static void setProgram(Command *newProgram);
-    static void execute();
+    bool isUltimate();
+    bool isClassifier();
+
+    bool cleanCapturedPositionalInputs(mt::VEC_STR &inputs);
+    virtual bool match(mt::VEC_STR &inputs) { return false; }
+    void run(ParamData &paramData);
+
+    void deepPull(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
+
+    virtual void pullData(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
   };
 }
 

@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  class Parameter {
+  class Parameter : public Command {
   private:
     std::string argument;
     bool type = false;
@@ -15,29 +15,30 @@ namespace cli_menu {
       type = false;
     }
 
-    void pullData(
-      mt::CR_VEC_STR &TEXTS,
-      mt::CR_VEC_DBL &NUMBERS,
-      mt::CR_VEC_BOL &CONDITIONS
-    );
-
   public:
     enum {TEXT, NUMBER};
+    Parameter(): Command() {}
 
     Parameter(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_BOL type_in,
-      const std::shared_ptr<CALLBACK> &callback_in
+      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
     );
 
+    bool match(mt::VEC_STR &inputs);
     bool getType() { return type; }
     std::string getStringifiedType();
+    std::string getFullName();
     std::string getRawArgument() { return argument; }
-    std::string getName(bool withSubname = false);
-    bool match(mt::VEC_STR &inputs);
-    int getInheritanceFlag() { return PARAMETER; }
+    mt::USI getInheritanceFlag() { return PARAMETER; }
+
+    void pullData(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
   };
 }
 
-#define __CLI_MENU__PARAMETER_H__
+#endif // __CLI_MENU__PARAMETER_H__

@@ -2,30 +2,49 @@
 #define __CLI_MENU__MESSAGE_H__
 
 #include <iostream>
-#include "command.h"
+#include "program.h"
 
 namespace cli_menu {
   class Message {
   private:
-    static void printDecoration(CR_INT count, CR_CHR ch = '.');
-    static void setTextCapitalBeginPeriodEnd(std::string &text);
-    static std::string getObligatoryString(CR_BOL isRequired);
-    static std::string getColoredTag(CR_INT flag);
-    static void printCommandList(Command *com, std::string contiStr = "");
-
-  public:
     enum {HINT, WARNING, ERROR, SUCCEED, CANCELED};
 
-    static void print(CR_INT flag, std::string text, CR_STR comName = "");
-    static void printCommandError(Command *com);
+    static std::string tidyUpText(mt::CR_STR text);
+    static std::string getObligatoryString(mt::CR_BOL isRequired);
+    static std::string getColoredTag(mt::CR_INT flag);
 
-    static void printMainHelp(
-      Command *comProgram,
-      CR_STR author = "",
-      CR_STR version = "1.0"
+  public:
+    static void print(
+      mt::CR_INT flag,
+      std::string text,
+      std::string name = ""
     );
-    
-    static void printSubHelp(Command *com);
+
+    static void printDecoration(
+      mt::CR_INT count,
+      mt::CR_CHR ch = '.'
+    );
+
+    static void printDevError(
+      mt::CR_STR funName,
+      mt::CR_STR paramTypeName,
+      mt::CR_STR customMessage = "unassigned"
+    );
+
+    static void printCommandList(
+      Command *command,
+      std::string continueString = "\n"
+    );
+
+    static void printCommandError(Command *command);
+
+    static void printProgramError(
+      Program *program,
+      mt::CR_BOL isEmpty
+    );
+
+    static void printMainHelp(Program *program);
+    static void printSubHelp(Command *command);
   };
 }
 

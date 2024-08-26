@@ -6,11 +6,14 @@
 namespace cli_menu {
 
   class Version {
-  private:
-    mt::UI major = 0, minor = 0, patch = 0;
-    ~Version();
-
   public:
+    mt::UI
+      major = 0,
+      minor = 0,
+      patch = 0;
+
+    Version() {}
+
     Version(
       mt::CR_UI major_in,
       mt::CR_UI minor_in,
@@ -18,26 +21,28 @@ namespace cli_menu {
     );
 
     std::string stringify();
-    void clean() { delete this; }
+    void clean();
   };
 
   class Program : public Command {
   private:
     std::string author;
-    Version *version;
+    Version version;
     ~Program();
 
   public:
+    Program();
+
     Program(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_STR author_in,
-      Version *version_in,
-      const std::shared_ptr<CALLBACK> &callback_in
+      const Version &version_in,
+      CR_SP_CALLBACK callback_in
     );
 
     std::string getAuthor() { return author; }
-    Version *getVersion() { return version; }
+    Version getVersion() { return version; }
     mt::USI getInheritanceFlag() { return PROGRAM; }
   };
 }

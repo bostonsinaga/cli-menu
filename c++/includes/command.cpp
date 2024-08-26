@@ -2,19 +2,19 @@
 #define __CLI_MENU__COMMAND_CPP__
 
 #include "command.h"
-#include "dash-test.h"
 
 namespace cli_menu {
-  using namespace mt_uti;
 
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    const std::shared_ptr<CALLBACK> &callback_in
+    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL required_in
   ) {
     name = name_in;
     description = description_in;
     callback = callback_in;
+    required = required_in;
   }
 
   Command::~Command() {
@@ -24,21 +24,13 @@ namespace cli_menu {
     callback.reset();
   }
 
-  Command *Command::getItem(CR_INT index) {
-    return VecTools<Command*>::getAt(items, index, nullptr);
-  }
-
-  Command *Command::getProgram() {
-    Command *program = this;
-    while (program->holder) {
-      program = program->holder;
-    }
-    return program;
+  Command *Command::getItem(mt::CR_INT index) {
+    return mt_uti::VecTools<Command*>::getAt(items, index, nullptr);
   }
 
   Command *Command::getRoot() {
     Command *root = this;
-    while (root->holder != Command::program) {
+    while (root->holder) {
       root = root->holder;
     }
     return root;
@@ -62,10 +54,10 @@ namespace cli_menu {
     setItems(newItems);
   }
 
-  void Command::addItem(Command *com) {
-    if (com) {
-      com->setHolder(this, false);
-      items.push_back(com);
+  void Command::addItem(Command *command) {
+    if (command) {
+      command->setHolder(this, false);
+      items.push_back(command);
     }
   }
 
@@ -75,43 +67,43 @@ namespace cli_menu {
     }
   }
 
-  void Command::removeItem(Command *com) {
-    if (!com) return;
+  void Command::removeItem(Command *command) {
+    if (!command) return;
 
     for (int i = 0; i < items.size(); i++) {
-      if (items[i] == com) {
+      if (items[i] == command) {
         items[i]->remove();
-        VecTools<Command*>::cutSingle(items, i);
+        mt_uti::VecTools<Command*>::cutSingle(items, i);
         break;
       }
     }
   }
 
   void Command::removeItem(int index) {
-    if (VecTools<Command*>::hasIndex(items, index)) {
-      items[i]->remove();
-      VecTools<Command*>::cutSingle(items, index);
-      break;
+    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      items[index]->remove();
+      mt_uti::VecTools<Command*>::cutSingle(items, index);
     }
   }
 
-  void releaseItem(Command *com) {
-    if (!com) return;
+  void Command::releaseItem(Command *command) {
+    if (!command) return;
 
     for (int i = 0; i < items.size(); i++) {
-      if (items[i] == com) {
-        item[i]->holder = nullptr;
-        VecTools<Command*>::cutSingle(items, i);
+      if (items[i] == command) {
+        items[i]->holder = nullptr;
+        mt_uti::VecTools<Command*>::cutSingle(items, i);
+        tier = 0;
         break;
       }
     }
   }
 
-  void releaseItem(int index) {
-    if (VecTools<Command*>::hasIndex(items, index)) {
-      item[i]->holder = nullptr;
-      VecTools<Command*>::cutSingle(items, index);
-      break;
+  void Command::releaseItem(int index) {
+    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      items[index]->holder = nullptr;
+      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      tier = 0;
     }
   }
 
@@ -130,22 +122,61 @@ namespace cli_menu {
   }
 
   bool Command::isRequired() {
-    return tier <= Command::ultimate->tier;
+    if (ultimate) return tier <= ultimate->tier || required;
+    return false;
   }
 
-  Command *Command::program = nullptr;
-  Command *Command::ultimate = nullptr;
-
-  void Command::setProgram(Command *newProgram) {
-    program = newProgram->getProgram();
+  bool Command::isUltimate() {
+    return this == ultimate;
   }
 
-  void Command::setUltimate(Command *newUltimate) {
+  bool Command::isClassifier() {
+    if (ultimate) return tier < ultimate->tier;
+    return false;
+  }
+
+  void Command::spreadUltimateDown(Command *newUltimate) {
     ultimate = newUltimate;
+    for (Command *com : items) {
+      com->spreadUltimateDown(newUltimate);
+    }
   }
 
-  bool Command::::cleanCapturedPositionalInputs(mt::VEC_STR &inputs) {
-    if (this == Command::ultimate) {
+  void Command::setAsUltimate() {
+    ultimate = this;
+    spreadUltimateDown(this);
+  }
+
+  void Command::run(ParamData &paramData) {
+    if (callback) {
+      (*callback)(
+        paramData.texts,
+        paramData.numbers,
+        paramData.conditions
+      );
+    }
+  }
+
+  void Command::deepPull(
+    ParamData &paramData,
+    mt::VEC_UI &usedIndexes
+  ) {
+    if (!usedIndexes.empty()) {
+      const int index = usedIndexes[0];
+      usedIndexes.erase(usedIndexes.begin());
+      items[index]->pullData(paramData, usedIndexes);
+    }
+  }
+
+  void Command::pullData(
+    ParamData &paramData,
+    mt::VEC_UI &usedIndexes
+  ) {
+    deepPull(paramData, usedIndexes);
+  }
+
+  bool Command::cleanCapturedPositionalInputs(mt::VEC_STR &inputs) {
+    if (this == ultimate) {
       mt::VEC_INT usedIndexes;
 
       for (int i = 0; inputs.size(); i++) {
@@ -154,44 +185,13 @@ namespace cli_menu {
         }
       }
 
-      VecTools<std::string>::cutIndexes(
+      mt_uti::VecTools<std::string>::cutIndexes(
         inputs, usedIndexes
       );
 
       return true;
     }
     return false;
-  }
-
-  void Command::deepPull(
-    mt::CR_VEC_STR &TEXTS,
-    mt::CR_VEC2_DBL &NUMBERS,
-    mt::CR_VEC_BOL &CONDITIONS
-  ) {
-    for (Command *com : items) {
-      if (com) com->pullData(TEXTS, NUMBERS, CONDITIONS);
-    }
-  }
-
-  void Command::execute() {
-    if (ultimate) {
-      if (!program) Command::setProgram(ultimate);
-
-      mt::CR_VEC_STR TEXTS;
-      mt::CR_VEC_DBL NUMBERS;
-      mt::CR_VEC_BOL CONDITIONS;
-
-      ultimate->getRoot()->pullData(TEXTS, NUMBERS, CONDITIONS);
-      (*ultimate->callback)(TEXTS, NUMBERS, CONDITIONS);
-    }
-    else {
-      if (!program) {
-        Command::setProgram(ultimate);
-      }
-
-      ultimate = getRoot();
-      Command::execute();
-    }
   }
 }
 

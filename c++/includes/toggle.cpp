@@ -6,31 +6,42 @@
 namespace cli_menu {
 
   Toggle::Toggle(
-    mt::CR_VEC_STR names_in,
-    mt::CR_VEC_STR descriptions_in,
-    const std::shared_ptr<CALLBACK> &callback_in
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL required_in
   ):
-  Command(name_in, description_in, callback_in) {}
+  Command(name_in, description_in, callback_in, required_in) {}
 
-  void Toggle::pullData(
-    mt::CR_VEC_STR &TEXTS,
-    mt::CR_VEC2_DBL &NUMBERS,
-    mt::CR_VEC_BOL &CONDITIONS
-  ) {
-    CONDITIONS.push_back(condition);
-    TEXTS.push_back("");
-    NUMBERS.push_back({});
-    deepPull(TEXTS, NUMBERS, CONDITIONS);
+  std::string Toggle::getFullName() {
+    return "--" + getName();
   }
 
-  bool Toggle::getCondition() { return condition; }
+  void Toggle::pullData(
+    ParamData &paramData,
+    mt::VEC_UI &usedIndexes
+  ) {
+    paramData.conditions.push_back(condition);
+    paramData.texts.push_back("");
+    paramData.numbers.push_back({});
+    deepPull(paramData, usedIndexes);
+  }
 
   bool Toggle::match(mt::VEC_STR &inputs) {
-    int begin = 0, end = inputs.size();
+    std::string thisName = getName();
 
-    if (tier <= Command::ultimate->tier) {
-      begin = tier;
-      end = tier + 1;
+    mt::UI begin = 0,
+      end = inputs.size(),
+      ultiTier = 0,
+      thisTier = this->getTier();
+
+    if (getUltimate()) {
+      ultiTier = getUltimate()->getTier();
+    }
+
+    if (thisTier <= ultiTier) {
+      begin = thisTier;
+      end = thisTier + 1;
       if (begin >= inputs.size()) return false;
     }
 
@@ -38,14 +49,14 @@ namespace cli_menu {
       std::string testName = inputs[i];
 
       if (DashTest::cleanDouble(testName) &&
-        testName == name
+        testName == thisName
       ) {
         condition = true;
         inputs[i] = "";
 
-        if (!Command::cleanCapturedPositionalInputs(inputs)) {
-          if (tier > Command::ultimate->tier) {
-            VecTools<std::string>::cutSingle(inputs, i);
+        if (!cleanCapturedPositionalInputs(inputs)) {
+          if (thisTier > ultiTier) {
+            mt_uti::VecTools<std::string>::cutSingle(inputs, i);
           }
         }
 

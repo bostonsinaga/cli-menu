@@ -5,28 +5,31 @@
 
 namespace cli_menu {
 
-  class Toggle {
+  class Toggle : public Command {
   private:
-    bool condition;
+    bool condition = false;
     ~Toggle() { condition = false; }
 
-    void pullData(
-      mt::CR_VEC_STR &TEXTS,
-      mt::CR_VEC_DBL &NUMBERS,
-      mt::CR_VEC_BOL &CONDITIONS
-    );
-
   public:
+    Toggle(): Command() {}
+
     Toggle(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      const std::shared_ptr<CALLBACK> &callback_in
+      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
     );
 
-    bool getCondition();
     bool match(mt::VEC_STR &inputs);
-    int getInheritanceFlag() { return TOGGLE; }
+    bool getCondition() { return condition; }
+    mt::USI getInheritanceFlag() { return TOGGLE; }
+    std::string getFullName();
+
+    void pullData(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
   };
 }
 
-#define __CLI_MENU__TOGGLE_H__
+#endif // __CLI_MENU__TOGGLE_H__

@@ -15,16 +15,20 @@ namespace cli_menu {
     patch = patch_in;
   }
 
-  Version::~Version() {
+  std::string Version::stringify() {
+    return std::to_string(major) + "."
+      + std::to_string(minor) + "."
+      + std::to_string(patch);
+  }
+
+  void Version::clean() {
     major = 0;
     minor = 0;
     patch = 0;
   }
 
-  std::string Version::stringify() {
-    return std::to_string(version.major) + "."
-      + std::to_string(version.minor) + "."
-      + std::to_string(version.patch);
+  Program::Program(): Command() {
+    author = "Anonymous";
   }
 
   Program::Program(
@@ -32,15 +36,16 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_STR author_in,
     const Version &version_in,
-    const std::shared_ptr<CALLBACK> &callback_in
+    CR_SP_CALLBACK callback_in
   ):
   Command(name_in, description_in, callback_in, true) {
+    if (author.empty()) author = "Anonymous";
     version = version_in;
   }
 
   Program::~Program() {
     author = "";
-    version->clean();
+    version.clean();
   }
 }
 
