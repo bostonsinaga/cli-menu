@@ -6,6 +6,7 @@ set (SOURCES
   toggle.h
   message.h
   executor.h
+  cli-menu.h
 
   base.cpp
   command.cpp
