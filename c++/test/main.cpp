@@ -1,26 +1,47 @@
 #include <iostream>
 #include "cli-menu.h"
 
-void foo(mt::CR_VEC_STR, mt::CR_VEC_BOL) {
-  std::cout << "\nFoo is called..";
+CM_FUNCTION(programFun) {
+  std::cout << "\nWill have default function from 'Program' which displaying error message";
+}
+
+CM_FUNCTION(dialogFun) {
+  std::cout << "\nDialog is called..";
+}
+
+CM_FUNCTION(sentenceFun) {
+  std::cout << "\nSentence is called..";
 }
 
 int main(int argc, char *argv[]) {
-
-  cm::Command *com = new cm::Command(
-    "conversation",
-    "simple dialog",
-    new cm::Parameters(
-      mt::VEC_STR{"say"}, 
-      mt::VEC_BOL{cm::Parameters::TEXT}, 
-      mt::VEC_BOL{true}, 
-      mt::VEC_STR{"Give a polite sentence"}),
-    new cm::Toggles(),
-    std::make_shared<cm::CALLBACK>(foo)
+  cm::Program *testProgram = new cm::Program(
+    "TEST",
+    "Test 'cli-menu' library",
+    "Boston Sinaga",
+    cm::Version(1, 0, 0),
+    CM_CALLBACK(programFun)
   );
 
-  cm::Executor exe("TEST", {com});
-  exe.iterate(argc, argv);
+  cm::Toggle *dialog = new cm::Toggle(
+    "dialog",
+    "Start conversation",
+    CM_CALLBACK(dialogFun)
+  );
+
+  cm::Parameter *sentence = new cm::Parameter(
+    "sentence",
+    "Give words with double quotes if have spaces",
+    cm::Parameter::TEXT,
+    CM_CALLBACK(sentenceFun)
+  );
+
+  testProgram->addItem(dialog);
+  dialog->addItem(sentence);
+  sentence->setAsUltimate();
+
+  cm::Executor::create(testProgram, argc, argv);
+  cm::Executor::execute();
+  cm::Executor::end();
 
   return 0;
 }
