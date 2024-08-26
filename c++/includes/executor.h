@@ -7,10 +7,9 @@ namespace cli_menu {
 
   class Executor {
   private:
+    static Program *program;
     static mt::VEC_STR inputs;
     static mt::VEC_UI usedIndexes;
-
-    static void abort(mt::CR_STR funName);
 
     static void match(
       Command *command,
@@ -19,6 +18,7 @@ namespace cli_menu {
   
   public:
     static void create(
+      Program *program_in,
       mt::CR_INT argc,
       char *argv[]
     );
