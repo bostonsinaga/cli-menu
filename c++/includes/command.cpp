@@ -21,6 +21,7 @@ namespace cli_menu {
     name = "";
     description = "";
     tier = 0;
+    items = {};
     callback.reset();
   }
 
@@ -117,6 +118,7 @@ namespace cli_menu {
   }
 
   void Command::remove() {
+    for (Command *com : items) com->holder = nullptr;
     cleanItems();
     delete this;
   }
