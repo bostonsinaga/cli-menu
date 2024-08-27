@@ -13,12 +13,15 @@ namespace cli_menu {
   private:
     std::string name, description;
     SP_CALLBACK callback;
-    Command *holder, *ultimate;
     VEC_COM items;
+
+    Command *holder = nullptr,
+      *ultimate = nullptr;
 
     mt::UI tier = 0;
     bool required = false;
 
+    void cleanItems();
     void setItems(CR_VEC_COM newItems);
     void spreadUltimateDown(Command *newUltimate);
 
@@ -54,7 +57,6 @@ namespace cli_menu {
     void setItemsReplace(CR_VEC_COM newItems);
 
     void addItem(Command *command);
-    void cleanItems();
     void removeItem(Command *command);
     void removeItem(int index);
     void releaseItem(Command *command);
