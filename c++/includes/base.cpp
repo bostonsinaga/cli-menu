@@ -5,6 +5,27 @@
 
 namespace cli_menu {
 
+  mt::VEC_STR DIALOG() {
+    static bool isInit = true;
+
+    mt::VEC_STR textVec;
+    std::string buffer;
+
+    if (isInit) {
+      std::cout << "\n\nINPUT: (cancel = :q, next = :w)\n";
+    }
+    else std::cout << "\nINPUT:\n";
+
+    while (std::getline(std::cin, buffer)) {
+      if (buffer == ":q") return {};
+      else if (buffer == ":w") break;
+      textVec.push_back(buffer);
+    }
+
+    isInit = false;
+    return textVec;
+  }
+
   bool DashTest::isSingle(mt::CR_STR str) {
     if (str.length() > 1 && str[0] == '-') {
       return true;
