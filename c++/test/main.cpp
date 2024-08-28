@@ -15,7 +15,7 @@ CM_FUNCTION(sentenceFun) {
 
 int main(int argc, char *argv[]) {
   cm::Program *testProgram = new cm::Program(
-    "TEST",
+    "test",
     "Test 'cli-menu' library",
     "Boston Sinaga",
     cm::Version(1, 0, 0),
@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
   cm::Executor::execute();
   cm::Executor::end();
 
+  std::cout << std::endl;
   return 0;
 }
 
