@@ -30,9 +30,9 @@ namespace cli_menu {
   bool Toggle::match(mt::VEC_STR &inputs) {
     std::string thisName = getName();
 
-    mt::UI begin = 0,
+    mt::UI begin = 1,
       end = inputs.size(),
-      ultiTier = 0,
+      ultiTier = 1,
       thisTier = this->getTier();
 
     if (getUltimate()) {
@@ -46,6 +46,8 @@ namespace cli_menu {
     }
 
     for (int i = begin; i < end; i++) {
+      if (inputs[i].empty()) continue;
+
       std::string testName = inputs[i];
 
       if (DashTest::cleanDouble(testName) &&
@@ -53,13 +55,6 @@ namespace cli_menu {
       ) {
         condition = true;
         inputs[i] = "";
-
-        if (!cleanCapturedPositionalInputs(inputs)) {
-          if (thisTier > ultiTier) {
-            mt_uti::VecTools<std::string>::cutSingle(inputs, i);
-          }
-        }
-
         return true;
       }
     }
