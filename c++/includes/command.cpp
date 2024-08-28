@@ -159,6 +159,11 @@ namespace cli_menu {
     }
   }
 
+  void Command::run() {
+    ParamData emptyParamData;
+    run(emptyParamData);
+  }
+
   void Command::deepPull(
     ParamData &paramData,
     mt::VEC_UI &usedIndexes

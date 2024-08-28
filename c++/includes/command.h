@@ -71,7 +71,9 @@ namespace cli_menu {
 
     bool cleanCapturedPositionalInputs(mt::VEC_STR &inputs);
     virtual bool match(mt::VEC_STR &inputs) { return false; }
+
     void run(ParamData &paramData);
+    void run();
 
     void deepPull(
       ParamData &paramData,
