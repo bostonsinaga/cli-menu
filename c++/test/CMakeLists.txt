@@ -1,2 +1,2 @@
-add_executable(TEST main.cpp)
-target_link_libraries(TEST cli-menu)
+add_executable(test main.cpp)
+target_link_libraries(test cli-menu)
