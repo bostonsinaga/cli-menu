@@ -47,10 +47,10 @@ namespace cli_menu {
     bool incomplete = false;
     std::string thisName = getName();
 
-    int begin = 0,
+    int begin = 1,
       end = inputs.size() - 1;
 
-    mt::UI ultiTier = 0,
+    mt::UI ultiTier = 1,
       thisTier = this->getTier();
 
     if (getUltimate()) {
@@ -65,6 +65,7 @@ namespace cli_menu {
     }
 
     for (int i = begin; i < end; i++) {
+      if (inputs[i].empty()) continue;
 
       int j = i + 1;
       std::string testName = inputs[i];
@@ -77,12 +78,6 @@ namespace cli_menu {
         if (!incomplete) {
           argument = inputs[j];
           inputs[j] = "";
-        }
-
-        if (!cleanCapturedPositionalInputs(inputs)) {
-          if (thisTier > ultiTier) {
-            mt_uti::VecTools<std::string>::cutInterval(inputs, i, j);
-          }
         }
 
         return !incomplete;
