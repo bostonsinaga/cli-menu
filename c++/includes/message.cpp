@@ -58,12 +58,20 @@ namespace cli_menu {
   void Message::print(
     mt::CR_INT flag,
     std::string text,
-    std::string name
+    std::string name,
+    bool toUppercase
   ) {
     if (text.length() > 0) {
       std::cout << std::endl;
-      mt_uti::StrTools::changeStringToUppercase(name);
-      if (name != "") std::cout << name << ": ";
+
+      if (toUppercase) {
+        mt_uti::StrTools::changeStringToUppercase(name);
+      }
+
+      if (name != "") {
+        std::cout << name << ": ";
+      }
+
       std::cout << getColoredTag(flag) << tidyUpText(text);
     }
   }
@@ -81,7 +89,8 @@ namespace cli_menu {
   ) {
     print(ERROR,
       customMessage + " '" + paramTypeName + "'",
-      "cli_menu::" + funName
+      "cli_menu::" + funName,
+      false
     );
   }
 

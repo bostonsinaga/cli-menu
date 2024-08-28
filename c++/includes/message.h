@@ -17,7 +17,8 @@ namespace cli_menu {
     static void print(
       mt::CR_INT flag,
       std::string text,
-      std::string name = ""
+      std::string name = "",
+      bool toUppercase = true
     );
 
     static void printDecoration(
