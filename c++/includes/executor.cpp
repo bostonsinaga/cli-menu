@@ -38,31 +38,32 @@ namespace cli_menu {
 
   void Executor::match(
     Command *command,
+    Command **lastCom,
     Command **ultimateHook
   ) {
     for (int i = 0; i < command->getNumberOfItems(); i++) {
       Command *com = command->getItem(i);
 
       if (com->match(inputs)) {
+
         if (com->isUltimate()) *ultimateHook = com;
+        *lastCom = com;
 
         usedIndexes.push_back(i);
-        match(com, ultimateHook);
+        match(com, lastCom, ultimateHook);
       }
     }
   }
 
   void Executor::execute() {
     if (program) {
-      Command *ultimate = nullptr;
       ParamData paramData;
 
+      Command *lastCom = nullptr,
+        *ultimate = nullptr;
+
       if (inputs.size() > 1) {
-        match(program, &ultimate);
-      }
-      else {
-        program->run();
-        return;
+        match(program, &lastCom, &ultimate);
       }
 
       int tierEnd = usedIndexes.size();
@@ -77,7 +78,8 @@ namespace cli_menu {
         }
         else Message::printProgramError(program, false);
       }
-      else Message::printDevError("Executor::execute", "Command::ultimate");
+      else if (lastCom) lastCom->run();
+      else program->run();
     }
     else Message::printDevError("Executor::execute", "Program");
   }

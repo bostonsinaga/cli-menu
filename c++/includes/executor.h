@@ -13,6 +13,7 @@ namespace cli_menu {
 
     static void match(
       Command *command,
+      Command **lastCom,
       Command **ultimateHook
     );
   
