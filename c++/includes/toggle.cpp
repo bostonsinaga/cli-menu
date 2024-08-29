@@ -13,6 +13,21 @@ namespace cli_menu {
   ):
   Command(name_in, description_in, callback_in, required_in) {}
 
+  Toggle::Toggle(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL required_in
+  ):
+  Command(name_in, description_in, callback_in, required_in) {}
+
+  Toggle::Toggle(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_BOL required_in
+  ):
+  Command(name_in, description_in, required_in) {}
+
   std::string Toggle::getFullName() {
     return "--" + getName();
   }

@@ -20,6 +20,19 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
+    Toggle(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
+    );
+
+    Toggle(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL required_in = false
+    );
+
     bool match(mt::VEC_STR &inputs);
     bool getCondition() { return condition; }
     mt::USI getInheritanceFlag() { return TOGGLE; }
