@@ -39,7 +39,19 @@ namespace cli_menu {
     CR_SP_CALLBACK callback_in
   ):
   Command(name_in, description_in, callback_in, true) {
-    if (author.empty()) author = "Anonymous";
+    author = "Anonymous";
+    version = version_in;
+  }
+
+  Program::Program(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_STR author_in,
+    CR_VERSION version_in,
+    CR_SP_PLAIN_CALLBACK callback_in
+  ):
+  Command(name_in, description_in, callback_in, true) {
+    author = "Anonymous";
     version = version_in;
   }
 
@@ -50,7 +62,7 @@ namespace cli_menu {
     CR_VERSION version_in
   ):
   Command(name_in, description_in, true) {
-    if (author.empty()) author = "Anonymous";
+    author = "Anonymous";
     version = version_in;
   }
 
