@@ -24,6 +24,8 @@ namespace cli_menu {
     void clean();
   };
 
+  typedef const Version& CR_VERSION;
+
   class Program : public Command {
   private:
     std::string author;
@@ -37,8 +39,15 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_STR author_in,
-      const Version &version_in,
+      CR_VERSION version_in,
       CR_SP_CALLBACK callback_in
+    );
+
+    Program(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_STR author_in,
+      CR_VERSION version_in
     );
 
     std::string getAuthor() { return author; }

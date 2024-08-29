@@ -35,10 +35,21 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_STR author_in,
-    const Version &version_in,
+    CR_VERSION version_in,
     CR_SP_CALLBACK callback_in
   ):
   Command(name_in, description_in, callback_in, true) {
+    if (author.empty()) author = "Anonymous";
+    version = version_in;
+  }
+
+  Program::Program(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_STR author_in,
+    CR_VERSION version_in
+  ):
+  Command(name_in, description_in, true) {
     if (author.empty()) author = "Anonymous";
     version = version_in;
   }
