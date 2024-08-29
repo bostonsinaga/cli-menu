@@ -43,6 +43,10 @@ namespace cm = cli_menu;
 )
 #endif
 
+#ifdef CLI_MENU_FUNCTION
+#undef CLI_MENU_FUNCTION
+#endif
+
 #ifndef CLI_MENU_FUNCTION
 #define CLI_MENU_FUNCTION(NAME) void NAME(\
   mt::CR_VEC_STR TEXTS,\
@@ -52,11 +56,15 @@ namespace cm = cli_menu;
 #endif
 
 #ifndef CM_CALLBACK
-#define CM_CALLBACK(FUNCTION) std::make_shared<cm::CALLBACK>(FUNCTION)
+#define CM_CALLBACK(FUNCTION) std::make_shared<cli_menu::CALLBACK>(FUNCTION)
+#endif
+
+#ifdef CLI_MENU_CALLBACK
+#undef CLI_MENU_CALLBACK
 #endif
 
 #ifndef CLI_MENU_CALLBACK
-#define CLI_MENU_CALLBACK(FUNCTION) std::make_shared<cm::CALLBACK>(FUNCTION)
+#define CLI_MENU_CALLBACK(FUNCTION) std::make_shared<cli_menu::CALLBACK>(FUNCTION)
 #endif
 
 #endif // __CLI_MENU_H__
