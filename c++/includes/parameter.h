@@ -27,6 +27,21 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
+    Parameter(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL type_in,
+      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
+    );
+
+    Parameter(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL type_in,
+      mt::CR_BOL required_in = false
+    );
+
     bool match(mt::VEC_STR &inputs);
     bool getType() { return type; }
     std::string getStringifiedType();
