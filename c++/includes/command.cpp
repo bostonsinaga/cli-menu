@@ -17,6 +17,16 @@ namespace cli_menu {
     required = required_in;
   }
 
+  Command::Command(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_BOL required_in
+  ) {
+    name = name_in;
+    description = description_in;
+    required = required_in;
+  }
+
   Command::~Command() {
     name = "";
     description = "";
@@ -142,6 +152,11 @@ namespace cli_menu {
     for (Command *com : items) {
       com->spreadUltimateDown(newUltimate);
     }
+  }
+
+  void Command::setCallback(CR_SP_CALLBACK callback_in) {
+    callback.reset();
+    callback = callback_in;
   }
 
   void Command::setAsUltimate() {
