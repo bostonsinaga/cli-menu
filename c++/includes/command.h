@@ -12,7 +12,7 @@ namespace cli_menu {
   class Command {
   private:
     std::string name, description;
-    SP_CALLBACK callback;
+    SP_CALLBACK callback = nullptr;
     VEC_COM items;
 
     Command *holder = nullptr,
@@ -38,10 +38,20 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
+    Command(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL required_in = false
+    );
+
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
     virtual std::string getFullName() { return name; }
     std::string getName() { return name; }
     std::string getDescription() { return description; }
+
+    void setCallback(CR_SP_CALLBACK callback_in);
+    void setAsUltimate();
+    void setRequired(mt::CR_BOL condition) { required = condition; }
 
     mt::UI getTier() { return tier; }
     size_t getNumberOfItems() { return items.size(); }
@@ -63,11 +73,11 @@ namespace cli_menu {
     void releaseItem(int index);
     void setHolder(Command *newHolder, bool addBack = true);
     void remove();
-    void setAsUltimate();
 
     bool isRequired();
     bool isUltimate();
     bool isClassifier();
+    bool hasCallback() { return bool(callback); }
 
     bool cleanCapturedPositionalInputs(mt::VEC_STR &inputs);
     virtual bool match(mt::VEC_STR &inputs) { return false; }
