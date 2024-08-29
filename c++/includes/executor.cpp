@@ -8,21 +8,19 @@ namespace cli_menu {
   Program *Executor::program = nullptr;
   mt::VEC_STR Executor::inputs = {};
   mt::VEC_UI Executor::usedIndexes = {};
+  bool Executor::dialogComplete = true;
 
   void Executor::create(
     Program *program_in,
     mt::CR_INT argc,
-    char *argv[]
+    char *argv[],
+    mt::CR_BOL completingDialog
   ) {
     if (program_in) {
       program = program_in;
 
       for (int i = 0; i < argc; i++) {
         inputs.push_back(argv[i]);
-      }
-
-      if (inputs.size() <= 1) {
-        Message::printProgramError(program, true);
       }
     }
     else Message::printDevError("Executor::create", "Program");
@@ -73,10 +71,11 @@ namespace cli_menu {
           program->pullData(paramData, usedIndexes);
           ultimate->run(paramData);
         }
-        else if (tierEnd >= 0) {
-          // open dialog..
+        else {
+          if (dialogComplete) DIALOG();
+          else if (program->hasCallback()) program->run();
+          else Message::printProgramError(program, false);
         }
-        else Message::printProgramError(program, false);
       }
       else if (lastCom) lastCom->run();
       else program->run();

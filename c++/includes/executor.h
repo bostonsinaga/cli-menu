@@ -10,6 +10,7 @@ namespace cli_menu {
     static Program *program;
     static mt::VEC_STR inputs;
     static mt::VEC_UI usedIndexes;
+    static bool dialogComplete;
 
     static void match(
       Command *command,
@@ -21,11 +22,16 @@ namespace cli_menu {
     static void create(
       Program *program_in,
       mt::CR_INT argc,
-      char *argv[]
+      char *argv[],
+      mt::CR_BOL completingDialog = true
     );
 
-    static void execute();
     static void end();
+    static void execute();
+
+    static void completeWithDialog(mt::CR_BOL condition) {
+      dialogComplete = condition;
+    }
   };
 }
 
