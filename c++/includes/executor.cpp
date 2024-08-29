@@ -10,28 +10,18 @@ namespace cli_menu {
   mt::VEC_UI Executor::usedIndexes = {};
   bool Executor::dialogComplete = true;
 
-  void Executor::create(
-    Program *program_in,
-    mt::CR_INT argc,
-    char *argv[],
-    mt::CR_BOL completingDialog
-  ) {
-    if (program_in) {
-      program = program_in;
-
-      for (int i = 0; i < argc; i++) {
-        inputs.push_back(argv[i]);
+  bool Executor::selectFunction(Command *command) {
+    if (command) {
+      if (dialogComplete) {
+        DIALOG();
+        return true;
+      }
+      else if (command->hasCallback()) {
+        command->run();
+        return true;
       }
     }
-    else Message::printDevError("Executor::create", "Program");
-  }
-
-  void Executor::end() {
-    if (program) {
-      program->remove();
-      inputs = {};
-    }
-    else Message::printDevError("Executor::end", "Program");
+    return false;
   }
 
   void Executor::match(
@@ -53,12 +43,27 @@ namespace cli_menu {
     }
   }
 
-  void Executor::execute() {
-    if (program) {
+  void Executor::run(
+    Program *program_in,
+    mt::CR_INT argc,
+    char *argv[],
+    mt::CR_BOL completingDialog
+  ) {
+    if (program_in) {
+      /** Init */
+
       ParamData paramData;
+      program = program_in;
+      dialogComplete = completingDialog;
 
       Command *lastCom = nullptr,
         *ultimate = nullptr;
+
+      for (int i = 0; i < argc; i++) {
+        inputs.push_back(argv[i]);
+      }
+
+      /** Process */
 
       if (inputs.size() > 1) {
         match(program, &lastCom, &ultimate);
@@ -71,16 +76,24 @@ namespace cli_menu {
           program->pullData(paramData, usedIndexes);
           ultimate->run(paramData);
         }
-        else {
-          if (dialogComplete) DIALOG();
-          else if (program->hasCallback()) program->run();
-          else Message::printProgramError(program, false);
+        // 'lastCom' is definitely exist
+        else if (!selectFunction(lastCom)) {
+          Message::printCommandError(lastCom);
         }
       }
-      else if (lastCom) lastCom->run();
-      else program->run();
+      else if (!selectFunction(lastCom)) {
+        if (lastCom) {
+          Message::printCommandError(lastCom);
+        }
+        else if (!selectFunction(program)) {
+          Message::printProgramError(program, inputs.size() <= 1);
+        }
+      }
+
+      // runtime end
+      program->remove();
     }
-    else Message::printDevError("Executor::execute", "Program");
+    else Message::printDevError("Executor::create", "Program");
   }
 }
 

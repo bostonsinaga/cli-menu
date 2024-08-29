@@ -12,6 +12,8 @@ namespace cli_menu {
     static mt::VEC_UI usedIndexes;
     static bool dialogComplete;
 
+    static bool selectFunction(Command *command);
+
     static void match(
       Command *command,
       Command **lastCom,
@@ -19,19 +21,12 @@ namespace cli_menu {
     );
   
   public:
-    static void create(
+    static void run(
       Program *program_in,
       mt::CR_INT argc,
       char *argv[],
-      mt::CR_BOL completingDialog = true
+      mt::CR_BOL completingDialog
     );
-
-    static void end();
-    static void execute();
-
-    static void completeWithDialog(mt::CR_BOL condition) {
-      dialogComplete = condition;
-    }
   };
 }
 
