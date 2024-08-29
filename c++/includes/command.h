@@ -13,6 +13,7 @@ namespace cli_menu {
   private:
     std::string name, description;
     SP_CALLBACK callback = nullptr;
+    SP_PLAIN_CALLBACK plainCallback = nullptr;
     VEC_COM items;
 
     Command *holder = nullptr,
@@ -24,6 +25,12 @@ namespace cli_menu {
     void cleanItems();
     void setItems(CR_VEC_COM newItems);
     void spreadUltimateDown(Command *newUltimate);
+
+    void setData(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
+      mt::CR_BOL required_in
+    );
 
   protected:
     virtual ~Command();
@@ -41,6 +48,13 @@ namespace cli_menu {
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
+      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL required_in = false
+    );
+
+    Command(
+      mt::CR_STR name_in,
+      mt::CR_STR description_in,
       mt::CR_BOL required_in = false
     );
 
@@ -50,8 +64,9 @@ namespace cli_menu {
     std::string getDescription() { return description; }
 
     void setCallback(CR_SP_CALLBACK callback_in);
-    void setAsUltimate();
+    void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
     void setRequired(mt::CR_BOL condition) { required = condition; }
+    void setAsUltimate();
 
     mt::UI getTier() { return tier; }
     size_t getNumberOfItems() { return items.size(); }
@@ -77,13 +92,9 @@ namespace cli_menu {
     bool isRequired();
     bool isUltimate();
     bool isClassifier();
-    bool hasCallback() { return bool(callback); }
-
-    bool cleanCapturedPositionalInputs(mt::VEC_STR &inputs);
+    bool run();
+    bool run(ParamData &paramData);
     virtual bool match(mt::VEC_STR &inputs) { return false; }
-
-    void run(ParamData &paramData);
-    void run();
 
     void deepPull(
       ParamData &paramData,

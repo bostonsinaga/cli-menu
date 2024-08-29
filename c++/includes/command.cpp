@@ -5,16 +5,34 @@
 
 namespace cli_menu {
 
+  void Command::setData(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    mt::CR_BOL required_in
+  ) {
+    name = name_in;
+    description = description_in;
+    required = required_in;
+  }
+
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
     mt::CR_BOL required_in
   ) {
-    name = name_in;
-    description = description_in;
+    setData(name_in, description_in, required_in);
     callback = callback_in;
-    required = required_in;
+  }
+
+  Command::Command(
+    mt::CR_STR name_in,
+    mt::CR_STR description_in,
+    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL required_in
+  ) {
+    setData(name_in, description_in, required_in);
+    plainCallback = callback_in;
   }
 
   Command::Command(
@@ -22,9 +40,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in
   ) {
-    name = name_in;
-    description = description_in;
-    required = required_in;
+    setData(name_in, description_in, required_in);
   }
 
   Command::~Command() {
@@ -159,24 +175,35 @@ namespace cli_menu {
     callback = callback_in;
   }
 
+  void Command::setCallback(CR_SP_PLAIN_CALLBACK callback_in) {
+    plainCallback.reset();
+    plainCallback = callback_in;
+  }
+
   void Command::setAsUltimate() {
     ultimate = this;
     spreadUltimateDown(this);
   }
 
-  void Command::run(ParamData &paramData) {
+  bool Command::run() {
+    if (plainCallback) {
+      (*plainCallback)();
+      return true;
+    }
+    return false;
+  }
+
+  bool Command::run(ParamData &paramData) {
     if (callback) {
       (*callback)(
         paramData.texts,
         paramData.numbers,
         paramData.conditions
       );
+      return true;
     }
-  }
-
-  void Command::run() {
-    ParamData emptyParamData;
-    run(emptyParamData);
+    else if (run()) return true;
+    return false;
   }
 
   void Command::deepPull(
@@ -195,25 +222,6 @@ namespace cli_menu {
     mt::VEC_UI &usedIndexes
   ) {
     deepPull(paramData, usedIndexes);
-  }
-
-  bool Command::cleanCapturedPositionalInputs(mt::VEC_STR &inputs) {
-    if (this == ultimate) {
-      mt::VEC_INT usedIndexes;
-
-      for (int i = 0; inputs.size(); i++) {
-        if (inputs[i].length() == 0) {
-          usedIndexes.push_back(i);
-        }
-      }
-
-      mt_uti::VecTools<std::string>::cutIndexes(
-        inputs, usedIndexes
-      );
-
-      return true;
-    }
-    return false;
   }
 }
 
