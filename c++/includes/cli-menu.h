@@ -55,6 +55,8 @@ namespace cm = cli_menu;
 )
 #endif
 
+/** CALLBACK */
+
 #ifndef CM_CALLBACK
 #define CM_CALLBACK(FUNCTION) std::make_shared<cli_menu::CALLBACK>(FUNCTION)
 #endif
@@ -65,6 +67,20 @@ namespace cm = cli_menu;
 
 #ifndef CLI_MENU_CALLBACK
 #define CLI_MENU_CALLBACK(FUNCTION) std::make_shared<cli_menu::CALLBACK>(FUNCTION)
+#endif
+
+/** PLAIN CALLBACK */
+
+#ifndef CM_PLAIN_CALLBACK
+#define CM_PLAIN_CALLBACK(FUNCTION) std::make_shared<cli_menu::PLAIN_CALLBACK>(FUNCTION)
+#endif
+
+#ifdef CLI_MENU_PLAIN_CALLBACK
+#undef CLI_MENU_PLAIN_CALLBACK
+#endif
+
+#ifndef CLI_MENU_PLAIN_CALLBACK
+#define CLI_MENU_PLAIN_CALLBACK(FUNCTION) std::make_shared<cli_menu::PLAIN_CALLBACK>(FUNCTION)
 #endif
 
 #endif // __CLI_MENU_H__
