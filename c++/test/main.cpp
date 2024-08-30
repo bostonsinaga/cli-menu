@@ -1,7 +1,7 @@
 #include <iostream>
 #include "cli-menu.h"
 
-CM_FUNCTION(programFun) {
+void programFun() {
   std::cout << "\nWill have default function from 'Program' which displaying error message";
 }
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     "Test 'cli-menu' library",
     "Boston Sinaga",
     cm::Version(1, 0, 0),
-    CM_CALLBACK(programFun)
+    CM_PLAIN_CALLBACK(programFun)
   );
 
   cm::Toggle *dialog = new cm::Toggle(
@@ -39,11 +39,9 @@ int main(int argc, char *argv[]) {
   dialog->addItem(sentence);
   sentence->setAsUltimate();
 
-  cm::Executor::create(testProgram, argc, argv);
-  cm::Executor::execute();
-  cm::Executor::end();
-
+  cm::Executor::run(testProgram, argc, argv, true);
   std::cout << std::endl;
+
   return 0;
 }
 
