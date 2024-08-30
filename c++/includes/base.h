@@ -11,8 +11,9 @@ namespace cli_menu {
 
   // callback format
   typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
+  typedef std::function<void()> PLAIN_CALLBACK;
   typedef std::shared_ptr<CALLBACK> SP_CALLBACK;
-  typedef std::shared_ptr<void()> SP_PLAIN_CALLBACK;
+  typedef std::shared_ptr<PLAIN_CALLBACK> SP_PLAIN_CALLBACK;
   typedef const SP_CALLBACK& CR_SP_CALLBACK;
   typedef const SP_PLAIN_CALLBACK& CR_SP_PLAIN_CALLBACK;
 
