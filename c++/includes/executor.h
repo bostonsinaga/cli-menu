@@ -12,7 +12,8 @@ namespace cli_menu {
     static mt::VEC_UI usedIndexes;
     static bool dialogComplete;
 
-    static bool selectFunction(Command *command);
+    static bool resolveFunction(Command *command);
+    static bool pullDataRun(Command *command);
 
     static void match(
       Command *command,

@@ -10,18 +10,21 @@ namespace cli_menu {
   mt::VEC_UI Executor::usedIndexes = {};
   bool Executor::dialogComplete = true;
 
-  bool Executor::selectFunction(Command *command) {
+  bool Executor::resolveFunction(Command *command) {
     if (command) {
       if (dialogComplete) {
         DIALOG();
         return true;
       }
-      else if (command->hasCallback()) {
-        command->run();
-        return true;
-      }
+      return pullDataRun(command);
     }
     return false;
+  }
+
+  bool Executor::pullDataRun(Command *command) {
+    ParamData paramData;
+    program->pullData(paramData, usedIndexes);
+    return command->run(paramData);
   }
 
   void Executor::match(
@@ -50,9 +53,10 @@ namespace cli_menu {
     mt::CR_BOL completingDialog
   ) {
     if (program_in) {
-      /** Init */
+      //______|
+      // Init |
+      //______|
 
-      ParamData paramData;
       program = program_in;
       dialogComplete = completingDialog;
 
@@ -63,7 +67,9 @@ namespace cli_menu {
         inputs.push_back(argv[i]);
       }
 
-      /** Process */
+      //_________|
+      // Process |
+      //_________|
 
       if (inputs.size() > 1) {
         match(program, &lastCom, &ultimate);
@@ -73,19 +79,18 @@ namespace cli_menu {
 
       if (ultimate) {
         if (ultimate->getTier() <= tierEnd) {
-          program->pullData(paramData, usedIndexes);
-          ultimate->run(paramData);
+          pullDataRun(ultimate);
         }
         // 'lastCom' is definitely exist
-        else if (!selectFunction(lastCom)) {
+        else if (!resolveFunction(lastCom)) {
           Message::printCommandError(lastCom);
         }
       }
-      else if (!selectFunction(lastCom)) {
+      else if (!resolveFunction(lastCom)) {
         if (lastCom) {
           Message::printCommandError(lastCom);
         }
-        else if (!selectFunction(program)) {
+        else if (!resolveFunction(program)) {
           Message::printProgramError(program, inputs.size() <= 1);
         }
       }
