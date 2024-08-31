@@ -161,7 +161,7 @@ namespace cli_menu {
       << "HINT:\n"
       << "* Use '-' for parameter and '--' for toggle\n"
       << "* The <req> or <opt> are only available in parameter (text/number)\n"
-      << "* The toggle (boolean) always optional, except for main command and classifications\n"
+      << "* The toggle (boolean) always optional, except for main command and groups\n"
       << "* Please type '--[command] --help' to view detailed information";
 
     printDecoration(decorDotsCount);
