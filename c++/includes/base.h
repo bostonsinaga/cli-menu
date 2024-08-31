@@ -17,8 +17,6 @@ namespace cli_menu {
   typedef const SP_CALLBACK& CR_SP_CALLBACK;
   typedef const SP_PLAIN_CALLBACK& CR_SP_PLAIN_CALLBACK;
 
-  mt::VEC_STR DIALOG();
-
   struct ParamData {
     mt::VEC_STR texts;
     mt::VEC2_DBL numbers;
