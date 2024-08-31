@@ -94,7 +94,7 @@ namespace cli_menu {
     );
   }
 
-  void Message::printCommandList(
+  void Message::printCommandsSequence(
     Command *command,
     std::string continueString
   ) {
@@ -103,12 +103,12 @@ namespace cli_menu {
         "<" + getObligatoryString(command->isRequired()) + "> ";
 
       for (Command *com : command->getItems()) {
-        printCommandList(com, continueString);
+        printCommandsSequence(com, continueString);
       }
 
       std::cout << continueString << std::endl;
     }
-    else printDevError("Message::printCommandList", "Command");
+    else printDevError("Message::printCommandsSequence", "Command");
   }
 
   void Message::printCommandError(Command *command) {
@@ -116,7 +116,7 @@ namespace cli_menu {
       std::cerr
         << mt_uti::StrTools::getStringToUppercase(command->getName())
         << ": " << getColoredTag(ERROR) << "Please follow the format.\n\n";
-      printCommandList(command);
+      printCommandsSequence(command);
     }
     else printDevError("Message::printCommandError", "Command");
   }
@@ -167,7 +167,7 @@ namespace cli_menu {
     printDecoration(decorDotsCount);
 
     for (Command *com : program->getItems()) {
-      printCommandList(com);
+      printCommandsSequence(com);
     }
   }
 
@@ -191,7 +191,7 @@ namespace cli_menu {
       std::cout << tidyUpText(command->getDescription());
       printDecoration(decorDotsCount);
 
-      printCommandList(command);
+      printCommandsSequence(command);
     }
   }
 }

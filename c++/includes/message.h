@@ -32,7 +32,7 @@ namespace cli_menu {
       mt::CR_STR customMessage = "unassigned"
     );
 
-    static void printCommandList(
+    static void printCommandsSequence(
       Command *command,
       std::string continueString = "\n"
     );
