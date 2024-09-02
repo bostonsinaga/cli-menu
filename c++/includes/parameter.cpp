@@ -50,6 +50,10 @@ namespace cli_menu {
     return getDashedName() + "[" + getStringifiedType() + "]";
   }
 
+  void Parameter::setData(mt::CR_BOL cond, mt::CR_STR str) {
+    if (cond) argument = str;
+  }
+
   void Parameter::pullData(
     ParamData &paramData,
     mt::VEC_UI &usedIndexes

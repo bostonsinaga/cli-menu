@@ -49,7 +49,11 @@ namespace cli_menu {
     std::string getFullName();
     std::string getRawArgument() { return argument; }
     mt::USI getInheritanceFlag() { return PARAMETER; }
-    void setArgument(mt::CR_STR arg) { argument = arg; }
+
+    void setData(
+      mt::CR_BOL cond = false,
+      mt::CR_STR str = ""
+    );
 
     void pullData(
       ParamData &paramData,
