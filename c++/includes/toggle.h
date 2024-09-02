@@ -39,6 +39,11 @@ namespace cli_menu {
     std::string getDashedName();
     std::string getFullName();
 
+    void setData(
+      mt::CR_BOL cond = false,
+      mt::CR_STR str = ""
+    );
+
     void pullData(
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
