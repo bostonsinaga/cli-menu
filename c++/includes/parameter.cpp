@@ -42,8 +42,12 @@ namespace cli_menu {
     return "NUMBER";
   }
 
+  std::string getDashedName() {
+    return "-" + getName();
+  }
+
   std::string Parameter::getFullName() {
-    return "-" + getName() + "[" + getStringifiedType() + "]";
+    return getDashedName() + "[" + getStringifiedType() + "]";
   }
 
   void Parameter::pullData(

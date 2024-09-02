@@ -45,6 +45,7 @@ namespace cli_menu {
     bool match(mt::VEC_STR &inputs);
     bool getType() { return type; }
     std::string getStringifiedType();
+    std::string getDashedName();
     std::string getFullName();
     std::string getRawArgument() { return argument; }
     mt::USI getInheritanceFlag() { return PARAMETER; }
