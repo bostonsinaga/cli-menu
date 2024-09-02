@@ -36,6 +36,7 @@ namespace cli_menu {
     bool match(mt::VEC_STR &inputs);
     bool getCondition() { return condition; }
     mt::USI getInheritanceFlag() { return TOGGLE; }
+    std::string getDashedName();
     std::string getFullName();
 
     void pullData(

@@ -28,8 +28,12 @@ namespace cli_menu {
   ):
   Command(name_in, description_in, required_in) {}
 
-  std::string Toggle::getFullName() {
+  std::string Toggle::getDashedName() {
     return "--" + getName();
+  }
+
+  std::string Toggle::getFullName() {
+    return getDashedName();
   }
 
   void Toggle::pullData(
