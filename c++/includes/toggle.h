@@ -38,11 +38,7 @@ namespace cli_menu {
     mt::USI getInheritanceFlag() { return TOGGLE; }
     std::string getDashedName();
     std::string getFullName();
-
-    void setData(
-      mt::CR_BOL cond = false,
-      mt::CR_STR str = ""
-    );
+    void setData(mt::CR_BOL cond) { condition = cond; }
 
     void pullData(
       ParamData &paramData,
