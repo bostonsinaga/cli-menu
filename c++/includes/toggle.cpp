@@ -36,10 +36,6 @@ namespace cli_menu {
     return getDashedName();
   }
 
-  void Toggle::setData(mt::CR_BOL cond, mt::CR_STR str) {
-    condition = cond;
-  }
-
   void Toggle::pullData(
     ParamData &paramData,
     mt::VEC_UI &usedIndexes
