@@ -7,18 +7,28 @@
 namespace cli_menu {
   class Message {
   private:
-    enum {HINT, WARNING, ERROR, SUCCEED, CANCELED};
 
     static std::string tidyUpText(mt::CR_STR text);
     static std::string getObligatoryString(mt::CR_BOL isRequired);
     static std::string getColoredTag(mt::CR_INT flag);
 
+    static const mt::USI colorCodes[] = {30, 31, 32, 33, 34, 35, 36, 37};
+    static const colorsCount = 8;
+
   public:
+    enum STATUS {HINT, WARNING, ERROR, SUCCEED, CANCELED};
+    enum COLOR {BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, LIGHT_BLUE, WHITE};
+
     static void print(
       mt::CR_INT flag,
       std::string text,
       std::string name = "",
       bool toUppercase = true
+    );
+
+    static std::string customColored(
+      mt::USI code,
+      mt::CR_STR text
     );
 
     static void printDecoration(
