@@ -13,10 +13,15 @@ namespace cli_menu {
   bool Executor::resolveFunction(Command *command) {
     if (command) {
       if (dialogComplete) {
-        DIALOG();
-        return true;
+        mt::USI flag = command->dialog();
+
+        if (flag == Command::DIALOG_FLAG.COMPLETE) {
+          return pullDataRun(command);
+        }
+        else { // CANCELED
+          Message::print(Message::STATUS.CANCELED, "program terminated");
+        }
       }
-      return pullDataRun(command);
     }
     return false;
   }
@@ -24,7 +29,15 @@ namespace cli_menu {
   bool Executor::pullDataRun(Command *command) {
     ParamData paramData;
     program->pullData(paramData, usedIndexes);
-    return command->run(paramData);
+
+    if (command->run(paramData)) {
+      Message::print(Message::STATUS.SUCCEED, "output file written to 'foo.kml'");
+      return true;
+    }
+    else {
+      Message::print(Message::STATUS.ERROR, "problem with input");
+      return false;
+    }
   }
 
   void Executor::match(
@@ -81,7 +94,7 @@ namespace cli_menu {
         if (ultimate->getTier() <= tierEnd) {
           pullDataRun(ultimate);
         }
-        // 'lastCom' is definitely exist
+        // 'lastCom' is a group
         else if (!resolveFunction(lastCom)) {
           Message::printCommandError(lastCom);
         }
