@@ -34,22 +34,30 @@ namespace cli_menu {
     else return "<opt>";
   }
 
+  std::string Message::customColored(
+    mt::USI code,
+    mt::CR_STR text
+  ) {
+    if (code < 0 || code > colorsCount) code = COLOR.WHITE;
+    return "\033[" + std::to_string(colorCodes[code]) + "m" + text + "\033[0m";
+  }
+
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
-      case HINT: {
-        return "\033[34mHINT. \033[0m";
+      case STATUS.HINT: {
+        return customColored(COLOR.LIGHT_BLUE, "HINT. ");
       }
-      case WARNING: {
-        return "\033[33mWARNING. \033[0m";
+      case STATUS.WARNING: {
+        return customColored(COLOR.YELLOW, "WARNING. ");
       }
-      case ERROR: {
-        return "\033[31mERROR. \033[0m";
+      case STATUS.ERROR: {
+        return customColored(COLOR.RED, "ERROR. ");
       }
-      case SUCCEED: {
-        return "\033[32mSUCCEED. \033[0m";
+      case STATUS.SUCCEED: {
+        return customColored(COLOR.GREEN, "SUCCEED. ");
       }
-      case CANCELED: {
-        return "\033[35mCANCELED. \033[0m";
+      case STATUS.CANCELED: {
+        return customColored(COLOR.BLUE, "CANCELED. ");
       }
     }
     return "";
@@ -87,7 +95,7 @@ namespace cli_menu {
     mt::CR_STR paramTypeName,
     mt::CR_STR customMessage
   ) {
-    print(ERROR,
+    print(STATUS.ERROR,
       customMessage + " '" + paramTypeName + "'",
       "cli_menu::" + funName,
       false
@@ -115,7 +123,7 @@ namespace cli_menu {
     if (command) {
       std::cerr
         << mt_uti::StrTools::getStringToUppercase(command->getName())
-        << ": " << getColoredTag(ERROR) << "Please follow the format.\n\n";
+        << ": " << getColoredTag(STATUS.ERROR) << "Please follow the format.\n\n";
       printCommandsSequence(command);
     }
     else printDevError("Message::printCommandError", "Command");
@@ -134,7 +142,7 @@ namespace cli_menu {
     if (isEmpty) about = "no input provided";
     else about = "invalid inputs";
 
-    print(ERROR,
+    print(STATUS.ERROR,
       about + ". Please type '--help' or '--menu' for available commands",
       program->getName()
     );
