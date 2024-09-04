@@ -26,16 +26,24 @@ namespace cli_menu {
     void setItems(CR_VEC_COM newItems);
     void spreadUltimateDown(Command *newUltimate);
 
-    void setData(
+    void setMetaData(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_BOL required_in
     );
 
+    static void printHelp(bool isClosed);
+    static mt::USI chooseQuestion(ParamData &paramData);
+    mt::USI closedQuestion(ParamData &paramData);
+    mt::USI openQuestion(ParamData &paramData);
+    mt::USI select(ParamData &paramData);
+
   protected:
     virtual ~Command();
 
   public:
+    enum DIALOG_FLAG {CANCELED, INCOMPLETE, COMPLETE};
+
     Command() {}
 
     Command(
@@ -59,9 +67,21 @@ namespace cli_menu {
     );
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
+    virtual std::string getDashedName() { return name; }
     virtual std::string getFullName() { return name; }
     std::string getName() { return name; }
     std::string getDescription() { return description; }
+
+    VEC_STR getTreeNamesVector(
+      mt::CR_BOL fully = false,
+      mt::CR_BOL withThis = false
+    );
+
+    std::string getTreeNames(
+      mt::CR_STR separator = " ",
+      mt::CR_BOL fully = false,
+      mt::CR_BOL withThis = false
+    );
 
     void setCallback(CR_SP_CALLBACK callback_in);
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
@@ -75,7 +95,10 @@ namespace cli_menu {
     Command *getHolder() { return holder; }
     Command *getUltimate() { return ultimate; }
 
+    Command *hasItem(Command *command);
+    Command *hasItem(mt::CR_STR name_in);
     Command *getItem(mt::CR_INT index);
+    Command *getItem(mt::CR_STR name_in);
     Command *getRoot();
 
     VEC_COM setItemsRelease(CR_VEC_COM newItems);
@@ -89,11 +112,18 @@ namespace cli_menu {
     void setHolder(Command *newHolder, bool addBack = true);
     void remove();
 
+    mt::USI dialog(std::string &statusDescription);
+
     bool isRequired();
     bool isUltimate();
-    bool isClassifier();
+    bool isGroup();
+    bool isSupporter();
+    bool isOptional();
     bool run();
     bool run(ParamData &paramData);
+
+    virtual bool setData(mt::CR_STR str) {}
+    virtual bool setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
 
     void deepPull(
