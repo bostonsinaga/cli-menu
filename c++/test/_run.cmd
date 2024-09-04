@@ -1,1 +1,1 @@
-"../build/test/TEST.exe"
+"../build/test/test.exe"
