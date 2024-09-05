@@ -24,6 +24,7 @@ namespace cli_menu {
     bool required = false;
 
     void cleanItems();
+    void sewNext(CR_INT index);
     void setItems(CR_VEC_COM newItems);
     void spreadUltimateDown(Command *newUltimate);
 
