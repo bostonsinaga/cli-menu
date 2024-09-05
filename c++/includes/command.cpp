@@ -48,6 +48,9 @@ namespace cli_menu {
     description = "";
     tier = 0;
     items = {};
+    next = nullptr;
+    holder = nullptr;
+    ultimate = nullptr;
     callback.reset();
   }
 
@@ -85,9 +88,15 @@ namespace cli_menu {
   }
 
   void Command::setItems(CR_VEC_COM newItems) {
-    items = newItems;
-    for (Command *com : items) {
-      if (com) com->setHolder(this, false);
+    items = {};
+
+    for (Command *com : newItems) {
+      if (com) items.push_back(com);
+    }
+
+    for (int i = 0; i < items.size(); i++) {
+      items[i]->setHolder(this, false);
+      if (i > 0) items[i-1]->next = items[i];
     }
   }
 
@@ -105,13 +114,23 @@ namespace cli_menu {
   void Command::addItem(Command *command) {
     if (command) {
       command->setHolder(this, false);
+      Command *last = items.back();
       items.push_back(command);
+      last->next = command;
     }
   }
 
   void Command::cleanItems() {
     for (Command *com : items) {
-      if (com) com->remove();
+      com->remove(false);
+    }
+  }
+
+  void Command::sewNext(CR_INT index) {
+    if (index > 0 &&
+      items.size() > index + 1
+    ) {
+      items[index - 1]->next = items[index + 1];
     }
   }
 
@@ -120,6 +139,7 @@ namespace cli_menu {
 
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == command) {
+        sewNext(i);
         items[i]->remove();
         mt_uti::VecTools<Command*>::cutSingle(items, i);
         break;
@@ -129,6 +149,7 @@ namespace cli_menu {
 
   void Command::removeItem(int index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      sewNext(index);
       items[index]->remove();
       mt_uti::VecTools<Command*>::cutSingle(items, index);
     }
@@ -139,6 +160,7 @@ namespace cli_menu {
 
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == command) {
+        sewNext(i);
         items[i]->holder = nullptr;
         mt_uti::VecTools<Command*>::cutSingle(items, i);
         tier = 0;
@@ -149,6 +171,7 @@ namespace cli_menu {
 
   void Command::releaseItem(int index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
+      sewNext(index);
       items[index]->holder = nullptr;
       mt_uti::VecTools<Command*>::cutSingle(items, index);
       tier = 0;
@@ -164,8 +187,10 @@ namespace cli_menu {
     }
   }
 
-  void Command::remove() {
-    for (Command *com : items) com->holder = nullptr;
+  void Command::remove(mt::CR_BOL firstOccurrence) {
+    if (firstOccurrence && holder) {
+      holder->releaseItem(this);
+    }
     cleanItems();
     delete this;
   }
@@ -180,8 +205,7 @@ namespace cli_menu {
   }
 
   bool Command::isGroup() {
-    if (ultimate) return tier < ultimate->tier;
-    return false;
+    return !items.empty() && !ultimate;
   }
 
   bool Command::isSupporter() {
@@ -353,14 +377,16 @@ namespace cli_menu {
     Command::printHelp(false);
 
     while (std::getline(std::cin, buffer)) {
-      bool isEnter = isOptional buffer == ":e";
+      bool isEnter = isOptional() && buffer == ":e";
 
       if (buffer == ":q") return DIALOG_FLAG.CANCELED;
       else if (buffer == ":w") {
         setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
         return Command::chooseQuestion(next);
       }
-      else if ()
+      else if (isEnter) {
+        return DIALOG_FLAG.COMPLETE
+      }
 
       strVec.push_back(buffer);
     }
