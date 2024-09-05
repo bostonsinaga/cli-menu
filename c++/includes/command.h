@@ -16,7 +16,8 @@ namespace cli_menu {
     SP_PLAIN_CALLBACK plainCallback = nullptr;
     VEC_COM items;
 
-    Command *holder = nullptr,
+    Command *next = nullptr,
+      *holder = nullptr,
       *ultimate = nullptr;
 
     mt::UI tier = 0;
@@ -42,7 +43,7 @@ namespace cli_menu {
     virtual ~Command();
 
   public:
-    enum DIALOG_FLAG {CANCELED, INCOMPLETE, COMPLETE};
+    enum DIALOG_FLAG {CANCELED, COMPLETE};
 
     Command() {}
 
@@ -92,6 +93,7 @@ namespace cli_menu {
     size_t getNumberOfItems() { return items.size(); }
 
     VEC_COM getItems() { return items; }
+    Command *getNext() { return next; }
     Command *getHolder() { return holder; }
     Command *getUltimate() { return ultimate; }
 
@@ -110,7 +112,7 @@ namespace cli_menu {
     void releaseItem(Command *command);
     void releaseItem(int index);
     void setHolder(Command *newHolder, bool addBack = true);
-    void remove();
+    void remove(mt::CR_BOL firstOccurrence = true);
 
     mt::USI dialog(std::string &statusDescription);
 
