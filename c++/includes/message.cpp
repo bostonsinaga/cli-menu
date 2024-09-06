@@ -84,7 +84,7 @@ namespace cli_menu {
     }
   }
 
-  void Message::printDecoration(mt::CR_INT count, mt::CR_CHR ch) {
+  void Message::printDecoration(mt::CR_INT count, mt::CR_CH ch) {
     std::cout << std::endl;
     for (int i = 0; i < count; i++) { std::cout << ch; }
     std::cout << std::endl;
