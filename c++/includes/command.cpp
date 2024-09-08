@@ -48,6 +48,7 @@ namespace cli_menu {
     description = "";
     tier = 0;
     items = {};
+    requiredItems = {};
     next = nullptr;
     holder = nullptr;
     ultimate = nullptr;
@@ -101,22 +102,28 @@ namespace cli_menu {
   }
 
   VEC_COM Command::setItemsRelease(CR_VEC_COM newItems) {
-    VEC_COM oldItems = items;
-    setItems(newItems);
-    return oldItems;
+    if (!isSupporter()) {
+      VEC_COM oldItems = items;
+      setItems(newItems);
+      return oldItems;
+    }
+    return {};
   }
 
   void Command::setItemsReplace(CR_VEC_COM newItems) {
-    cleanItems();
-    setItems(newItems);
+    if (!isSupporter()) {
+      cleanItems();
+      setItems(newItems);
+    }
   }
 
   void Command::addItem(Command *command) {
-    if (command) {
+    if (command && !isSupporter()) {
       command->setHolder(this, false);
       Command *last = items.back();
       items.push_back(command);
       last->next = command;
+      updateRequiredItems(target, true);
     }
   }
 
@@ -134,47 +141,53 @@ namespace cli_menu {
     }
   }
 
+  Command* Command::dismantle(CR_INT index) {
+    Command *target = items[index];
+    sewNext(index);
+    updateRequiredItems(target, false);
+    mt_uti::VecTools<Command*>::cutSingle(items, index);
+  }
+
+  void Command::dismantleRemove(CR_INT index) {
+    dismantle(index)->remove(true);
+  }
+
+  Command* Command::dismantleRelease(CR_INT index) {
+    items[index]->tier = 0;
+    items[index]->holder = nullptr;
+    return dismantle(index);
+  }
+
   void Command::removeItem(Command *command) {
     if (!command) return;
 
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == command) {
-        sewNext(i);
-        items[i]->remove();
-        mt_uti::VecTools<Command*>::cutSingle(items, i);
+        dismantleRemove(i);
         break;
       }
     }
   }
 
-  void Command::removeItem(int index) {
+  void Command::removeItem(CR_INT index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
-      sewNext(index);
-      items[index]->remove();
-      mt_uti::VecTools<Command*>::cutSingle(items, index);
+      dismantleRemove(index);
     }
   }
 
-  void Command::releaseItem(Command *command) {
+  Command *Command::releaseItem(Command *command) {
     if (!command) return;
 
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == command) {
-        sewNext(i);
-        items[i]->holder = nullptr;
-        mt_uti::VecTools<Command*>::cutSingle(items, i);
-        tier = 0;
-        break;
+        return dismantleRelease(i);
       }
     }
   }
 
-  void Command::releaseItem(int index) {
+  Command *Command::releaseItem(CR_INT index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
-      sewNext(index);
-      items[index]->holder = nullptr;
-      mt_uti::VecTools<Command*>::cutSingle(items, index);
-      tier = 0;
+      return dismantleRelease(index);
     }
   }
 
@@ -182,6 +195,7 @@ namespace cli_menu {
     if (newHolder) {
       if (holder) holder->releaseItem(this);
       if (addBack) newHolder->addItem(this);
+      if (newHolder->isUltimate()) ultimate = newHolder;
       holder = newHolder;
       tier = holder->tier + 1;
     }
@@ -195,9 +209,25 @@ namespace cli_menu {
     delete this;
   }
 
-  bool Command::isRequired() {
-    if (ultimate) return tier <= ultimate->tier || required;
-    return false;
+  int Command::getRequiredCount() {
+    if (ultimate) return ultimate->requiredItems.size();
+    return 0;
+  }
+
+  void Command::updateRequiredItems(Command *command, CR_BOL adding) {
+    if (isUltimate() && command->isRequired()) {
+
+      int index = mt_uti::VecTools<Command*>::getIndex(
+        requiredItems, command
+      );
+
+      if (adding && index == -1) {
+        requiredItems.push_back(command);
+      }
+      else if (!adding && index != -1) {
+        mt_uti::VecTools<Command*>::cutSingle(requiredItems, index);
+      }
+    }
   }
 
   bool Command::isUltimate() {
@@ -213,15 +243,26 @@ namespace cli_menu {
     return false;
   }
 
+  bool Command::isRequired() {
+    return isGroup() || required;
+  }
+
   bool Command::isOptional() {
     return !isRequired();
   }
 
-  void Command::spreadUltimateDown(Command *newUltimate) {
+  void Command::collapseUltimateItems(
+    Command *newUltimate,
+    VEC_COM &united
+  ) {
     ultimate = newUltimate;
+    mt_uti::VecTools<Command*>::concat(united, items);
+
     for (Command *com : items) {
-      com->spreadUltimateDown(newUltimate);
+      com->collapseUltimateItems(newUltimate, united);
     }
+
+    items = {};
   }
 
   VEC_STR Command::getTreeNamesVector(
@@ -268,8 +309,19 @@ namespace cli_menu {
   }
 
   void Command::setAsUltimate() {
-    ultimate = this;
-    spreadUltimateDown(this);
+    VEC_COM united;
+    Command *last = nullptr;
+
+    collapseUltimateItems(this, united);
+    items = united;
+
+    for (Command *com : united) {
+      if (last) last->next = com;
+      updateRequiredItems(com, true);
+      com->holder = this;
+      com->tier = tier + 1;
+      last = com;
+    }
   }
 
   bool Command::run() {
@@ -332,6 +384,24 @@ namespace cli_menu {
     std::cout << std::endl;
   }
 
+  void Command::printError_enter(CR_BOL selecting) {
+    std::string about;
+
+    if (selecting) about = "main command";
+    else about = "all required parameters are met";
+
+    std::cout << "Cannot use ':e' before " << about << ". Try Again:\n\n";
+  }
+
+  void Command::printError_next(CR_BOL selecting) {
+    std::string about;
+
+    if (selecting) about = "before main command";
+    else about = "with empty input on required parameter";
+
+    std::cout << "Cannot use ':w' " << about << ". Try Again:\n\n";
+  }
+
   // with and after ultimate (supporters)
   mt::USI Command::chooseQuestion(Command *com) {
     if (com) {
@@ -370,6 +440,7 @@ namespace cli_menu {
 
   // with and after ultimate (supporters)
   mt::USI Toggle::openQuestion() {
+
     mt::VEC_STR strVec;
     std::string buffer;
 
@@ -377,18 +448,23 @@ namespace cli_menu {
     Command::printHelp(false);
 
     while (std::getline(std::cin, buffer)) {
-      bool isEnter = isOptional() && buffer == ":e";
+      bool inputPassed = isOptional() || (isRequired() && !strVec.empty());
 
       if (buffer == ":q") return DIALOG_FLAG.CANCELED;
       else if (buffer == ":w") {
-        setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-        return Command::chooseQuestion(next);
+        if (inputPassed) {
+          setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
+          return Command::chooseQuestion(next);
+        }
+        else printError_next(false);
       }
-      else if (isEnter) {
-        return DIALOG_FLAG.COMPLETE
+      else if (buffer == ":e") {
+        if (getRequiredCount() == 0 && inputPassed) {
+          return DIALOG_FLAG.COMPLETE;
+        }
+        else printError_enter(false);
       }
-
-      strVec.push_back(buffer);
+      else strVec.push_back(buffer);
     }
   }
 
@@ -403,12 +479,8 @@ namespace cli_menu {
     while (std::getline(std::cin, nameTest)) {
 
       if (nameTest == ":q") return DIALOG_FLAG.CANCELED;
-      else if (nameTest == ":w") {
-        std::cout << "Cannot use ':w' before ultimate command. Try Again:\n\n";
-      }
-      else if (nameTest == ":e") {
-        std::cout << "Cannot use ':e' before optional argument. Try Again:\n\n";
-      }
+      else if (buffer == ":w") printError_next(true);
+      else if (buffer == ":e") printError_enter(true);
 
       Command *next = getItem(nameTest);
 

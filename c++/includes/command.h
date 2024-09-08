@@ -14,7 +14,9 @@ namespace cli_menu {
     std::string name, description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
-    VEC_COM items;
+
+    VEC_COM items,
+      requiredItems; // only exists in the 'ultimate' scope
 
     Command *next = nullptr,
       *holder = nullptr,
@@ -23,10 +25,22 @@ namespace cli_menu {
     mt::UI tier = 0;
     bool required = false;
 
+    int getRequiredCount();
+    void updateRequiredItems(Command *command, CR_BOL adding);
+
     void cleanItems();
     void sewNext(CR_INT index);
     void setItems(CR_VEC_COM newItems);
-    void spreadUltimateDown(Command *newUltimate);
+    void remove(mt::CR_BOL firstOccurrence);
+
+    Command* dismantle(CR_INT index);
+    void dismantleRemove(CR_INT index);
+    Command* dismantleRelease(CR_INT index);
+
+    void collapseUltimateItems(
+      Command *newUltimate,
+      VEC_COM &united
+    );
 
     void setMetaData(
       mt::CR_STR name_in,
@@ -34,7 +48,10 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
+    /** DIALOG */
     static void printHelp(bool isClosed);
+    static void printError_enter(CR_BOL selecting);
+    static void printError_next(CR_BOL selecting);
     static mt::USI chooseQuestion(ParamData &paramData);
     mt::USI closedQuestion(ParamData &paramData);
     mt::USI openQuestion(ParamData &paramData);
@@ -107,20 +124,25 @@ namespace cli_menu {
     VEC_COM setItemsRelease(CR_VEC_COM newItems);
     void setItemsReplace(CR_VEC_COM newItems);
 
+    /**
+     * Cannot change 'items',
+     * if this an 'ultimate' supporter.
+     */
+
     void addItem(Command *command);
     void removeItem(Command *command);
-    void removeItem(int index);
+    void removeItem(CR_INT index);
     void releaseItem(Command *command);
-    void releaseItem(int index);
+    void releaseItem(CR_INT index);
     void setHolder(Command *newHolder, bool addBack = true);
-    void remove(mt::CR_BOL firstOccurrence = true);
+    void remove() { remove(true); }
 
     mt::USI dialog(std::string &statusDescription);
 
-    bool isRequired();
     bool isUltimate();
     bool isGroup();
     bool isSupporter();
+    bool isRequired();
     bool isOptional();
     bool run();
     bool run(ParamData &paramData);
