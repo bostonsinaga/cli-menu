@@ -118,11 +118,15 @@ namespace cli_menu {
   }
 
   void Command::addItem(Command *command) {
+
     if (command && !isSupporter()) {
       command->setHolder(this, false);
-      Command *last = items.back();
+
+      if (!items.empty()) {
+        items.back()->next = command;
+      }
+
       items.push_back(command);
-      last->next = command;
       updateRequiredItems(command, true);
     }
   }
@@ -184,12 +188,15 @@ namespace cli_menu {
         return dismantleRelease(i);
       }
     }
+
+    return nullptr;
   }
 
   Command *Command::releaseItem(mt::CR_INT index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
       return dismantleRelease(index);
     }
+    return nullptr;
   }
 
   void Command::setHolder(Command *newHolder, bool addBack) {
@@ -437,6 +444,8 @@ namespace cli_menu {
 
       if (willBreak) return Command::chooseQuestion(next);
     }
+
+    return DIALOG_FLAG.CANCELED;
   }
 
   // with and after ultimate (supporters)
@@ -467,6 +476,8 @@ namespace cli_menu {
       }
       else strVec.push_back(buffer);
     }
+
+    return DIALOG_FLAG.CANCELED;
   }
 
   // before ultimate (groups)
@@ -496,6 +507,8 @@ namespace cli_menu {
         Command::printHelp(false);
       }
     }
+
+    return DIALOG_FLAG.CANCELED;
   }
 
   mt::USI Command::dialog() {
