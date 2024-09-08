@@ -123,7 +123,7 @@ namespace cli_menu {
       Command *last = items.back();
       items.push_back(command);
       last->next = command;
-      updateRequiredItems(target, true);
+      updateRequiredItems(command, true);
     }
   }
 
@@ -133,7 +133,7 @@ namespace cli_menu {
     }
   }
 
-  void Command::sewNext(CR_INT index) {
+  void Command::sewNext(mt::CR_INT index) {
     if (index > 0 &&
       items.size() > index + 1
     ) {
@@ -141,18 +141,19 @@ namespace cli_menu {
     }
   }
 
-  Command* Command::dismantle(CR_INT index) {
+  Command* Command::dismantle(mt::CR_INT index) {
     Command *target = items[index];
     sewNext(index);
     updateRequiredItems(target, false);
     mt_uti::VecTools<Command*>::cutSingle(items, index);
+    return target;
   }
 
-  void Command::dismantleRemove(CR_INT index) {
+  void Command::dismantleRemove(mt::CR_INT index) {
     dismantle(index)->remove(true);
   }
 
-  Command* Command::dismantleRelease(CR_INT index) {
+  Command* Command::dismantleRelease(mt::CR_INT index) {
     items[index]->tier = 0;
     items[index]->holder = nullptr;
     return dismantle(index);
@@ -169,14 +170,14 @@ namespace cli_menu {
     }
   }
 
-  void Command::removeItem(CR_INT index) {
+  void Command::removeItem(mt::CR_INT index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
       dismantleRemove(index);
     }
   }
 
   Command *Command::releaseItem(Command *command) {
-    if (!command) return;
+    if (!command) return nullptr;
 
     for (int i = 0; i < items.size(); i++) {
       if (items[i] == command) {
@@ -185,7 +186,7 @@ namespace cli_menu {
     }
   }
 
-  Command *Command::releaseItem(CR_INT index) {
+  Command *Command::releaseItem(mt::CR_INT index) {
     if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
       return dismantleRelease(index);
     }
@@ -214,7 +215,7 @@ namespace cli_menu {
     return 0;
   }
 
-  void Command::updateRequiredItems(Command *command, CR_BOL adding) {
+  void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
     if (isUltimate() && command->isRequired()) {
 
       int index = mt_uti::VecTools<Command*>::getIndex(
@@ -265,11 +266,11 @@ namespace cli_menu {
     items = {};
   }
 
-  VEC_STR Command::getTreeNamesVector(
+  mt::VEC_STR Command::getTreeNamesVector(
     mt::CR_BOL fully,
     mt::CR_BOL withThis
   ) {
-    VEC_STR names;
+    mt::VEC_STR names;
     Command *root = this;
 
     std::function<void()> chooseName = [&]() {
@@ -384,7 +385,7 @@ namespace cli_menu {
     std::cout << std::endl;
   }
 
-  void Command::printError_enter(CR_BOL selecting) {
+  void Command::printError_enter(mt::CR_BOL selecting) {
     std::string about;
 
     if (selecting) about = "main command";
@@ -393,7 +394,7 @@ namespace cli_menu {
     std::cout << "Cannot use ':e' before " << about << ". Try Again:\n\n";
   }
 
-  void Command::printError_next(CR_BOL selecting) {
+  void Command::printError_next(mt::CR_BOL selecting) {
     std::string about;
 
     if (selecting) about = "before main command";
@@ -422,7 +423,7 @@ namespace cli_menu {
 
     while (std::getline(std::cin, buffer)) {
 
-      StrTools::changeStringToLowercase(buffer);
+      mt_uti::StrTools::changeStringToLowercase(buffer);
       bool willBreak = false;
 
       if (buffer == "y" || "yes") {
@@ -439,7 +440,7 @@ namespace cli_menu {
   }
 
   // with and after ultimate (supporters)
-  mt::USI Toggle::openQuestion() {
+  mt::USI Command::openQuestion() {
 
     mt::VEC_STR strVec;
     std::string buffer;
@@ -479,8 +480,8 @@ namespace cli_menu {
     while (std::getline(std::cin, nameTest)) {
 
       if (nameTest == ":q") return DIALOG_FLAG.CANCELED;
-      else if (buffer == ":w") printError_next(true);
-      else if (buffer == ":e") printError_enter(true);
+      else if (nameTest == ":w") printError_next(true);
+      else if (nameTest == ":e") printError_enter(true);
 
       Command *next = getItem(nameTest);
 

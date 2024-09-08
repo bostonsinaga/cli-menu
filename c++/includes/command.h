@@ -26,16 +26,16 @@ namespace cli_menu {
     bool required = false;
 
     int getRequiredCount();
-    void updateRequiredItems(Command *command, CR_BOL adding);
+    void updateRequiredItems(Command *command, mt::CR_BOL adding);
 
     void cleanItems();
-    void sewNext(CR_INT index);
+    void sewNext(mt::CR_INT index);
     void setItems(CR_VEC_COM newItems);
     void remove(mt::CR_BOL firstOccurrence);
 
-    Command* dismantle(CR_INT index);
-    void dismantleRemove(CR_INT index);
-    Command* dismantleRelease(CR_INT index);
+    Command* dismantle(mt::CR_INT index);
+    void dismantleRemove(mt::CR_INT index);
+    Command* dismantleRelease(mt::CR_INT index);
 
     void collapseUltimateItems(
       Command *newUltimate,
@@ -50,18 +50,20 @@ namespace cli_menu {
 
     /** DIALOG */
     static void printHelp(bool isClosed);
-    static void printError_enter(CR_BOL selecting);
-    static void printError_next(CR_BOL selecting);
-    static mt::USI chooseQuestion(ParamData &paramData);
-    mt::USI closedQuestion(ParamData &paramData);
-    mt::USI openQuestion(ParamData &paramData);
-    mt::USI select(ParamData &paramData);
+    static void printError_enter(mt::CR_BOL selecting);
+    static void printError_next(mt::CR_BOL selecting);
+    static mt::USI chooseQuestion(Command *com);
+    mt::USI closedQuestion();
+    mt::USI openQuestion();
+    mt::USI select();
 
   protected:
     virtual ~Command();
 
   public:
-    enum DIALOG_FLAG {CANCELED, COMPLETE};
+    static struct {
+      enum {CANCELED, COMPLETE};
+    } DIALOG_FLAG;
 
     Command() {}
 
@@ -91,7 +93,7 @@ namespace cli_menu {
     std::string getName() { return name; }
     std::string getDescription() { return description; }
 
-    VEC_STR getTreeNamesVector(
+    mt::VEC_STR getTreeNamesVector(
       mt::CR_BOL fully = false,
       mt::CR_BOL withThis = false
     );
@@ -115,8 +117,8 @@ namespace cli_menu {
     Command *getHolder() { return holder; }
     Command *getUltimate() { return ultimate; }
 
-    Command *hasItem(Command *command);
-    Command *hasItem(mt::CR_STR name_in);
+    bool hasItem(Command *command);
+    bool hasItem(mt::CR_STR name_in);
     Command *getItem(mt::CR_INT index);
     Command *getItem(mt::CR_STR name_in);
     Command *getRoot();
@@ -131,13 +133,13 @@ namespace cli_menu {
 
     void addItem(Command *command);
     void removeItem(Command *command);
-    void removeItem(CR_INT index);
-    void releaseItem(Command *command);
-    void releaseItem(CR_INT index);
+    void removeItem(mt::CR_INT index);
+    Command *releaseItem(Command *command);
+    Command *releaseItem(mt::CR_INT index);
     void setHolder(Command *newHolder, bool addBack = true);
     void remove() { remove(true); }
 
-    mt::USI dialog(std::string &statusDescription);
+    mt::USI dialog();
 
     bool isUltimate();
     bool isGroup();
@@ -147,8 +149,8 @@ namespace cli_menu {
     bool run();
     bool run(ParamData &paramData);
 
-    virtual bool setData(mt::CR_STR str) {}
-    virtual bool setData(mt::CR_BOL cond) {}
+    virtual void setData(mt::CR_STR str) {}
+    virtual void setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
 
     void deepPull(
