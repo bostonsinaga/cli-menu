@@ -42,7 +42,7 @@ namespace cli_menu {
     return "NUMBER";
   }
 
-  std::string getDashedName() {
+  std::string Parameter::getDashedName() {
     return "-" + getName();
   }
 
