@@ -12,12 +12,17 @@ namespace cli_menu {
     static std::string getObligatoryString(mt::CR_BOL isRequired);
     static std::string getColoredTag(mt::CR_INT flag);
 
-    static const mt::USI colorCodes[] = {30, 31, 32, 33, 34, 35, 36, 37};
-    static const colorsCount = 8;
+    static constexpr mt::USI colorCodes[8] = {30, 31, 32, 33, 34, 35, 36, 37};
+    static constexpr mt::USI colorsCount = 8;
 
   public:
-    enum STATUS {HINT, WARNING, ERROR, SUCCEED, CANCELED};
-    enum COLOR {BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, LIGHT_BLUE, WHITE};
+    static struct { enum {
+      HINT, WARNING, ERROR, SUCCEED, CANCELED
+    }; } STATUS;
+
+    static struct { enum {
+      BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, LIGHT_BLUE, WHITE
+    }; } COLOR;
 
     static void print(
       mt::CR_INT flag,
