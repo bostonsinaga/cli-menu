@@ -376,7 +376,7 @@ namespace cli_menu {
       static bool isInit = true;
 
       if (isInit) {
-        std::cout << "(cancel = ':q', next = ':w', enter = ':e')\n";
+        std::cout << "(Yes = Y, No = N)\n";
         isInit = false;
       }
     }
@@ -384,7 +384,7 @@ namespace cli_menu {
       static bool isInit = true;
 
       if (isInit) {
-        std::cout << "(Yes = 'Y', No = 'N')\n";
+        std::cout << "(cancel = :q, next = :w, enter = :e)\n";
         isInit = false;
       }
     }
