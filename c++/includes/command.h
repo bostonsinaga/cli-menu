@@ -24,6 +24,7 @@ namespace cli_menu {
 
     mt::UI tier = 0;
     bool required = false;
+    static std::string boundaryLine;
 
     int getRequiredCount();
     void updateRequiredItems(Command *command, mt::CR_BOL adding);
@@ -127,10 +128,10 @@ namespace cli_menu {
     void setItemsReplace(CR_VEC_COM newItems);
 
     /**
+     * NOTE :
      * Cannot change 'items',
      * if this an 'ultimate' supporter.
      */
-
     void addItem(Command *command);
     void removeItem(Command *command);
     void removeItem(mt::CR_INT index);
@@ -138,8 +139,6 @@ namespace cli_menu {
     Command *releaseItem(mt::CR_INT index);
     void setHolder(Command *newHolder, bool addBack = true);
     void remove() { remove(true); }
-
-    mt::USI dialog();
 
     bool isUltimate();
     bool isGroup();
@@ -152,6 +151,7 @@ namespace cli_menu {
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
+    mt::USI dialog();
 
     void deepPull(
       ParamData &paramData,
@@ -162,6 +162,10 @@ namespace cli_menu {
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
     );
+
+    // invoked in constructors with default size of 20
+    static void setBoundaryLine(mt::CR_SI size);
+    static void printBoundaryLine();
   };
 }
 

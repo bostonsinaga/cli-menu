@@ -4,6 +4,9 @@
 #include "command.h"
 
 namespace cli_menu {
+  //______________|
+  // CONSTRUCTORS |
+  //______________|
 
   void Command::setMetaData(
     mt::CR_STR name_in,
@@ -13,6 +16,7 @@ namespace cli_menu {
     name = name_in;
     description = description_in;
     required = required_in;
+    setBoundaryLine(20);
   }
 
   Command::Command(
@@ -54,6 +58,10 @@ namespace cli_menu {
     ultimate = nullptr;
     callback.reset();
   }
+
+  //___________________|
+  // PARENT - CHILDREN |
+  //___________________|
 
   bool Command::hasItem(Command *command) {
     for (Command *com : items) {
@@ -217,27 +225,6 @@ namespace cli_menu {
     delete this;
   }
 
-  int Command::getRequiredCount() {
-    if (ultimate) return ultimate->requiredItems.size();
-    return 0;
-  }
-
-  void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
-    if (isUltimate() && command->isRequired()) {
-
-      int index = mt_uti::VecTools<Command*>::getIndex(
-        requiredItems, command
-      );
-
-      if (adding && index == -1) {
-        requiredItems.push_back(command);
-      }
-      else if (!adding && index != -1) {
-        mt_uti::VecTools<Command*>::cutSingle(requiredItems, index);
-      }
-    }
-  }
-
   bool Command::isUltimate() {
     return this == ultimate;
   }
@@ -257,20 +244,6 @@ namespace cli_menu {
 
   bool Command::isOptional() {
     return !isRequired();
-  }
-
-  void Command::collapseUltimateItems(
-    Command *newUltimate,
-    VEC_COM &united
-  ) {
-    ultimate = newUltimate;
-    mt_uti::VecTools<Command*>::concat(united, items);
-
-    for (Command *com : items) {
-      com->collapseUltimateItems(newUltimate, united);
-    }
-
-    items = {};
   }
 
   mt::VEC_STR Command::getTreeNamesVector(
@@ -304,6 +277,45 @@ namespace cli_menu {
       getTreeNamesVector(fully, withThis),
       separator
     );
+  }
+
+  //__________|
+  // ULTIMATE |
+  //__________|
+
+  int Command::getRequiredCount() {
+    if (ultimate) return ultimate->requiredItems.size();
+    return 0;
+  }
+
+  void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
+    if (isUltimate() && command->isRequired()) {
+
+      int index = mt_uti::VecTools<Command*>::getIndex(
+        requiredItems, command
+      );
+
+      if (adding && index == -1) {
+        requiredItems.push_back(command);
+      }
+      else if (!adding && index != -1) {
+        mt_uti::VecTools<Command*>::cutSingle(requiredItems, index);
+      }
+    }
+  }
+
+  void Command::collapseUltimateItems(
+    Command *newUltimate,
+    VEC_COM &united
+  ) {
+    ultimate = newUltimate;
+    mt_uti::VecTools<Command*>::concat(united, items);
+
+    for (Command *com : items) {
+      com->collapseUltimateItems(newUltimate, united);
+    }
+
+    items = {};
   }
 
   void Command::setCallback(CR_SP_CALLBACK callback_in) {
@@ -370,6 +382,10 @@ namespace cli_menu {
   ) {
     deepPull(paramData, usedIndexes);
   }
+
+  //________|
+  // DIALOG |
+  //________|
 
   void Command::printHelp(bool isClosed) {
     if (isClosed) {
@@ -485,8 +501,9 @@ namespace cli_menu {
     std::string nameTest;
     static std::string treeNames = getTreeNames(" ", true);
 
+    printBoundaryLine();
     treeNames += getFullName() + " ";
-    std::cout << "\n\n" << treeNames << ":\n\n";
+    std::cout << "\n" << treeNames << ":\n\n";
 
     while (std::getline(std::cin, nameTest)) {
 
@@ -516,6 +533,21 @@ namespace cli_menu {
       return select();
     }
     return Command::chooseQuestion(this);
+  }
+
+  std::string Command::boundaryLine = "";
+
+  void Command::setBoundaryLine(mt::CR_SI size) {
+    if (size < 0) {
+      boundaryLine = "";
+    }
+    else {
+      boundaryLine = "\n" + std::string(size, '_');
+    }
+  }
+
+  void Command::printBoundaryLine() {
+    std::cout << boundaryLine;
   }
 }
 
