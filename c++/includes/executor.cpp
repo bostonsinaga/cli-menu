@@ -19,7 +19,11 @@ namespace cli_menu {
           return pullDataRun(command);
         }
         else { // CANCELED
-          Message::print(Message::STATUS.CANCELED, "program terminated");
+          Message::print(
+            Message::STATUS.CANCELED,
+            "program terminated",
+            program->getName()
+          );
         }
       }
     }
@@ -31,11 +35,19 @@ namespace cli_menu {
     program->pullData(paramData, usedIndexes);
 
     if (command->run(paramData)) {
-      Message::print(Message::STATUS.SUCCEED, "output file written to 'foo.kml'");
+      Message::print(
+        Message::STATUS.SUCCEED,
+        "output file written to 'foo.kml'",
+        program->getName()
+      );
       return true;
     }
     else {
-      Message::print(Message::STATUS.ERROR, "problem with input");
+      Message::print(
+        Message::STATUS.ERROR,
+        "problem with input",
+        program->getName()
+      );
       return false;
     }
   }
