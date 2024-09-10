@@ -24,6 +24,7 @@ namespace cli_menu {
             "program terminated",
             program->getName()
           );
+          return true;
         }
       }
     }
@@ -124,6 +125,9 @@ namespace cli_menu {
       program->remove();
     }
     else Message::printDevError("Executor::create", "Program");
+
+    // tidy new line
+    std::cout << std::endl;
   }
 }
 
