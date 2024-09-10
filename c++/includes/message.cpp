@@ -85,9 +85,10 @@ namespace cli_menu {
   }
 
   void Message::printDecoration(mt::CR_INT count, mt::CR_CH ch) {
-    std::cout << std::endl;
-    for (int i = 0; i < count; i++) { std::cout << ch; }
-    std::cout << std::endl;
+    if (count > 0) {
+      std::string decor(count, ch);
+      std::cout << std::endl << decor << std::endl;
+    }
   }
 
   void Message::printDevError(
@@ -155,7 +156,7 @@ namespace cli_menu {
     }
 
     std::string programName = program->getName();
-    int decorDotsCount = programName.length() * 2;
+    int decorsCount = programName.length() * 2;
     mt_uti::StrTools::changeStringToUppercase(programName);
 
     std::cout << "Welcome to '" << programName << "'\n\n";
@@ -163,7 +164,7 @@ namespace cli_menu {
     std::cout << "version: " << program->getVersion().stringify() << std::endl;
     std::cout << "author: " << program->getAuthor();
 
-    printDecoration(decorDotsCount);
+    printDecoration(decorsCount);
 
     std::cout
       << "HINT:\n"
@@ -172,7 +173,7 @@ namespace cli_menu {
       << "* The toggle (boolean) always optional, except for main command and groups\n"
       << "* Please type '--[command] --help' to view detailed information";
 
-    printDecoration(decorDotsCount);
+    printDecoration(decorsCount);
 
     for (Command *com : program->getItems()) {
       printCommandsSequence(com);
@@ -190,14 +191,14 @@ namespace cli_menu {
     }
     else {
       std::string comName = command->getName();
-      int decorDotsCount = comName.length() * 2;
+      int decorsCount = comName.length() * 2;
       mt_uti::StrTools::changeStringToUppercase(comName);
 
       std::cout << comName << ':';
-      printDecoration(decorDotsCount);
+      printDecoration(decorsCount);
 
       std::cout << tidyUpText(command->getDescription());
-      printDecoration(decorDotsCount);
+      printDecoration(decorsCount);
 
       printCommandsSequence(command);
     }
