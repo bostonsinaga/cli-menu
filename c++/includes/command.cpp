@@ -16,7 +16,7 @@ namespace cli_menu {
     name = name_in;
     description = description_in;
     required = required_in;
-    setBoundaryLine(20);
+    setBoundaryLine(40);
   }
 
   Command::Command(
@@ -387,43 +387,43 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  void Command::printHelp(bool isClosed) {
-    if (isClosed) {
-      static bool isInit = true;
+  void Command::printHelp(mt::CR_USI flag) {
+    static bool isInits[] = {true, true, true};
 
-      if (isInit) {
-        std::cout << "(Yes = Y, No = N)\n";
-        isInit = false;
-      }
-    }
-    else {
-      static bool isInit = true;
+    static const std::string abbreviations[] = {
+      "\033[3m(yes = y, no = n, or boolean)\033[0m\n",
+      "\033[3m(cancel = :q, next = :w, enter = :e)\033[0m\n",
+      "\033[3m(cancel = :q)\033[0m\n"
+    };
 
-      if (isInit) {
-        std::cout << "(cancel = :q, next = :w, enter = :e)\n";
-        isInit = false;
-      }
+    if (flag < 3 && isInits[flag]) {
+      isInits[flag] = false;
+      std::cout << abbreviations[flag];
     }
 
     std::cout << std::endl;
   }
 
+  void Command::printTryAgain(mt::CR_STR about) {
+    std::cout << "\n\033[31m> " << about << ". Try Again:\033[0m\n\n";
+  }
+
   void Command::printError_enter(mt::CR_BOL selecting) {
-    std::string about;
+    std::string about = "Cannot enter before ";
 
-    if (selecting) about = "main command";
-    else about = "all required parameters are met";
+    if (selecting) about += "main command";
+    else about += "all required parameters are met";
 
-    std::cout << "Cannot use ':e' before " << about << ". Try Again:\n\n";
+    printTryAgain(about);
   }
 
   void Command::printError_next(mt::CR_BOL selecting) {
-    std::string about;
+    std::string about = "Cannot skip ";
 
-    if (selecting) about = "before main command";
-    else about = "with empty input on required parameter";
+    if (selecting) about += "before main command";
+    else about += "with empty input on required parameter";
 
-    std::cout << "Cannot use ':w' " << about << ". Try Again:\n\n";
+    printTryAgain(about);
   }
 
   // with and after ultimate (supporters)
@@ -439,24 +439,28 @@ namespace cli_menu {
 
   // with and after ultimate (supporters)
   mt::USI Command::closedQuestion() {
-    std::string buffer;
 
-    std::cout << "\n\n" << getFullName() << ":\n";
-    Command::printHelp(true);
+    std::string buffer;
+    printAfterBoundaryLine(getFullName(), PRINT_HELP_FLAG.CLOSED);
 
     while (std::getline(std::cin, buffer)) {
 
       mt_uti::StrTools::changeStringToLowercase(buffer);
       bool willBreak = false;
 
-      if (buffer == "y" || "yes") {
+      if (buffer == "y" || buffer == "yes" ||
+        buffer == "1" || buffer == "true"
+      ) {
         setData(true);
         willBreak = true;
       }
-      else if (buffer == "n" || "no") {
+      else if (buffer == "n" || buffer == "no" ||
+        buffer == "0" || buffer == "false"
+      ) {
         setData(false);
         willBreak = true;
       }
+      else printTryAgain("Only accept boolean values");
 
       if (willBreak) return Command::chooseQuestion(next);
     }
@@ -470,8 +474,7 @@ namespace cli_menu {
     mt::VEC_STR strVec;
     std::string buffer;
 
-    std::cout << "\n\n" << getFullName() << ":\n";
-    Command::printHelp(false);
+    printAfterBoundaryLine(getFullName(), PRINT_HELP_FLAG.OPEN);
 
     while (std::getline(std::cin, buffer)) {
       bool inputPassed = isOptional() || (isRequired() && !strVec.empty());
@@ -499,17 +502,25 @@ namespace cli_menu {
   // before ultimate (groups)
   mt::USI Command::select() {
     std::string nameTest;
-    static std::string treeNames = getTreeNames(" ", true);
 
-    printBoundaryLine();
-    treeNames += getFullName() + " ";
-    std::cout << "\n" << treeNames << ":\n\n";
+    static std::string treeNames = getTreeNames(" ", true);
+    treeNames += getFullName();
+
+    printAfterBoundaryLine(treeNames, PRINT_HELP_FLAG.SELECT);
 
     while (std::getline(std::cin, nameTest)) {
 
-      if (nameTest == ":q") return DIALOG_FLAG.CANCELED;
-      else if (nameTest == ":w") printError_next(true);
-      else if (nameTest == ":e") printError_enter(true);
+      if (nameTest == ":q") {
+        return DIALOG_FLAG.CANCELED;
+      }
+      else if (nameTest == ":w") {
+        printError_next(true);
+        continue;
+      }
+      else if (nameTest == ":e") {
+        printError_enter(true);
+        continue;
+      }
 
       Command *next = getItem(nameTest);
 
@@ -519,10 +530,7 @@ namespace cli_menu {
         }
         return next->select();
       }
-      else {
-        std::cout << "\n\nCommand not found. Try Again:\n";
-        Command::printHelp(false);
-      }
+      else Command::printTryAgain("Command not found");
     }
 
     return DIALOG_FLAG.CANCELED;
@@ -538,16 +546,23 @@ namespace cli_menu {
   std::string Command::boundaryLine = "";
 
   void Command::setBoundaryLine(mt::CR_SI size) {
-    if (size < 0) {
-      boundaryLine = "";
-    }
-    else {
-      boundaryLine = "\n" + std::string(size, '_');
-    }
+    if (size < 0) boundaryLine = "";
+    else boundaryLine = std::string(size, '-');
   }
 
   void Command::printBoundaryLine() {
-    std::cout << boundaryLine;
+    static bool isActive = false;
+    if (isActive) std::cout << boundaryLine;
+    else isActive = true;
+  }
+
+  void Command::printAfterBoundaryLine(
+    mt::CR_STR comName,
+    mt::CR_USI helpFlag
+  ) {
+    printBoundaryLine();
+    std::cout << "\n\033[1m> " << comName << ":\033[0m\n";
+    Command::printHelp(helpFlag);
   }
 }
 
