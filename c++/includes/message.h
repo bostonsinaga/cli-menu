@@ -38,7 +38,7 @@ namespace cli_menu {
 
     static void printDecoration(
       mt::CR_INT count,
-      mt::CR_CH ch = '.'
+      mt::CR_CH ch = '-'
     );
 
     static void printDevError(
