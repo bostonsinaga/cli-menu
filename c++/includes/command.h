@@ -49,14 +49,19 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
-    /** DIALOG */
-    static void printHelp(bool isClosed);
+    static void printHelp(mt::CR_USI flag);
+    static void printTryAgain(mt::CR_STR about);
     static void printError_enter(mt::CR_BOL selecting);
     static void printError_next(mt::CR_BOL selecting);
     static mt::USI chooseQuestion(Command *com);
+
     mt::USI closedQuestion();
     mt::USI openQuestion();
     mt::USI select();
+
+    static struct {
+      enum {CLOSED, OPEN, SELECT};
+    } PRINT_HELP_FLAG;
 
   protected:
     virtual ~Command();
@@ -163,9 +168,15 @@ namespace cli_menu {
       mt::VEC_UI &usedIndexes
     );
 
-    // invoked in constructors with default size of 20
+    // invoked in constructors with default size of 40
     static void setBoundaryLine(mt::CR_SI size);
+
     static void printBoundaryLine();
+
+    void printAfterBoundaryLine(
+      mt::CR_STR about,
+      mt::CR_USI helpFlag
+    );
   };
 }
 
