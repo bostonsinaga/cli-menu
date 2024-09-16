@@ -29,6 +29,9 @@ namespace cli_menu {
     int getRequiredCount();
     void updateRequiredItems(Command *command, mt::CR_BOL adding);
 
+    void cleanDuplicatesInItems();
+    void cleanDuplicateToLastAdded(Command *command);
+
     void cleanItems();
     void sewNext(mt::CR_INT index);
     void setItems(CR_VEC_COM newItems);
@@ -114,6 +117,7 @@ namespace cli_menu {
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
     void setRequired(mt::CR_BOL condition) { required = condition; }
     void setAsUltimate();
+    void resignFromUltimate();
 
     mt::UI getTier() { return tier; }
     size_t getNumberOfItems() { return items.size(); }

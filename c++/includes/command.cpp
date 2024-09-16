@@ -103,6 +103,8 @@ namespace cli_menu {
       if (com) items.push_back(com);
     }
 
+    cleanDuplicatesInItems();
+
     for (int i = 0; i < items.size(); i++) {
       items[i]->setHolder(this, false);
       if (i > 0) items[i-1]->next = items[i];
@@ -135,7 +137,40 @@ namespace cli_menu {
       }
 
       items.push_back(command);
+      cleanDuplicateToLastAdded(command);
       updateRequiredItems(command, true);
+    }
+  }
+
+  void Command::cleanDuplicatesInItems() {
+    std::tuple<VEC_COM, VEC_COM>
+      wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateInside(
+        items, false,
+        [](Command *rep, Command *com)->bool {
+          if (rep->getName() == com->getName()) return true;
+          return false;
+        }
+      );
+
+    // remove duplicates of same name
+    for (Command *com : std::get<1>(wastedTuple)) {
+      com->remove();
+    }
+  }
+
+  void Command::cleanDuplicateToLastAdded(Command *command) {
+    std::tuple<VEC_COM, VEC_COM>
+      wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateToMember(
+        items, command, false,
+        [](Command *rep, Command *com)->bool {
+          if (rep->getName() == com->getName()) return true;
+          return false;
+        }
+      );
+
+    // remove duplicates of same name
+    for (Command *com : std::get<1>(wastedTuple)) {
+      com->remove();
     }
   }
 
@@ -290,16 +325,14 @@ namespace cli_menu {
 
   void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
     if (isUltimate() && command->isRequired()) {
-
-      int index = mt_uti::VecTools<Command*>::getIndex(
-        requiredItems, command
-      );
-
-      if (adding && index == -1) {
+      if (adding) {
         requiredItems.push_back(command);
       }
-      else if (!adding && index != -1) {
-        mt_uti::VecTools<Command*>::cutSingle(requiredItems, index);
+      else {
+        mt_uti::VecTools<Command*>::cutSingle(
+          requiredItems,
+          mt_uti::VecTools<Command*>::getIndex(requiredItems, command)
+        );
       }
     }
   }
@@ -334,6 +367,7 @@ namespace cli_menu {
 
     collapseUltimateItems(this, united);
     items = united;
+    Command::cleanDuplicatesInItems();
 
     for (Command *com : united) {
       if (last) last->next = com;
@@ -341,6 +375,17 @@ namespace cli_menu {
       com->holder = this;
       com->tier = tier + 1;
       last = com;
+    }
+  }
+
+  void Command::resignFromUltimate() {
+    if (isUltimate()) {
+      for (Command *com : items) {
+        com->ultimate = nullptr;
+      }
+
+      ultimate = nullptr;
+      requiredItems = {};
     }
   }
 
