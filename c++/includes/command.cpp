@@ -13,22 +13,13 @@ namespace cli_menu {
     Control::ENTER = ":e",
     Control::NEXT = ":n";
 
-  bool Control::cancelTest(std::string &str) {
+  int Control::test(std::string &str) {
     mt_uti::StrTools::changeStringToLowercase(str);
-    if (str == Control::CANCEL) return true;
-    return false;
-  }
 
-  bool Control::enterTest(std::string &str) {
-    mt_uti::StrTools::changeStringToLowercase(str);
-    if (str == Control::ENTER) return true;
-    return false;
-  }
-
-  bool Control::nextTest(std::string &str) {
-    mt_uti::StrTools::changeStringToLowercase(str);
-    if (str == Control::NEXT) return true;
-    return false;
+    if (str == Control::CANCEL) return 1;
+    else if (str == Control::ENTER) return 2;
+    else if (str == Control::NEXT) return 3;
+    return 0;
   }
 
   //________________________|

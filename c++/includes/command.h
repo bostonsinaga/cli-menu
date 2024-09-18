@@ -8,9 +8,11 @@ namespace cli_menu {
   class Control {
   public:
     static const std::string CANCEL, ENTER, NEXT;
-    static bool cancelTest(std::string &str);
-    static bool enterTest(std::string &str);
-    static bool nextTest(std::string &str);
+    static int test(std::string &str);
+
+    static bool cancelTest(std::string &str) { return test(str) == 1; }
+    static bool enterTest(std::string &str) { return test(str) == 2; }
+    static bool nextTest(std::string &str) { return test(str) == 3; }
   };
 
   class Command;
