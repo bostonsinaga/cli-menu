@@ -38,11 +38,13 @@ namespace cli_menu {
   void Command::setMetaData(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
+    Command *holder_in,
     mt::CR_BOL required_in
   ) {
     name = name_in;
     description = description_in;
     required = required_in;
+    setHolder(holder_in);
     setBoundaryLine(40);
   }
 
@@ -50,9 +52,10 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
+    Command *holder_in,
     mt::CR_BOL required_in
   ) {
-    setMetaData(name_in, description_in, required_in);
+    setMetaData(name_in, description_in, holder_in, required_in);
     callback = callback_in;
   }
 
@@ -60,18 +63,20 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
+    Command *holder_in,
     mt::CR_BOL required_in
   ) {
-    setMetaData(name_in, description_in, required_in);
+    setMetaData(name_in, description_in, holder_in, required_in);
     plainCallback = callback_in;
   }
 
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
+    Command *holder_in,
     mt::CR_BOL required_in
   ) {
-    setMetaData(name_in, description_in, required_in);
+    setMetaData(name_in, description_in, holder_in, required_in);
   }
 
   Command::~Command() {

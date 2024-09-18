@@ -38,7 +38,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_CALLBACK callback_in
   ):
-  Command(name_in, description_in, callback_in, true) {
+  Command(name_in, description_in, callback_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
@@ -50,7 +50,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_PLAIN_CALLBACK callback_in
   ):
-  Command(name_in, description_in, callback_in, true) {
+  Command(name_in, description_in, callback_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
@@ -61,7 +61,7 @@ namespace cli_menu {
     mt::CR_STR author_in,
     CR_VERSION version_in
   ):
-  Command(name_in, description_in, true) {
+  Command(name_in, description_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
