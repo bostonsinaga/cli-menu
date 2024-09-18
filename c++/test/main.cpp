@@ -49,8 +49,7 @@ int main(int argc, char *argv[]) {
     "file name",
     cm::Parameter::TEXT,
     CM_CALLBACK(fileInFun),
-    sentence,
-    true
+    sentence
   );
 
   cm::Parameter *fileOut = new cm::Parameter(
@@ -58,7 +57,8 @@ int main(int argc, char *argv[]) {
     "file name",
     cm::Parameter::TEXT,
     CM_CALLBACK(fileOutFun),
-    fileIn
+    fileIn,
+    true
   );
 
   sentence->setAsUltimate();
