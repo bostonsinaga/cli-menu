@@ -484,36 +484,7 @@ namespace cli_menu {
     std::cout << "\n\033[31m> " << about << ". Try Again:\033[0m\n\n";
   }
 
-  void Command::printError_enter(mt::CR_BOL selecting) {
-    std::string about = "Cannot enter before ";
-
-    if (selecting) about += "parameters";
-    else about += "all required parameters are met";
-
-    printTryAgain(about);
-  }
-
-  void Command::printError_next(mt::CR_BOL selecting) {
-    std::string about = "Cannot skip ";
-
-    if (selecting) about += "before selecting group or command";
-    else about += "with empty input on required parameter";
-
-    printTryAgain(about);
-  }
-
-  // with and after ultimate (supporters)
-  mt::USI Command::chooseQuestion(Command *com) {
-    if (com) {
-      if (com->getInheritanceFlag() == PARAMETER) {
-        return com->openQuestion();
-      }
-      return com->closedQuestion();
-    }
-    return DIALOG_FLAG.COMPLETE;
-  }
-
-  // with and after ultimate (supporters)
+  // called after ultimate
   mt::USI Command::closedQuestion() {
 
     bool willBreak;
@@ -545,17 +516,17 @@ namespace cli_menu {
         if (getRequiredCount() == 0) {
           return DIALOG_FLAG.COMPLETE;
         }
-        else printError_enter(false);
+        else Command::printTryAgain("Cannot enter before all required parameters are met");
       }
-      else printTryAgain("Only accept boolean values");
+      else Command::printTryAgain("Only accept boolean values");
 
-      if (willBreak) return Command::chooseQuestion(next);
+      if (willBreak) return dialog();
     }
 
     return DIALOG_FLAG.CANCELED;
   }
 
-  // with and after ultimate (supporters)
+  // called after ultimate
   mt::USI Command::openQuestion() {
 
     mt::VEC_STR strVec;
@@ -574,14 +545,14 @@ namespace cli_menu {
         if (getRequiredCount() == 0 && inputPassed) {
           return DIALOG_FLAG.COMPLETE;
         }
-        else printError_enter(false);
+        else Command::printTryAgain("Cannot enter before all required parameters are met");
       }
       else if (Control::nextTest(buffer)) {
         if (inputPassed) {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return Command::chooseQuestion(next);
+          return dialog();
         }
-        else printError_next(false);
+        else Command::printTryAgain("Cannot skip with empty input on required parameter");
       }
       else strVec.push_back(buffer);
     }
@@ -589,8 +560,8 @@ namespace cli_menu {
     return DIALOG_FLAG.CANCELED;
   }
 
-  // before ultimate (groups)
-  mt::USI Command::select() {
+  // selection of question, group, or ultimate
+  mt::USI Command::dialog(mt::CR_BOL doneNullptr) {
     std::string nameTest;
 
     static std::string treeNames = getTreeNames(" ", true);
@@ -608,33 +579,32 @@ namespace cli_menu {
         return DIALOG_FLAG.CANCELED;
       }
       else if (Control::enterTest(nameTest)) {
-        printError_enter(true);
+        Command::printTryAgain("Cannot enter before parameters");
         continue;
       }
       else if (Control::nextTest(nameTest)) {
-        printError_next(true);
+        Command::printTryAgain("Cannot skip before selecting group or command");
         continue;
       }
 
-      Command *next = getItem(nameTest);
+      Command *found = getItem(nameTest);
 
-      if (next) {
-        if (next->isSupporter()) {
-          return Command::chooseQuestion(next);
+      if (found) {
+        if (found->isSupporter()) {
+          // choose question
+          if (found->getInheritanceFlag() == PARAMETER) {
+            return found->openQuestion();
+          }
+          return found->closedQuestion();
         }
-        return next->select();
+        return found->dialog();
       }
+      // called from question gives 'true'
+      else if (doneNullptr) return DIALOG_FLAG.COMPLETE;
       else Command::printTryAgain("Command not found");
     }
 
     return DIALOG_FLAG.CANCELED;
-  }
-
-  mt::USI Command::dialog() {
-    if (isGroup() || isUltimate()) {
-      return select();
-    }
-    return Command::chooseQuestion(this);
   }
 
   std::string Command::boundaryLine = "";

@@ -63,13 +63,10 @@ namespace cli_menu {
 
     static void printHelp(mt::CR_BOL idx);
     static void printTryAgain(mt::CR_STR about);
-    static void printError_enter(mt::CR_BOL selecting);
-    static void printError_next(mt::CR_BOL selecting);
-    static mt::USI chooseQuestion(Command *com);
 
     mt::USI closedQuestion();
     mt::USI openQuestion();
-    mt::USI select();
+    mt::USI dialog(mt::CR_BOL doneNullptr);
 
   protected:
     virtual ~Command();
@@ -168,7 +165,7 @@ namespace cli_menu {
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
-    mt::USI dialog();
+    mt::USI dialog() { return dialog(false); }
 
     void deepPull(
       ParamData &paramData,
