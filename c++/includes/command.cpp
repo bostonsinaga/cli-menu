@@ -288,12 +288,11 @@ namespace cli_menu {
   }
 
   bool Command::isGroup() {
-    return !items.empty() && !ultimate;
+    return !ultimate || isUltimate();
   }
 
   bool Command::isSupporter() {
-    if (ultimate) return tier > ultimate->tier;
-    return false;
+    return holder == ultimate;
   }
 
   bool Command::isRequired() {
@@ -578,7 +577,9 @@ namespace cli_menu {
         continue;
       }
 
-      Command *found = getItem(nameTest);
+      Command *found;
+      if (isGroup()) found = getItem(nameTest);
+      else found = ultimate->getItem(nameTest);
 
       if (found) {
         if (found->isSupporter()) {
