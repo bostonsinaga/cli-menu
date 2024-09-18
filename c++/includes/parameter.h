@@ -10,7 +10,7 @@ namespace cli_menu {
     std::string argument;
     bool type = false;
 
-    ~Parameter() {
+    ~Parameter() override {
       argument = "";
       type = false;
     }
@@ -45,19 +45,19 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
-    bool match(mt::VEC_STR &inputs);
+    bool match(mt::VEC_STR &inputs) override;
     bool getType() { return type; }
     std::string getStringifiedType();
-    std::string getDashedName();
-    std::string getFullName();
+    std::string getDashedName() override;
+    std::string getFullName() override;
     std::string getRawArgument() { return argument; }
-    mt::USI getInheritanceFlag() { return PARAMETER; }
-    void setData(mt::CR_STR str) { argument = str; }
+    mt::USI getInheritanceFlag() override { return PARAMETER; }
+    void setData(mt::CR_STR str) override { argument = str; }
 
     void pullData(
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
-    );
+    ) override;
   };
 }
 

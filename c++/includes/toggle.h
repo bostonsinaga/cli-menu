@@ -8,7 +8,7 @@ namespace cli_menu {
   class Toggle : public Command {
   private:
     bool condition = false;
-    ~Toggle() { condition = false; }
+    ~Toggle() override { condition = false; }
 
   public:
     Toggle(): Command() {}
@@ -36,17 +36,17 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
-    bool match(mt::VEC_STR &inputs);
+    bool match(mt::VEC_STR &inputs) override;
     bool getCondition() { return condition; }
-    mt::USI getInheritanceFlag() { return TOGGLE; }
-    std::string getDashedName();
-    std::string getFullName();
-    void setData(mt::CR_BOL cond) { condition = cond; }
+    mt::USI getInheritanceFlag() override { return TOGGLE; }
+    std::string getDashedName() override;
+    std::string getFullName() override;
+    void setData(mt::CR_BOL cond) override { condition = cond; }
 
     void pullData(
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
-    );
+    ) override;
   };
 }
 

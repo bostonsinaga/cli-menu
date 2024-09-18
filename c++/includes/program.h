@@ -30,7 +30,7 @@ namespace cli_menu {
   private:
     std::string author;
     Version version;
-    ~Program();
+    ~Program() override;
 
   public:
     Program();
@@ -60,7 +60,7 @@ namespace cli_menu {
 
     std::string getAuthor() { return author; }
     Version getVersion() { return version; }
-    mt::USI getInheritanceFlag() { return PROGRAM; }
+    mt::USI getInheritanceFlag() override { return PROGRAM; }
   };
 }
 
