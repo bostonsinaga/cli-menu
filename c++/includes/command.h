@@ -32,7 +32,7 @@ namespace cli_menu {
       *holder = nullptr,
       *ultimate = nullptr;
 
-    mt::UI tier = 0;
+    mt::UI tier = 0; // useful in overriding 'match' method
     bool required = false;
     static std::string boundaryLine;
 
