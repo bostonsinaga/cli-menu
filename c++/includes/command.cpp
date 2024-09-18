@@ -655,7 +655,7 @@ namespace cli_menu {
     mt::CR_BOL idx
   ) {
     printBoundaryLine();
-    std::cout << "\n\033[1m> " << comName << ":\033[0m\n";
+    std::cout << "\n\033[1m>" << comName << ":\033[0m\n";
     Command::printHelp(idx);
   }
 }
