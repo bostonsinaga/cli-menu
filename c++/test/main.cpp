@@ -13,6 +13,14 @@ CM_FUNCTION(sentenceFun) {
   std::cout << "\nSentence is called..";
 }
 
+CM_FUNCTION(fileInFun) {
+  std::cout << "\nRead..";
+}
+
+CM_FUNCTION(fileOutFun) {
+  std::cout << "\nWrite..";
+}
+
 int main(int argc, char *argv[]) {
   cm::Program *testProgram = new cm::Program(
     "test",
@@ -25,23 +33,37 @@ int main(int argc, char *argv[]) {
   cm::Toggle *dialog = new cm::Toggle(
     "dialog",
     "Start conversation",
-    CM_CALLBACK(dialogFun)
+    CM_CALLBACK(dialogFun),
+    testProgram
   );
 
-  cm::Parameter *sentence = new cm::Parameter(
+  cm::Toggle *sentence = new cm::Toggle(
     "sentence",
     "Give words with double quotes if have spaces",
-    cm::Parameter::TEXT,
-    CM_CALLBACK(sentenceFun)
+    CM_CALLBACK(sentenceFun),
+    dialog
   );
 
-  testProgram->addItem(dialog);
-  dialog->addItem(sentence);
+  cm::Parameter *fileIn = new cm::Parameter(
+    "file-in",
+    "file name",
+    cm::Parameter::TEXT,
+    CM_CALLBACK(fileInFun),
+    sentence,
+    true
+  );
+
+  cm::Parameter *fileOut = new cm::Parameter(
+    "file-out",
+    "file name",
+    cm::Parameter::TEXT,
+    CM_CALLBACK(fileOutFun),
+    fileIn
+  );
+
   sentence->setAsUltimate();
 
   cm::Executor::run(testProgram, argc, argv, true);
-  std::cout << std::endl;
-
   return 0;
 }
 
