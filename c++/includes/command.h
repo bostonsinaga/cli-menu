@@ -33,15 +33,15 @@ namespace cli_menu {
       *ultimate = nullptr;
 
     mt::UI tier = 0; // useful in overriding 'match' method
-    bool required = false;
     static std::string boundaryLine;
 
-    int getRequiredCount();
-    void updateRequiredItems(Command *command, mt::CR_BOL adding);
+    bool accumulating = false,
+      required = false,
+      used = false;
 
+    void updateRequiredItems(Command *command, mt::CR_BOL adding);
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
-
     void cleanItems();
     void sewNext(mt::CR_INT index);
     void setItems(CR_VEC_COM newItems);
@@ -50,6 +50,10 @@ namespace cli_menu {
     Command* dismantle(mt::CR_INT index);
     void dismantleRemove(mt::CR_INT index);
     Command* dismantleRelease(mt::CR_INT index);
+
+    mt::UI getRequiredCount() {
+      return ultimate->requiredItems.size();
+    }
 
     void collapseUltimateItems(
       Command *newUltimate,
@@ -65,10 +69,10 @@ namespace cli_menu {
 
     static void printHelp(mt::CR_BOL idx);
     static void printTryAgain(mt::CR_STR about);
+    static mt::USI chooseQuestion(Command *command);
 
     mt::USI closedQuestion();
     mt::USI openQuestion();
-    mt::USI dialog(mt::CR_BOL doneNullptr);
 
   protected:
     virtual ~Command();
@@ -122,9 +126,12 @@ namespace cli_menu {
 
     void setCallback(CR_SP_CALLBACK callback_in);
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
-    void setRequired(mt::CR_BOL condition) { required = condition; }
     void setAsUltimate();
     void resignFromUltimate();
+
+    void setAccumulating(mt::CR_BOL condition) { accumulating = condition; }
+    void setRequired(mt::CR_BOL condition) { required = condition; }
+    void setUsed(mt::CR_BOL condition) { used = condition; }
 
     mt::UI getTier() { return tier; }
     size_t getNumberOfItems() { return items.size(); }
@@ -148,26 +155,30 @@ namespace cli_menu {
      * Cannot change 'items',
      * if this an 'ultimate' supporter.
      */
-    void addItem(Command *command);
+    void addItem(Command *command, mt::CR_BOL reconnected = true);
+    void setHolder(Command *newHolder, mt::CR_BOL reconnected = true);
+
     void removeItem(Command *command);
     void removeItem(mt::CR_INT index);
     Command *releaseItem(Command *command);
     Command *releaseItem(mt::CR_INT index);
-    void setHolder(Command *newHolder, bool addBack = true);
     void remove() { remove(true); }
 
-    bool isUltimate();
-    bool isGroup();
-    bool isSupporter();
-    bool isRequired();
-    bool isOptional();
+    bool isUltimate() { return this == ultimate; }
+    bool isGroup() { return !ultimate || isUltimate(); }
+    bool isSupporter() { return holder && holder == ultimate; }
+    bool isRequired() { return isGroup() || required; }
+    bool isOptional() { return !isRequired(); }
+    bool isAccumulating() { return accumulating; }
+    bool isUsed() { return used; }
+
     bool run();
     bool run(ParamData &paramData);
 
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
-    mt::USI dialog() { return dialog(false); }
+    mt::USI dialog();
 
     void deepPull(
       ParamData &paramData,

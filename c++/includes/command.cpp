@@ -79,6 +79,9 @@ namespace cli_menu {
     next = nullptr;
     holder = nullptr;
     ultimate = nullptr;
+    accumulating = false;
+    required = false;
+    used = false;
     callback.reset();
   }
 
@@ -150,10 +153,14 @@ namespace cli_menu {
     }
   }
 
-  void Command::addItem(Command *command) {
-
+  void Command::addItem(
+    Command *command,
+    mt::CR_BOL reconnected
+  ) {
     if (command && !isSupporter()) {
-      command->setHolder(this, false);
+      if (reconnected) {
+        command->setHolder(this, false);
+      }
 
       if (!items.empty()) {
         items.back()->next = command;
@@ -162,6 +169,28 @@ namespace cli_menu {
       items.push_back(command);
       cleanDuplicateToLastAdded(command);
       updateRequiredItems(command, true);
+    }
+  }
+
+  void Command::setHolder(
+    Command *newHolder,
+    mt::CR_BOL reconnected
+  ) {
+    if (newHolder) {
+      if (holder) {
+        holder->releaseItem(this);
+      }
+
+      if (reconnected) {
+        newHolder->addItem(this, false);
+      }
+
+      if (newHolder->isUltimate()) {
+        ultimate = newHolder;
+      }
+
+      holder = newHolder;
+      tier = holder->tier + 1;
     }
   }
 
@@ -226,6 +255,7 @@ namespace cli_menu {
   Command* Command::dismantleRelease(mt::CR_INT index) {
     items[index]->tier = 0;
     items[index]->holder = nullptr;
+    items[index]->ultimate = nullptr;
     return dismantle(index);
   }
 
@@ -265,42 +295,12 @@ namespace cli_menu {
     return nullptr;
   }
 
-  void Command::setHolder(Command *newHolder, bool addBack) {
-    if (newHolder) {
-      if (holder) holder->releaseItem(this);
-      if (addBack) newHolder->addItem(this);
-      if (newHolder->isUltimate()) ultimate = newHolder;
-      holder = newHolder;
-      tier = holder->tier + 1;
-    }
-  }
-
   void Command::remove(mt::CR_BOL firstOccurrence) {
     if (firstOccurrence && holder) {
       holder->releaseItem(this);
     }
     cleanItems();
     delete this;
-  }
-
-  bool Command::isUltimate() {
-    return this == ultimate;
-  }
-
-  bool Command::isGroup() {
-    return !ultimate || isUltimate();
-  }
-
-  bool Command::isSupporter() {
-    return holder == ultimate;
-  }
-
-  bool Command::isRequired() {
-    return isGroup() || required;
-  }
-
-  bool Command::isOptional() {
-    return !isRequired();
   }
 
   mt::VEC_STR Command::getTreeNamesVector(
@@ -339,11 +339,6 @@ namespace cli_menu {
   //__________|
   // ULTIMATE |
   //__________|
-
-  int Command::getRequiredCount() {
-    if (ultimate) return ultimate->requiredItems.size();
-    return 0;
-  }
 
   void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
     if (isUltimate() && command->isRequired()) {
@@ -402,10 +397,7 @@ namespace cli_menu {
 
   void Command::resignFromUltimate() {
     if (isUltimate()) {
-      for (Command *com : items) {
-        com->ultimate = nullptr;
-      }
-
+      for (Command *com : items) com->ultimate = nullptr;
       ultimate = nullptr;
       requiredItems = {};
     }
@@ -474,6 +466,19 @@ namespace cli_menu {
     std::cout << "\n\033[31m> " << about << ". Try Again:\033[0m\n\n";
   }
 
+  mt::USI Command::chooseQuestion(Command *command) {
+    if (command) {
+      if (command->getInheritanceFlag() == PARAMETER) {
+        return command->openQuestion();
+      }
+      return command->closedQuestion();
+    }
+    else if (command->getRequiredCount() == 0) {
+      return DIALOG_FLAG.COMPLETE;
+    }
+    return command->dialog();
+  }
+
   // called after ultimate
   mt::USI Command::closedQuestion() {
 
@@ -510,7 +515,7 @@ namespace cli_menu {
       }
       else Command::printTryAgain("Only accept boolean values");
 
-      if (willBreak) return dialog();
+      if (willBreak) return Command::chooseQuestion(this);
     }
 
     return DIALOG_FLAG.CANCELED;
@@ -540,7 +545,7 @@ namespace cli_menu {
       else if (Control::nextTest(buffer)) {
         if (inputPassed) {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return dialog();
+          return Command::chooseQuestion(this);
         }
         else Command::printTryAgain("Cannot skip with empty input on required parameter");
       }
@@ -550,8 +555,8 @@ namespace cli_menu {
     return DIALOG_FLAG.CANCELED;
   }
 
-  // selection of question, group, or ultimate
-  mt::USI Command::dialog(mt::CR_BOL doneNullptr) {
+  // available to all tiers (command selection)
+  mt::USI Command::dialog() {
     std::string nameTest;
 
     static std::string treeNames = getTreeNames(" ", true);
@@ -583,16 +588,10 @@ namespace cli_menu {
 
       if (found) {
         if (found->isSupporter()) {
-          // choose question
-          if (found->getInheritanceFlag() == PARAMETER) {
-            return found->openQuestion();
-          }
-          return found->closedQuestion();
+          return Command::chooseQuestion(found);
         }
         return found->dialog();
       }
-      // called from question gives 'true'
-      else if (doneNullptr) return DIALOG_FLAG.COMPLETE;
       else Command::printTryAgain("Command not found");
     }
 
