@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include "base.h"
+#include "message.h"
 
 namespace cli_menu {
 
@@ -9,10 +9,9 @@ namespace cli_menu {
   public:
     static const std::string CANCEL, ENTER, NEXT;
     static int test(std::string &str);
-
-    static bool cancelTest(std::string &str) { return test(str) == 1; }
-    static bool enterTest(std::string &str) { return test(str) == 2; }
-    static bool nextTest(std::string &str) { return test(str) == 3; }
+    static bool cancelTest(std::string &str);
+    static bool enterTest(std::string &str);
+    static bool nextTest(std::string &str);
   };
 
   class Command;
@@ -51,6 +50,12 @@ namespace cli_menu {
     void dismantleRemove(mt::CR_INT index);
     Command* dismantleRelease(mt::CR_INT index);
 
+    std::string getBranchLeafString(
+      mt::CR_INT spacesCount,
+      mt::CR_INT columnIndex,
+      mt::CR_BOL withDescription
+    );
+
     mt::UI getRequiredCount() {
       return ultimate->requiredItems.size();
     }
@@ -67,7 +72,7 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
-    static void printHelp(mt::CR_BOL idx);
+    static void printAbbreviations(mt::CR_BOL idx);
     static void printTryAgain(mt::CR_STR about);
     static mt::USI chooseQuestion(Command *command);
 
@@ -113,15 +118,14 @@ namespace cli_menu {
     std::string getName() { return name; }
     std::string getDescription() { return description; }
 
-    mt::VEC_STR getTreeNamesVector(
-      mt::CR_BOL fully = false,
-      mt::CR_BOL withThis = false
+    std::string getInlineRootNames(
+      mt::CR_STR separator,
+      mt::CR_BOL fully
     );
 
-    std::string getTreeNames(
-      mt::CR_STR separator = " ",
-      mt::CR_BOL fully = false,
-      mt::CR_BOL withThis = false
+    std::string getBranchLeafString(
+      int spacesCount,
+      mt::CR_BOL withDescription
     );
 
     void setCallback(CR_SP_CALLBACK callback_in);
@@ -199,6 +203,9 @@ namespace cli_menu {
       mt::CR_STR about,
       mt::CR_BOL idx
     );
+
+    virtual void printHelp();
+    virtual void printError();
   };
 }
 

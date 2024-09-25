@@ -22,6 +22,18 @@ namespace cli_menu {
     return 0;
   }
 
+  bool Control::cancelTest(std::string &str) {
+    return test(str) == 1;
+  }
+
+  bool Control::enterTest(std::string &str) {
+    return test(str) == 2;
+  }
+
+  bool Control::nextTest(std::string &str) {
+    return test(str) == 3;
+  }
+
   //________________________|
   // COMMAND - CONSTRUCTORS |
   //________________________|
@@ -303,37 +315,103 @@ namespace cli_menu {
     delete this;
   }
 
-  mt::VEC_STR Command::getTreeNamesVector(
-    mt::CR_BOL fully,
-    mt::CR_BOL withThis
+  std::string Command::getInlineRootNames(
+    mt::CR_STR separator,
+    mt::CR_BOL fully
   ) {
-    mt::VEC_STR names;
-    Command *root = this;
+    std::string text;
+    Command *root = holder;
 
-    std::function<void()> chooseName = [&]() {
-      if (fully) names.push_back(root->getFullName());
-      else names.push_back(root->name);
-    };
+    static const std::function<void(Command*)>
+      add = [&](Command *com) {
+        text = (fully ? com->getFullName() : com->name) + separator;
+      };
 
-    if (withThis) chooseName();
+    add(this);
 
-    while (root->holder) {
+    // looping up to root
+    while (root) {
+      add(root);
       root = root->holder;
-      chooseName();
     }
 
-    return names;
+    return text;
   }
 
-  std::string Command::getTreeNames(
-    mt::CR_STR separator,
-    mt::CR_BOL fully,
-    mt::CR_BOL withThis
+  std::string Command::getBranchLeafString(
+    mt::CR_INT spacesCount,
+    mt::CR_INT columnIndex,
+    mt::CR_BOL withDescription
   ) {
-    return mt_uti::StrTools::uniteVector(
-      getTreeNamesVector(fully, withThis),
-      separator
-    );
+    static std::string separator = std::string(spacesCount, ' ');
+
+    std::string text;
+    Command *root = holder;
+    int tabsCount = 0;
+
+    // looping up to root
+    while (root) {
+      tabsCount += root->name.length() + separator.length();
+      root = root->holder;
+    }
+
+    text += name + separator;
+
+    if (columnIndex > 0) {
+      text = std::string(tabsCount, ' ') + text;
+    }
+
+    // display a neat description
+    if (withDescription && items.empty()) {
+      mt::VEC_STR lines {""};
+
+      // detect newline characters
+      for (char &ch : description) {
+        lines.back().push_back(ch);
+        if (ch == '\n') lines.push_back("");
+      }
+
+      // get rid empty strings created due to detected newlines
+      for (int i = 0; i < lines.size(); i++) {
+        if (lines[i].empty()) {
+          mini_tools::utils::VecTools<std::string>::cutSingle(lines, i);
+          i--;
+        }
+      }
+
+      // push 'lines' vector to 'text' string
+      for (int i = 0; i < lines.size(); i++) {
+
+        if (i > 0 || columnIndex > 0) {
+          lines[i] = std::string(
+            tabsCount + name.length() + separator.length(), ' '
+          ) + lines[i];
+        }
+
+        text += lines[i];
+      }
+    }
+    // has items (recursion)
+    else for (int i = 0; i < items.size(); i++) {
+      text += items[i]->getBranchLeafString(
+        spacesCount, i, withDescription
+      );
+    }
+
+    // add newline to every index except the last
+    if (holder &&
+      columnIndex < holder->items.size() - 1
+    ) { text += "\n"; }
+
+    return text;
+  }
+
+  std::string Command::getBranchLeafString(
+    int spacesCount,
+    mt::CR_BOL withDescription
+  ) {
+    if (spacesCount < 1) spacesCount = 1;
+    return getBranchLeafString(spacesCount, 0, withDescription);
   }
 
   //__________|
@@ -446,7 +524,7 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  void Command::printHelp(mt::CR_BOL idx) {
+  void Command::printAbbreviations(mt::CR_BOL idx) {
     static bool init[] = {true, true};
 
     static const std::string abbreviations[] = {
@@ -559,14 +637,14 @@ namespace cli_menu {
   mt::USI Command::dialog() {
     std::string nameTest;
 
-    static std::string treeNames = getTreeNames(" ", true);
-    treeNames += " " + getFullName();
+    static std::string inlineNames = getInlineRootNames(" ", true);
+    inlineNames += " " + getFullName();
 
     if (isUltimate()) {
-      treeNames += "\033[32m (main)\033[0m";
+      inlineNames += "\033[32m (main)\033[0m";
     }
 
-    printAfterBoundaryLine(treeNames, false);
+    printAfterBoundaryLine(inlineNames, false);
 
     while (std::getline(std::cin, nameTest)) {
 
@@ -617,7 +695,29 @@ namespace cli_menu {
   ) {
     printBoundaryLine();
     std::cout << "\n\033[1m>" << comName << ":\033[0m\n";
-    Command::printHelp(idx);
+    Command::printAbbreviations(idx);
+  }
+
+  //__________|
+  // MESSAGES |
+  //__________|
+
+  void Command::printHelp() {
+    const int decorsCount = name.length() * 2;
+    std::string uppercase = mt_uti::StrTools::getStringToUppercase(name);
+
+    std::cout << uppercase << ':';
+    Message::printDecoration(decorsCount);
+    std::cout << Message::tidyUpText(getDescription());
+
+    if (isGroup()) {
+      Message::printDecoration(decorsCount);
+      std::cout << getBranchLeafString(1, !isUltimate());
+    }
+  }
+
+  void Command::printError() {
+    std::cerr << "Command Error..";
   }
 }
 
