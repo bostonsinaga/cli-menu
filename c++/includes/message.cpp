@@ -38,26 +38,26 @@ namespace cli_menu {
     mt::USI code,
     mt::CR_STR text
   ) {
-    if (code < 0 || code > colorsCount) code = COLOR.WHITE;
+    if (code < 0 || code > colorsCount) code = COLOR::WHITE;
     return "\033[" + std::to_string(colorCodes[code]) + "m" + text + "\033[0m";
   }
 
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
-      case STATUS.HINT: {
-        return customColored(COLOR.LIGHT_BLUE, "HINT. ");
+      case STATUS::HINT: {
+        return customColored(COLOR::LIGHT_BLUE, "HINT. ");
       }
-      case STATUS.WARNING: {
-        return customColored(COLOR.YELLOW, "WARNING. ");
+      case STATUS::WARNING: {
+        return customColored(COLOR::YELLOW, "WARNING. ");
       }
-      case STATUS.ERROR: {
-        return customColored(COLOR.RED, "ERROR. ");
+      case STATUS::ERROR: {
+        return customColored(COLOR::RED, "ERROR. ");
       }
-      case STATUS.SUCCEED: {
-        return customColored(COLOR.GREEN, "SUCCEED. ");
+      case STATUS::SUCCEED: {
+        return customColored(COLOR::GREEN, "SUCCEED. ");
       }
-      case STATUS.CANCELED: {
-        return customColored(COLOR.BLUE, "CANCELED. ");
+      case STATUS::CANCELED: {
+        return customColored(COLOR::BLUE, "CANCELED. ");
       }
     }
     return "";
@@ -98,7 +98,7 @@ namespace cli_menu {
       boundaryLine = std::string(ct, ch);
     }
 
-    if (ct > 0) std::cout << std::endl << boundaryLine << std::endl;
+    if (ct > 0) std::cout << std::endl << boundaryLine;
   }
 }
 

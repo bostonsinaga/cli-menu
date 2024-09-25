@@ -11,13 +11,13 @@ namespace cli_menu {
     static constexpr mt::USI colorsCount = 8;
 
   public:
-    static struct { enum {
+    enum STATUS {
       HINT, WARNING, ERROR, SUCCEED, CANCELED
-    }; } STATUS;
+    };
 
-    static struct { enum {
+    enum COLOR {
       BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, LIGHT_BLUE, WHITE
-    }; } COLOR;
+    };
 
     static std::string getColoredTag(mt::CR_INT flag);
     static std::string tidyUpText(mt::CR_STR text);
@@ -36,7 +36,7 @@ namespace cli_menu {
     );
 
     static void printBoundaryLine(
-      mt::CR_INT count = 40,
+      mt::CR_INT count = 45,
       mt::CR_CH character = '-'
     );
   };
