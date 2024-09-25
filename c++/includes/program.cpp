@@ -70,6 +70,32 @@ namespace cli_menu {
     author = "";
     version.clean();
   }
+
+  void Program::printHelp() {
+    int decorsCount = getName().length() * 2;
+    std::string uppercase = mt_uti::StrTools::getStringToUppercase(getName());
+
+    std::cout << "Welcome to '" << uppercase << "'\n\n";
+
+    std::cout << "version: " << getVersion().stringify() << std::endl;
+    std::cout << "author: " << getAuthor();
+
+    Message::printDecoration(decorsCount);
+
+    std::cout
+      << "HINT:\n"
+      << "* Use '-' for parameter and '--' for toggle\n"
+      << "* The <req> or <opt> are only available in parameter (text/number)\n"
+      << "* The toggle (boolean) always optional, except for main command and groups\n"
+      << "* Please type '--[command] --help' to view detailed information";
+
+    Message::printDecoration(decorsCount);
+    std::cout << getBranchLeafString(1, true);
+  }
+
+  void Program::printError() {
+    std::cerr << "Program Error..";
+  }
 }
 
 #endif // __CLI_MENU__PROGRAM_CPP__

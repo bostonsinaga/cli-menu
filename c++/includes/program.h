@@ -61,6 +61,9 @@ namespace cli_menu {
     std::string getAuthor() { return author; }
     Version getVersion() { return version; }
     mt::USI getInheritanceFlag() override { return PROGRAM; }
+
+    void printHelp() override;
+    void printError() override;
   };
 }
 
