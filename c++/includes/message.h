@@ -35,9 +35,9 @@ namespace cli_menu {
       mt::CR_STR text
     );
 
-    static void printDecoration(
-      mt::CR_INT count,
-      mt::CR_CH ch = '-'
+    static void printBoundaryLine(
+      mt::CR_INT count = 40,
+      mt::CR_CH character = '-'
     );
   };
 }

@@ -84,11 +84,21 @@ namespace cli_menu {
     }
   }
 
-  void Message::printDecoration(mt::CR_INT count, mt::CR_CH ch) {
-    if (count > 0) {
-      std::string decor(count, ch);
-      std::cout << std::endl << decor << std::endl;
+  void Message::printBoundaryLine(
+    mt::CR_INT count,
+    mt::CR_CH character
+  ) {
+    static int ct = 0;
+    static char ch;
+    static std::string boundaryLine;
+
+    if (count > 0 && (ct != count || ch != character)) {
+      ct = count;
+      ch = character;
+      boundaryLine = std::string(ct, ch);
     }
+
+    if (ct > 0) std::cout << std::endl << boundaryLine << std::endl;
   }
 }
 
