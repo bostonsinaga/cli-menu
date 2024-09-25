@@ -39,12 +39,6 @@ namespace cli_menu {
       mt::CR_INT count,
       mt::CR_CH ch = '-'
     );
-
-    static void printDevError(
-      mt::CR_STR funName,
-      mt::CR_STR paramTypeName,
-      mt::CR_STR customMessage = "unassigned"
-    );
   };
 }
 

@@ -90,18 +90,6 @@ namespace cli_menu {
       std::cout << std::endl << decor << std::endl;
     }
   }
-
-  void Message::printDevError(
-    mt::CR_STR funName,
-    mt::CR_STR paramTypeName,
-    mt::CR_STR customMessage
-  ) {
-    print(STATUS.ERROR,
-      customMessage + " '" + paramTypeName + "'",
-      "cli_menu::" + funName,
-      false
-    );
-  }
 }
 
 #endif // __CLI_MENU__MESSAGE_CPP__
