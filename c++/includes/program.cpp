@@ -72,15 +72,12 @@ namespace cli_menu {
   }
 
   void Program::printHelp() {
-    int decorsCount = getName().length() * 2;
-    std::string uppercase = mt_uti::StrTools::getStringToUppercase(getName());
+    std::cout
+      << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(getName())
+      << "'\n\nversion: " << getVersion().stringify()
+      << "\nauthor: " << getAuthor();
 
-    std::cout << "Welcome to '" << uppercase << "'\n\n";
-
-    std::cout << "version: " << getVersion().stringify() << std::endl;
-    std::cout << "author: " << getAuthor();
-
-    Message::printDecoration(decorsCount);
+    Message::printBoundaryLine();
 
     std::cout
       << "HINT:\n"
@@ -89,7 +86,7 @@ namespace cli_menu {
       << "* The toggle (boolean) always optional, except for main command and groups\n"
       << "* Please type '--[command] --help' to view detailed information";
 
-    Message::printDecoration(decorsCount);
+    Message::printBoundaryLine();
     std::cout << getBranchLeafString(1, true);
   }
 
