@@ -124,7 +124,12 @@ namespace cli_menu {
       // runtime end
       program->remove();
     }
-    else Message::printDevError("Executor::create", "Program");
+    else Message::print(
+      Message::STATUS.ERROR,
+      "unassigned 'Program'",
+      "cli_menu::Executor::run",
+      false
+    );
 
     // tidy new line
     std::cout << std::endl;
