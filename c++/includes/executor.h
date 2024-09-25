@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__EXECUTOR_H__
 #define __CLI_MENU__EXECUTOR_H__
 
-#include "message.h"
+#include "program.h"
 
 namespace cli_menu {
 
