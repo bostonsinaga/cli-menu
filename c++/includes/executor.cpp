@@ -15,12 +15,12 @@ namespace cli_menu {
       if (dialogComplete) {
         mt::USI flag = command->dialog();
 
-        if (flag == Command::DIALOG_FLAG.COMPLETE) {
+        if (flag == Command::DIALOG::COMPLETE) {
           return pullDataRun(command);
         }
         else { // CANCELED
           Message::print(
-            Message::STATUS.CANCELED,
+            Message::STATUS::CANCELED,
             "program terminated",
             program->getName()
           );
@@ -37,7 +37,7 @@ namespace cli_menu {
 
     if (command->run(paramData)) {
       Message::print(
-        Message::STATUS.SUCCEED,
+        Message::STATUS::SUCCEED,
         "output file written to 'foo.kml'",
         program->getName()
       );
@@ -45,7 +45,7 @@ namespace cli_menu {
     }
     else {
       Message::print(
-        Message::STATUS.ERROR,
+        Message::STATUS::ERROR,
         "problem with input",
         program->getName()
       );
@@ -125,7 +125,7 @@ namespace cli_menu {
       program->remove();
     }
     else Message::print(
-      Message::STATUS.ERROR,
+      Message::STATUS::ERROR,
       "unassigned 'Program'",
       "cli_menu::Executor::run",
       false
