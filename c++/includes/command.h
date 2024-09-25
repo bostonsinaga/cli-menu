@@ -31,7 +31,8 @@ namespace cli_menu {
       *holder = nullptr,
       *ultimate = nullptr;
 
-    mt::UI tier = 0; // useful in overriding 'match' method
+    // useful in overriding 'match' method
+    mt::UI tier = 0;
     static std::string boundaryLine;
 
     bool accumulating = false,
@@ -72,7 +73,6 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
-    static void printAbbreviations(mt::CR_BOL idx);
     static void printTryAgain(mt::CR_STR about);
     static mt::USI chooseQuestion(Command *command);
 
@@ -83,9 +83,7 @@ namespace cli_menu {
     virtual ~Command();
 
   public:
-    static struct {
-      enum {CANCELED, COMPLETE};
-    } DIALOG_FLAG;
+    enum DIALOG { CANCELED, COMPLETE };
 
     Command() {}
 
@@ -194,14 +192,9 @@ namespace cli_menu {
       mt::VEC_UI &usedIndexes
     );
 
-    // invoked in constructors with default size of 40
-    static void setBoundaryLine(mt::CR_SI size);
-
-    static void printBoundaryLine();
-
     void printAfterBoundaryLine(
       mt::CR_STR about,
-      mt::CR_BOL idx
+      mt::CR_BOL isOpen
     );
 
     virtual void printHelp();

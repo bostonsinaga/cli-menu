@@ -48,7 +48,6 @@ namespace cli_menu {
     description = description_in;
     required = required_in;
     setHolder(holder_in);
-    setBoundaryLine(40);
   }
 
   Command::Command(
@@ -524,24 +523,11 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  void Command::printAbbreviations(mt::CR_BOL idx) {
-    static bool init[] = {true, true};
-
-    static const std::string abbreviations[] = {
-      "\033[3m(cancel = :c, enter = :e, next = :n, previous = :p)\033[0m\n",
-      "\033[3m(yes = y, no = n, or boolean)\033[0m\n"
-    };
-
-    if (init[idx]) {
-      init[idx] = false;
-      std::cout << abbreviations[idx];
-    }
-
-    std::cout << std::endl;
-  }
-
   void Command::printTryAgain(mt::CR_STR about) {
-    std::cout << "\n\033[31m> " << about << ". Try Again:\033[0m\n\n";
+    std::cerr << Message::customColored(
+      Message::COLOR::RED,
+      "\n> " + about + ". Try Again:\n\n"
+    );
   }
 
   mt::USI Command::chooseQuestion(Command *command) {
@@ -552,7 +538,7 @@ namespace cli_menu {
       return command->closedQuestion();
     }
     else if (command->getRequiredCount() == 0) {
-      return DIALOG_FLAG.COMPLETE;
+      return DIALOG::COMPLETE;
     }
     return command->dialog();
   }
@@ -562,7 +548,8 @@ namespace cli_menu {
 
     bool willBreak;
     std::string buffer;
-    printAfterBoundaryLine(getFullName(), true);
+
+    Command::printAfterBoundaryLine(getFullName(), false);
 
     while (std::getline(std::cin, buffer)) {
 
@@ -583,20 +570,24 @@ namespace cli_menu {
         willBreak = true;
       }
       else if (Control::cancelTest(buffer)) {
-        return DIALOG_FLAG.CANCELED;
+        return DIALOG::CANCELED;
       }
       else if (Control::enterTest(buffer)) {
         if (getRequiredCount() == 0) {
-          return DIALOG_FLAG.COMPLETE;
+          return DIALOG::COMPLETE;
         }
-        else Command::printTryAgain("Cannot enter before all required parameters are met");
+        else Command::printTryAgain(
+          "Cannot enter before all required parameters are met"
+        );
       }
-      else Command::printTryAgain("Only accept boolean values");
+      else Command::printTryAgain(
+        "Only accept boolean values"
+      );
 
       if (willBreak) return Command::chooseQuestion(this);
     }
 
-    return DIALOG_FLAG.CANCELED;
+    return DIALOG::CANCELED;
   }
 
   // called after ultimate
@@ -606,57 +597,72 @@ namespace cli_menu {
     std::string buffer;
     bool inputPassed;
 
-    printAfterBoundaryLine(getFullName(), false);
+    Command::printAfterBoundaryLine(getFullName(), true);
 
     while (std::getline(std::cin, buffer)) {
       inputPassed = isOptional() || (isRequired() && !strVec.empty());
 
       if (Control::cancelTest(buffer)) {
-        return DIALOG_FLAG.CANCELED;
+        return DIALOG::CANCELED;
       }
       else if (Control::enterTest(buffer)) {
         if (getRequiredCount() == 0 && inputPassed) {
-          return DIALOG_FLAG.COMPLETE;
+          return DIALOG::COMPLETE;
         }
-        else Command::printTryAgain("Cannot enter before all required parameters are met");
+        else Command::printTryAgain(
+          "Cannot enter before all required parameters are met"
+        );
       }
       else if (Control::nextTest(buffer)) {
         if (inputPassed) {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
           return Command::chooseQuestion(this);
         }
-        else Command::printTryAgain("Cannot skip with empty input on required parameter");
+        else Command::printTryAgain(
+          "Cannot skip with empty input on required parameter"
+        );
       }
       else strVec.push_back(buffer);
     }
 
-    return DIALOG_FLAG.CANCELED;
+    return DIALOG::CANCELED;
   }
 
   // available to all tiers (command selection)
   mt::USI Command::dialog() {
-    std::string nameTest;
 
-    static std::string inlineNames = getInlineRootNames(" ", true);
+    std::string nameTest;
+    static std::string inlineNames = "";
+
+    if (inlineNames.empty() && holder) {
+      inlineNames += holder->getInlineRootNames(" ", true);
+    }
+
     inlineNames += " " + getFullName();
 
     if (isUltimate()) {
-      inlineNames += "\033[32m (main)\033[0m";
+      inlineNames += Message::customColored(
+        Message::COLOR::GREEN, " (main)"
+      );
     }
 
-    printAfterBoundaryLine(inlineNames, false);
+    Command::printAfterBoundaryLine(inlineNames, true);
 
     while (std::getline(std::cin, nameTest)) {
 
       if (Control::cancelTest(nameTest)) {
-        return DIALOG_FLAG.CANCELED;
+        return DIALOG::CANCELED;
       }
       else if (Control::enterTest(nameTest)) {
-        Command::printTryAgain("Cannot enter before parameters");
+        Command::printTryAgain(
+          "Cannot enter before parameters"
+        );
         continue;
       }
       else if (Control::nextTest(nameTest)) {
-        Command::printTryAgain("Cannot skip before selecting group or command");
+        Command::printTryAgain(
+          "Cannot skip before selecting group or command"
+        );
         continue;
       }
 
@@ -673,45 +679,55 @@ namespace cli_menu {
       else Command::printTryAgain("Command not found");
     }
 
-    return DIALOG_FLAG.CANCELED;
-  }
-
-  std::string Command::boundaryLine = "";
-
-  void Command::setBoundaryLine(mt::CR_SI size) {
-    if (size < 0) boundaryLine = "";
-    else boundaryLine = std::string(size, '-');
-  }
-
-  void Command::printBoundaryLine() {
-    static bool isActive = false;
-    if (isActive) std::cout << boundaryLine;
-    else isActive = true;
-  }
-
-  void Command::printAfterBoundaryLine(
-    mt::CR_STR comName,
-    mt::CR_BOL idx
-  ) {
-    printBoundaryLine();
-    std::cout << "\n\033[1m>" << comName << ":\033[0m\n";
-    Command::printAbbreviations(idx);
+    return DIALOG::CANCELED;
   }
 
   //__________|
   // MESSAGES |
   //__________|
 
-  void Command::printHelp() {
-    const int decorsCount = name.length() * 2;
-    std::string uppercase = mt_uti::StrTools::getStringToUppercase(name);
+  void Command::printAfterBoundaryLine(
+    mt::CR_STR comName,
+    mt::CR_BOL isOpen
+  ) {
+    static bool init[] = {true, true};
 
-    std::cout << uppercase << ':';
-    Message::printDecoration(decorsCount);
+    if (!(init[0] && init[1])) {
+      Message::printBoundaryLine();
+    }
+
+    // bold font style
+    std::cout << "\n\033[1m>" << comName << ":\033[0m\n";
+
+    // display only once
+    if (init[isOpen]) {
+      init[isOpen] = false;
+
+      // italic font style
+      if (isOpen) {
+        std::cout
+          << "\033[3m(cancel = :c, "
+          << "enter = :e, "
+          << "next = :n, "
+          << "previous = :p)\033[0m\n";
+      }
+      // italic font style
+      else std::cout
+        << "\033[3m(yes = y, "
+        << "no = n, "
+        << "or boolean)\033[0m\n"; 
+    }
+
+    std::cout << std::endl;
+  }
+
+  void Command::printHelp() {
+    std::cout << mt_uti::StrTools::getStringToUppercase(name) << ':';
+    Message::printBoundaryLine();
     std::cout << Message::tidyUpText(getDescription());
 
     if (isGroup()) {
-      Message::printDecoration(decorsCount);
+      Message::printBoundaryLine();
       std::cout << getBranchLeafString(1, !isUltimate());
     }
   }
