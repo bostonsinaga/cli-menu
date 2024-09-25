@@ -109,15 +109,15 @@ namespace cli_menu {
         }
         // 'lastCom' is a group
         else if (!resolveFunction(lastCom)) {
-          Message::printCommandError(lastCom);
+          lastCom->printError();
         }
       }
       else if (!resolveFunction(lastCom)) {
         if (lastCom) {
-          Message::printCommandError(lastCom);
+          lastCom->printError();
         }
         else if (!resolveFunction(program)) {
-          Message::printProgramError(program, inputs.size() <= 1);
+          program->printError();
         }
       }
 
