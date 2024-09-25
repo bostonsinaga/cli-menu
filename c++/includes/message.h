@@ -1,17 +1,12 @@
 #ifndef __CLI_MENU__MESSAGE_H__
 #define __CLI_MENU__MESSAGE_H__
 
-#include <iostream>
-#include "program.h"
+#include "base.h"
 
 namespace cli_menu {
+
   class Message {
   private:
-
-    static std::string tidyUpText(mt::CR_STR text);
-    static std::string getObligatoryString(mt::CR_BOL isRequired);
-    static std::string getColoredTag(mt::CR_INT flag);
-
     static constexpr mt::USI colorCodes[8] = {30, 31, 32, 33, 34, 35, 36, 37};
     static constexpr mt::USI colorsCount = 8;
 
@@ -23,6 +18,10 @@ namespace cli_menu {
     static struct { enum {
       BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, LIGHT_BLUE, WHITE
     }; } COLOR;
+
+    static std::string getColoredTag(mt::CR_INT flag);
+    static std::string tidyUpText(mt::CR_STR text);
+    static std::string getObligatoryString(mt::CR_BOL isRequired);
 
     static void print(
       mt::CR_INT flag,
@@ -46,21 +45,6 @@ namespace cli_menu {
       mt::CR_STR paramTypeName,
       mt::CR_STR customMessage = "unassigned"
     );
-
-    static void printCommandsSequence(
-      Command *command,
-      std::string continueString = "\n"
-    );
-
-    static void printCommandError(Command *command);
-
-    static void printProgramError(
-      Program *program,
-      mt::CR_BOL isEmpty
-    );
-
-    static void printMainHelp(Program *program);
-    static void printSubHelp(Command *command);
   };
 }
 
