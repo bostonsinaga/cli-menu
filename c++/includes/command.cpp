@@ -109,7 +109,7 @@ namespace cli_menu {
 
   bool Command::hasItem(mt::CR_STR name_in) {
     for (Command *com : items) {
-      if (com->getName() == name_in) return true;
+      if (com->name == name_in) return true;
     }
     return false;
   }
@@ -120,7 +120,7 @@ namespace cli_menu {
 
   Command *Command::getItem(mt::CR_STR name_in) {
     for (Command *com : items) {
-      if (com->getName() == name_in) return com;
+      if (com->name == name_in) return com;
     }
     return nullptr;
   }
@@ -133,34 +133,60 @@ namespace cli_menu {
     return root;
   }
 
-  void Command::setItems(CR_VEC_COM newItems) {
-    items = {};
+  void Command::setItems(
+    CR_VEC_COM newItems,
+    mt::CR_BOL needEmpty,
+    mt::CR_BOL validating
+  ) {
+    int startIdx = 0;
 
-    for (Command *com : newItems) {
-      if (com) items.push_back(com);
+    if (needEmpty) items = {};
+    else startIdx = items.size();
+
+    // slower (safe)
+    if (validating) {
+      for (Command *com : newItems) {
+        if (com) items.push_back(com);
+      }
+      cleanDuplicatesInItems();
     }
+    // faster (danger)
+    else items = newItems;
 
-    cleanDuplicatesInItems();
-
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = startIdx; i < items.size(); i++) {
       items[i]->setHolder(this, false);
       if (i > 0) items[i-1]->next = items[i];
     }
   }
 
-  VEC_COM Command::setItemsRelease(CR_VEC_COM newItems) {
+  VEC_COM Command::setItemsRelease(
+    CR_VEC_COM newItems,
+    mt::CR_BOL validating
+  ) {
     if (!isSupporter()) {
       VEC_COM oldItems = items;
-      setItems(newItems);
+      setItems(newItems, true, validating);
       return oldItems;
     }
     return {};
   }
 
-  void Command::setItemsReplace(CR_VEC_COM newItems) {
+  void Command::setItemsReplace(
+    CR_VEC_COM newItems,
+    mt::CR_BOL validating
+  ) {
     if (!isSupporter()) {
       cleanItems();
-      setItems(newItems);
+      setItems(newItems, true, validating);
+    }
+  }
+
+  void Command::addItems(
+    CR_VEC_COM newItems,
+    mt::CR_BOL validating
+  ) {
+    if (!isSupporter()) {
+      setItems(newItems, false, validating);
     }
   }
 
@@ -169,6 +195,19 @@ namespace cli_menu {
     mt::CR_BOL reconnected
   ) {
     if (command && !isSupporter()) {
+
+      if (command->getInheritanceFlag() == PROGRAM) {
+        command->disguise();
+
+        Message::print(
+          Message::STATUS::WARNING,
+          "Cannot add a 'Program' (name: '" +
+          command->name + "'). To keep proceeding, it is now considered as 'Toggle'.",
+          "cli_menu::Command::addItem",
+          false
+        );
+      }
+
       if (reconnected) {
         command->setHolder(this, false);
       }
@@ -210,7 +249,7 @@ namespace cli_menu {
       wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateInside(
         items, false,
         [](Command *rep, Command *com)->bool {
-          if (rep->getName() == com->getName()) return true;
+          if (rep->name == com->name) return true;
           return false;
         }
       );
@@ -226,7 +265,7 @@ namespace cli_menu {
       wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateToMember(
         items, command, false,
         [](Command *rep, Command *com)->bool {
-          if (rep->getName() == com->getName()) return true;
+          if (rep->name == com->name) return true;
           return false;
         }
       );
@@ -306,111 +345,26 @@ namespace cli_menu {
     return nullptr;
   }
 
+  VEC_COM Command::releaseItems() {
+    VEC_COM released = items;
+
+    for (Command *com : items) {
+      com->tier = 0;
+      com->holder = nullptr;
+      com->ultimate = nullptr;
+    }
+
+    items = {};
+    requiredItems = {};
+    return released;
+  }
+
   void Command::remove(mt::CR_BOL firstOccurrence) {
     if (firstOccurrence && holder) {
       holder->releaseItem(this);
     }
     cleanItems();
     delete this;
-  }
-
-  std::string Command::getInlineRootNames(
-    mt::CR_STR separator,
-    mt::CR_BOL fully
-  ) {
-    std::string text;
-    Command *root = holder;
-
-    static const std::function<void(Command*)>
-      add = [&](Command *com) {
-        text = (fully ? com->getFullName() : com->name) + separator;
-      };
-
-    add(this);
-
-    // looping up to root
-    while (root) {
-      add(root);
-      root = root->holder;
-    }
-
-    return text;
-  }
-
-  std::string Command::getBranchLeafString(
-    mt::CR_INT spacesCount,
-    mt::CR_INT columnIndex,
-    mt::CR_BOL withDescription
-  ) {
-    static std::string separator = std::string(spacesCount, ' ');
-
-    std::string text;
-    Command *root = holder;
-    int tabsCount = 0;
-
-    // looping up to root
-    while (root) {
-      tabsCount += root->name.length() + separator.length();
-      root = root->holder;
-    }
-
-    text += name + separator;
-
-    if (columnIndex > 0) {
-      text = std::string(tabsCount, ' ') + text;
-    }
-
-    // display a neat description
-    if (withDescription && items.empty()) {
-      mt::VEC_STR lines {""};
-
-      // detect newline characters
-      for (char &ch : description) {
-        lines.back().push_back(ch);
-        if (ch == '\n') lines.push_back("");
-      }
-
-      // get rid empty strings created due to detected newlines
-      for (int i = 0; i < lines.size(); i++) {
-        if (lines[i].empty()) {
-          mini_tools::utils::VecTools<std::string>::cutSingle(lines, i);
-          i--;
-        }
-      }
-
-      // push 'lines' vector to 'text' string
-      for (int i = 0; i < lines.size(); i++) {
-
-        if (i > 0 || columnIndex > 0) {
-          lines[i] = std::string(
-            tabsCount + name.length() + separator.length(), ' '
-          ) + lines[i];
-        }
-
-        text += lines[i];
-      }
-    }
-    // has items (recursion)
-    else for (int i = 0; i < items.size(); i++) {
-      text += items[i]->getBranchLeafString(
-        spacesCount, i, withDescription
-      );
-    }
-
-    // add newline to every index except the last
-    if (holder &&
-      columnIndex < holder->items.size() - 1
-    ) { text += "\n"; }
-
-    return text;
-  }
-
-  std::string Command::getBranchLeafString(
-    int spacesCount,
-    mt::CR_BOL withDescription
-  ) {
-    if (spacesCount < 1) spacesCount = 1;
-    return getBranchLeafString(spacesCount, 0, withDescription);
   }
 
   //__________|
@@ -682,9 +636,108 @@ namespace cli_menu {
     return DIALOG::CANCELED;
   }
 
-  //__________|
-  // MESSAGES |
-  //__________|
+  //___________________|
+  // ADVANCED MESSAGES |
+  //___________________|
+
+  std::string Command::getInlineRootNames(
+    mt::CR_STR separator,
+    mt::CR_BOL fully
+  ) {
+    std::string text;
+    Command *root = holder;
+
+    static const std::function<void(Command*)>
+      add = [&](Command *com) {
+        text = (fully ? com->getFullName() : com->name) + separator;
+      };
+
+    add(this);
+
+    // looping up to root
+    while (root) {
+      add(root);
+      root = root->holder;
+    }
+
+    return text;
+  }
+
+  std::string Command::getBranchLeafString(
+    mt::CR_INT spacesCount,
+    mt::CR_INT columnIndex,
+    mt::CR_BOL withDescription
+  ) {
+    static std::string separator = std::string(spacesCount, ' ');
+
+    std::string text;
+    Command *root = holder;
+    int tabsCount = 0;
+
+    // looping up to root
+    while (root) {
+      tabsCount += root->name.length() + separator.length();
+      root = root->holder;
+    }
+
+    text += name + separator;
+
+    if (columnIndex > 0) {
+      text = std::string(tabsCount, ' ') + text;
+    }
+
+    // display a neat description
+    if (withDescription && items.empty()) {
+      mt::VEC_STR lines {""};
+
+      // detect newline characters
+      for (char &ch : description) {
+        lines.back().push_back(ch);
+        if (ch == '\n') lines.push_back("");
+      }
+
+      // get rid empty strings created due to detected newlines
+      for (int i = 0; i < lines.size(); i++) {
+        if (lines[i].empty()) {
+          mini_tools::utils::VecTools<std::string>::cutSingle(lines, i);
+          i--;
+        }
+      }
+
+      // push 'lines' vector to 'text' string
+      for (int i = 0; i < lines.size(); i++) {
+
+        if (i > 0 || columnIndex > 0) {
+          lines[i] = std::string(
+            tabsCount + name.length() + separator.length(), ' '
+          ) + lines[i];
+        }
+
+        text += lines[i];
+      }
+    }
+    // has items (recursion)
+    else for (int i = 0; i < items.size(); i++) {
+      text += items[i]->getBranchLeafString(
+        spacesCount, i, withDescription
+      );
+    }
+
+    // add newline to every index except the last
+    if (holder &&
+      columnIndex < holder->items.size() - 1
+    ) { text += "\n"; }
+
+    return text;
+  }
+
+  std::string Command::getBranchLeafString(
+    int spacesCount,
+    mt::CR_BOL withDescription
+  ) {
+    if (spacesCount < 1) spacesCount = 1;
+    return getBranchLeafString(spacesCount, 0, withDescription);
+  }
 
   void Command::printAfterBoundaryLine(
     mt::CR_STR comName,
@@ -724,7 +777,7 @@ namespace cli_menu {
   void Command::printHelp() {
     std::cout << mt_uti::StrTools::getStringToUppercase(name) << ':';
     Message::printBoundaryLine();
-    std::cout << Message::tidyUpText(getDescription());
+    std::cout << description;
 
     if (isGroup()) {
       Message::printBoundaryLine();
