@@ -20,7 +20,6 @@ namespace cli_menu {
     };
 
     static std::string getColoredTag(mt::CR_INT flag);
-    static std::string tidyUpText(mt::CR_STR text);
     static std::string getObligatoryString(mt::CR_BOL isRequired);
 
     static void print(

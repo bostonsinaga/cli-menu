@@ -5,30 +5,6 @@
 
 namespace cli_menu {
 
-  // set text to start with a capital letter and end with a period
-  std::string Message::tidyUpText(mt::CR_STR text) {
-    std::string retStr = text;
-
-    if (!text.empty()) {
-
-      const char last = retStr[text.length() - 1];
-      retStr[0] = std::toupper(retStr[0]);
-
-      if (last != '.' && last != ';' &&
-        last != '!' && last != '?' &&
-        last != ':' && last != ','
-      ) {
-        retStr.push_back('.');
-      }
-      else if (last == ',') {
-        retStr.pop_back();
-        retStr.push_back('.');
-      }
-    }
-
-    return retStr;
-  }
-
   std::string Message::getObligatoryString(mt::CR_BOL isRequired) {
     if (isRequired) return "<req>";
     else return "<opt>";
@@ -80,7 +56,7 @@ namespace cli_menu {
         std::cout << name << ": ";
       }
 
-      std::cout << getColoredTag(flag) << tidyUpText(text);
+      std::cout << getColoredTag(flag) << text << std::endl;
     }
   }
 
