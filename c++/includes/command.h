@@ -19,7 +19,7 @@ namespace cli_menu {
   typedef const VEC_COM& CR_VEC_COM;
 
   class Command {
-  private:
+  protected:
     std::string name, description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
@@ -29,7 +29,8 @@ namespace cli_menu {
 
     Command *next = nullptr,
       *holder = nullptr,
-      *ultimate = nullptr;
+      *ultimate = nullptr,
+      *incarnation = nullptr;
 
     // useful in overriding 'match' method
     mt::UI tier = 0;
@@ -44,8 +45,13 @@ namespace cli_menu {
     void cleanDuplicateToLastAdded(Command *command);
     void cleanItems();
     void sewNext(mt::CR_INT index);
-    void setItems(CR_VEC_COM newItems);
     void remove(mt::CR_BOL firstOccurrence);
+
+    void setItems(
+      CR_VEC_COM newItems,
+      mt::CR_BOL needEmpty,
+      mt::CR_BOL validating
+    );
 
     Command* dismantle(mt::CR_INT index);
     void dismantleRemove(mt::CR_INT index);
@@ -73,14 +79,33 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
+    virtual void setData(mt::CR_STR str) {}
+    virtual void setData(mt::CR_BOL cond) {}
+
     static void printTryAgain(mt::CR_STR about);
     static mt::USI chooseQuestion(Command *command);
 
     mt::USI closedQuestion();
     mt::USI openQuestion();
 
-  protected:
+    void deepPull(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
+
+    void printAfterBoundaryLine(
+      mt::CR_STR about,
+      mt::CR_BOL isOpen
+    );
+
+    // destructor only invoked from 'remove' method
     virtual ~Command();
+
+    // able to set 'incarnation' in another subclass
+    virtual void disguise(mt::CR_BOL replaced = true) {}
+
+    // safely delete 'incarnation'
+    virtual void undisguise() {}
 
   public:
     enum DIALOG { CANCELED, COMPLETE };
@@ -116,16 +141,6 @@ namespace cli_menu {
     std::string getName() { return name; }
     std::string getDescription() { return description; }
 
-    std::string getInlineRootNames(
-      mt::CR_STR separator,
-      mt::CR_BOL fully
-    );
-
-    std::string getBranchLeafString(
-      int spacesCount,
-      mt::CR_BOL withDescription
-    );
-
     void setCallback(CR_SP_CALLBACK callback_in);
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
     void setAsUltimate();
@@ -149,8 +164,20 @@ namespace cli_menu {
     Command *getItem(mt::CR_STR name_in);
     Command *getRoot();
 
-    VEC_COM setItemsRelease(CR_VEC_COM newItems);
-    void setItemsReplace(CR_VEC_COM newItems);
+    VEC_COM setItemsRelease(
+      CR_VEC_COM newItems,
+      mt::CR_BOL validating = true
+    );
+
+    void setItemsReplace(
+      CR_VEC_COM newItems,
+      mt::CR_BOL validating = true
+    );
+
+    void addItems(
+      CR_VEC_COM newItems,
+      mt::CR_BOL validating = true
+    );
 
     /**
      * NOTE :
@@ -164,6 +191,7 @@ namespace cli_menu {
     void removeItem(mt::CR_INT index);
     Command *releaseItem(Command *command);
     Command *releaseItem(mt::CR_INT index);
+    VEC_COM releaseItems();
     void remove() { remove(true); }
 
     bool isUltimate() { return this == ultimate; }
@@ -177,24 +205,22 @@ namespace cli_menu {
     bool run();
     bool run(ParamData &paramData);
 
-    virtual void setData(mt::CR_STR str) {}
-    virtual void setData(mt::CR_BOL cond) {}
     virtual bool match(mt::VEC_STR &inputs) { return false; }
     mt::USI dialog();
-
-    void deepPull(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
-    );
 
     virtual void pullData(
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
     );
 
-    void printAfterBoundaryLine(
-      mt::CR_STR about,
-      mt::CR_BOL isOpen
+    std::string getInlineRootNames(
+      mt::CR_STR separator,
+      mt::CR_BOL fully
+    );
+
+    std::string getBranchLeafString(
+      int spacesCount,
+      mt::CR_BOL withDescription
     );
 
     virtual void printHelp();
