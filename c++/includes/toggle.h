@@ -10,6 +10,9 @@ namespace cli_menu {
     bool condition = false;
     ~Toggle() override { condition = false; }
 
+  protected:
+    void setData(mt::CR_BOL cond) override { condition = cond; }
+
   public:
     Toggle(): Command() {}
 
@@ -41,7 +44,6 @@ namespace cli_menu {
     mt::USI getInheritanceFlag() override { return TOGGLE; }
     std::string getDashedName() override;
     std::string getFullName() override;
-    void setData(mt::CR_BOL cond) override { condition = cond; }
 
     void pullData(
       ParamData &paramData,
