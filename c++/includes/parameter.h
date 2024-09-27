@@ -15,6 +15,9 @@ namespace cli_menu {
       type = false;
     }
 
+  protected:
+    void setData(mt::CR_STR str) override { argument = str; }
+
   public:
     enum {TEXT, NUMBER};
     Parameter(): Command() {}
@@ -52,7 +55,6 @@ namespace cli_menu {
     std::string getFullName() override;
     std::string getRawArgument() { return argument; }
     mt::USI getInheritanceFlag() override { return PARAMETER; }
-    void setData(mt::CR_STR str) override { argument = str; }
 
     void pullData(
       ParamData &paramData,
