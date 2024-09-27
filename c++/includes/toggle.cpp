@@ -32,7 +32,7 @@ namespace cli_menu {
   Command(name_in, description_in, holder_in, required_in) {}
 
   std::string Toggle::getDashedName() {
-    return "--" + getName();
+    return "--" + name;
   }
 
   std::string Toggle::getFullName() {
@@ -50,15 +50,15 @@ namespace cli_menu {
   }
 
   bool Toggle::match(mt::VEC_STR &inputs) {
-    std::string thisName = getName();
+    std::string thisName = name;
 
     mt::UI begin = 1,
       end = inputs.size(),
       ultiTier = 1,
-      thisTier = this->getTier();
+      thisTier = tier;
 
-    if (getUltimate()) {
-      ultiTier = getUltimate()->getTier();
+    if (ultimate) {
+      ultiTier = ultimate->getTier();
     }
 
     if (thisTier <= ultiTier) {
