@@ -46,7 +46,7 @@ namespace cli_menu {
   }
 
   std::string Parameter::getDashedName() {
-    return "-" + getName();
+    return "-" + name;
   }
 
   std::string Parameter::getFullName() {
@@ -73,16 +73,16 @@ namespace cli_menu {
   bool Parameter::match(mt::VEC_STR &inputs) {
 
     bool incomplete = false;
-    std::string thisName = getName();
+    std::string thisName = name;
 
     int begin = 1,
       end = inputs.size() - 1;
 
     mt::UI ultiTier = 1,
-      thisTier = this->getTier();
+      thisTier = tier;
 
-    if (getUltimate()) {
-      ultiTier = getUltimate()->getTier();
+    if (ultimate) {
+      ultiTier = ultimate->getTier();
     }
 
     if (thisTier <= ultiTier) {
