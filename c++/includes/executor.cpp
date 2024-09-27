@@ -21,7 +21,7 @@ namespace cli_menu {
         else { // CANCELED
           Message::print(
             Message::STATUS::CANCELED,
-            "program terminated",
+            "Program terminated.",
             program->getName()
           );
           return true;
@@ -38,7 +38,7 @@ namespace cli_menu {
     if (command->run(paramData)) {
       Message::print(
         Message::STATUS::SUCCEED,
-        "output file written to 'foo.kml'",
+        "Output file written to 'foo.kml'.",
         program->getName()
       );
       return true;
@@ -46,7 +46,7 @@ namespace cli_menu {
     else {
       Message::print(
         Message::STATUS::ERROR,
-        "problem with input",
+        "Problem with input.",
         program->getName()
       );
       return false;
@@ -126,13 +126,10 @@ namespace cli_menu {
     }
     else Message::print(
       Message::STATUS::ERROR,
-      "unassigned 'Program'",
+      "Unassigned 'Program'.",
       "cli_menu::Executor::run",
       false
     );
-
-    // tidy new line
-    std::cout << std::endl;
   }
 }
 
