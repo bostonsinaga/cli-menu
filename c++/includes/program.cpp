@@ -73,9 +73,9 @@ namespace cli_menu {
 
   void Program::printHelp() {
     std::cout
-      << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(getName())
-      << "'\n\nversion: " << getVersion().stringify()
-      << "\nauthor: " << getAuthor();
+      << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(name)
+      << "'\n\nversion: " << version.stringify()
+      << "\nauthor: " << author;
 
     Message::printBoundaryLine();
 
@@ -92,6 +92,61 @@ namespace cli_menu {
 
   void Program::printError() {
     std::cerr << "Program Error..";
+  }
+
+  void Program::disguise(mt::CR_BOL replaced) {
+
+    if (incarnation) {
+      if (replaced) incarnation->remove();
+      else return;
+    }
+
+    if (callback) {
+      incarnation = new Toggle(
+        name,
+        description,
+        callback,
+        holder,
+        required
+      );
+    }
+    else if (plainCallback) {
+      incarnation = new Toggle(
+        name,
+        description,
+        plainCallback,
+        holder,
+        required
+      );
+    }
+    else incarnation = new Toggle(
+      name,
+      description,
+      holder,
+      required
+    );
+
+    incarnation->setItemsRelease(items);
+  }
+
+  void Program::undisguise() {
+
+    if (!incarnation) return;
+    VEC_COM released = incarnation->releaseItems();
+
+    /**
+     * The remaining 'released' contains items
+     * that already existed in 'items' before 'disguise' invocation.
+     */
+    addItems(
+      mt_uti::VecTools<Command*>::cutInterval(
+        released, items.size(), incarnation->getNumberOfItems() - 1
+      ),
+      false
+    );
+
+    incarnation->remove();
+    incarnation = nullptr;
   }
 }
 
