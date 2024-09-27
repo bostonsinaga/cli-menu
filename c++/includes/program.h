@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__PROGRAM_H__
 #define __CLI_MENU__PROGRAM_H__
 
-#include "command.h"
+#include "toggle.h"
 
 namespace cli_menu {
 
@@ -31,6 +31,10 @@ namespace cli_menu {
     std::string author;
     Version version;
     ~Program() override;
+
+  protected:
+    void disguise(mt::CR_BOL replaced = true) override;
+    void undisguise() override;
 
   public:
     Program();
