@@ -36,6 +36,7 @@ namespace cli_menu {
     static std::string boundaryLine;
 
     bool accumulating = false,
+      disguised = false,
       required = false,
       used = false;
 
@@ -100,11 +101,12 @@ namespace cli_menu {
     // destructor only invoked from 'remove' method
     virtual ~Command();
 
-    // able to set 'incarnation' in another subclass
-    virtual void disguise(mt::CR_BOL replaced = true) {}
-
-    // safely delete 'incarnation'
-    virtual void undisguise() {}
+    /**
+     * A state setter for 'disguised' where the derived class
+     * will behave as its base class (hiding its own abilities).
+     * But still need to set 'disguised' on/off conditions.
+     */
+    void disguise(mt::CR_BOL isIt) { disguised = isIt; }
 
   public:
     enum DIALOG { CANCELED, COMPLETE };
