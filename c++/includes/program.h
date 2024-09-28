@@ -26,15 +26,11 @@ namespace cli_menu {
 
   typedef const Version& CR_VERSION;
 
-  class Program : public Command {
+  class Program : public Toggle {
   private:
     std::string author;
     Version version;
     ~Program() override;
-
-  protected:
-    void disguise(mt::CR_BOL replaced = true) override;
-    void undisguise() override;
 
   public:
     Program();
@@ -65,6 +61,8 @@ namespace cli_menu {
     std::string getAuthor() { return author; }
     Version getVersion() { return version; }
     mt::USI getInheritanceFlag() override { return PROGRAM; }
+    std::string getDashedName() override;
+    std::string getFullName() override;
 
     void printHelp() override;
     void printError() override;
