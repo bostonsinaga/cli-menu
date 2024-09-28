@@ -29,8 +29,7 @@ namespace cli_menu {
 
     Command *next = nullptr,
       *holder = nullptr,
-      *ultimate = nullptr,
-      *incarnation = nullptr;
+      *ultimate = nullptr;
 
     // useful in overriding 'match' method
     mt::UI tier = 0;
