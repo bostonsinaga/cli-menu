@@ -44,12 +44,21 @@ int main(int argc, char *argv[]) {
     dialog
   );
 
+  cm::Program *lorem = new cm::Program(
+    "lorem",
+    "Lore ipsum dolor amet",
+    "Boston Sianipar",
+    cm::Version(1, 0, 1)
+  );
+
+  sentence->addItem(lorem);
+
   cm::Parameter *fileIn = new cm::Parameter(
     "file-in",
     "file name",
     cm::Parameter::TEXT,
     CM_CALLBACK(fileInFun),
-    sentence
+    lorem
   );
 
   cm::Parameter *fileOut = new cm::Parameter(
@@ -61,8 +70,7 @@ int main(int argc, char *argv[]) {
     true
   );
 
-  sentence->setAsUltimate();
-
+  lorem->setAsUltimate();
   cm::Executor::run(testProgram, argc, argv, true);
   return 0;
 }
