@@ -197,7 +197,7 @@ namespace cli_menu {
     if (command && !isSupporter()) {
 
       if (command->getInheritanceFlag() == PROGRAM) {
-        command->disguise();
+        command->disguise(true);
 
         Message::print(
           Message::STATUS::WARNING,
