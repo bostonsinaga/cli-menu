@@ -27,7 +27,7 @@ namespace cli_menu {
     patch = 0;
   }
 
-  Program::Program(): Command() {
+  Program::Program(): Toggle() {
     author = "Anonymous";
   }
 
@@ -38,7 +38,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_CALLBACK callback_in
   ):
-  Command(name_in, description_in, callback_in, nullptr, true) {
+  Toggle(name_in, description_in, callback_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
@@ -50,7 +50,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_PLAIN_CALLBACK callback_in
   ):
-  Command(name_in, description_in, callback_in, nullptr, true) {
+  Toggle(name_in, description_in, callback_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
@@ -61,7 +61,7 @@ namespace cli_menu {
     mt::CR_STR author_in,
     CR_VERSION version_in
   ):
-  Command(name_in, description_in, nullptr, true) {
+  Toggle(name_in, description_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
   }
@@ -71,82 +71,42 @@ namespace cli_menu {
     version.clean();
   }
 
+  std::string Program::getDashedName() {
+    if (disguised) return Toggle::getDashedName();
+    return Command::getDashedName();
+  }
+
+  std::string Program::getFullName() {
+    if (disguised) return Toggle::getFullName();
+    return Command::getFullName();
+  }
+
   void Program::printHelp() {
-    std::cout
-      << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(name)
-      << "'\n\nversion: " << version.stringify()
-      << "\nauthor: " << author;
+    if (disguised) {
+      Toggle::printHelp();
+    }
+    else {
+      std::cout
+        << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(name)
+        << "'\n\nversion: " << version.stringify()
+        << "\nauthor: " << author;
 
-    Message::printBoundaryLine();
+      Message::printBoundaryLine();
 
-    std::cout
-      << "HINT:\n"
-      << "* Use '-' for parameter and '--' for toggle\n"
-      << "* The <req> or <opt> are only available in parameter (text/number)\n"
-      << "* The toggle (boolean) always optional, except for main command and groups\n"
-      << "* Please type '--[command] --help' to view detailed information";
+      std::cout
+        << "HINT:\n"
+        << "* Use '-' for parameter and '--' for toggle\n"
+        << "* The <req> or <opt> are only available in parameter (text/number)\n"
+        << "* The toggle (boolean) always optional, except for main command and groups\n"
+        << "* Please type '--[command] --help' to view detailed information";
 
-    Message::printBoundaryLine();
-    std::cout << getBranchLeafString(1, true);
+      Message::printBoundaryLine();
+      std::cout << getBranchLeafString(1, true);
+    }
   }
 
   void Program::printError() {
     std::cerr << "Program Error..";
-  }
-
-  void Program::disguise(mt::CR_BOL replaced) {
-
-    if (incarnation) {
-      if (replaced) incarnation->remove();
-      else return;
-    }
-
-    if (callback) {
-      incarnation = new Toggle(
-        name,
-        description,
-        callback,
-        holder,
-        required
-      );
-    }
-    else if (plainCallback) {
-      incarnation = new Toggle(
-        name,
-        description,
-        plainCallback,
-        holder,
-        required
-      );
-    }
-    else incarnation = new Toggle(
-      name,
-      description,
-      holder,
-      required
-    );
-
-    incarnation->setItemsRelease(items);
-  }
-
-  void Program::undisguise() {
-
-    if (!incarnation) return;
-    VEC_COM released = incarnation->releaseItems();
-
-    /**
-     * The remaining 'released' contains items
-     * that already existed in 'items' before 'disguise' invocation.
-     */
-    addItems(
-      mt_uti::VecTools<Command*>::cutInterval(
-        released, items.size(), incarnation->getNumberOfItems() - 1
-      ),
-      false
-    );
-
-    incarnation->remove();
-    incarnation = nullptr;
   }
 }
 
