@@ -8,9 +8,10 @@ namespace cli_menu {
   class Toggle : public Command {
   private:
     bool condition = false;
-    ~Toggle() override { condition = false; }
 
   protected:
+    ~Toggle() override { condition = false; }
+
     void setData(mt::CR_BOL cond) override { condition = cond; }
 
   public:
