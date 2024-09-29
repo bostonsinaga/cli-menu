@@ -341,7 +341,24 @@ namespace cli_menu {
   // ULTIMATE |
   //__________|
 
-  void Command::updateRequiredItems(Command *command, mt::CR_BOL adding) {
+  std::string Command::getMainLabel() {
+    if (isUltimate()) {
+      return Message::customColored(
+        Message::COLOR::GREEN, "(main)"
+      );
+    }
+    return "";
+  }
+
+  // the 'ultimate' confirmed to exist when this invoked
+  std::string Command::getFullNameWithUltimate() {
+    return " " + ultimate->getFullName() + " " + getFullName();
+  }
+
+  void Command::updateRequiredItems(
+    Command *command,
+    mt::CR_BOL adding
+  ) {
     if (isUltimate() && command->isRequired()) {
       if (adding) {
         requiredItems.push_back(command);
@@ -473,7 +490,10 @@ namespace cli_menu {
     bool willBreak;
     std::string buffer;
 
-    Command::printAfterBoundaryLine(getFullName(), false);
+    Command::printAfterBoundaryLine(
+      getFullNameWithUltimate(),
+      false
+    );
 
     while (std::getline(std::cin, buffer)) {
 
@@ -504,6 +524,9 @@ namespace cli_menu {
           "Cannot enter before all required parameters are met"
         );
       }
+      else if (Control::selectTest(buffer)) {
+        return dialog();
+      }
       else Command::printTryAgain(
         "Only accept boolean values"
       );
@@ -521,7 +544,10 @@ namespace cli_menu {
     std::string buffer;
     bool inputPassed;
 
-    Command::printAfterBoundaryLine(getFullName(), true);
+    Command::printAfterBoundaryLine(
+      getFullNameWithUltimate(),
+      true
+    );
 
     while (std::getline(std::cin, buffer)) {
       inputPassed = isOptional() || (isRequired() && !strVec.empty());
@@ -546,6 +572,9 @@ namespace cli_menu {
           "Cannot skip with empty input on required parameter"
         );
       }
+      else if (Control::selectTest(buffer)) {
+        return dialog();
+      }
       else strVec.push_back(buffer);
     }
 
@@ -563,13 +592,6 @@ namespace cli_menu {
     }
 
     inlineNames += " " + getFullName();
-
-    if (isUltimate()) {
-      inlineNames += Message::customColored(
-        Message::COLOR::GREEN, " (main)"
-      );
-    }
-
     Command::printAfterBoundaryLine(inlineNames, true);
 
     while (std::getline(std::cin, nameTest)) {
@@ -729,10 +751,11 @@ namespace cli_menu {
       // italic font style
       if (isOpen) {
         std::cout
-          << "\033[3m(cancel = :c, "
-          << "enter = :e, "
-          << "next = :n, "
-          << "previous = :p)\033[0m\n";
+          << "\033[3m(.cancel = :c, "
+          << ".enter = :e, "
+          << ".next = :n, "
+          << ".previous = :p, "
+          << ".select = :s)\033[0m\n";
       }
       // italic font style
       else std::cout
