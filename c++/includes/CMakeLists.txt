@@ -10,6 +10,7 @@ set (SOURCES
 
   base.cpp
   command.cpp
+  control.cpp
   program.cpp
   parameter.cpp
   toggle.cpp
