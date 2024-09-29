@@ -21,8 +21,12 @@ CM_FUNCTION(fileOutFun) {
   std::cout << "\nWrite..";
 }
 
+CM_FUNCTION(tidyFun) {
+  std::cout << "\nTidy up..";
+}
+
 int main(int argc, char *argv[]) {
-  cm::Program *testProgram = new cm::Program(
+  cm::Program *test = new cm::Program(
     "test",
     "Test 'cli-menu' library",
     "Boston Sinaga",
@@ -34,44 +38,35 @@ int main(int argc, char *argv[]) {
     "dialog",
     "Start conversation",
     CM_CALLBACK(dialogFun),
-    testProgram
+    test
   );
-
-  cm::Toggle *sentence = new cm::Toggle(
-    "sentence",
-    "Give words with double quotes if have spaces",
-    CM_CALLBACK(sentenceFun),
-    dialog
-  );
-
-  cm::Program *lorem = new cm::Program(
-    "lorem",
-    "Lore ipsum dolor amet",
-    "Boston Sianipar",
-    cm::Version(1, 0, 1)
-  );
-
-  sentence->addItem(lorem);
 
   cm::Parameter *fileIn = new cm::Parameter(
     "file-in",
-    "file name",
+    "Filename input",
     cm::Parameter::TEXT,
     CM_CALLBACK(fileInFun),
-    lorem
+    dialog,
+    true
   );
 
   cm::Parameter *fileOut = new cm::Parameter(
     "file-out",
-    "file name",
+    "Filename output",
     cm::Parameter::TEXT,
     CM_CALLBACK(fileOutFun),
-    fileIn,
-    true
+    fileIn
   );
 
-  lorem->setAsUltimate();
-  cm::Executor::run(testProgram, argc, argv, true);
+  cm::Toggle *tidy = new cm::Toggle(
+    "tidy",
+    "Tidy up text",
+    CM_CALLBACK(tidyFun),
+    fileOut
+  );
+
+  dialog->setAsUltimate();
+  cm::Executor::run(test, argc, argv, true);
   return 0;
 }
 
