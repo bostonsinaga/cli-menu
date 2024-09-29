@@ -22,7 +22,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     Toggle(
@@ -30,14 +31,16 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_PLAIN_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     Toggle(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     bool match(mt::VEC_STR &inputs) override;

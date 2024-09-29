@@ -11,11 +11,14 @@ namespace cli_menu {
     mt::CR_BOL type_in,
     CR_SP_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ):
-  Command::Command(name_in, description_in, callback_in, holder_in, required_in) {
-    type = type_in;
-  }
+  Command::Command(
+    name_in, description_in,
+    callback_in, holder_in,
+    required_in, accumulating_in
+  ) { type = type_in; }
 
   Parameter::Parameter(
     mt::CR_STR name_in,
@@ -23,22 +26,28 @@ namespace cli_menu {
     mt::CR_BOL type_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ):
-  Command::Command(name_in, description_in, callback_in, holder_in, required_in) {
-    type = type_in;
-  }
+  Command::Command(
+    name_in, description_in,
+    callback_in, holder_in,
+    required_in, accumulating_in
+  ) { type = type_in; }
 
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_BOL type_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ):
-  Command::Command(name_in, description_in, holder_in, required_in) {
-    type = type_in;
-  }
+  Command::Command(
+    name_in, description_in,
+    holder_in, required_in,
+    accumulating_in
+  ) { type = type_in; }
 
   std::string Parameter::getStringifiedType() {
     if (type == TEXT) return "TEXT";
