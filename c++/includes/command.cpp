@@ -4,39 +4,9 @@
 #include "command.h"
 
 namespace cli_menu {
-  //_________|
-  // CONTROL |
-  //_________|
-
-  const std::string
-    Control::CANCEL = ":c",
-    Control::ENTER = ":e",
-    Control::NEXT = ":n";
-
-  int Control::test(std::string &str) {
-    mt_uti::StrTools::changeStringToLowercase(str);
-
-    if (str == Control::CANCEL) return 1;
-    else if (str == Control::ENTER) return 2;
-    else if (str == Control::NEXT) return 3;
-    return 0;
-  }
-
-  bool Control::cancelTest(std::string &str) {
-    return test(str) == 1;
-  }
-
-  bool Control::enterTest(std::string &str) {
-    return test(str) == 2;
-  }
-
-  bool Control::nextTest(std::string &str) {
-    return test(str) == 3;
-  }
-
-  //________________________|
-  // COMMAND - CONSTRUCTORS |
-  //________________________|
+  //______________|
+  // CONSTRUCTORS |
+  //______________|
 
   void Command::setMetaData(
     mt::CR_STR name_in,
