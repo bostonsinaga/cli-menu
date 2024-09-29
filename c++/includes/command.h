@@ -5,20 +5,21 @@
 
 namespace cli_menu {
 
-  class Control {
-  public:
-    static const std::string CANCEL, ENTER, NEXT;
-    static int test(std::string &str);
-    static bool cancelTest(std::string &str);
-    static bool enterTest(std::string &str);
-    static bool nextTest(std::string &str);
-  };
-
   class Command;
   typedef std::vector<Command*> VEC_COM;
   typedef const VEC_COM& CR_VEC_COM;
 
   class Command {
+  private:
+    class Control {
+    public:
+      static const std::string CANCEL, ENTER, NEXT;
+      static int test(std::string &str);
+      static bool cancelTest(std::string &str);
+      static bool enterTest(std::string &str);
+      static bool nextTest(std::string &str);
+    };
+
   protected:
     std::string name, description;
     SP_CALLBACK callback = nullptr;
