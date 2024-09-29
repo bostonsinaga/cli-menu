@@ -12,11 +12,13 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ) {
     name = name_in;
     description = description_in;
     required = required_in;
+    accumulating = accumulating_in;
     setHolder(holder_in);
   }
 
@@ -25,9 +27,15 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ) {
-    setMetaData(name_in, description_in, holder_in, required_in);
+    setMetaData(
+      name_in, description_in,
+      holder_in, required_in,
+      accumulating_in
+    );
+
     callback = callback_in;
   }
 
@@ -36,9 +44,15 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ) {
-    setMetaData(name_in, description_in, holder_in, required_in);
+    setMetaData(
+      name_in, description_in,
+      holder_in, required_in,
+      accumulating_in
+    );
+
     plainCallback = callback_in;
   }
 
@@ -46,9 +60,14 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     Command *holder_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    mt::CR_BOL accumulating_in
   ) {
-    setMetaData(name_in, description_in, holder_in, required_in);
+    setMetaData(
+      name_in, description_in,
+      holder_in, required_in,
+      accumulating_in
+    );
   }
 
   Command::~Command() {

@@ -75,7 +75,8 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       Command *holder_in,
-      mt::CR_BOL required_in
+      mt::CR_BOL required_in,
+      mt::CR_BOL accumulating_in
     );
 
     static void printTryAgain(mt::CR_STR about);
@@ -134,7 +135,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     Command(
@@ -142,14 +144,16 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_PLAIN_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in = false,
+      mt::CR_BOL accumulating_in = false
     );
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
@@ -165,7 +169,6 @@ namespace cli_menu {
 
     void setAccumulating(mt::CR_BOL condition) { accumulating = condition; }
     void setRequired(mt::CR_BOL condition) { required = condition; }
-    void setUsed(mt::CR_BOL condition) { used = condition; }
 
     mt::UI getTier() { return tier; }
     size_t getNumberOfItems() { return items.size(); }
