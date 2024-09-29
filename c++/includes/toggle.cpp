@@ -36,7 +36,7 @@ namespace cli_menu {
   }
 
   std::string Toggle::getFullName() {
-    return getDashedName();
+    return getDashedName() + getMainLabel();
   }
 
   void Toggle::pullData(

@@ -50,7 +50,9 @@ namespace cli_menu {
   }
 
   std::string Parameter::getFullName() {
-    return getDashedName() + "[" + getStringifiedType() + "]";
+    return getDashedName()
+      + "[" + getStringifiedType() + "]"
+      + getMainLabel();
   }
 
   void Parameter::pullData(
