@@ -13,35 +13,33 @@ namespace cli_menu {
   private:
     class Control {
     public:
-      static const std::string CANCEL, ENTER, NEXT;
+      enum { CANCEL_FG = 1, ENTER_FG = 2, NEXT_FG = 3, SELECT_FG = 4 };
+      static const std::string CANCEL[2], ENTER[2], NEXT[2], SELECT[2];
+
       static int test(std::string &str);
       static bool cancelTest(std::string &str);
       static bool enterTest(std::string &str);
       static bool nextTest(std::string &str);
+      static bool selectTest(std::string &str);
     };
 
-  protected:
-    std::string name, description;
+  private:
+    std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
 
-    VEC_COM items,
-      requiredItems; // only exists in the 'ultimate' scope
+    // only exists in the 'ultimate' scope
+    VEC_COM requiredItems;
 
     Command *next = nullptr,
-      *holder = nullptr,
-      *ultimate = nullptr;
+      *holder = nullptr;
 
-    // useful in overriding 'match' method
-    mt::UI tier = 0;
     static std::string boundaryLine;
 
     bool accumulating = false,
-      disguised = false,
       required = false,
       used = false;
 
-    void updateRequiredItems(Command *command, mt::CR_BOL adding);
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
     void cleanItems();
@@ -57,16 +55,16 @@ namespace cli_menu {
     Command* dismantle(mt::CR_INT index);
     void dismantleRemove(mt::CR_INT index);
     Command* dismantleRelease(mt::CR_INT index);
-
-    std::string getBranchLeafString(
-      mt::CR_INT spacesCount,
-      mt::CR_INT columnIndex,
-      mt::CR_BOL withDescription
-    );
+    std::string getFullNameWithUltimate();
 
     mt::UI getRequiredCount() {
       return ultimate->requiredItems.size();
     }
+
+    void updateRequiredItems(
+      Command *command,
+      mt::CR_BOL adding
+    );
 
     void collapseUltimateItems(
       Command *newUltimate,
@@ -80,27 +78,17 @@ namespace cli_menu {
       mt::CR_BOL required_in
     );
 
-    virtual void setData(mt::CR_STR str) {}
-    virtual void setData(mt::CR_BOL cond) {}
-
     static void printTryAgain(mt::CR_STR about);
     static mt::USI chooseQuestion(Command *command);
 
     mt::USI closedQuestion();
     mt::USI openQuestion();
 
-    void deepPull(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
-    );
-
+    // prints '-' signs horizontally before names list
     void printAfterBoundaryLine(
       mt::CR_STR about,
       mt::CR_BOL isOpen
     );
-
-    // destructor only invoked from 'remove' method
-    virtual ~Command();
 
     /**
      * A state setter for 'disguised' where the derived class
@@ -108,6 +96,33 @@ namespace cli_menu {
      * But still need to set 'disguised' on/off conditions.
      */
     void disguise(mt::CR_BOL isIt) { disguised = isIt; }
+
+  protected:
+    std::string name;
+    VEC_COM items;
+    Command *ultimate = nullptr;
+
+    mt::UI tier = 0; // useful in overriding 'match' method
+    bool disguised = false;
+
+    std::string getBranchLeafString(
+      mt::CR_INT spacesCount,
+      mt::CR_INT columnIndex,
+      mt::CR_BOL withDescription
+    );
+
+    std::string getMainLabel();
+    virtual void setData(mt::CR_STR str) {}
+    virtual void setData(mt::CR_BOL cond) {}
+
+    // will invoked from 'pullData'
+    void deepPull(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
+
+    // destructor only invoked from 'remove' method
+    virtual ~Command();
 
   public:
     enum DIALOG { CANCELED, COMPLETE };
