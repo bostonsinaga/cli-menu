@@ -31,8 +31,8 @@ namespace cli_menu {
     // only exists in the 'ultimate' scope
     VEC_COM requiredItems;
 
-    Command *next = nullptr,
-      *holder = nullptr;
+    Command *holder = nullptr,
+      *next = nullptr;
 
     static std::string boundaryLine;
 
@@ -79,9 +79,12 @@ namespace cli_menu {
       mt::CR_BOL accumulating_in
     );
 
-    static void printTryAgain(mt::CR_STR about);
-    static mt::USI chooseQuestion(Command *command);
+    static void printDialogError(
+      mt::CR_STR reason,
+      mt::CR_STR suggestion = "Try Again"
+    );
 
+    static mt::USI chooseQuestion(Command *command);
     mt::USI closedQuestion();
     mt::USI openQuestion();
 
@@ -174,8 +177,8 @@ namespace cli_menu {
     size_t getNumberOfItems() { return items.size(); }
 
     VEC_COM getItems() { return items; }
-    Command *getNext() { return next; }
     Command *getHolder() { return holder; }
+    Command *getNext() { return next; }
     Command *getUltimate() { return ultimate; }
 
     bool hasItem(Command *command);
