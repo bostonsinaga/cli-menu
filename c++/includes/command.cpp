@@ -490,23 +490,25 @@ namespace cli_menu {
     );
   }
 
+  /**
+   * The 'command' confirmed to exist when this invoked.
+   * This always invoked in supporter level.
+   */
   mt::USI Command::chooseQuestion(Command *command) {
-    if (command) {
-      if (command->getInheritanceFlag() == PARAMETER) {
-        return command->openQuestion();
-      }
-      return command->closedQuestion();
-    }
-    else if (command->getRequiredCount() == 0) {
+    if (command->next->used &&
+      command->ultimate->getRequiredCount() == 0
+    ) {
       return DIALOG::COMPLETE;
     }
-    return command->dialog();
+    else if (command->getInheritanceFlag() == PARAMETER) {
+      return command->openQuestion();
+    }
+    // PROGRAM or TOGGLE
+    return command->closedQuestion();
   }
 
   // called after ultimate
   mt::USI Command::closedQuestion() {
-
-    bool willBreak;
     std::string buffer;
 
     Command::printAfterBoundaryLine(
@@ -515,22 +517,20 @@ namespace cli_menu {
     );
 
     while (std::getline(std::cin, buffer)) {
-
       mt_uti::StrTools::changeStringToLowercase(buffer);
-      willBreak = false;
 
       if (buffer == "y" || buffer == "yes" ||
         buffer == "1" || buffer == "true"
       ) {
         setData(true);
-        willBreak = true;
+        Command::chooseQuestion(this);
       }
       else if (buffer == "n" || buffer == "no" ||
         buffer == "0" || buffer == "false" ||
         Control::nextTest(buffer)
       ) {
         setData(false);
-        willBreak = true;
+        Command::chooseQuestion(this);
       }
       else if (Control::cancelTest(buffer)) {
         return DIALOG::CANCELED;
@@ -549,8 +549,6 @@ namespace cli_menu {
       else Command::printTryAgain(
         "Only accept boolean values"
       );
-
-      if (willBreak) return Command::chooseQuestion(this);
     }
 
     return DIALOG::CANCELED;
