@@ -122,6 +122,17 @@ namespace cli_menu {
     return root;
   }
 
+  void Command::connectNext(int &index, VEC_COM &vecCom) {
+    if (index > 0) {
+      vecCom[index - 1]->next = vecCom[index];
+
+      // connect last index to the first
+      if (index == vecCom.size() - 1) {
+        vecCom[index]->next = vecCom[0];
+      }
+    }
+  }
+
   void Command::setItems(
     CR_VEC_COM newItems,
     mt::CR_BOL needEmpty,
@@ -144,15 +155,7 @@ namespace cli_menu {
 
     for (int i = startIdx; i < items.size(); i++) {
       items[i]->setHolder(this, false);
-
-      if (i > 0) {
-        items[i-1]->next = items[i];
-
-        // connect last index to the first
-        if (i == items.size() - 1) {
-          items[i]->next = items[0];
-        }
-      }
+      Command::connectNext(i, items);
     }
   }
 
@@ -280,10 +283,15 @@ namespace cli_menu {
   }
 
   void Command::sewNext(mt::CR_INT index) {
-    if (index > 0 &&
-      items.size() > index + 1
-    ) {
-      items[index - 1]->next = items[index + 1];
+    if (index > 0) {
+      // connect between except the index
+      if (index + 1 < items.size()) {
+        items[index - 1]->next = items[index + 1];
+      }
+      // connect last index to the first
+      else if (index == items.size() - 1) {
+        items[index]->next = items[0];
+      }
     }
   }
 
@@ -425,18 +433,16 @@ namespace cli_menu {
 
   void Command::setAsUltimate() {
     VEC_COM united;
-    Command *last = nullptr;
 
     collapseUltimateItems(this, united);
     items = united;
     Command::cleanDuplicatesInItems();
 
-    for (Command *com : united) {
-      if (last) last->next = com;
-      updateRequiredItems(com, true);
-      com->holder = this;
-      com->tier = tier + 1;
-      last = com;
+    for (int i = 0; i < united.size(); i++) {
+      connectNext(i, united);
+      updateRequiredItems(united[i], true);
+      united[i]->holder = this;
+      united[i]->tier = tier + 1;
     }
   }
 
@@ -638,6 +644,9 @@ namespace cli_menu {
           return next->dialog();
         }
         else if (getNumberOfItems() > 0) {
+          if (isUltimate()) {
+            return Command::chooseQuestion(items[0]);
+          }
           return items[0]->dialog();
         }
         else { // group that has no items
