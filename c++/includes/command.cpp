@@ -543,8 +543,7 @@ namespace cli_menu {
         Command::chooseQuestion(next);
       }
       else if (buffer == "n" || buffer == "no" ||
-        buffer == "0" || buffer == "false" ||
-        Control::nextTest(buffer)
+        buffer == "0" || buffer == "false"
       ) {
         setData(false);
         Command::chooseQuestion(next);
@@ -559,6 +558,9 @@ namespace cli_menu {
         else Command::printDialogError(
           "Cannot enter before all required parameters are met"
         );
+      }
+      else if (Control::nextTest(buffer)) {
+        return Command::chooseQuestion(next);
       }
       else if (Control::selectTest(buffer)) {
         return dialog();
