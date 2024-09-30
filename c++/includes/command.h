@@ -46,6 +46,11 @@ namespace cli_menu {
     void sewNext(mt::CR_INT index);
     void remove(mt::CR_BOL firstOccurrence);
 
+    static void connectNext(
+      int &index,
+      VEC_COM &vecCom
+    );
+
     void setItems(
       CR_VEC_COM newItems,
       mt::CR_BOL needEmpty,
