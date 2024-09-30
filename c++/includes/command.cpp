@@ -76,8 +76,8 @@ namespace cli_menu {
     tier = 0;
     items = {};
     requiredItems = {};
-    next = nullptr;
     holder = nullptr;
+    next = nullptr;
     ultimate = nullptr;
     accumulating = false;
     required = false;
@@ -144,7 +144,15 @@ namespace cli_menu {
 
     for (int i = startIdx; i < items.size(); i++) {
       items[i]->setHolder(this, false);
-      if (i > 0) items[i-1]->next = items[i];
+
+      if (i > 0) {
+        items[i-1]->next = items[i];
+
+        // connect last index to the first
+        if (i == items.size() - 1) {
+          items[i]->next = items[0];
+        }
+      }
     }
   }
 
@@ -483,10 +491,13 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  void Command::printTryAgain(mt::CR_STR about) {
+  void Command::printDialogError(
+    mt::CR_STR reason,
+    mt::CR_STR suggestion
+  ) {
     std::cerr << Message::customColored(
       Message::COLOR::RED,
-      "\n> " + about + ". Try Again:\n\n"
+      "\n> " + reason + ". " + suggestion + ":\n\n"
     );
   }
 
@@ -523,14 +534,14 @@ namespace cli_menu {
         buffer == "1" || buffer == "true"
       ) {
         setData(true);
-        Command::chooseQuestion(this);
+        Command::chooseQuestion(next);
       }
       else if (buffer == "n" || buffer == "no" ||
         buffer == "0" || buffer == "false" ||
         Control::nextTest(buffer)
       ) {
         setData(false);
-        Command::chooseQuestion(this);
+        Command::chooseQuestion(next);
       }
       else if (Control::cancelTest(buffer)) {
         return DIALOG::CANCELED;
@@ -539,14 +550,14 @@ namespace cli_menu {
         if (getRequiredCount() == 0) {
           return DIALOG::COMPLETE;
         }
-        else Command::printTryAgain(
+        else Command::printDialogError(
           "Cannot enter before all required parameters are met"
         );
       }
       else if (Control::selectTest(buffer)) {
         return dialog();
       }
-      else Command::printTryAgain(
+      else Command::printDialogError(
         "Only accept boolean values"
       );
     }
@@ -576,16 +587,16 @@ namespace cli_menu {
         if (getRequiredCount() == 0 && inputPassed) {
           return DIALOG::COMPLETE;
         }
-        else Command::printTryAgain(
+        else Command::printDialogError(
           "Cannot enter before all required parameters are met"
         );
       }
       else if (Control::nextTest(buffer)) {
         if (inputPassed) {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return Command::chooseQuestion(this);
+          return Command::chooseQuestion(next);
         }
-        else Command::printTryAgain(
+        else Command::printDialogError(
           "Cannot skip with empty input on required parameter"
         );
       }
@@ -617,16 +628,25 @@ namespace cli_menu {
         return DIALOG::CANCELED;
       }
       else if (Control::enterTest(nameTest)) {
-        Command::printTryAgain(
+        Command::printDialogError(
           "Cannot enter before parameters"
         );
         continue;
       }
       else if (Control::nextTest(nameTest)) {
-        Command::printTryAgain(
-          "Cannot skip before selecting group or command"
-        );
-        continue;
+        if (next) {
+          return next->dialog();
+        }
+        else if (getNumberOfItems() > 0) {
+          return items[0]->dialog();
+        }
+        else { // group that has no items
+          Command::printDialogError(
+            "This is a dead end",
+            "Please go back to the previous level or enter with this"
+          );
+          continue;
+        }
       }
 
       Command *found;
@@ -639,7 +659,7 @@ namespace cli_menu {
         }
         return found->dialog();
       }
-      else Command::printTryAgain("Command not found");
+      else Command::printDialogError("Command not found");
     }
 
     return DIALOG::CANCELED;
