@@ -12,25 +12,26 @@ namespace cli_menu {
   private:
     int r = 0, g = 0, b = 0;
 
-    static std::string newlines[2];
-    static void updateNewlines(std::string &text);
+    static const std::string
+      antidote, italic, underline;
 
-    static std::string getString(
+    static std::string correctNewlines(
       std::string &text,
-      mt::CR_STR additionalEscapeCode
+      mt::CR_STR styleEscapeCode,
+      mt::CR_STR colorEscapeCode
     );
 
     static std::string getString(
       std::string &text,
+      mt::CR_STR styleEscapeCode,
       CR_CLR foreground,
-      CR_CLR background,
-      mt::CR_STR additionalEscapeCode
+      CR_CLR background
     );
 
     static std::string getString(
       std::string &text,
-      CR_CLR foreground,
-      mt::CR_STR additionalEscapeCode
+      mt::CR_STR styleEscapeCode,
+      CR_CLR foreground
     );
 
   public:
