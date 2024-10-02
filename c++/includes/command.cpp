@@ -73,7 +73,7 @@ namespace cli_menu {
   Command::~Command() {
     name = "";
     description = "";
-    tier = 0;
+    level = 0;
     items = {};
     requiredItems = {};
     holder = nullptr;
@@ -240,7 +240,7 @@ namespace cli_menu {
       }
 
       holder = newHolder;
-      tier = holder->tier + 1;
+      level = holder->level + 1;
     }
   }
 
@@ -308,7 +308,7 @@ namespace cli_menu {
   }
 
   Command* Command::dismantleRelease(mt::CR_INT index) {
-    items[index]->tier = 0;
+    items[index]->level = 0;
     items[index]->holder = nullptr;
     items[index]->ultimate = nullptr;
     return dismantle(index);
@@ -354,7 +354,7 @@ namespace cli_menu {
     VEC_COM released = items;
 
     for (Command *com : items) {
-      com->tier = 0;
+      com->level = 0;
       com->holder = nullptr;
       com->ultimate = nullptr;
     }
@@ -440,7 +440,7 @@ namespace cli_menu {
       connectNext(i, united);
       updateRequiredItems(united[i], true);
       united[i]->holder = this;
-      united[i]->tier = tier + 1;
+      united[i]->level = level + 1;
     }
   }
 
@@ -615,7 +615,7 @@ namespace cli_menu {
     return DIALOG::CANCELED;
   }
 
-  // available to all tiers (command selection)
+  // available to all levels (command selection)
   mt::USI Command::dialog() {
 
     std::string nameTest;
@@ -652,7 +652,7 @@ namespace cli_menu {
         else { // group that has no items
           Command::printDialogError(
             "This is a dead end",
-            "Please go back to the previous level or enter with this"
+            "Please go to upper level or process this one"
           );
           continue;
         }

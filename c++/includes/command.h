@@ -111,7 +111,7 @@ namespace cli_menu {
     VEC_COM items;
     Command *ultimate = nullptr;
 
-    mt::UI tier = 0; // useful in overriding 'match' method
+    mt::UI level = 0; // useful in overriding 'match' method
     bool disguised = false;
 
     std::string getBranchLeafString(
@@ -178,7 +178,7 @@ namespace cli_menu {
     void setAccumulating(mt::CR_BOL condition) { accumulating = condition; }
     void setRequired(mt::CR_BOL condition) { required = condition; }
 
-    mt::UI getTier() { return tier; }
+    mt::UI getLevel() { return level; }
     size_t getNumberOfItems() { return items.size(); }
 
     VEC_COM getItems() { return items; }

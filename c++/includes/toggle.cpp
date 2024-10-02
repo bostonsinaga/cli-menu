@@ -69,16 +69,16 @@ namespace cli_menu {
 
     mt::UI begin = 1,
       end = inputs.size(),
-      ultiTier = 1,
-      thisTier = tier;
+      ultiLevel = 1,
+      thisLevel = level;
 
     if (ultimate) {
-      ultiTier = ultimate->getTier();
+      ultiLevel = ultimate->getLevel();
     }
 
-    if (thisTier <= ultiTier) {
-      begin = thisTier;
-      end = thisTier + 1;
+    if (thisLevel <= ultiLevel) {
+      begin = thisLevel;
+      end = thisLevel + 1;
       if (begin >= inputs.size()) return false;
     }
 

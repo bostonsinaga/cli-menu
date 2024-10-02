@@ -101,10 +101,10 @@ namespace cli_menu {
         match(program, &lastCom, &ultimate);
       }
 
-      int tierEnd = usedIndexes.size();
+      int levelEnd = usedIndexes.size();
 
       if (ultimate) {
-        if (ultimate->getTier() <= tierEnd) {
+        if (ultimate->getLevel() <= levelEnd) {
           pullDataRun(ultimate);
         }
         // 'lastCom' is a group
