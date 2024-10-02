@@ -12,9 +12,12 @@ namespace cli_menu {
   private:
     int r = 0, g = 0, b = 0;
 
-    static std::string getNewlines(
+    static std::string newlines[2];
+    static void updateNewlines(std::string &text);
+
+    static std::string getString(
       std::string &text,
-      mt::CR_BOL isFront
+      mt::CR_STR additionalEscapeCode
     );
 
     static std::string getString(
@@ -58,12 +61,21 @@ namespace cli_menu {
 
     static std::string getString(
       std::string text,
-      CR_CLR foreground,
-      CR_CLR background
+      CR_CLR foreground
     );
 
     static std::string getString(
       std::string text,
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static std::string getUnderlineString(
+      std::string text
+    );
+
+    static std::string getUnderlineString(
+      std::string text,
       CR_CLR foreground
     );
 
@@ -73,7 +85,11 @@ namespace cli_menu {
       CR_CLR background
     );
 
-    static std::string getUnderlineString(
+    static std::string getItalicString(
+      std::string text
+    );
+
+    static std::string getItalicString(
       std::string text,
       CR_CLR foreground
     );
@@ -82,11 +98,6 @@ namespace cli_menu {
       std::string text,
       CR_CLR foreground,
       CR_CLR background
-    );
-
-    static std::string getItalicString(
-      std::string text,
-      CR_CLR foreground
     );
 
     static void printPresets();
