@@ -39,14 +39,22 @@ namespace cli_menu {
     Color::WHITE(255, 255, 255),
     Color::YELLOW(255, 255, 0);
 
-  std::string Color::newlines[2] = {"", ""};
+  const std::string
+    Color::antidote = "\x1B[0m",
+    Color::italic = "\x1b[3m",
+    Color::underline = "\x1b[4m";
 
-  void Color::updateNewlines(
-    std::string &text
+  std::string Color::correctNewlines(
+    std::string &text,
+    mt::CR_STR styleEscapeCode,
+    mt::CR_STR colorEscapeCode
   ) {
-    if (text.empty()) return;
+    if (text.empty()) return "";
+
+    std::string newlines[2];
     bool anyNl = false;
 
+    // newlines at front
     for (int i = 0; i < text.size() - 1; i++) {
       if (text[i] == '\n') {
         text.erase(text.begin());
@@ -60,6 +68,7 @@ namespace cli_menu {
     if (!anyNl) newlines[0] = "";
     else anyNl = false;
 
+    // newlines at back
     for (int i = text.size() - 1; i > 0; i--) {
       if (text[i] == '\n') {
         text.erase(text.begin() + text.size() - 1);
@@ -70,57 +79,77 @@ namespace cli_menu {
     }
 
     if (!anyNl) newlines[1] = "";
-  }
+    mt::VEC_STR fractions;
 
-  std::string Color::getString(
-    std::string &text,
-    mt::CR_STR additionalEscapeCode
-  ) {
-    updateNewlines(text);
-    return newlines[0] + additionalEscapeCode
-      + text + (additionalEscapeCode.empty() ? "" : "\x1B[0m")
+    // newlines inside
+    for (int i = 0; i < text.size(); i++) {
+      if (text[i] == '\n') {
+        fractions.push_back(text.substr(0, i));
+        text.erase(0, i+1);
+        i = 0;
+      }
+    }
+
+    std::string
+      styleAntidote = styleEscapeCode.empty() ? "" : antidote,
+      colorAntidote = colorEscapeCode.empty() ? "" : antidote;
+
+    /**
+     * Reconnect 'fractions' to 'text'
+     * with corrected ANSI code by adding code around '\n'.
+     */
+    if (!fractions.empty()) {
+      for (std::string &str : fractions) {
+        text = str + styleAntidote + colorAntidote + "\n"
+          + colorEscapeCode + styleEscapeCode + text;
+      }
+    }
+
+    return newlines[0]
+      + styleEscapeCode + colorEscapeCode
+      + text + colorAntidote + styleAntidote
       + newlines[1];
   }
 
   std::string Color::getString(
     std::string &text,
-    CR_CLR foreground,
-    mt::CR_STR additionalEscapeCode
+    mt::CR_STR styleEscapeCode,
+    CR_CLR foreground
   ) {
-    updateNewlines(text);
-    return newlines[0]
-      + additionalEscapeCode + "\x1B[38;2;"
-      + std::to_string(foreground.r) + ";"
-      + std::to_string(foreground.g) + ";" 
-      + std::to_string(foreground.b) + "m"
-      + text + "\x1B[0m" + (additionalEscapeCode.empty() ? "" : "\x1B[0m")
-      + newlines[0];
+    return correctNewlines(
+      text,
+      styleEscapeCode,
+      "\x1B[38;2;"
+        + std::to_string(foreground.r) + ";"
+        + std::to_string(foreground.g) + ";" 
+        + std::to_string(foreground.b) + "m"
+    );
   }
 
   std::string Color::getString(
     std::string &text,
+    mt::CR_STR styleEscapeCode,
     CR_CLR foreground,
-    CR_CLR background,
-    mt::CR_STR additionalEscapeCode
+    CR_CLR background
   ) {
-    updateNewlines(text);
-    return newlines[0]
-      + additionalEscapeCode + "\x1B[38;2;"
-      + std::to_string(foreground.r) + ";"
-      + std::to_string(foreground.g) + ";" 
-      + std::to_string(foreground.b) + ";48;2;"
-      + std::to_string(background.r) + ";"
-      + std::to_string(background.g) + ";" 
-      + std::to_string(background.b) + "m"
-      + text + "\x1B[0m" + (additionalEscapeCode.empty() ? "" : "\x1B[0m")
-      + newlines[1];
+    return correctNewlines(
+      text,
+      styleEscapeCode,
+      "\x1B[38;2;"
+        + std::to_string(foreground.r) + ";"
+        + std::to_string(foreground.g) + ";" 
+        + std::to_string(foreground.b) + ";48;2;"
+        + std::to_string(background.r) + ";"
+        + std::to_string(background.g) + ";" 
+        + std::to_string(background.b) + "m"
+    );
   }
 
   std::string Color::getString(
     std::string text,
     CR_CLR foreground
   ) {
-    return getString(text, foreground, "");
+    return getString(text, "", foreground);
   }
 
   std::string Color::getString(
@@ -128,20 +157,20 @@ namespace cli_menu {
     CR_CLR foreground,
     CR_CLR background
   ) {
-    return getString(text, foreground, background, "");
+    return getString(text, "", foreground, background);
   }
 
   std::string Color::getUnderlineString(
     std::string text
   ) {
-    return getString(text, "\x1b[4m");
+    return correctNewlines(text, underline, "");
   }
 
   std::string Color::getUnderlineString(
     std::string text,
     CR_CLR foreground
   ) {
-    return getString(text, foreground, "\x1b[4m");
+    return getString(text, underline, foreground);
   }
 
   std::string Color::getUnderlineString(
@@ -149,20 +178,20 @@ namespace cli_menu {
     CR_CLR foreground,
     CR_CLR background
   ) {
-    return getString(text, foreground, background, "\x1b[4m");
+    return getString(text, underline, foreground, background);
   }
 
   std::string Color::getItalicString(
     std::string text
   ) {
-    return getString(text, "\x1b[0m");
+    return correctNewlines(text, italic, "");
   }
 
   std::string Color::getItalicString(
     std::string text,
     CR_CLR foreground
   ) {
-    return getString(text, foreground, "\x1b[3m");
+    return getString(text, italic, foreground);
   }
 
   std::string Color::getItalicString(
@@ -170,7 +199,7 @@ namespace cli_menu {
     CR_CLR foreground,
     CR_CLR background
   ) {
-    return getString(text, foreground, background, "\x1b[3m");
+    return getString(text, italic, foreground, background);
   }
 
   void Color::printPresets() {
