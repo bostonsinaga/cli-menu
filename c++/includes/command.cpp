@@ -787,27 +787,22 @@ namespace cli_menu {
       Message::printBoundaryLine();
     }
 
-    // bold font style
-    std::cout << "\n\033[1m>" << comName << ":\033[0m\n";
+    std::cout << Color::getString(
+      ">" + comName + ":\n", Color::WHITE
+    );
 
     // display only once
     if (init[isOpen]) {
       init[isOpen] = false;
 
-      // italic font style
       if (isOpen) {
-        std::cout
-          << "\033[3m(.cancel = :c, "
-          << ".enter = :e, "
-          << ".next = :n, "
-          << ".previous = :p, "
-          << ".select = :s)\033[0m\n";
+        std::cout << Color::getItalicString(
+          "(.cancel = :c, .enter = :e, .next = :n, .previous = :p, .select = :s)\n"
+        );
       }
-      // italic font style
-      else std::cout
-        << "\033[3m(yes = y, "
-        << "no = n, "
-        << "or boolean)\033[0m\n"; 
+      else std::cout << Color::getItalicString(
+        "(yes = y, no = n, or boolean)\n"
+      );
     }
 
     std::cout << std::endl;
