@@ -2,11 +2,12 @@
 #define __CLI_MENU_H__
 
 #include "base.h"
+#include "color.h"
+#include "message.h"
 #include "command.h"
-#include "program.h"
 #include "parameter.h"
 #include "toggle.h"
-#include "message.h"
+#include "program.h"
 #include "executor.h"
 
 namespace cm = cli_menu;
