@@ -378,9 +378,7 @@ namespace cli_menu {
 
   std::string Command::getMainLabel() {
     if (isUltimate()) {
-      return Message::customColored(
-        Message::COLOR::GREEN, "(main)"
-      );
+      return Color::getString("(main)", Color::GREEN);
     }
     return "";
   }
@@ -501,9 +499,9 @@ namespace cli_menu {
     mt::CR_STR reason,
     mt::CR_STR suggestion
   ) {
-    std::cerr << Message::customColored(
-      Message::COLOR::RED,
-      "\n> " + reason + ". " + suggestion + ":\n\n"
+    std::cerr << Color::getString(
+      "\n> " + reason + ". " + suggestion + ":\n\n",
+      Color::RED
     );
   }
 
