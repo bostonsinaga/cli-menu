@@ -1,20 +1,22 @@
 set (SOURCES
   base.h
+  color.h
+  message.h
   command.h
-  program.h
   parameter.h
   toggle.h
-  message.h
+  program.h
   executor.h
   cli-menu.h
 
   base.cpp
+  color.cpp
+  message.cpp
   command.cpp
   control.cpp
-  program.cpp
   parameter.cpp
   toggle.cpp
-  message.cpp
+  program.cpp
   executor.cpp
 )
 
