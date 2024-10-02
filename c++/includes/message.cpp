@@ -10,30 +10,22 @@ namespace cli_menu {
     else return "<opt>";
   }
 
-  std::string Message::customColored(
-    mt::USI code,
-    mt::CR_STR text
-  ) {
-    if (code < 0 || code > colorsCount) code = COLOR::WHITE;
-    return "\033[" + std::to_string(colorCodes[code]) + "m" + text + "\033[0m";
-  }
-
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
       case STATUS::HINT: {
-        return customColored(COLOR::LIGHT_BLUE, "HINT. ");
+        return Color::getString("HINT. ", Color::SKY_BLUE);
       }
       case STATUS::WARNING: {
-        return customColored(COLOR::YELLOW, "WARNING. ");
+        return Color::getString("WARNING. ", Color::YELLOW);
       }
       case STATUS::ERROR: {
-        return customColored(COLOR::RED, "ERROR. ");
+        return Color::getString("ERROR. ", Color::RED);
       }
       case STATUS::SUCCEED: {
-        return customColored(COLOR::GREEN, "SUCCEED. ");
+        return Color::getString("SUCCEED. ", Color::GREEN);
       }
       case STATUS::CANCELED: {
-        return customColored(COLOR::BLUE, "CANCELED. ");
+        return Color::getString("CANCELED. ", Color::BLUE);
       }
     }
     return "";
