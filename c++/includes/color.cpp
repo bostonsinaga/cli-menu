@@ -160,27 +160,6 @@ namespace cli_menu {
     return getString(text, "", foreground, background);
   }
 
-  std::string Color::getUnderlineString(
-    std::string text
-  ) {
-    return correctNewlines(text, underline, "");
-  }
-
-  std::string Color::getUnderlineString(
-    std::string text,
-    CR_CLR foreground
-  ) {
-    return getString(text, underline, foreground);
-  }
-
-  std::string Color::getUnderlineString(
-    std::string text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    return getString(text, underline, foreground, background);
-  }
-
   std::string Color::getItalicString(
     std::string text
   ) {
@@ -200,6 +179,27 @@ namespace cli_menu {
     CR_CLR background
   ) {
     return getString(text, italic, foreground, background);
+  }
+
+  std::string Color::getUnderlineString(
+    std::string text
+  ) {
+    return correctNewlines(text, underline, "");
+  }
+
+  std::string Color::getUnderlineString(
+    std::string text,
+    CR_CLR foreground
+  ) {
+    return getString(text, underline, foreground);
+  }
+
+  std::string Color::getUnderlineString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    return getString(text, underline, foreground, background);
   }
 
   void Color::printPresets() {
