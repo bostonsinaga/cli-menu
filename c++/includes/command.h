@@ -12,15 +12,23 @@ namespace cli_menu {
   class Command {
   private:
     class Control {
-    public:
-      enum { CANCEL_FG = 1, ENTER_FG = 2, NEXT_FG = 3, SELECT_FG = 4 };
-      static const std::string CANCEL[2], ENTER[2], NEXT[2], SELECT[2];
+    private:
+      enum {
+        CANCEL = 0, SELECT = 1,
+        PREVIOUS = 2, NEXT = 3,
+        BACK = 4, ENTER = 5
+      };
 
-      static int test(std::string &str);
+      static const std::string NAMES[6][2];
+      static int test(std::string str);
+
+    public:
       static bool cancelTest(std::string &str);
-      static bool enterTest(std::string &str);
-      static bool nextTest(std::string &str);
       static bool selectTest(std::string &str);
+      static bool previousTest(std::string &str);
+      static bool nextTest(std::string &str);
+      static bool backTest(std::string &str);
+      static bool enterTest(std::string &str);
       static void printHelp();
     };
 
