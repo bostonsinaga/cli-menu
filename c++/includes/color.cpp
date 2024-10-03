@@ -81,33 +81,46 @@ namespace cli_menu {
     if (!anyNl) newlines[1] = "";
     mt::VEC_STR fractions;
 
-    // newlines inside
+    // inner newline detection
     for (int i = 0; i < text.size(); i++) {
       if (text[i] == '\n') {
         fractions.push_back(text.substr(0, i));
         text.erase(0, i+1);
         i = 0;
       }
-    }
+      /**
+       * Also an antidote correction.
+       * Adding parameter codes around it.
+       */
+      else if (i+3 < text.size() &&
+        text[i] == '\x1B' &&
+        text[i+1] == '[' &&
+        text[i+2] == '0' &&
+        text[i+3] == 'm'
+      ) {
+        text = text.substr(0, i+4) + styleEscapeCode
+          + colorEscapeCode + text.substr(i+4);
 
-    std::string
-      styleAntidote = styleEscapeCode.empty() ? "" : antidote,
-      colorAntidote = colorEscapeCode.empty() ? "" : antidote;
+        i += 3 + styleEscapeCode.length()
+          + colorEscapeCode.length();
+      }
+    }
 
     /**
      * Reconnect 'fractions' to 'text'
-     * with corrected ANSI code by adding code around '\n'.
+     * with corrected ANSI escape code
+     * by adding parameter codes around '\n'.
      */
     if (!fractions.empty()) {
-      for (std::string &str : fractions) {
-        text = str + styleAntidote + colorAntidote + "\n"
+      for (int i = fractions.size() - 1; i >= 0; i--) {
+        text = fractions[i] + antidote + "\n"
           + colorEscapeCode + styleEscapeCode + text;
       }
     }
 
     return newlines[0]
       + styleEscapeCode + colorEscapeCode
-      + text + colorAntidote + styleAntidote
+      + text + antidote
       + newlines[1];
   }
 
