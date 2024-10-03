@@ -71,31 +71,31 @@ namespace cli_menu {
       CR_CLR background
     );
 
-    static std::string getUnderlineString(
+    static std::string getItalicString(
       std::string text
     );
 
-    static std::string getUnderlineString(
+    static std::string getItalicString(
       std::string text,
       CR_CLR foreground
     );
 
-    static std::string getUnderlineString(
+    static std::string getItalicString(
       std::string text,
       CR_CLR foreground,
       CR_CLR background
     );
 
-    static std::string getItalicString(
+    static std::string getUnderlineString(
       std::string text
     );
 
-    static std::string getItalicString(
+    static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground
     );
 
-    static std::string getItalicString(
+    static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground,
       CR_CLR background
