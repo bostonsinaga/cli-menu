@@ -21,6 +21,7 @@ namespace cli_menu {
       static bool enterTest(std::string &str);
       static bool nextTest(std::string &str);
       static bool selectTest(std::string &str);
+      static void printHelp();
     };
 
   private:
@@ -96,7 +97,8 @@ namespace cli_menu {
     // prints '-' signs horizontally before names list
     void printAfterBoundaryLine(
       mt::CR_STR about,
-      mt::CR_BOL isOpen
+      mt::CR_BOL isOpen,
+      mt::CR_BOL usingDashes = false
     );
 
     /**

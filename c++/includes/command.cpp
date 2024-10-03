@@ -378,7 +378,7 @@ namespace cli_menu {
 
   std::string Command::getMainLabel() {
     if (isUltimate()) {
-      return Color::getString("(main)", Color::GREEN);
+      return Color::getString("(main)", Color(16, 128, 16));
     }
     return "";
   }
@@ -779,29 +779,29 @@ namespace cli_menu {
 
   void Command::printAfterBoundaryLine(
     mt::CR_STR comName,
-    mt::CR_BOL isOpen
+    mt::CR_BOL isOpen,
+    mt::CR_BOL usingDashes
   ) {
+    static std::string noInitNl = "";
     static bool init[] = {true, true};
 
-    if (!(init[0] && init[1])) {
+    if (usingDashes && !(init[0] && init[1])) {
       Message::printBoundaryLine();
     }
 
     std::cout << Color::getString(
-      ">" + comName + ":\n", Color::WHITE
+      noInitNl + ">" + comName + ":\n",
+      Color::BLACK, Color::SILVER
     );
 
-    // display only once
     if (init[isOpen]) {
       init[isOpen] = false;
+      noInitNl = "\n";
 
-      if (isOpen) {
-        std::cout << Color::getItalicString(
-          "(.cancel = :c, .enter = :e, .next = :n, .previous = :p, .select = :s)\n"
-        );
-      }
+      // display only once
+      if (isOpen) Control::printHelp();
       else std::cout << Color::getItalicString(
-        "(yes = y, no = n, or boolean)\n"
+        "  yes = y, no = n, or boolean\n"
       );
     }
 
