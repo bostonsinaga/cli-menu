@@ -39,6 +39,14 @@ namespace cli_menu {
   bool Command::Control::selectTest(std::string &str) {
     return test(str) == SELECT_FG;
   }
+
+  void Command::Control::printHelp() {
+    std::cout << Color::getItalicString(
+      std::string("  .cancel = :c, .select   = :s,\n") +
+      std::string("  .next   = :n, .previous = :p,\n") +
+      std::string("  .back   = :b, .enter    = :e\n")
+    );
+  }
 }
 
 #endif // __CLI_MENU__CONTROL_CPP__
