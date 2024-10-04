@@ -93,6 +93,13 @@ namespace cli_menu {
         inputs.push_back(argv[i]);
       }
 
+      if (Command::usingLowercaseName) {
+        program->changeTreeNamesToLowercase();
+      }
+      else if (Command::usingUppercaseName) {
+        program->changeTreeNamesToUppercase();
+      }
+
       //_________|
       // Process |
       //_________|
