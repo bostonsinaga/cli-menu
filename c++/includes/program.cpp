@@ -85,6 +85,16 @@ namespace cli_menu {
     Command::usingCaseSensitiveName = isIt;
   }
 
+  void Program::useLowercaseName(mt::CR_BOL isIt) {
+    Command::usingLowercaseName = isIt;
+    if (isIt) Command::usingUppercaseName = false;
+  }
+
+  void Program::useUppercaseName(mt::CR_BOL isIt) {
+    Command::usingUppercaseName = isIt;
+    if (isIt) Command::usingLowercaseName = false;
+  }
+
   void Program::useDashesBoundaryLine(mt::CR_BOL isIt) {
     Command::usingDashesBoundaryLine = isIt;
   }

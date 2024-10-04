@@ -65,6 +65,8 @@ namespace cli_menu {
     std::string getFullName() override;
 
     static void useCaseSensitiveName(mt::CR_BOL isIt);
+    static void useLowercaseName(mt::CR_BOL isIt);
+    static void useUppercaseName(mt::CR_BOL isIt);
     static void useDashesBoundaryLine(mt::CR_BOL isIt);
 
     void printHelp() override;
