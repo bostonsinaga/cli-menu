@@ -8,6 +8,9 @@ namespace cli_menu {
   // CONSTRUCTORS |
   //______________|
 
+  bool Command::usingCaseSensitiveName = true,
+    Command::usingDashesBoundaryLine = false;
+
   void Command::setMetaData(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
@@ -378,7 +381,10 @@ namespace cli_menu {
 
   std::string Command::getMainLabel() {
     if (isUltimate()) {
-      return Color::getString("(main)", Color(16, 128, 16));
+      if (Command::usingDashesBoundaryLine) {
+        return Color::getString("(main)", Color::GREEN);
+      }
+      return Color::getString("(main)", Color(0, 127, 0));
     }
     return "";
   }
@@ -505,6 +511,11 @@ namespace cli_menu {
     );
   }
 
+  void Command::getDialogInput(std::string &buffer) {
+    std::cout << "> ";
+    std::cin >> buffer;
+  }
+
   /**
    * The 'command' confirmed to exist when this invoked.
    * This always invoked in supporter level.
@@ -531,7 +542,8 @@ namespace cli_menu {
       false
     );
 
-    while (std::getline(std::cin, buffer)) {
+    while (true) {
+      getDialogInput(buffer);
       mt_uti::StrTools::changeStringToLowercase(buffer);
 
       if (buffer == "y" || buffer == "yes" ||
@@ -583,7 +595,8 @@ namespace cli_menu {
       true
     );
 
-    while (std::getline(std::cin, buffer)) {
+    while (true) {
+      getDialogInput(buffer);
       inputPassed = isOptional() || (isRequired() && !strVec.empty());
 
       if (Control::cancelTest(buffer)) {
@@ -628,7 +641,8 @@ namespace cli_menu {
     inlineNames += " " + getFullName();
     Command::printAfterBoundaryLine(inlineNames, true);
 
-    while (std::getline(std::cin, nameTest)) {
+    while (true) {
+      getDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
         return DIALOG::CANCELED;
@@ -658,7 +672,13 @@ namespace cli_menu {
         }
       }
 
+      // user defined command
       Command *found;
+
+      if (!Command::usingCaseSensitiveName) {
+        mt_uti::StrTools::changeStringToLowercase(nameTest);
+      }
+
       if (isGroup()) found = getItem(nameTest);
       else found = ultimate->getItem(nameTest);
 
@@ -778,20 +798,29 @@ namespace cli_menu {
   }
 
   void Command::printAfterBoundaryLine(
-    mt::CR_STR comName,
-    mt::CR_BOL isOpen,
-    mt::CR_BOL usingDashes
+    std::string comName,
+    mt::CR_BOL isOpen
   ) {
     static std::string noInitNl = "";
     static bool init[] = {true, true};
+    comName = noInitNl + ">" + comName + ":\n";
 
-    if (usingDashes && !(init[0] && init[1])) {
-      Message::printBoundaryLine();
+    if (Command::usingDashesBoundaryLine) {
+      if (!(init[0] && init[1])) {
+        Message::printBoundaryLine();
+      }
+
+      std::cout << Color::getString(
+        comName, Color::WHITE
+      );
     }
-
-    std::cout << Color::getString(
-      noInitNl + ">" + comName + ":\n",
-      Color::BLACK, Color::SILVER
+    else if (isGroup()) {
+      std::cout << Color::getString(
+        comName, Color::BLACK, Color::SILVER
+      );
+    }
+    else std::cout << Color::getString(
+      comName, Color::BLACK, Color::WHITE
     );
 
     if (init[isOpen]) {

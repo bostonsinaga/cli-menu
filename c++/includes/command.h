@@ -43,8 +43,6 @@ namespace cli_menu {
     Command *holder = nullptr,
       *next = nullptr;
 
-    static std::string boundaryLine;
-
     bool accumulating = false,
       required = false,
       used = false;
@@ -98,15 +96,18 @@ namespace cli_menu {
       mt::CR_STR suggestion = "Try Again"
     );
 
+    static void getDialogInput(std::string &buffer);
     static mt::USI chooseQuestion(Command *command);
     mt::USI closedQuestion();
     mt::USI openQuestion();
 
-    // prints '-' signs horizontally before names list
+    /**
+     * Prints '-' signs horizontally before names list or
+     * names list with prominent background color.
+     */
     void printAfterBoundaryLine(
-      mt::CR_STR about,
-      mt::CR_BOL isOpen,
-      mt::CR_BOL usingDashes = false
+      std::string comName,
+      mt::CR_BOL isOpen
     );
 
     /**
@@ -120,6 +121,10 @@ namespace cli_menu {
     std::string name;
     VEC_COM items;
     Command *ultimate = nullptr;
+
+    // can only be set through the 'Program'
+    static bool usingCaseSensitiveName,
+      usingDashesBoundaryLine;
 
     mt::UI level = 0; // useful in overriding 'match' method
     bool disguised = false;
@@ -185,8 +190,8 @@ namespace cli_menu {
     void setAsUltimate();
     void resignFromUltimate();
 
-    void setAccumulating(mt::CR_BOL condition) { accumulating = condition; }
-    void setRequired(mt::CR_BOL condition) { required = condition; }
+    void setAccumulating(mt::CR_BOL isIt) { accumulating = isIt; }
+    void setRequired(mt::CR_BOL isIt) { required = isIt; }
 
     mt::UI getLevel() { return level; }
     size_t getNumberOfItems() { return items.size(); }
