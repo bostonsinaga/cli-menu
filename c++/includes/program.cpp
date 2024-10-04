@@ -81,6 +81,14 @@ namespace cli_menu {
     return Command::getFullName();
   }
 
+  void Program::useCaseSensitiveName(mt::CR_BOL isIt) {
+    Command::usingCaseSensitiveName = isIt;
+  }
+
+  void Program::useDashesBoundaryLine(mt::CR_BOL isIt) {
+    Command::usingDashesBoundaryLine = isIt;
+  }
+
   void Program::printHelp() {
     if (disguised) {
       Toggle::printHelp();
