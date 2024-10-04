@@ -124,6 +124,8 @@ namespace cli_menu {
 
     // can only be set through the 'Program'
     static bool usingCaseSensitiveName,
+      usingLowercaseName,
+      usingUppercaseName,
       usingDashesBoundaryLine;
 
     mt::UI level = 0; // useful in overriding 'match' method
@@ -136,6 +138,8 @@ namespace cli_menu {
     );
 
     std::string getMainLabel();
+    void changeTreeNamesToLowercase();
+    void changeTreeNamesToUppercase();
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
 
@@ -147,6 +151,9 @@ namespace cli_menu {
 
     // destructor only invoked from 'remove' method
     virtual ~Command();
+
+    // accessing letter case conditions and setters
+    friend class Executor;
 
   public:
     enum DIALOG { CANCELED, COMPLETE };

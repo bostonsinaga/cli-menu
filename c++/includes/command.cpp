@@ -9,6 +9,8 @@ namespace cli_menu {
   //______________|
 
   bool Command::usingCaseSensitiveName = true,
+    Command::usingLowercaseName = false,
+    Command::usingUppercaseName = false,
     Command::usingDashesBoundaryLine = false;
 
   void Command::setMetaData(
@@ -111,9 +113,20 @@ namespace cli_menu {
   }
 
   Command *Command::getItem(mt::CR_STR name_in) {
+
+    bool needToUppercase = !Command::usingCaseSensitiveName &&
+      !Command::usingLowercaseName && !Command::usingUppercaseName;
+
     for (Command *com : items) {
-      if (com->name == name_in) return com;
+      std::string nm = com->name;
+
+      if (needToUppercase) {
+        mt_uti::StrTools::changeStringToUppercase(nm);
+      }
+
+      if (nm == name_in) return com;
     }
+
     return nullptr;
   }
 
@@ -676,7 +689,10 @@ namespace cli_menu {
       Command *found;
 
       if (!Command::usingCaseSensitiveName) {
-        mt_uti::StrTools::changeStringToLowercase(nameTest);
+        if (Command::usingLowercaseName) {
+          mt_uti::StrTools::changeStringToLowercase(nameTest);
+        }
+        else mt_uti::StrTools::changeStringToUppercase(nameTest);
       }
 
       if (isGroup()) found = getItem(nameTest);
@@ -795,6 +811,22 @@ namespace cli_menu {
   ) {
     if (spacesCount < 1) spacesCount = 1;
     return getBranchLeafString(spacesCount, 0, withDescription);
+  }
+
+  void Command::changeTreeNamesToLowercase() {
+    mt_uti::StrTools::changeStringToLowercase(name);
+
+    for (Command *com : items) {
+      com->changeTreeNamesToLowercase();
+    }
+  }
+
+  void Command::changeTreeNamesToUppercase() {
+    mt_uti::StrTools::changeStringToUppercase(name);
+
+    for (Command *com : items) {
+      com->changeTreeNamesToUppercase();
+    }
   }
 
   void Command::printAfterBoundaryLine(
