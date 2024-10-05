@@ -12,13 +12,47 @@ namespace cli_menu {
     };
 
     static std::string getColoredTag(mt::CR_INT flag);
-    static std::string getObligatoryString(mt::CR_BOL isRequired);
+    static void printItalicString(mt::CR_STR text);
+    static void printUnderlineString(mt::CR_STR text);
 
-    static void print(
+    static void printString(
+      mt::CR_STR text,
+      CR_CLR foreground
+    );
+
+    static void printString(
+      mt::CR_STR text,
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static void printItalicString(
+      mt::CR_STR text,
+      CR_CLR foreground
+    );
+
+    static void printItalicString(
+      mt::CR_STR text,
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static void printUnderlineString(
+      mt::CR_STR text,
+      CR_CLR foreground
+    );
+
+    static void printUnderlineString(
+      mt::CR_STR text,
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static void printNamed(
       mt::CR_INT flag,
-      std::string text,
+      mt::CR_STR text,
       std::string name = "",
-      bool toUppercase = true
+      mt::CR_BOL toUppercase = true
     );
 
     static void printBoundaryLine(

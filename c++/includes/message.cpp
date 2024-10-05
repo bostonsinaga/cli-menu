@@ -5,11 +5,6 @@
 
 namespace cli_menu {
 
-  std::string Message::getObligatoryString(mt::CR_BOL isRequired) {
-    if (isRequired) return "<req>";
-    else return "<opt>";
-  }
-
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
       case STATUS::HINT: {
@@ -31,11 +26,76 @@ namespace cli_menu {
     return "";
   }
 
-  void Message::print(
+  void Message::printItalicString(mt::CR_STR text) {
+    std::cout << Color::getItalicString(text);
+  }
+
+  void Message::printUnderlineString(mt::CR_STR text) {
+    std::cout << Color::getUnderlineString(text);
+  }
+
+  void Message::printString(
+    mt::CR_STR text,
+    CR_CLR foreground
+  ) {
+    std::cout << Color::getString(
+      text, foreground
+    );
+  }
+
+  void Message::printString(
+    mt::CR_STR text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::cout << Color::getString(
+      text, foreground, background
+    );
+  }
+
+  void Message::printItalicString(
+    mt::CR_STR text,
+    CR_CLR foreground
+  ) {
+    std::cout << Color::getItalicString(
+      text, foreground
+    );
+  }
+
+  void Message::printItalicString(
+    mt::CR_STR text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::cout << Color::getItalicString(
+      text, foreground, background
+    );
+  }
+
+  void Message::printUnderlineString(
+    mt::CR_STR text,
+    CR_CLR foreground
+  ) {
+    std::cout << Color::getUnderlineString(
+      text, foreground
+    );
+  }
+
+  void Message::printUnderlineString(
+    mt::CR_STR text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::cout << Color::getUnderlineString(
+      text, foreground, background
+    );
+  }
+
+  void Message::printNamed(
     mt::CR_INT flag,
-    std::string text,
+    mt::CR_STR text,
     std::string name,
-    bool toUppercase
+    mt::CR_BOL toUppercase
   ) {
     if (text.length() > 0) {
       std::cout << std::endl;
