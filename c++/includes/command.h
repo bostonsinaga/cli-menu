@@ -138,8 +138,13 @@ namespace cli_menu {
     );
 
     std::string getMainLabel();
+
+    static bool isTemporaryLetterCaseChange();
+    static void onFreeChangeInputLetterCase(std::string &strIn);
+
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
+
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
 
