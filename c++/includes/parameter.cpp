@@ -50,8 +50,8 @@ namespace cli_menu {
   ) { type = type_in; }
 
   std::string Parameter::getStringifiedType() {
-    if (type == TEXT) return "TEXT";
-    return "NUMBER";
+    if (type == TEXT) return "text";
+    return "number";
   }
 
   std::string Parameter::getDashedName() {
@@ -60,8 +60,10 @@ namespace cli_menu {
 
   std::string Parameter::getFullName() {
     return getDashedName()
-      + "[" + getStringifiedType() + "]"
-      + getMainLabel();
+      + Color::getString(
+        "<" + getStringifiedType() + ">",
+        Command::usingDashesBoundaryLine ? Color::AZURE : Color(0, 95, 223)
+      ) + getMainLabel();
   }
 
   void Parameter::pullData(
