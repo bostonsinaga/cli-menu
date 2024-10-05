@@ -24,14 +24,14 @@ namespace cli_menu {
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground,
-      CR_CLR background
+      CR_CLR foreground
     );
 
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground
+      CR_CLR foreground,
+      CR_CLR background
     );
 
   public:
