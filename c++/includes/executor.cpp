@@ -19,7 +19,7 @@ namespace cli_menu {
           return pullDataRun(command);
         }
         else { // CANCELED
-          Message::print(
+          Message::printNamed(
             Message::STATUS::CANCELED,
             "Program terminated.",
             program->getName()
@@ -36,7 +36,7 @@ namespace cli_menu {
     program->pullData(paramData, usedIndexes);
 
     if (command->run(paramData)) {
-      Message::print(
+      Message::printNamed(
         Message::STATUS::SUCCEED,
         "Output file written to 'foo.kml'.",
         program->getName()
@@ -44,7 +44,7 @@ namespace cli_menu {
       return true;
     }
     else {
-      Message::print(
+      Message::printNamed(
         Message::STATUS::ERROR,
         "Problem with input.",
         program->getName()
@@ -131,7 +131,7 @@ namespace cli_menu {
       // runtime end
       program->remove();
     }
-    else Message::print(
+    else Message::printNamed(
       Message::STATUS::ERROR,
       "Unassigned 'Program'.",
       "cli_menu::Executor::run",
