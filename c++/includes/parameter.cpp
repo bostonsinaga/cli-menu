@@ -86,6 +86,10 @@ namespace cli_menu {
     bool incomplete = false;
     std::string thisName = name;
 
+    if (Command::isTemporaryLetterCaseChange()) {
+      mt_uti::StrTools::changeStringToUppercase(thisName);
+    }
+
     int begin = 1,
       end = inputs.size() - 1;
 
@@ -108,6 +112,7 @@ namespace cli_menu {
 
       int j = i + 1;
       std::string testName = inputs[i];
+      Command::onFreeChangeInputLetterCase(testName);
 
       if (DashTest::cleanSingle(testName) &&
         testName == thisName

@@ -67,6 +67,10 @@ namespace cli_menu {
   bool Toggle::match(mt::VEC_STR &inputs) {
     std::string thisName = name;
 
+    if (Command::isTemporaryLetterCaseChange()) {
+      mt_uti::StrTools::changeStringToUppercase(thisName);
+    }
+
     mt::UI begin = 1,
       end = inputs.size(),
       ultiLevel = 1,
@@ -86,6 +90,7 @@ namespace cli_menu {
       if (inputs[i].empty()) continue;
 
       std::string testName = inputs[i];
+      Command::onFreeChangeInputLetterCase(testName);
 
       if (DashTest::cleanDouble(testName) &&
         testName == thisName
