@@ -213,7 +213,7 @@ namespace cli_menu {
       if (command->getInheritanceFlag() == PROGRAM) {
         command->disguise(true);
 
-        Message::print(
+        Message::printNamed(
           Message::STATUS::WARNING,
           "Cannot add a 'Program' (name: '" +
           command->name + "'). To keep proceeding, it is now considered as 'Toggle'.",
@@ -392,10 +392,14 @@ namespace cli_menu {
 
   std::string Command::getMainLabel() {
     if (isUltimate()) {
+      Color fontColor;
+
       if (Command::usingDashesBoundaryLine) {
-        return Color::getString("(main)", Color::GREEN);
+        fontColor = Color::MINT;
       }
-      return Color::getString("(main)", Color(0, 127, 0));
+      else fontColor = Color::TEAL;
+
+      return Color::getString("[MAIN]", fontColor);
     }
     return "";
   }
@@ -516,9 +520,29 @@ namespace cli_menu {
     mt::CR_STR reason,
     mt::CR_STR suggestion
   ) {
-    std::cerr << Color::getString(
+    Message::printString(
       "\n> " + reason + ". " + suggestion + ":\n\n",
       Color::RED
+    );
+  }
+
+  void Command::printDialogStatus() {
+    std::string status = " (";
+
+    if (isGroup()) status += "sel";
+    else {
+      status += "par, ";
+
+      if (required) status += "req, ";
+      else status += "opt, ";
+
+      if (!used) status += "emp";
+      else if (accumulating) status += "acc";
+      else status += "cor";
+    }
+
+    Message::printItalicString(
+      status + ")\n", Color::MAGENTA
     );
   }
 
@@ -546,15 +570,12 @@ namespace cli_menu {
 
   // called after ultimate
   mt::USI Command::closedQuestion() {
-    std::string buffer;
 
-    Command::printAfterBoundaryLine(
-      getFullNameWithUltimate(),
-      false
-    );
+    std::string buffer;
+    printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
-      getDialogInput(buffer);
+      Command::getDialogInput(buffer);
       mt_uti::StrTools::changeStringToLowercase(buffer);
 
       if (buffer == "y" || buffer == "yes" ||
@@ -601,13 +622,10 @@ namespace cli_menu {
     std::string buffer;
     bool inputPassed;
 
-    Command::printAfterBoundaryLine(
-      getFullNameWithUltimate(),
-      true
-    );
+    printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
-      getDialogInput(buffer);
+      Command::getDialogInput(buffer);
       inputPassed = isOptional() || (isRequired() && !strVec.empty());
 
       if (Control::cancelTest(buffer)) {
@@ -650,10 +668,10 @@ namespace cli_menu {
     }
 
     inlineNames += " " + getFullName();
-    Command::printAfterBoundaryLine(inlineNames, true);
+    printAfterBoundaryLine(inlineNames);
 
     while (true) {
-      getDialogInput(nameTest);
+      Command::getDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
         return DIALOG::CANCELED;
@@ -835,31 +853,30 @@ namespace cli_menu {
     }
   }
 
-  void Command::printAfterBoundaryLine(
-    std::string comName,
-    mt::CR_BOL isOpen
-  ) {
+  void Command::printAfterBoundaryLine(std::string comName) {
+
     static std::string noInitNl = "";
     static bool init[] = {true, true};
-    comName = noInitNl + ">" + comName + ":\n";
+    comName = noInitNl + ">" + comName + ":";
+
+    bool isOpen = !ultimate ||
+      (isSupporter() && getInheritanceFlag() == PARAMETER);
 
     if (Command::usingDashesBoundaryLine) {
       if (!(init[0] && init[1])) {
         Message::printBoundaryLine();
       }
 
-      std::cout << Color::getString(
+      Message::printString(
         comName, Color::WHITE
       );
     }
-    else if (isGroup()) {
-      std::cout << Color::getString(
-        comName, Color::BLACK, Color::SILVER
-      );
-    }
-    else std::cout << Color::getString(
+    else Message::printString(
       comName, Color::BLACK, Color::WHITE
     );
+
+    // has a newline at the end
+    printDialogStatus();
 
     if (init[isOpen]) {
       init[isOpen] = false;
@@ -867,11 +884,12 @@ namespace cli_menu {
 
       // display only once
       if (isOpen) Control::printHelp();
-      else std::cout << Color::getItalicString(
+      else Message::printItalicString(
         "  yes = y, no = n, or boolean\n"
       );
     }
 
+    // always have a newline
     std::cout << std::endl;
   }
 

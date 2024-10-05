@@ -96,6 +96,7 @@ namespace cli_menu {
       mt::CR_STR suggestion = "Try Again"
     );
 
+    void printDialogStatus();
     static void getDialogInput(std::string &buffer);
     static mt::USI chooseQuestion(Command *command);
     mt::USI closedQuestion();
@@ -105,10 +106,7 @@ namespace cli_menu {
      * Prints '-' signs horizontally before names list or
      * names list with prominent background color.
      */
-    void printAfterBoundaryLine(
-      std::string comName,
-      mt::CR_BOL isOpen
-    );
+    void printAfterBoundaryLine(std::string comName);
 
     /**
      * A state setter for 'disguised' where the derived class
