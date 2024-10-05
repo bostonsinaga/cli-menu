@@ -68,16 +68,16 @@ namespace cli_menu {
     ParamData &paramData,
     mt::VEC_UI &usedIndexes
   ) {
-    if (type == TEXT) {
-      paramData.texts.push_back(argument);
-    }
-    else {
-      paramData.numbers.push_back(
+    if (isSupporter()) {
+      if (type == TEXT) {
+        paramData.texts.push_back(argument);
+        paramData.numbers.push_back({});
+      }
+      else paramData.numbers.push_back(
         mt_uti::Scanner<double>::parseNumbers(argument)
       );
+      paramData.conditions.push_back(false);
     }
-
-    paramData.conditions.push_back(false);
     deepPull(paramData, usedIndexes);
   }
 

@@ -58,9 +58,11 @@ namespace cli_menu {
     ParamData &paramData,
     mt::VEC_UI &usedIndexes
   ) {
-    paramData.conditions.push_back(condition);
-    paramData.texts.push_back("");
-    paramData.numbers.push_back({});
+    if (isSupporter()) {
+      paramData.conditions.push_back(condition);
+      paramData.texts.push_back("");
+      paramData.numbers.push_back({});
+    }
     deepPull(paramData, usedIndexes);
   }
 
