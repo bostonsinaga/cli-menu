@@ -44,8 +44,9 @@ namespace cli_menu {
       *next = nullptr;
 
     bool accumulating = false,
-      required = false,
-      used = false;
+      required = false;
+
+    static const std::string cannotProcessErrorString;
 
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
@@ -126,8 +127,11 @@ namespace cli_menu {
       usingUppercaseName,
       usingDashesBoundaryLine;
 
-    mt::UI level = 0; // useful in overriding 'match' method
-    bool disguised = false;
+    // useful in overriding 'match' method
+    mt::UI level = 0;
+
+    bool disguised = false,
+      used = false;
 
     std::string getBranchLeafString(
       mt::CR_INT spacesCount,
@@ -136,6 +140,7 @@ namespace cli_menu {
     );
 
     std::string getMainLabel();
+    void updateRequiredSelf(mt::CR_BOL adding);
 
     static bool isTemporaryLetterCaseChange();
     static void onFreeChangeInputLetterCase(std::string &strIn);
