@@ -49,6 +49,12 @@ namespace cli_menu {
     accumulating_in
   ) { type = type_in; }
 
+  void Parameter::setData(mt::CR_STR str) {
+    used = true;
+    argument = str;
+    if (isSupporter()) updateRequiredSelf(false);
+  }
+
   std::string Parameter::getStringifiedType() {
     if (type == TEXT) return "text";
     return "number";

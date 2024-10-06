@@ -16,7 +16,7 @@ namespace cli_menu {
     }
 
   protected:
-    void setData(mt::CR_STR str) override { argument = str; }
+    void setData(mt::CR_STR str) override;
 
   public:
     enum {TEXT, NUMBER};

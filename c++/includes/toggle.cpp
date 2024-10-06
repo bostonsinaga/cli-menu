@@ -46,6 +46,12 @@ namespace cli_menu {
     accumulating_in
   ) {}
 
+  void Toggle::setData(mt::CR_BOL cond) {
+    used = true;
+    condition = cond;
+    if (isSupporter()) updateRequiredSelf(false);
+  }
+
   std::string Toggle::getDashedName() {
     return "--" + name;
   }

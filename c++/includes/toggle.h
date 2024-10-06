@@ -11,8 +11,7 @@ namespace cli_menu {
 
   protected:
     ~Toggle() override { condition = false; }
-
-    void setData(mt::CR_BOL cond) override { condition = cond; }
+    void setData(mt::CR_BOL cond) override;
 
   public:
     Toggle(): Command() {}
