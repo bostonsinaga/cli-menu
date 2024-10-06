@@ -2,6 +2,7 @@ set (SOURCES
   base.h
   color.h
   message.h
+  control.h
   command.h
   parameter.h
   toggle.h
@@ -12,8 +13,8 @@ set (SOURCES
   base.cpp
   color.cpp
   message.cpp
-  command.cpp
   control.cpp
+  command.cpp
   parameter.cpp
   toggle.cpp
   program.cpp
