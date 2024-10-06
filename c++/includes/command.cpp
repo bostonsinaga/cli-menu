@@ -232,7 +232,7 @@ namespace cli_menu {
 
       items.push_back(command);
       cleanDuplicateToLastAdded(command);
-      updateRequiredItems(command, true);
+      if (isUltimate()) updateRequiredItems(command, true);
     }
   }
 
@@ -312,7 +312,7 @@ namespace cli_menu {
   Command* Command::dismantle(mt::CR_INT index) {
     Command *target = items[index];
     sewNext(index);
-    updateRequiredItems(target, false);
+    if (isUltimate()) updateRequiredItems(target, false);
     mt_uti::VecTools<Command*>::cutSingle(items, index);
     return target;
   }
@@ -413,17 +413,19 @@ namespace cli_menu {
     Command *command,
     mt::CR_BOL adding
   ) {
-    if (isUltimate() && command->isRequired()) {
+    if (command->required) {
       if (adding) {
         requiredItems.push_back(command);
       }
-      else {
-        mt_uti::VecTools<Command*>::cutSingle(
-          requiredItems,
-          mt_uti::VecTools<Command*>::getIndex(requiredItems, command)
-        );
-      }
+      else mt_uti::VecTools<Command*>::cutSingle(
+        requiredItems,
+        mt_uti::VecTools<Command*>::getIndex(requiredItems, command)
+      );
     }
+  }
+
+  void Command::updateRequiredSelf(mt::CR_BOL adding) {
+    ultimate->updateRequiredItems(this, adding);
   }
 
   void Command::collapseUltimateItems(
@@ -516,6 +518,9 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
+  const std::string
+    Command::cannotProcessErrorString = "Cannot process until all required parameters are met";
+
   void Command::printDialogError(
     mt::CR_STR reason,
     mt::CR_STR suggestion
@@ -556,8 +561,8 @@ namespace cli_menu {
    * This always invoked in supporter level.
    */
   mt::USI Command::chooseQuestion(Command *command) {
-    if (command->next->used &&
-      command->ultimate->getRequiredCount() == 0
+    if (command->used &&
+      command->getRequiredCount() == 0
     ) {
       return DIALOG::COMPLETE;
     }
@@ -582,13 +587,13 @@ namespace cli_menu {
         buffer == "1" || buffer == "true"
       ) {
         setData(true);
-        Command::chooseQuestion(next);
+        return Command::chooseQuestion(next);
       }
       else if (buffer == "n" || buffer == "no" ||
         buffer == "0" || buffer == "false"
       ) {
         setData(false);
-        Command::chooseQuestion(next);
+        return Command::chooseQuestion(next);
       }
       else if (Control::cancelTest(buffer)) {
         return DIALOG::CANCELED;
@@ -597,9 +602,7 @@ namespace cli_menu {
         if (getRequiredCount() == 0) {
           return DIALOG::COMPLETE;
         }
-        else Command::printDialogError(
-          "Cannot enter before all required parameters are met"
-        );
+        else Command::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(buffer)) {
         return Command::chooseQuestion(next);
@@ -635,9 +638,7 @@ namespace cli_menu {
         if (getRequiredCount() == 0 && inputPassed) {
           return DIALOG::COMPLETE;
         }
-        else Command::printDialogError(
-          "Cannot enter before all required parameters are met"
-        );
+        else Command::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(buffer)) {
         if (inputPassed) {
@@ -678,7 +679,7 @@ namespace cli_menu {
       }
       else if (Control::enterTest(nameTest)) {
         Command::printDialogError(
-          "Cannot enter before parameters"
+          "Cannot process before parameters"
         );
         continue;
       }
