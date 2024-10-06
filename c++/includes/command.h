@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include "message.h"
+#include "control.h"
 
 namespace cli_menu {
 
@@ -10,28 +10,6 @@ namespace cli_menu {
   typedef const VEC_COM& CR_VEC_COM;
 
   class Command {
-  private:
-    class Control {
-    private:
-      enum {
-        CANCEL = 0, SELECT = 1,
-        PREVIOUS = 2, NEXT = 3,
-        BACK = 4, ENTER = 5
-      };
-
-      static const std::string NAMES[6][2];
-      static int test(std::string str);
-
-    public:
-      static bool cancelTest(std::string &str);
-      static bool selectTest(std::string &str);
-      static bool previousTest(std::string &str);
-      static bool nextTest(std::string &str);
-      static bool backTest(std::string &str);
-      static bool enterTest(std::string &str);
-      static void printHelp();
-    };
-
   private:
     std::string description;
     SP_CALLBACK callback = nullptr;
