@@ -855,18 +855,16 @@ namespace cli_menu {
   }
 
   void Command::printAfterBoundaryLine(std::string comName) {
-
-    static std::string noInitNl = "";
-    static bool init[] = {true, true};
-    comName = noInitNl + ">" + comName + ":";
-
-    bool isOpen = !ultimate ||
-      (isSupporter() && getInheritanceFlag() == PARAMETER);
+    comName = "\n>" + comName + ":";
 
     if (Command::usingDashesBoundaryLine) {
-      if (!(init[0] && init[1])) {
+      static bool isInit = true;
+
+      if (!isInit) {
         Message::printBoundaryLine();
       }
+
+      isInit = false;
 
       Message::printString(
         comName, Color::WHITE
@@ -879,15 +877,20 @@ namespace cli_menu {
     // has a newline at the end
     printDialogStatus();
 
-    if (init[isOpen]) {
-      init[isOpen] = false;
-      noInitNl = "\n";
+    // once displayed
+    if (!ultimate || (isSupporter() && getInheritanceFlag() == PARAMETER)) {
+      Control::printHelp(isSupporter());
+    }
+    else {
+      static bool isClosedInit = true;
 
-      // display only once
-      if (isOpen) Control::printHelp();
-      else Message::printItalicString(
-        "  yes = y, no = n, or boolean\n"
-      );
+      if (isClosedInit && isSupporter()) {
+        isClosedInit = false;
+
+        Message::printItalicString(
+          "  yes = y, no = n, or boolean\n"
+        );
+      }
     }
 
     // always have a newline
