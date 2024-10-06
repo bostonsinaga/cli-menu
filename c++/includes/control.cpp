@@ -1,11 +1,11 @@
 #ifndef __CLI_MENU__CONTROL_CPP__
 #define __CLI_MENU__CONTROL_CPP__
 
-#include "command.h"
+#include "control.h"
 
 namespace cli_menu {
 
-  const std::string Command::Control::NAMES[6][2] = {
+  const std::string Control::NAMES[6][2] = {
     { ":c", ".cancel" },
     { ":s", ".select" },
     { ":p", ".previous" },
@@ -14,7 +14,7 @@ namespace cli_menu {
     { ":e", ".enter" }
   };
 
-  int Command::Control::test(std::string str) {
+  int Control::test(std::string str) {
 
     int spaceChange = 0;
     mt_uti::StrTools::changeStringToLowercase(str);
@@ -41,36 +41,57 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Command::Control::cancelTest(std::string &str) {
+  bool Control::cancelTest(std::string &str) {
     return test(str) == CANCEL + 1;
   }
 
-  bool Command::Control::selectTest(std::string &str) {
+  bool Control::selectTest(std::string &str) {
     return test(str) == SELECT + 1;
   }
 
-  bool Command::Control::previousTest(std::string &str) {
+  bool Control::previousTest(std::string &str) {
     return test(str) == PREVIOUS + 1;
   }
 
-  bool Command::Control::nextTest(std::string &str) {
+  bool Control::nextTest(std::string &str) {
     return test(str) == NEXT + 1;
   }
 
-  bool Command::Control::backTest(std::string &str) {
+  bool Control::backTest(std::string &str) {
     return test(str) == BACK + 1;
   }
 
-  bool Command::Control::enterTest(std::string &str) {
+  bool Control::enterTest(std::string &str) {
     return test(str) == ENTER + 1;
   }
 
-  void Command::Control::printHelp() {
-    std::cout << Color::getItalicString(
-      std::string("  .cancel   = :c, .select = :s,\n") +
-      std::string("  .previous = :p, .next   = :n,\n") +
-      std::string("  .back     = :b, .enter  = :e \n")
-    );
+  void Control::printHelp(mt::CR_BOL isSupporter) {
+    static int groupPhase = isSupporter;
+    if (groupPhase == 3) return;
+
+    switch (groupPhase) {
+      case 0: {
+        Message::printItalicString(
+          std::string("  .back = :b, .cancel   = :c,\n") +
+          std::string("  .help = :h, .list     = :l,\n") +
+          std::string("  .next = :n, .previous = :p\n")
+        );
+        groupPhase = 2;
+      break;}
+      case 1: {
+        Message::printItalicString(
+          std::string("  .back     = :b, .cancel = :c,\n") +
+          std::string("  .enter    = :e, .help   = :h,\n") +
+          std::string("  .list     = :l, .next   = :n,\n") +
+          std::string("  .previous = :p, .select = :s\n")
+        );
+        groupPhase = 3;
+      break;}
+      case 2: {
+        Message::printItalicString("  .enter = :e, .select = :s\n");
+        groupPhase = 3;
+      break;}
+    }
   }
 }
 
