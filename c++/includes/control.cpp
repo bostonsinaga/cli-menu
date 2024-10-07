@@ -16,10 +16,8 @@ namespace cli_menu {
     { ".select", ":s" }
   };
 
-  int Control::test(std::string str) {
-
+  int Control::test(std::string &str) {
     int spaceChange = 0;
-    mt_uti::StrTools::changeStringToLowercase(str);
 
     static std::function<bool(mt::CR_CH)>
       isSpace = [](mt::CR_CH ch)->bool {

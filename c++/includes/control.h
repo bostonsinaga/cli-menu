@@ -16,7 +16,7 @@ namespace cli_menu {
 
     static const int count = 8;
     static const std::string NAMES[count][2];
-    static int test(std::string str);
+    static int test(std::string &str);
 
   public:
     static bool cancelTest(std::string &str);
