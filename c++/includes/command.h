@@ -119,15 +119,21 @@ namespace cli_menu {
 
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
-    virtual bool match(mt::VEC_STR &inputs) { return false; }
-    virtual mt::USI question() { return DIALOG::COMPLETE; }
+
+    virtual bool match(mt::VEC_STR &inputs) {
+      return false;
+    }
+
+    virtual mt::USI question(Command **ultimateHook) {
+      return DIALOG::COMPLETE;
+    }
 
     // only at supporter level
     bool checkDialogEnd();
 
     // available at all levels
-    mt::USI nextQuestion() { return next->question(); }
-    mt::USI dialog();
+    mt::USI nextQuestion(Command **ultimateHook);
+    mt::USI dialog(Command **ultimateHook);
 
     void deepPull(
       ParamData &paramData,

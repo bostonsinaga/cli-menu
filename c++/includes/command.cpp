@@ -560,9 +560,14 @@ namespace cli_menu {
     return false;
   }
 
-  mt::USI Command::dialog() {
+  mt::USI Command::nextQuestion(Command **ultimateHook) {
+    return next->question(ultimateHook);
+  }
+
+  mt::USI Command::dialog(Command **ultimateHook) {
     std::string nameTest;
     static std::string inlineNames = "";
+    *ultimateHook = !ultimate ? this : ultimate;
 
     if (inlineNames.empty() && holder) {
       inlineNames += holder->getInlineRootNames(" ", true);
@@ -575,7 +580,7 @@ namespace cli_menu {
       Command::setDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
-        return DIALOG::CANCELED;
+        break;
       }
       else if (Control::enterTest(nameTest)) {
         Command::printDialogError(
@@ -585,17 +590,17 @@ namespace cli_menu {
       }
       else if (Control::nextTest(nameTest)) {
         if (next) {
-          return next->dialog();
+          return next->dialog(ultimateHook);
         }
         else if (getNumberOfItems() > 0) {
           if (isUltimate()) {
-            return items[0]->question();
+            return items[0]->question(ultimateHook);
           }
-          return items[0]->dialog();
+          return items[0]->dialog(ultimateHook);
         }
         else { // group that has no items
           Command::printDialogError(
-            "This is a dead end. Please go to upper level or process this one"
+            "The command has only one parameter"
           );
           continue;
         }
@@ -609,9 +614,9 @@ namespace cli_menu {
 
         if (found) {
           if (found->isSupporter()) {
-            return found->question();
+            return found->question(ultimateHook);
           }
-          return found->dialog();
+          return found->dialog(ultimateHook);
         }
         else if (isUltimate() || isSupporter()) {
           Command::printDialogError("Parameter not found");
@@ -620,7 +625,6 @@ namespace cli_menu {
       }
     }
 
-    // will never reach this (formality)
     return DIALOG::CANCELED;
   }
 
