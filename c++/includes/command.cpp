@@ -553,7 +553,7 @@ namespace cli_menu {
 
   void Command::getDialogInput(std::string &buffer) {
     std::cout << "> ";
-    std::cin >> buffer;
+    std::getline(std::cin, buffer);
   }
 
   /**
@@ -701,21 +701,21 @@ namespace cli_menu {
           continue;
         }
       }
+      else { // find developer defined command
+        Command *found;
+        Command::onFreeChangeInputLetterCase(nameTest);
 
-      // find developer defined command
-      Command *found;
-      Command::onFreeChangeInputLetterCase(nameTest);
+        if (isGroup()) found = getItem(nameTest);
+        else found = ultimate->getItem(nameTest);
 
-      if (isGroup()) found = getItem(nameTest);
-      else found = ultimate->getItem(nameTest);
-
-      if (found) {
-        if (found->isSupporter()) {
-          return Command::chooseQuestion(found);
+        if (found) {
+          if (found->isSupporter()) {
+            return Command::chooseQuestion(found);
+          }
+          return found->dialog();
         }
-        return found->dialog();
+        else Command::printDialogError("Command not found");
       }
-      else Command::printDialogError("Command not found");
     }
 
     return DIALOG::CANCELED;
