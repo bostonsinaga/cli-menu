@@ -24,10 +24,6 @@ namespace cli_menu {
     bool accumulating = false,
       required = false;
 
-    static const std::string
-      cannotProcessErrorString,
-      cannotSkipErrorString;
-
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
     void cleanItems();
@@ -48,11 +44,7 @@ namespace cli_menu {
     Command* dismantle(mt::CR_INT index);
     void dismantleRemove(mt::CR_INT index);
     Command* dismantleRelease(mt::CR_INT index);
-    std::string getFullNameWithUltimate();
-
-    mt::UI getRequiredCount() {
-      return ultimate->requiredItems.size();
-    }
+    void printDialogStatus();
 
     void updateRequiredItems(
       Command *command,
@@ -71,23 +63,6 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       mt::CR_BOL accumulating_in
     );
-
-    static void printDialogError(
-      mt::CR_STR reason,
-      mt::CR_STR suggestion = "Try Again"
-    );
-
-    void printDialogStatus();
-    static void getDialogInput(std::string &buffer);
-    static mt::USI chooseQuestion(Command *command);
-    mt::USI closedQuestion();
-    mt::USI openQuestion();
-
-    /**
-     * Prints '-' signs horizontally before names list or
-     * names list with prominent background color.
-     */
-    void printAfterBoundaryLine(std::string comName);
 
     /**
      * A state setter for 'disguised' where the derived class
@@ -113,16 +88,34 @@ namespace cli_menu {
     bool disguised = false,
       used = false;
 
+    static const std::string
+      cannotProcessErrorString,
+      cannotSkipErrorString;
+
+    bool run();
+    bool run(ParamData &paramData);
+
+    static void printDialogError(
+      mt::CR_STR reason,
+      mt::CR_STR suggestion = "Try Again"
+    );
+
     std::string getBranchLeafString(
       mt::CR_INT spacesCount,
       mt::CR_INT columnIndex,
       mt::CR_BOL withDescription
     );
 
+    mt::UI getRequiredCount() {
+      return ultimate->requiredItems.size();
+    }
+
     std::string getMainLabel();
+    std::string getFullNameWithUltimate();
     void updateRequiredSelf(mt::CR_BOL adding);
 
     static bool isTemporaryLetterCaseChange();
+    static void getDialogInput(std::string &buffer);
     static void onFreeChangeInputLetterCase(std::string &strIn);
 
     void changeTreeNamesToLowercase();
@@ -130,12 +123,28 @@ namespace cli_menu {
 
     virtual void setData(mt::CR_STR str) {}
     virtual void setData(mt::CR_BOL cond) {}
+    virtual bool match(mt::VEC_STR &inputs) { return false; }
+    virtual mt::USI question() { return DIALOG::COMPLETE; }
 
-    // will invoked from 'pullData'
+    bool endDialog();
+    mt::USI dialog();
+    mt::USI nextQuestion() { return next->question(); }
+
     void deepPull(
       ParamData &paramData,
       mt::VEC_UI &usedIndexes
     );
+
+    virtual void pullData(
+      ParamData &paramData,
+      mt::VEC_UI &usedIndexes
+    );
+
+    /**
+     * Prints '-' signs horizontally before names list or
+     * names list with prominent background color.
+     */
+    void printAfterBoundaryLine(std::string comName);
 
     // destructor only invoked from 'remove' method
     virtual ~Command();
@@ -177,6 +186,7 @@ namespace cli_menu {
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
     virtual std::string getDashedName() { return name; }
     virtual std::string getFullName() { return name; }
+
     std::string getName() { return name; }
     std::string getDescription() { return description; }
 
@@ -239,17 +249,6 @@ namespace cli_menu {
     bool isOptional() { return !isRequired(); }
     bool isAccumulating() { return accumulating; }
     bool isUsed() { return used; }
-
-    bool run();
-    bool run(ParamData &paramData);
-
-    virtual bool match(mt::VEC_STR &inputs) { return false; }
-    mt::USI dialog();
-
-    virtual void pullData(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
-    );
 
     std::string getInlineRootNames(
       mt::CR_STR separator,
