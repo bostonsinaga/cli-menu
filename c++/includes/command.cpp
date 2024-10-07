@@ -519,7 +519,8 @@ namespace cli_menu {
   //________|
 
   const std::string
-    Command::cannotProcessErrorString = "Cannot process until all required parameters are met";
+    Command::cannotProcessErrorString = "Cannot process until all required parameters are met",
+    Command::cannotSkipErrorString = "Cannot skip with empty input on required parameter";
 
   void Command::printDialogError(
     mt::CR_STR reason,
@@ -599,13 +600,16 @@ namespace cli_menu {
         return DIALOG::CANCELED;
       }
       else if (Control::enterTest(buffer)) {
-        if (getRequiredCount() == 0) {
+        if (getRequiredCount() == 0 && isOptional()) {
           return DIALOG::COMPLETE;
         }
         else Command::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(buffer)) {
-        return Command::chooseQuestion(next);
+        if (isOptional()) {
+          return Command::chooseQuestion(next);
+        }
+        else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(buffer)) {
         return dialog();
@@ -645,14 +649,15 @@ namespace cli_menu {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
           return Command::chooseQuestion(next);
         }
-        else Command::printDialogError(
-          "Cannot skip with empty input on required parameter"
-        );
+        else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(buffer)) {
         return dialog();
       }
-      else strVec.push_back(buffer);
+      else {
+        strVec.push_back(buffer);
+        updateRequiredSelf(false);
+      }
     }
 
     return DIALOG::CANCELED;
