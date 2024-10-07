@@ -522,13 +522,9 @@ namespace cli_menu {
     Command::cannotProcessErrorString = "Cannot process until all required parameters are met",
     Command::cannotSkipErrorString = "Cannot skip with empty input on required parameter";
 
-  void Command::printDialogError(
-    mt::CR_STR reason,
-    mt::CR_STR suggestion
-  ) {
+  void Command::printDialogError(mt::CR_STR reason) {
     Message::printString(
-      "\n> " + reason + ". " + suggestion + ":\n\n",
-      Color::RED
+      "\n> " + reason + "\n\n", Color::RED
     );
   }
 
@@ -552,22 +548,19 @@ namespace cli_menu {
     );
   }
 
-  void Command::getDialogInput(std::string &buffer) {
+  void Command::setDialogInput(std::string &buffer) {
     std::cout << "> ";
     std::getline(std::cin, buffer);
   }
 
-  // this always invoked in supporter level
-  bool Command::endDialog() {
+  bool Command::checkDialogEnd() {
     if (used && getRequiredCount() == 0) {
       return true;
     }
     return false;
   }
 
-  // available to all levels (command selection)
   mt::USI Command::dialog() {
-
     std::string nameTest;
     static std::string inlineNames = "";
 
@@ -579,7 +572,7 @@ namespace cli_menu {
     printAfterBoundaryLine(inlineNames);
 
     while (true) {
-      Command::getDialogInput(nameTest);
+      Command::setDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
         return DIALOG::CANCELED;
@@ -602,8 +595,7 @@ namespace cli_menu {
         }
         else { // group that has no items
           Command::printDialogError(
-            "This is a dead end",
-            "Please go to upper level or process this one"
+            "This is a dead end. Please go to upper level or process this one"
           );
           continue;
         }
@@ -621,10 +613,14 @@ namespace cli_menu {
           }
           return found->dialog();
         }
-        else Command::printDialogError("Command not found");
+        else if (isUltimate() || isSupporter()) {
+          Command::printDialogError("Parameter not found");
+        }
+        else Command::printDialogError("Group not found");
       }
     }
 
+    // will never reach this (formality)
     return DIALOG::CANCELED;
   }
 

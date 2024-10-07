@@ -95,11 +95,6 @@ namespace cli_menu {
     bool run();
     bool run(ParamData &paramData);
 
-    static void printDialogError(
-      mt::CR_STR reason,
-      mt::CR_STR suggestion = "Try Again"
-    );
-
     std::string getBranchLeafString(
       mt::CR_INT spacesCount,
       mt::CR_INT columnIndex,
@@ -114,8 +109,9 @@ namespace cli_menu {
     std::string getFullNameWithUltimate();
     void updateRequiredSelf(mt::CR_BOL adding);
 
+    static void printDialogError(mt::CR_STR reason);
+    static void setDialogInput(std::string &buffer);
     static bool isTemporaryLetterCaseChange();
-    static void getDialogInput(std::string &buffer);
     static void onFreeChangeInputLetterCase(std::string &strIn);
 
     void changeTreeNamesToLowercase();
@@ -126,9 +122,12 @@ namespace cli_menu {
     virtual bool match(mt::VEC_STR &inputs) { return false; }
     virtual mt::USI question() { return DIALOG::COMPLETE; }
 
-    bool endDialog();
-    mt::USI dialog();
+    // only at supporter level
+    bool checkDialogEnd();
+
+    // available at all levels
     mt::USI nextQuestion() { return next->question(); }
+    mt::USI dialog();
 
     void deepPull(
       ParamData &paramData,
