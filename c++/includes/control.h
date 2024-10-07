@@ -8,12 +8,14 @@ namespace cli_menu {
   class Control {
   private:
     enum {
-      CANCEL = 0, SELECT = 1,
-      PREVIOUS = 2, NEXT = 3,
-      BACK = 4, ENTER = 5
+      BACK = 0, CANCEL = 1,
+      ENTER = 2, HELP  = 3, 
+      LIST = 4, NEXT = 5,
+      PREVIOUS = 6, SELECT = 7
     };
 
-    static const std::string NAMES[6][2];
+    static const int count = 8;
+    static const std::string NAMES[count][2];
     static int test(std::string str);
 
   public:
