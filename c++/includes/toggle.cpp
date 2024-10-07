@@ -112,13 +112,13 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::question() {
-    if (endDialog()) return DIALOG::COMPLETE;
+    if (checkDialogEnd()) return DIALOG::COMPLETE;
 
     std::string buffer;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
-      Command::getDialogInput(buffer);
+      Command::setDialogInput(buffer);
       mt_uti::StrTools::changeStringToLowercase(buffer);
 
       if (buffer == "y" || buffer == "yes" ||
@@ -134,7 +134,7 @@ namespace cli_menu {
         return nextQuestion();
       }
       else if (Control::cancelTest(buffer)) {
-        return DIALOG::CANCELED;
+        break;
       }
       else if (Control::enterTest(buffer)) {
         if (getRequiredCount() == 0 && isOptional()) {
