@@ -13,7 +13,7 @@ namespace cli_menu {
   bool Executor::resolveFunction(Command *command) {
     if (command) {
       if (dialogComplete) {
-        mt::USI flag = command->dialog();
+        mt::USI flag = command->dialog(&command);
 
         if (flag == Command::DIALOG::COMPLETE) {
           return pullDataRun(command);
