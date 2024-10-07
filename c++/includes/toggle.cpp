@@ -111,10 +111,11 @@ namespace cli_menu {
     return false;
   }
 
-  mt::USI Toggle::question() {
+  mt::USI Toggle::question(Command **ultimateHook) {
     if (checkDialogEnd()) return DIALOG::COMPLETE;
 
     std::string buffer;
+    *ultimateHook = !ultimate ? this : ultimate;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
@@ -125,13 +126,13 @@ namespace cli_menu {
         buffer == "1" || buffer == "true"
       ) {
         setData(true);
-        return nextQuestion();
+        return nextQuestion(ultimateHook);
       }
       else if (buffer == "n" || buffer == "no" ||
         buffer == "0" || buffer == "false"
       ) {
         setData(false);
-        return nextQuestion();
+        return nextQuestion(ultimateHook);
       }
       else if (Control::cancelTest(buffer)) {
         break;
@@ -144,12 +145,12 @@ namespace cli_menu {
       }
       else if (Control::nextTest(buffer)) {
         if (isOptional()) {
-          return nextQuestion();
+          return nextQuestion(ultimateHook);
         }
         else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(buffer)) {
-        return dialog();
+        return dialog(ultimateHook);
       }
       else Command::printDialogError(
         "Only accept boolean values"

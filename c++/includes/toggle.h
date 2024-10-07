@@ -14,7 +14,7 @@ namespace cli_menu {
     void setData(mt::CR_BOL cond) override;
 
     // always called after ultimate (closed question)
-    mt::USI question() override;
+    mt::USI question(Command **ultimateHook) override;
 
   public:
     Toggle(): Command() {}

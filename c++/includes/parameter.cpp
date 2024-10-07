@@ -137,13 +137,14 @@ namespace cli_menu {
     return false;
   }
 
-  mt::USI Parameter::question() {
+  mt::USI Parameter::question(Command **ultimateHook) {
     if (checkDialogEnd()) return DIALOG::COMPLETE;
 
     mt::VEC_STR strVec;
     std::string buffer;
     bool inputPassed;
 
+    *ultimateHook = !ultimate ? this : ultimate;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
@@ -165,12 +166,12 @@ namespace cli_menu {
       else if (Control::nextTest(controlStr)) {
         if (inputPassed) {
           setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return nextQuestion();
+          return nextQuestion(ultimateHook);
         }
         else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(controlStr)) {
-        return dialog();
+        return dialog(ultimateHook);
       }
       else {
         strVec.push_back(buffer);
