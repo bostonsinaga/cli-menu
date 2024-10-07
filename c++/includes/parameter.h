@@ -18,6 +18,9 @@ namespace cli_menu {
   protected:
     void setData(mt::CR_STR str) override;
 
+    // always called after ultimate (open question)
+    mt::USI question() override;
+
   public:
     enum {TEXT, NUMBER};
     Parameter(): Command() {}

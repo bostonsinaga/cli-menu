@@ -52,7 +52,6 @@ namespace cli_menu {
   void Parameter::setData(mt::CR_STR str) {
     used = true;
     argument = str;
-    if (isSupporter()) updateRequiredSelf(false);
   }
 
   std::string Parameter::getStringifiedType() {
@@ -136,6 +135,47 @@ namespace cli_menu {
       }
     }
     return false;
+  }
+
+  mt::USI Parameter::question() {
+    if (endDialog()) return DIALOG::COMPLETE;
+
+    mt::VEC_STR strVec;
+    std::string buffer;
+    bool inputPassed;
+
+    printAfterBoundaryLine(getFullNameWithUltimate());
+
+    while (true) {
+      Command::getDialogInput(buffer);
+      inputPassed = isOptional() || (isRequired() && !strVec.empty());
+
+      if (Control::cancelTest(buffer)) {
+        return DIALOG::CANCELED;
+      }
+      else if (Control::enterTest(buffer)) {
+        if (getRequiredCount() == 0 && inputPassed) {
+          return DIALOG::COMPLETE;
+        }
+        else Command::printDialogError(cannotProcessErrorString);
+      }
+      else if (Control::nextTest(buffer)) {
+        if (inputPassed) {
+          setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
+          return nextQuestion();
+        }
+        else Command::printDialogError(cannotSkipErrorString);
+      }
+      else if (Control::selectTest(buffer)) {
+        return dialog();
+      }
+      else {
+        strVec.push_back(buffer);
+        updateRequiredSelf(false);
+      }
+    }
+
+    return DIALOG::CANCELED;
   }
 }
 
