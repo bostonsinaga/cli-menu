@@ -13,6 +13,9 @@ namespace cli_menu {
     ~Toggle() override { condition = false; }
     void setData(mt::CR_BOL cond) override;
 
+    // always called after ultimate (closed question)
+    mt::USI question() override;
+
   public:
     Toggle(): Command() {}
 
@@ -44,9 +47,9 @@ namespace cli_menu {
 
     bool match(mt::VEC_STR &inputs) override;
     bool getCondition() { return condition; }
-    mt::USI getInheritanceFlag() override { return TOGGLE; }
     std::string getDashedName() override;
     std::string getFullName() override;
+    mt::USI getInheritanceFlag() override { return TOGGLE; }
 
     void pullData(
       ParamData &paramData,

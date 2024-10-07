@@ -110,6 +110,54 @@ namespace cli_menu {
     }
     return false;
   }
+
+  mt::USI Toggle::question() {
+    if (endDialog()) return DIALOG::COMPLETE;
+
+    std::string buffer;
+    printAfterBoundaryLine(getFullNameWithUltimate());
+
+    while (true) {
+      Command::getDialogInput(buffer);
+      mt_uti::StrTools::changeStringToLowercase(buffer);
+
+      if (buffer == "y" || buffer == "yes" ||
+        buffer == "1" || buffer == "true"
+      ) {
+        setData(true);
+        return nextQuestion();
+      }
+      else if (buffer == "n" || buffer == "no" ||
+        buffer == "0" || buffer == "false"
+      ) {
+        setData(false);
+        return nextQuestion();
+      }
+      else if (Control::cancelTest(buffer)) {
+        return DIALOG::CANCELED;
+      }
+      else if (Control::enterTest(buffer)) {
+        if (getRequiredCount() == 0 && isOptional()) {
+          return DIALOG::COMPLETE;
+        }
+        else Command::printDialogError(cannotProcessErrorString);
+      }
+      else if (Control::nextTest(buffer)) {
+        if (isOptional()) {
+          return nextQuestion();
+        }
+        else Command::printDialogError(cannotSkipErrorString);
+      }
+      else if (Control::selectTest(buffer)) {
+        return dialog();
+      }
+      else Command::printDialogError(
+        "Only accept boolean values"
+      );
+    }
+
+    return DIALOG::CANCELED;
+  }
 }
 
 #endif // __CLI_MENU__TOGGLE_CPP__
