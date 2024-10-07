@@ -24,7 +24,9 @@ namespace cli_menu {
     bool accumulating = false,
       required = false;
 
-    static const std::string cannotProcessErrorString;
+    static const std::string
+      cannotProcessErrorString,
+      cannotSkipErrorString;
 
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
