@@ -557,110 +557,12 @@ namespace cli_menu {
     std::getline(std::cin, buffer);
   }
 
-  /**
-   * The 'command' confirmed to exist when this invoked.
-   * This always invoked in supporter level.
-   */
-  mt::USI Command::chooseQuestion(Command *command) {
-    if (command->used &&
-      command->getRequiredCount() == 0
-    ) {
-      return DIALOG::COMPLETE;
+  // this always invoked in supporter level
+  bool Command::endDialog() {
+    if (used && getRequiredCount() == 0) {
+      return true;
     }
-    else if (command->getInheritanceFlag() == PARAMETER) {
-      return command->openQuestion();
-    }
-    // PROGRAM or TOGGLE
-    return command->closedQuestion();
-  }
-
-  // called after ultimate
-  mt::USI Command::closedQuestion() {
-
-    std::string buffer;
-    printAfterBoundaryLine(getFullNameWithUltimate());
-
-    while (true) {
-      Command::getDialogInput(buffer);
-      mt_uti::StrTools::changeStringToLowercase(buffer);
-
-      if (buffer == "y" || buffer == "yes" ||
-        buffer == "1" || buffer == "true"
-      ) {
-        setData(true);
-        return Command::chooseQuestion(next);
-      }
-      else if (buffer == "n" || buffer == "no" ||
-        buffer == "0" || buffer == "false"
-      ) {
-        setData(false);
-        return Command::chooseQuestion(next);
-      }
-      else if (Control::cancelTest(buffer)) {
-        return DIALOG::CANCELED;
-      }
-      else if (Control::enterTest(buffer)) {
-        if (getRequiredCount() == 0 && isOptional()) {
-          return DIALOG::COMPLETE;
-        }
-        else Command::printDialogError(cannotProcessErrorString);
-      }
-      else if (Control::nextTest(buffer)) {
-        if (isOptional()) {
-          return Command::chooseQuestion(next);
-        }
-        else Command::printDialogError(cannotSkipErrorString);
-      }
-      else if (Control::selectTest(buffer)) {
-        return dialog();
-      }
-      else Command::printDialogError(
-        "Only accept boolean values"
-      );
-    }
-
-    return DIALOG::CANCELED;
-  }
-
-  // called after ultimate
-  mt::USI Command::openQuestion() {
-
-    mt::VEC_STR strVec;
-    std::string buffer;
-    bool inputPassed;
-
-    printAfterBoundaryLine(getFullNameWithUltimate());
-
-    while (true) {
-      Command::getDialogInput(buffer);
-      inputPassed = isOptional() || (isRequired() && !strVec.empty());
-
-      if (Control::cancelTest(buffer)) {
-        return DIALOG::CANCELED;
-      }
-      else if (Control::enterTest(buffer)) {
-        if (getRequiredCount() == 0 && inputPassed) {
-          return DIALOG::COMPLETE;
-        }
-        else Command::printDialogError(cannotProcessErrorString);
-      }
-      else if (Control::nextTest(buffer)) {
-        if (inputPassed) {
-          setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return Command::chooseQuestion(next);
-        }
-        else Command::printDialogError(cannotSkipErrorString);
-      }
-      else if (Control::selectTest(buffer)) {
-        return dialog();
-      }
-      else {
-        strVec.push_back(buffer);
-        updateRequiredSelf(false);
-      }
-    }
-
-    return DIALOG::CANCELED;
+    return false;
   }
 
   // available to all levels (command selection)
@@ -694,7 +596,7 @@ namespace cli_menu {
         }
         else if (getNumberOfItems() > 0) {
           if (isUltimate()) {
-            return Command::chooseQuestion(items[0]);
+            return items[0]->question();
           }
           return items[0]->dialog();
         }
@@ -715,7 +617,7 @@ namespace cli_menu {
 
         if (found) {
           if (found->isSupporter()) {
-            return Command::chooseQuestion(found);
+            return found->question();
           }
           return found->dialog();
         }
