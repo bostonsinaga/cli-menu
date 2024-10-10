@@ -27,8 +27,8 @@ namespace cli_menu {
   public:
     static bool isSingle(mt::CR_STR str);
     static bool isDouble(mt::CR_STR str);
-    static bool cleanSingle(std::string &str);
-    static bool cleanDouble(std::string &str);
+    static std::string cleanSingle(std::string &str);
+    static std::string cleanDouble(std::string &str);
   };
 }
 
