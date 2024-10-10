@@ -21,12 +21,6 @@ namespace cli_menu {
       + std::to_string(patch);
   }
 
-  void Version::clean() {
-    major = 0;
-    minor = 0;
-    patch = 0;
-  }
-
   Program::Program(): Toggle() {
     author = "Anonymous";
   }
@@ -64,11 +58,6 @@ namespace cli_menu {
   Toggle(name_in, description_in, nullptr, true) {
     author = "Anonymous";
     version = version_in;
-  }
-
-  Program::~Program() {
-    author = "";
-    version.clean();
   }
 
   std::string Program::getDashedName() {
@@ -125,6 +114,100 @@ namespace cli_menu {
 
   void Program::printError() {
     std::cerr << "Program Error..";
+  }
+
+  void Program::run(
+    mt::CR_INT argc,
+    char *argv[],
+    mt::CR_BOL completingDialog
+  ) {
+    // in case if this added to items of 'Command'
+    if (holder) {
+      remove();
+      return;
+    }
+
+    //______|
+    // Init |
+    //______|
+
+    mt::VEC_STR inputs;
+    ParamData paramData;
+    Command::dialogued = completingDialog;
+
+    for (int i = 1; i < argc; i++) {
+      inputs.push_back(argv[i]);
+    }
+
+    // will get 'pop_back' in 'Command::match'
+    std::reverse(inputs.begin(), inputs.end());
+
+    if (Command::usingLowercaseName) {
+      changeTreeNamesToLowercase();
+    }
+    else if (Command::usingUppercaseName) {
+      changeTreeNamesToUppercase();
+    }
+
+    //_________|
+    // Process |
+    //_________|
+
+    Command *lastCom = nullptr;
+    bool noItems = false;
+
+    if (items.size() > 0) {
+      lastCom = matchTo(items[0], inputs, paramData);
+    }
+    else noItems = true;
+
+    if (lastCom) {
+      // program
+      if (lastCom == this) {
+        printError();
+      }
+      // ultimate
+      else if (lastCom->isUltimate()) {
+        // check if has any callback
+        if (!runTo(lastCom, paramData)) {
+          Message::printNamed(
+            Message::STATUS::ERROR,
+            "No callback.",
+            lastCom->getName()
+          );
+        }
+        // succeeded after main callback
+        else Message::printNamed(
+          Message::STATUS::SUCCEED,
+          "Output file written to 'foo.kml'.",
+          name
+        );
+      }
+      // supporter
+      else if (lastCom->isSupporter()) {
+        lastCom->getUltimate()->printError();
+      }
+      // group
+      else if (!runTo(lastCom, paramData)) {
+        lastCom->printError();
+      }
+    }
+    // nullptr no items
+    else if (noItems)  {
+        Message::printNamed(
+        Message::STATUS::ERROR,
+        "No items.",
+        name
+      );
+    }
+    // nullptr canceled
+    else Message::printNamed(
+      Message::STATUS::CANCELED,
+      "Program terminated.",
+      name
+    );
+
+    remove(); // runtime end
   }
 }
 

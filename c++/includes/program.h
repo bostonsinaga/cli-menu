@@ -20,8 +20,9 @@ namespace cli_menu {
       mt::CR_UI patch_in
     );
 
+    //
+    // remove 'clean'
     std::string stringify();
-    void clean();
   };
 
   typedef const Version& CR_VERSION;
@@ -30,7 +31,6 @@ namespace cli_menu {
   private:
     std::string author;
     Version version;
-    ~Program() override;
 
   public:
     Program();
@@ -71,6 +71,12 @@ namespace cli_menu {
 
     void printHelp() override;
     void printError() override;
+
+    void run(
+      mt::CR_INT argc,
+      char *argv[],
+      mt::CR_BOL completingDialog
+    );
   };
 }
 
