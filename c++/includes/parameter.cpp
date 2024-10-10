@@ -49,9 +49,38 @@ namespace cli_menu {
     accumulating_in
   ) { type = type_in; }
 
-  void Parameter::setData(mt::CR_STR str) {
+  void Parameter::setData(
+    ParamData &paramData,
+    mt::CR_STR str
+  ) {
+    // safety for recall or pointing back/previous
+    if (!used) updateRequiredSelf(false);
+
+    if (type == TEXT) {
+      paramData.texts.push_back(str);
+      paramData.numbers.push_back({});
+    }
+    // space or newline is a separator
+    else paramData.numbers.push_back(
+      mt_uti::Scanner<double>::parseNumbers(str)
+    );
+
     used = true;
-    argument = str;
+    paramData.conditions.push_back(false);
+  }
+
+  void Parameter::checkout(
+    ParamData &paramData,
+    mt::CR_VEC_STR strVec
+  ) {
+    // concatenate multiline strings from 'strVec'
+    std::string united = mt_uti::StrTools::uniteVector(strVec, "\n");
+
+    // recall can be accumulated in argument
+    setData(
+      paramData,
+      accumulating ? argument + united : united
+    );
   }
 
   std::string Parameter::getStringifiedType() {
@@ -71,115 +100,104 @@ namespace cli_menu {
       ) + getMainLabel();
   }
 
-  void Parameter::pullData(
-    ParamData &paramData,
-    mt::VEC_UI &usedIndexes
+  Command *Parameter::match(
+    mt::VEC_STR &inputs,
+    ParamData &paramData
   ) {
-    if (isSupporter()) {
-      if (type == TEXT) {
-        paramData.texts.push_back(argument);
-        paramData.numbers.push_back({});
-      }
-      else paramData.numbers.push_back(
-        mt_uti::Scanner<double>::parseNumbers(argument)
+    std::string copyName, copyInput;
+
+    if (inputs.size() > 0) {
+      const int i = inputs.size() - 1;
+
+      // copy to secure original strings
+      Command::copyMatchNames(
+        copyName, copyInput,
+        name, inputs[i]
       );
-      paramData.conditions.push_back(false);
-    }
-    deepPull(paramData, usedIndexes);
-  }
 
-  bool Parameter::match(mt::VEC_STR &inputs) {
+      if (copyName == DashTest::cleanSingle(copyInput)) {
+        inputs.pop_back();
 
-    bool incomplete = false;
-    std::string thisName = name;
+        if (isGroup()) {
 
-    if (Command::isTemporaryLetterCaseChange()) {
-      mt_uti::StrTools::changeStringToUppercase(thisName);
-    }
+          // call default callback or print error
+          if (items.size() == 0) {
 
-    int begin = 1,
-      end = inputs.size() - 1;
-
-    mt::UI ultiLevel = 1,
-      thisLevel = level;
-
-    if (ultimate) {
-      ultiLevel = ultimate->getLevel();
-    }
-
-    if (thisLevel <= ultiLevel) {
-      begin = thisLevel;
-      end = thisLevel + 1;
-      if (begin >= inputs.size()) return false;
-      else if (end >= inputs.size()) incomplete = true;
-    }
-
-    for (int i = begin; i < end; i++) {
-      if (inputs[i].empty()) continue;
-
-      int j = i + 1;
-      std::string testName = inputs[i];
-      Command::onFreeChangeInputLetterCase(testName);
-
-      if (DashTest::cleanSingle(testName) &&
-        testName == thisName
-      ) {
-        inputs[i] = "";
-
-        if (!incomplete) {
-          argument = inputs[j];
-          inputs[j] = "";
+            // only capture the last
+            if (inputs.size() > 0) setData(
+              paramData, inputs[i-1]
+            );
+            return this;
+          }
+          // redirected to first item
+          return matchTo(items[0], inputs, paramData);
         }
-
-        return !incomplete;
+        // supporter
+        else {
+          // inputs has arguments
+          if (inputs.size() > 0) {
+            setData(paramData, inputs[i-1]);
+            return matchTo(getUnusedNext(this), inputs, paramData);
+          }
+          // inputs has no arguments
+          else if (Command::dialogued) return dialog(paramData);
+          else return this; // print error
+        }
       }
+      // pointing to neighbor or itself (Program)
+      return matchTo(getUnusedNext(this), inputs, paramData);
     }
-    return false;
+    // 'inputs' completion
+    else if (Command::dialogued) {
+      return dialogTo(holder, paramData);
+    }
+    // callback or print error
+    else return this;
   }
 
-  mt::USI Parameter::question(Command **ultimateHook) {
-    if (checkDialogEnd()) return DIALOG::COMPLETE;
-
+  Command *Parameter::question(ParamData &paramData) {
     mt::VEC_STR strVec;
     std::string buffer;
-    bool inputPassed;
 
-    *ultimateHook = !ultimate ? this : ultimate;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
-      Command::setDialogInput(buffer);
+      Message::setDialogInput(buffer);
+
+      // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
-      inputPassed = isOptional() ||
+      bool inputPassed = isOptional() ||
         (isRequired() && !strVec.empty());
 
       if (Control::cancelTest(controlStr)) {
-        break;
+        break; // returns nullptr below
       }
       else if (Control::enterTest(controlStr)) {
+        // directly completed
         if (getRequiredCount() == 0 && inputPassed) {
-          return DIALOG::COMPLETE;
+          checkout(paramData, strVec);
+          return ultimate;
         }
+        // required items are not complete
         else Command::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(controlStr)) {
+        // proceed to next question
         if (inputPassed) {
-          setData(mt_uti::StrTools::uniteVector(strVec, "\n"));
-          return nextQuestion(ultimateHook);
+          checkout(paramData, strVec);
+          return questionTo(getUnusedNext(this), paramData);
         }
+        // required items are not complete
         else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(controlStr)) {
-        return dialog(ultimateHook);
+        return dialog(paramData);
       }
-      else {
-        strVec.push_back(buffer);
-        updateRequiredSelf(false);
-      }
+      else strVec.push_back(buffer);
     }
 
-    return DIALOG::CANCELED;
+    return nullptr; // canceled
   }
 }
 

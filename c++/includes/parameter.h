@@ -10,16 +10,25 @@ namespace cli_menu {
     std::string argument;
     bool type = false;
 
-    ~Parameter() override {
-      argument = "";
-      type = false;
-    }
+    void setData(
+      ParamData &paramData,
+      mt::CR_STR str
+    );
+
+    // used in 'question' for 'setData'
+    void checkout(
+      ParamData &paramData,
+      mt::CR_VEC_STR strVec
+    );
 
   protected:
-    void setData(mt::CR_STR str) override;
-
     // always called after ultimate (open question)
-    mt::USI question(Command **ultimateHook) override;
+    Command *question(ParamData &paramData) override;
+
+    Command *match(
+      mt::VEC_STR &inputs,
+      ParamData &paramData
+    ) override;
 
   public:
     enum {TEXT, NUMBER};
@@ -54,18 +63,11 @@ namespace cli_menu {
       mt::CR_BOL accumulating_in = false
     );
 
-    bool match(mt::VEC_STR &inputs) override;
     bool getType() { return type; }
     std::string getStringifiedType();
     std::string getDashedName() override;
     std::string getFullName() override;
-    std::string getRawArgument() { return argument; }
     mt::USI getInheritanceFlag() override { return PARAMETER; }
-
-    void pullData(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
-    ) override;
   };
 }
 
