@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
   );
 
   dialog->setAsUltimate();
-  cm::Executor::run(test, argc, argv, true);
+  test->run(argc, argv, true);
   return 0;
 }
 
