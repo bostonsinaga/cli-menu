@@ -8,7 +8,6 @@
 #include "parameter.h"
 #include "toggle.h"
 #include "program.h"
-#include "executor.h"
 
 namespace cm = cli_menu;
 
