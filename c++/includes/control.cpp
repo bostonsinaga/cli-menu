@@ -4,7 +4,9 @@
 #include "control.h"
 
 namespace cli_menu {
-
+  /**
+   * All tests argument are expected to be lowercase.
+   */
   const std::string Control::NAMES[count][2] = {
     { ".back", ":b" },
     { ".cancel", ":c" },
@@ -16,7 +18,7 @@ namespace cli_menu {
     { ".select", ":s" }
   };
 
-  int Control::test(std::string &str) {
+  int Control::test(mt::CR_STR str) {
     int spaceChange = 0;
 
     static std::function<bool(mt::CR_CH)>
@@ -28,7 +30,7 @@ namespace cli_menu {
       };
 
     // force return when 'abc123 space abc123' is detected
-    for (char &ch : str) {
+    for (mt::CR_CH ch : str) {
       if (isNotSpace(ch)) {
         if (spaceChange == 0) spaceChange = 1;
         else if (spaceChange == 2) return 0;
@@ -76,28 +78,47 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Control::cancelTest(std::string &str) {
+  bool Control::cancelTest(mt::CR_STR str) {
     return test(str) == CANCEL + 1;
   }
 
-  bool Control::selectTest(std::string &str) {
+  bool Control::selectTest(mt::CR_STR str) {
     return test(str) == SELECT + 1;
   }
 
-  bool Control::previousTest(std::string &str) {
+  bool Control::previousTest(mt::CR_STR str) {
     return test(str) == PREVIOUS + 1;
   }
 
-  bool Control::nextTest(std::string &str) {
+  bool Control::nextTest(mt::CR_STR str) {
     return test(str) == NEXT + 1;
   }
 
-  bool Control::backTest(std::string &str) {
+  bool Control::backTest(mt::CR_STR str) {
     return test(str) == BACK + 1;
   }
 
-  bool Control::enterTest(std::string &str) {
+  bool Control::enterTest(mt::CR_STR str) {
     return test(str) == ENTER + 1;
+  }
+
+  int Control::booleanTest(mt::CR_STR str) {
+    if (str == "y" || str == "yes" ||
+      str == "1" || str == "true"
+    ) {
+      return 2;
+    }
+    else if (str == "n" || str == "no" ||
+      str == "0" || str == "false"
+    ) {
+      return 1;
+    }
+    return 0;
+  }
+
+  bool Control::revealBoolean(mt::CR_INT testedFlag) {
+    if (testedFlag > 1) return true;
+    return false;
   }
 
   void Control::printHelp(mt::CR_BOL isSupporter) {

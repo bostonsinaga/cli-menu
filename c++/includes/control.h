@@ -16,15 +16,20 @@ namespace cli_menu {
 
     static const int count = 8;
     static const std::string NAMES[count][2];
-    static int test(std::string &str);
+    static int test(mt::CR_STR str);
 
   public:
-    static bool cancelTest(std::string &str);
-    static bool selectTest(std::string &str);
-    static bool previousTest(std::string &str);
-    static bool nextTest(std::string &str);
-    static bool backTest(std::string &str);
-    static bool enterTest(std::string &str);
+    static bool cancelTest(mt::CR_STR str);
+    static bool backTest(mt::CR_STR str);
+    static bool enterTest(mt::CR_STR str);
+    static bool nextTest(mt::CR_STR str);
+    static bool previousTest(mt::CR_STR str);
+    static bool selectTest(mt::CR_STR str);
+
+    // returns 0 (other), 1 (false), 2 (true)
+    static int booleanTest(mt::CR_STR str);
+    static bool revealBoolean(mt::CR_INT testedFlag);
+
     static void printHelp(mt::CR_BOL isSupporter);
   };
 }
