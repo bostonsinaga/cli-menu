@@ -59,6 +59,12 @@ namespace cli_menu {
       mt::CR_INT count = 45,
       mt::CR_CH character = '-'
     );
+
+    // decorated input interface
+    static void setDialogInput(
+      std::string &buffer,
+      mt::CR_CH ch = '<'
+    );
   };
 }
 

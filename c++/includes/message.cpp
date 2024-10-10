@@ -128,6 +128,14 @@ namespace cli_menu {
 
     if (ct > 0) std::cout << std::endl << boundaryLine;
   }
+
+  void Message::setDialogInput(
+    std::string &buffer,
+    mt::CR_CH ch
+  ) {
+    std::cout << ch << ' ';
+    std::getline(std::cin, buffer);
+  }
 }
 
 #endif // __CLI_MENU__MESSAGE_CPP__
