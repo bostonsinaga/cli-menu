@@ -7,7 +7,6 @@ set (SOURCES
   parameter.h
   toggle.h
   program.h
-  executor.h
   cli-menu.h
 
   base.cpp
@@ -18,7 +17,6 @@ set (SOURCES
   parameter.cpp
   toggle.cpp
   program.cpp
-  executor.cpp
 )
 
 add_library(cli-menu STATIC ${SOURCES})
