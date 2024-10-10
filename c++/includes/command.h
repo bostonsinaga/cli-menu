@@ -9,20 +9,19 @@ namespace cli_menu {
   typedef std::vector<Command*> VEC_COM;
   typedef const VEC_COM& CR_VEC_COM;
 
+  /**
+   * It is recommended to use derived classes
+   * for feature completeness.
+   */
   class Command {
   private:
     std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
+    mt::UI level = 0;
 
     // only exists in the 'ultimate' scope
     VEC_COM requiredItems;
-
-    Command *holder = nullptr,
-      *next = nullptr;
-
-    bool accumulating = false,
-      required = false;
 
     void cleanDuplicatesInItems();
     void cleanDuplicateToLastAdded(Command *command);
@@ -74,18 +73,21 @@ namespace cli_menu {
   protected:
     std::string name;
     VEC_COM items;
-    Command *ultimate = nullptr;
+
+    Command *holder = nullptr,
+      *next = nullptr,
+      *ultimate = nullptr;
 
     // can only be set through the 'Program'
     static bool usingCaseSensitiveName,
       usingLowercaseName,
       usingUppercaseName,
-      usingDashesBoundaryLine;
+      usingDashesBoundaryLine,
+      dialogued;
 
-    // useful in overriding 'match' method
-    mt::UI level = 0;
-
-    bool disguised = false,
+    bool accumulating = false,
+      disguised = false,
+      required = false,
       used = false;
 
     static const std::string
@@ -94,6 +96,11 @@ namespace cli_menu {
 
     bool run();
     bool run(ParamData &paramData);
+
+    bool runTo(
+      Command *target,
+      ParamData &paramData
+    );
 
     std::string getBranchLeafString(
       mt::CR_INT spacesCount,
@@ -107,42 +114,51 @@ namespace cli_menu {
 
     std::string getMainLabel();
     std::string getFullNameWithUltimate();
+    Command *getUnusedNext(Command *start);
     void updateRequiredSelf(mt::CR_BOL adding);
 
     static void printDialogError(mt::CR_STR reason);
-    static void setDialogInput(std::string &buffer);
     static bool isTemporaryLetterCaseChange();
     static void onFreeChangeInputLetterCase(std::string &strIn);
+
+    // used to secure original strings
+    static void copyMatchNames(
+      std::string &hookName1, std::string &hookName2,
+      mt::CR_STR oriName1, mt::CR_STR oriName2
+    );
 
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
 
-    virtual void setData(mt::CR_STR str) {}
-    virtual void setData(mt::CR_BOL cond) {}
+    virtual Command *match(
+      mt::VEC_STR &inputs,
+      ParamData &paramData
+    ) { return nullptr; }
 
-    virtual bool match(mt::VEC_STR &inputs) {
-      return false;
-    }
-
-    virtual mt::USI question(Command **ultimateHook) {
-      return DIALOG::COMPLETE;
-    }
-
-    // only at supporter level
-    bool checkDialogEnd();
-
-    // available at all levels
-    mt::USI nextQuestion(Command **ultimateHook);
-    mt::USI dialog(Command **ultimateHook);
-
-    void deepPull(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
+    /**
+     * Returns parent if no neighbors.
+     * Returns itself if this a 'Program'.
+     */
+    Command *matchTo(
+      Command *target,
+      mt::VEC_STR &inputs,
+      ParamData &paramData
     );
 
-    virtual void pullData(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
+    virtual Command *question(ParamData &paramData) {
+      return nullptr;
+    }
+
+    Command *questionTo(
+      Command *target,
+      ParamData &paramData
+    );
+
+    Command *dialog(ParamData &paramData);
+
+    Command *dialogTo(
+      Command *target,
+      ParamData &paramData
     );
 
     /**
@@ -152,10 +168,7 @@ namespace cli_menu {
     void printAfterBoundaryLine(std::string comName);
 
     // destructor only invoked from 'remove' method
-    virtual ~Command();
-
-    // accessing letter case conditions and setters
-    friend class Executor;
+    ~Command() {}
 
   public:
     enum DIALOG { CANCELED, COMPLETE };

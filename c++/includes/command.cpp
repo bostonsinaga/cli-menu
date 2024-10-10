@@ -11,7 +11,8 @@ namespace cli_menu {
   bool Command::usingCaseSensitiveName = true,
     Command::usingLowercaseName = false,
     Command::usingUppercaseName = false,
-    Command::usingDashesBoundaryLine = false;
+    Command::usingDashesBoundaryLine = false,
+    Command::dialogued = false;
 
   void Command::setMetaData(
     mt::CR_STR name_in,
@@ -73,21 +74,6 @@ namespace cli_menu {
       holder_in, required_in,
       accumulating_in
     );
-  }
-
-  Command::~Command() {
-    name = "";
-    description = "";
-    level = 0;
-    items = {};
-    requiredItems = {};
-    holder = nullptr;
-    next = nullptr;
-    ultimate = nullptr;
-    accumulating = false;
-    required = false;
-    used = false;
-    callback.reset();
   }
 
   //___________________|
@@ -425,7 +411,9 @@ namespace cli_menu {
   }
 
   void Command::updateRequiredSelf(mt::CR_BOL adding) {
-    ultimate->updateRequiredItems(this, adding);
+    if (ultimate) {
+      ultimate->updateRequiredItems(this, adding);
+    }
   }
 
   void Command::collapseUltimateItems(
@@ -496,22 +484,33 @@ namespace cli_menu {
     return false;
   }
 
-  void Command::deepPull(
-    ParamData &paramData,
-    mt::VEC_UI &usedIndexes
+  bool Command::runTo(
+    Command *target,
+    ParamData &paramData
   ) {
-    if (!usedIndexes.empty()) {
-      const int index = usedIndexes[0];
-      usedIndexes.erase(usedIndexes.begin());
-      items[index]->pullData(paramData, usedIndexes);
-    }
+    if (target) return target->run(paramData);
+    return false;
   }
 
-  void Command::pullData(
-    ParamData &paramData,
-    mt::VEC_UI &usedIndexes
+  Command *Command::getUnusedNext(Command *start) {
+    if (!next || next == start) return nullptr;
+    else if (!next->used) return next;
+    return next->getUnusedNext(start);
+  }
+
+  Command *Command::matchTo(
+    Command *target,
+    mt::VEC_STR &inputs,
+    ParamData &paramData
   ) {
-    deepPull(paramData, usedIndexes);
+    if (target) return target->match(inputs, paramData);
+    else if (isGroup()) {
+      // this is a 'Program' or without 'Program'
+      if (!holder) return this;
+      // contained by the 'Program'
+      return holder;
+    }
+    return ultimate;
   }
 
   //________|
@@ -548,26 +547,21 @@ namespace cli_menu {
     );
   }
 
-  void Command::setDialogInput(std::string &buffer) {
-    std::cout << "> ";
-    std::getline(std::cin, buffer);
+  /**
+   * The 'ultimate' is guaranteed to exist because
+   * this method always called at supporter level.
+   */
+  Command *Command::questionTo(
+    Command *target,
+    ParamData &paramData
+  ) {
+    if (target) return target->question(paramData);
+    return ultimate;
   }
 
-  bool Command::checkDialogEnd() {
-    if (used && getRequiredCount() == 0) {
-      return true;
-    }
-    return false;
-  }
-
-  mt::USI Command::nextQuestion(Command **ultimateHook) {
-    return next->question(ultimateHook);
-  }
-
-  mt::USI Command::dialog(Command **ultimateHook) {
-    std::string nameTest;
+  Command *Command::dialog(ParamData &paramData) {
+    /** Print name list */
     static std::string inlineNames = "";
-    *ultimateHook = !ultimate ? this : ultimate;
 
     if (inlineNames.empty() && holder) {
       inlineNames += holder->getInlineRootNames(" ", true);
@@ -576,11 +570,14 @@ namespace cli_menu {
     inlineNames += " " + getFullName();
     printAfterBoundaryLine(inlineNames);
 
+    /** Get user input */
+    std::string nameTest;
+
     while (true) {
-      Command::setDialogInput(nameTest);
+      Message::setDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
-        break;
+        break; // returns nullptr below
       }
       else if (Control::enterTest(nameTest)) {
         Command::printDialogError(
@@ -589,23 +586,27 @@ namespace cli_menu {
         continue;
       }
       else if (Control::nextTest(nameTest)) {
+        // pointing to neighbor
         if (next) {
-          return next->dialog(ultimateHook);
+          return next->dialog(paramData);
         }
+        // redirected to first item
         else if (getNumberOfItems() > 0) {
           if (isUltimate()) {
-            return items[0]->question(ultimateHook);
+            return items[0]->question(paramData);
           }
-          return items[0]->dialog(ultimateHook);
+          return items[0]->dialog(paramData);
         }
-        else { // group that has no items
+        // group that has no items
+        else {
           Command::printDialogError(
             "The command has only one parameter"
           );
           continue;
         }
       }
-      else { // find developer defined command
+      // find developer defined command
+      else {
         Command *found;
         Command::onFreeChangeInputLetterCase(nameTest);
 
@@ -614,9 +615,9 @@ namespace cli_menu {
 
         if (found) {
           if (found->isSupporter()) {
-            return found->question(ultimateHook);
+            return found->question(paramData);
           }
-          return found->dialog(ultimateHook);
+          return found->dialog(paramData);
         }
         else if (isUltimate() || isSupporter()) {
           Command::printDialogError("Parameter not found");
@@ -625,7 +626,15 @@ namespace cli_menu {
       }
     }
 
-    return DIALOG::CANCELED;
+    return nullptr; // canceled
+  }
+
+  Command *Command::dialogTo(
+    Command *target,
+    ParamData &paramData
+  ) {
+    if (target) return target->dialog(paramData);
+    return nullptr;
   }
 
   //___________________|
@@ -743,6 +752,22 @@ namespace cli_menu {
       }
       else mt_uti::StrTools::changeStringToUppercase(strIn);
     }
+  }
+
+  void Command::copyMatchNames(
+    std::string &hookName1, std::string &hookName2,
+    mt::CR_STR oriName1, mt::CR_STR oriName2
+  ) {
+    // copy name
+    hookName1 = oriName1;
+
+    if (Command::isTemporaryLetterCaseChange()) {
+      mt_uti::StrTools::changeStringToUppercase(hookName1);
+    }
+
+    // copy input
+    hookName2 = oriName2;
+    Command::onFreeChangeInputLetterCase(hookName2);
   }
 
   void Command::changeTreeNamesToLowercase() {
