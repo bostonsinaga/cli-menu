@@ -7,14 +7,19 @@ namespace cli_menu {
 
   class Toggle : public Command {
   private:
-    bool condition = false;
+    void setData(
+      ParamData &paramData,
+      mt::CR_BOL cond
+    );
 
   protected:
-    ~Toggle() override { condition = false; }
-    void setData(mt::CR_BOL cond) override;
-
     // always called after ultimate (closed question)
-    mt::USI question(Command **ultimateHook) override;
+    Command *question(ParamData &paramData) override;
+
+    Command *match(
+      mt::VEC_STR &inputs,
+      ParamData &paramData
+    ) override;
 
   public:
     Toggle(): Command() {}
@@ -45,16 +50,9 @@ namespace cli_menu {
       mt::CR_BOL accumulating_in = false
     );
 
-    bool match(mt::VEC_STR &inputs) override;
-    bool getCondition() { return condition; }
     std::string getDashedName() override;
     std::string getFullName() override;
     mt::USI getInheritanceFlag() override { return TOGGLE; }
-
-    void pullData(
-      ParamData &paramData,
-      mt::VEC_UI &usedIndexes
-    ) override;
   };
 }
 

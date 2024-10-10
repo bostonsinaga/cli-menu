@@ -46,10 +46,17 @@ namespace cli_menu {
     accumulating_in
   ) {}
 
-  void Toggle::setData(mt::CR_BOL cond) {
+  void Toggle::setData(
+    ParamData &paramData,
+    mt::CR_BOL cond
+  ) {
+    // safety for recall or pointing back/previous
+    if (!used) updateRequiredSelf(false);
+
     used = true;
-    condition = cond;
-    if (isSupporter()) updateRequiredSelf(false);
+    paramData.conditions.push_back(cond);
+    paramData.texts.push_back("");
+    paramData.numbers.push_back({});
   }
 
   std::string Toggle::getDashedName() {
@@ -60,104 +67,101 @@ namespace cli_menu {
     return getDashedName() + getMainLabel();
   }
 
-  void Toggle::pullData(
-    ParamData &paramData,
-    mt::VEC_UI &usedIndexes
+  Command *Toggle::match(
+    mt::VEC_STR &inputs,
+    ParamData &paramData
   ) {
-    if (isSupporter()) {
-      paramData.conditions.push_back(condition);
-      paramData.texts.push_back("");
-      paramData.numbers.push_back({});
-    }
-    deepPull(paramData, usedIndexes);
-  }
+    std::string copyName, copyInput;
 
-  bool Toggle::match(mt::VEC_STR &inputs) {
-    std::string thisName = name;
+    if (inputs.size() > 0) {
+      const int i = inputs.size() - 1;
 
-    if (Command::isTemporaryLetterCaseChange()) {
-      mt_uti::StrTools::changeStringToUppercase(thisName);
-    }
+      Command::copyMatchNames(
+        copyName, copyInput,
+        name, inputs[i]
+      );
 
-    mt::UI begin = 1,
-      end = inputs.size(),
-      ultiLevel = 1,
-      thisLevel = level;
+      if (copyName == DashTest::cleanDouble(copyInput)) {
+        inputs.pop_back();
 
-    if (ultimate) {
-      ultiLevel = ultimate->getLevel();
-    }
+        if (isGroup()) {
 
-    if (thisLevel <= ultiLevel) {
-      begin = thisLevel;
-      end = thisLevel + 1;
-      if (begin >= inputs.size()) return false;
-    }
+          // callback or print error
+          if (items.size() == 0) {
+            setData(paramData, true);
+            return this;
+          }
+          // redirected to first item
+          return matchTo(items[0], inputs, paramData);
+        }
+        // supporter
+        else {
+          // actually there is no need for argument
+          if (inputs.size() > 0) {
+            int boolFlag = Control::booleanTest(
+              mt_uti::StrTools::getStringToLowercase(inputs[i-1])
+            );
 
-    for (int i = begin; i < end; i++) {
-      if (inputs[i].empty()) continue;
-
-      std::string testName = inputs[i];
-      Command::onFreeChangeInputLetterCase(testName);
-
-      if (DashTest::cleanDouble(testName) &&
-        testName == thisName
-      ) {
-        condition = true;
-        inputs[i] = "";
-        return true;
+            if (boolFlag) {
+              setData(paramData, Control::revealBoolean(boolFlag));
+            }
+            else setData(paramData, true);
+          }
+          return matchTo(getUnusedNext(this), inputs, paramData);
+        }
       }
+      // pointing to neighbor or itself (Program)
+      return matchTo(getUnusedNext(this), inputs, paramData);
     }
-    return false;
+    // 'inputs' completion
+    else if (Command::dialogued) {
+      return dialogTo(holder, paramData);
+    }
+    // callback or print error
+    else return this;
   }
 
-  mt::USI Toggle::question(Command **ultimateHook) {
-    if (checkDialogEnd()) return DIALOG::COMPLETE;
-
+  Command *Toggle::question(ParamData &paramData) {
     std::string buffer;
-    *ultimateHook = !ultimate ? this : ultimate;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
     while (true) {
-      Command::setDialogInput(buffer);
+      Message::setDialogInput(buffer);
       mt_uti::StrTools::changeStringToLowercase(buffer);
+      int boolFlag = Control::booleanTest(buffer);
 
-      if (buffer == "y" || buffer == "yes" ||
-        buffer == "1" || buffer == "true"
-      ) {
-        setData(true);
-        return nextQuestion(ultimateHook);
-      }
-      else if (buffer == "n" || buffer == "no" ||
-        buffer == "0" || buffer == "false"
-      ) {
-        setData(false);
-        return nextQuestion(ultimateHook);
+      if (boolFlag) {
+        setData(paramData, Control::revealBoolean(boolFlag));
+        return questionTo(getUnusedNext(this), paramData);
       }
       else if (Control::cancelTest(buffer)) {
-        break;
+        break; // returns nullptr below
       }
       else if (Control::enterTest(buffer)) {
+        // directly completed
         if (getRequiredCount() == 0 && isOptional()) {
-          return DIALOG::COMPLETE;
+          return ultimate;
         }
+        // required items are not complete
         else Command::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(buffer)) {
+        // proceed to next question
         if (isOptional()) {
-          return nextQuestion(ultimateHook);
+          return questionTo(getUnusedNext(this), paramData);
         }
+        // required items are not complete
         else Command::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(buffer)) {
-        return dialog(ultimateHook);
+        return dialog(paramData);
       }
       else Command::printDialogError(
         "Only accept boolean values"
       );
     }
 
-    return DIALOG::CANCELED;
+    return nullptr; // canceled
   }
 }
 
