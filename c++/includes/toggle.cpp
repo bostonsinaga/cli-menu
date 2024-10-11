@@ -50,13 +50,10 @@ namespace cli_menu {
     ParamData &paramData,
     mt::CR_BOL cond
   ) {
-    // safety for recall or pointing back/previous
-    if (!used) updateRequiredSelf(false);
-
-    used = true;
     paramData.conditions.push_back(cond);
     paramData.texts.push_back("");
     paramData.numbers.push_back({});
+    updateRequiredSelf(false);
   }
 
   std::string Toggle::getDashedName() {
