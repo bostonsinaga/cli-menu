@@ -135,6 +135,10 @@ namespace cli_menu {
     ParamData paramData;
     Command::dialogued = completingDialog;
 
+    /**
+     * Skip the first one because its format is unpredictable
+     * to compare with program name e.g. "./bin/program.exe".
+     */
     for (int i = 1; i < argc; i++) {
       inputs.push_back(argv[i]);
     }
