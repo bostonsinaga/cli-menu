@@ -17,8 +17,11 @@ namespace cli_menu {
   Command::Command(
     name_in, description_in,
     callback_in, holder_in,
-    required_in, accumulating_in
-  ) { type = type_in; }
+    required_in
+  ) {
+    type = type_in;
+    accumulating = accumulating_in;
+  }
 
   Parameter::Parameter(
     mt::CR_STR name_in,
@@ -32,8 +35,11 @@ namespace cli_menu {
   Command::Command(
     name_in, description_in,
     callback_in, holder_in,
-    required_in, accumulating_in
-  ) { type = type_in; }
+    required_in
+  ) {
+    type = type_in;
+    accumulating = accumulating_in;
+  }
 
   Parameter::Parameter(
     mt::CR_STR name_in,
@@ -45,9 +51,11 @@ namespace cli_menu {
   ):
   Command::Command(
     name_in, description_in,
-    holder_in, required_in,
-    accumulating_in
-  ) { type = type_in; }
+    holder_in, required_in
+  ) {
+    type = type_in;
+    accumulating = accumulating_in;
+  }
 
   void Parameter::setData(
     ParamData &paramData,
@@ -97,6 +105,12 @@ namespace cli_menu {
       ) + getMainLabel();
   }
 
+  std::string Parameter::getFillingStatusString() {
+    if (!used) return "emp";
+    else if (accumulating) return "acc";
+    return "cor";
+  }
+
   Command *Parameter::match(
     mt::VEC_STR &inputs,
     ParamData &paramData
@@ -124,6 +138,7 @@ namespace cli_menu {
             if (inputs.size() > 0) setData(
               paramData, inputs[i-1]
             );
+
             return this;
           }
           // redirected to first item
@@ -137,19 +152,25 @@ namespace cli_menu {
             return matchTo(getUnusedNext(this), inputs, paramData);
           }
           // inputs has no arguments
-          else if (Command::dialogued) return dialog(paramData);
+          else if (Command::dialogued) {
+            return dialog(paramData);
+          }
           else return this; // print error
         }
       }
-      // pointing to neighbor or itself (Program)
+      // pointing to neighbor or itself (program)
       return matchTo(getUnusedNext(this), inputs, paramData);
     }
     // 'inputs' completion
     else if (Command::dialogued) {
       return dialogTo(holder, paramData);
     }
-    // callback or print error
-    else return this;
+    // invoke callback
+    else if (getRequiredCount() == 0) {
+      return holder;
+    }
+    // incomplete print error
+    return this;
   }
 
   Command *Parameter::question(ParamData &paramData) {
@@ -164,30 +185,33 @@ namespace cli_menu {
       // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
-      bool inputPassed = isOptional() ||
-        (isRequired() && !valVec.empty());
-
       // control input
       if (Control::cancelTest(controlStr)) {
         break; // returns nullptr below
       }
       else if (Control::enterTest(controlStr)) {
         // directly completed
-        if (getRequiredCount() == 0 && inputPassed) {
+        if (getRequiredCount() == 0) {
           checkout(paramData, valVec);
           return ultimate;
         }
         // required items are not complete
-        else Command::printDialogError(cannotProcessErrorString);
+        else {
+          Message::printDialogError(cannotProcessErrorString);
+        }
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
-        if (inputPassed) {
+        if (isOptional() ||
+          (isRequired() && used)
+        ) {
           checkout(paramData, valVec);
           return questionTo(getUnusedNext(this), paramData);
         }
         // required items are not complete
-        else Command::printDialogError(cannotSkipErrorString);
+        else {
+          Message::printDialogError(cannotSkipErrorString);
+        }
       }
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData);

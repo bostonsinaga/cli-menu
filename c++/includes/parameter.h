@@ -8,7 +8,9 @@ namespace cli_menu {
   class Parameter : public Command {
   private:
     std::string argument;
-    bool type = false;
+
+    bool accumulating = false,
+      type = false;
 
     void setData(
       ParamData &paramData,
@@ -67,7 +69,11 @@ namespace cli_menu {
     std::string getStringifiedType();
     std::string getDashedName() override;
     std::string getFullName() override;
+    std::string getFillingStatusString() override;
     mt::USI getInheritanceFlag() override { return PARAMETER; }
+
+    void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
+    bool isAccumulating() { return accumulating; }
   };
 }
 
