@@ -60,6 +60,8 @@ namespace cli_menu {
       mt::CR_CH character = '-'
     );
 
+    static void printDialogError(mt::CR_STR reason);
+
     // decorated input interface
     static void setDialogInput(
       std::string &buffer,
