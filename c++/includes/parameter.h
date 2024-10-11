@@ -18,7 +18,7 @@ namespace cli_menu {
     // used in 'question' for 'setData'
     void checkout(
       ParamData &paramData,
-      mt::CR_VEC_STR strVec
+      mt::CR_VEC_STR valVec
     );
 
   protected:

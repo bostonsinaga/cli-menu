@@ -53,9 +53,6 @@ namespace cli_menu {
     ParamData &paramData,
     mt::CR_STR str
   ) {
-    // safety for recall or pointing back/previous
-    if (!used) updateRequiredSelf(false);
-
     if (type == TEXT) {
       paramData.texts.push_back(str);
       paramData.numbers.push_back({});
@@ -65,16 +62,16 @@ namespace cli_menu {
       mt_uti::Scanner<double>::parseNumbers(str)
     );
 
-    used = true;
     paramData.conditions.push_back(false);
+    updateRequiredSelf(false);
   }
 
   void Parameter::checkout(
     ParamData &paramData,
-    mt::CR_VEC_STR strVec
+    mt::CR_VEC_STR valVec
   ) {
-    // concatenate multiline strings from 'strVec'
-    std::string united = mt_uti::StrTools::uniteVector(strVec, "\n");
+    // concatenate multiline strings from 'valVec'
+    std::string united = mt_uti::StrTools::uniteVector(valVec, "\n");
 
     // recall can be accumulated in argument
     setData(
@@ -156,7 +153,7 @@ namespace cli_menu {
   }
 
   Command *Parameter::question(ParamData &paramData) {
-    mt::VEC_STR strVec;
+    mt::VEC_STR valVec;
     std::string buffer;
 
     printAfterBoundaryLine(getFullNameWithUltimate());
@@ -168,15 +165,16 @@ namespace cli_menu {
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
       bool inputPassed = isOptional() ||
-        (isRequired() && !strVec.empty());
+        (isRequired() && !valVec.empty());
 
+      // control input
       if (Control::cancelTest(controlStr)) {
         break; // returns nullptr below
       }
       else if (Control::enterTest(controlStr)) {
         // directly completed
         if (getRequiredCount() == 0 && inputPassed) {
-          checkout(paramData, strVec);
+          checkout(paramData, valVec);
           return ultimate;
         }
         // required items are not complete
@@ -185,7 +183,7 @@ namespace cli_menu {
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
         if (inputPassed) {
-          checkout(paramData, strVec);
+          checkout(paramData, valVec);
           return questionTo(getUnusedNext(this), paramData);
         }
         // required items are not complete
@@ -194,7 +192,12 @@ namespace cli_menu {
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData);
       }
-      else strVec.push_back(buffer);
+      // value input
+      else {
+        // to be able to '.enter'
+        updateRequiredSelf(false);
+        valVec.push_back(buffer);
+      }
     }
 
     return nullptr; // canceled
