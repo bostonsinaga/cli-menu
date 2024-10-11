@@ -19,6 +19,7 @@ namespace cli_menu {
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
     mt::UI level = 0;
+    bool used = false;
 
     // only exists in the 'ultimate' scope
     VEC_COM requiredItems;
@@ -87,8 +88,7 @@ namespace cli_menu {
 
     bool accumulating = false,
       disguised = false,
-      required = false,
-      used = false;
+      required = false;
 
     static const std::string
       cannotProcessErrorString,
@@ -121,10 +121,10 @@ namespace cli_menu {
     static bool isTemporaryLetterCaseChange();
     static void onFreeChangeInputLetterCase(std::string &strIn);
 
-    // used to secure original strings
+    // secure original strings
     static void copyMatchNames(
-      std::string &hookName1, std::string &hookName2,
-      mt::CR_STR oriName1, mt::CR_STR oriName2
+      std::string &hookName, std::string &hookInput,
+      mt::CR_STR oriName, mt::CR_STR oriInput
     );
 
     void changeTreeNamesToLowercase();

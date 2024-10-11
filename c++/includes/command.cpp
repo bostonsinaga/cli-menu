@@ -411,8 +411,13 @@ namespace cli_menu {
   }
 
   void Command::updateRequiredSelf(mt::CR_BOL adding) {
-    if (ultimate) {
-      ultimate->updateRequiredItems(this, adding);
+    if (!used) {
+      // occurs once (safeguard)
+      used = true;
+
+      if (ultimate) {
+        ultimate->updateRequiredItems(this, adding);
+      }
     }
   }
 
@@ -503,10 +508,13 @@ namespace cli_menu {
     mt::VEC_STR &inputs,
     ParamData &paramData
   ) {
-    if (target) return target->match(inputs, paramData);
+    if (target) {
+      return target->match(inputs, paramData);
+    }
     else if (isGroup()) {
       // this is a 'Program' or without 'Program'
       if (!holder) return this;
+
       // contained by the 'Program'
       return holder;
     }
@@ -530,14 +538,17 @@ namespace cli_menu {
   void Command::printDialogStatus() {
     std::string status = " (";
 
-    if (isGroup()) status += "sel";
+    if (isGroup()) {
+      status += "sel"; // 1st
+    }
+    // supporter
     else {
-      status += "par, ";
+      status += "par, "; // 1st
 
-      if (required) status += "req, ";
+      if (required) status += "req, "; // 2nd
       else status += "opt, ";
 
-      if (!used) status += "emp";
+      if (!used) status += "emp"; // 3rd
       else if (accumulating) status += "acc";
       else status += "cor";
     }
@@ -755,19 +766,17 @@ namespace cli_menu {
   }
 
   void Command::copyMatchNames(
-    std::string &hookName1, std::string &hookName2,
-    mt::CR_STR oriName1, mt::CR_STR oriName2
+    std::string &hookName, std::string &hookInput,
+    mt::CR_STR oriName, mt::CR_STR oriInput
   ) {
-    // copy name
-    hookName1 = oriName1;
+    hookName = oriName;
 
     if (Command::isTemporaryLetterCaseChange()) {
-      mt_uti::StrTools::changeStringToUppercase(hookName1);
+      mt_uti::StrTools::changeStringToUppercase(hookName);
     }
 
-    // copy input
-    hookName2 = oriName2;
-    Command::onFreeChangeInputLetterCase(hookName2);
+    hookInput = oriInput;
+    Command::onFreeChangeInputLetterCase(hookInput);
   }
 
   void Command::changeTreeNamesToLowercase() {
