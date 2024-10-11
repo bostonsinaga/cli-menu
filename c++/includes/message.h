@@ -63,7 +63,7 @@ namespace cli_menu {
     // decorated input interface
     static void setDialogInput(
       std::string &buffer,
-      mt::CR_CH ch = '<'
+      mt::CR_CH ch = '>'
     );
   };
 }
