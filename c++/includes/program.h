@@ -20,8 +20,6 @@ namespace cli_menu {
       mt::CR_UI patch_in
     );
 
-    //
-    // remove 'clean'
     std::string stringify();
   };
 
