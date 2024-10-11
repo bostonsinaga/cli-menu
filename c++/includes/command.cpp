@@ -14,17 +14,23 @@ namespace cli_menu {
     Command::usingDashesBoundaryLine = false,
     Command::dialogued = false;
 
+  const mt::USI Command::disguiseFlags[disguiseCount] = {
+    PROGRAM
+  };
+
+  const std::string Command::disguiseNames[disguiseCount][2] = {
+    {"Program", "Toggle"}
+  };
+
   void Command::setMetaData(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ) {
     name = name_in;
     description = description_in;
     required = required_in;
-    accumulating = accumulating_in;
     setHolder(holder_in);
   }
 
@@ -33,13 +39,11 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ) {
     setMetaData(
       name_in, description_in,
-      holder_in, required_in,
-      accumulating_in
+      holder_in, required_in
     );
 
     callback = callback_in;
@@ -50,13 +54,11 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ) {
     setMetaData(
       name_in, description_in,
-      holder_in, required_in,
-      accumulating_in
+      holder_in, required_in
     );
 
     plainCallback = callback_in;
@@ -66,13 +68,11 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ) {
     setMetaData(
       name_in, description_in,
-      holder_in, required_in,
-      accumulating_in
+      holder_in, required_in
     );
   }
 
@@ -195,18 +195,9 @@ namespace cli_menu {
     mt::CR_BOL reconnected
   ) {
     if (command && !isSupporter()) {
-
-      if (command->getInheritanceFlag() == PROGRAM) {
-        command->disguise(true);
-
-        Message::printNamed(
-          Message::STATUS::WARNING,
-          "Cannot add a 'Program' (name: '" +
-          command->name + "'). To keep proceeding, it is now considered as 'Toggle'.",
-          "cli_menu::Command::addItem",
-          false
-        );
-      }
+      Command::checkDisguise(
+        command, "cli_menu::Command::addItem"
+      );
 
       if (reconnected) {
         command->setHolder(this, false);
@@ -529,12 +520,6 @@ namespace cli_menu {
     Command::cannotProcessErrorString = "Cannot process until all required parameters are met",
     Command::cannotSkipErrorString = "Cannot skip with empty input on required parameter";
 
-  void Command::printDialogError(mt::CR_STR reason) {
-    Message::printString(
-      "\n> " + reason + "\n\n", Color::RED
-    );
-  }
-
   void Command::printDialogStatus() {
     std::string status = " (";
 
@@ -548,14 +533,17 @@ namespace cli_menu {
       if (required) status += "req, "; // 2nd
       else status += "opt, ";
 
-      if (!used) status += "emp"; // 3rd
-      else if (accumulating) status += "acc";
-      else status += "cor";
+      status += getFillingStatusString(); // 3rd
     }
 
     Message::printItalicString(
       status + ")\n", Color::MAGENTA
     );
+  }
+
+  std::string Command::getFillingStatusString() {
+    if (!used) return "emp";
+    return "cor";
   }
 
   /**
@@ -591,7 +579,7 @@ namespace cli_menu {
         break; // returns nullptr below
       }
       else if (Control::enterTest(nameTest)) {
-        Command::printDialogError(
+        Message::printDialogError(
           "Cannot process before parameters"
         );
         continue;
@@ -610,7 +598,7 @@ namespace cli_menu {
         }
         // group that has no items
         else {
-          Command::printDialogError(
+          Message::printDialogError(
             "The command has only one parameter"
           );
           continue;
@@ -631,9 +619,9 @@ namespace cli_menu {
           return found->dialog(paramData);
         }
         else if (isUltimate() || isSupporter()) {
-          Command::printDialogError("Parameter not found");
+          Message::printDialogError("Parameter not found");
         }
-        else Command::printDialogError("Group not found");
+        else Message::printDialogError("Group not found");
       }
     }
 
@@ -818,10 +806,13 @@ namespace cli_menu {
     // has a newline at the end
     printDialogStatus();
 
-    // once displayed
+    /** Once displayed */
+
+    // group or supporter parameter
     if (!ultimate || (isSupporter() && getInheritanceFlag() == PARAMETER)) {
       Control::printHelp(isSupporter());
     }
+    // supporter toggle
     else {
       static bool isClosedInit = true;
 
@@ -851,6 +842,32 @@ namespace cli_menu {
 
   void Command::printError() {
     std::cerr << "Command Error..";
+  }
+
+  void Command::checkDisguise(
+    Command *command,
+    mt::CR_STR occurrenceMethodName
+  ) {
+    int detected = -1;
+
+    for (int i = 0; i < disguiseCount; i++) {
+      if (!command->disguised &&
+        command->getInheritanceFlag() == disguiseFlags[i]
+      ) { break; }
+    }
+
+    if (detected >= 0) {
+      command->disguised = true;
+
+      Message::printNamed(
+        Message::STATUS::WARNING,
+        "Cannot add a '" + disguiseNames[detected][0] + "' (name: '" +
+        command->name + "'). To keep proceeding, it is now considered as '"
+        + disguiseNames[detected][1] + "'.",
+        occurrenceMethodName,
+        false
+      );
+    }
   }
 }
 

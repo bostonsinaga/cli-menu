@@ -18,8 +18,16 @@ namespace cli_menu {
     std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
+    Command *next = nullptr;
     mt::UI level = 0;
-    bool used = false;
+    bool required = false;
+
+    static const int disguiseCount = 1;
+    static const mt::USI disguiseFlags[disguiseCount];
+    static const std::string disguiseNames[disguiseCount][2];
+
+    bool run();
+    bool run(ParamData &paramData);
 
     // only exists in the 'ultimate' scope
     VEC_COM requiredItems;
@@ -44,7 +52,9 @@ namespace cli_menu {
     Command* dismantle(mt::CR_INT index);
     void dismantleRemove(mt::CR_INT index);
     Command* dismantleRelease(mt::CR_INT index);
+
     void printDialogStatus();
+    virtual std::string getFillingStatusString();
 
     void updateRequiredItems(
       Command *command,
@@ -60,23 +70,34 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       Command *holder_in,
-      mt::CR_BOL required_in,
-      mt::CR_BOL accumulating_in
+      mt::CR_BOL required_in
     );
 
+    static bool isTemporaryLetterCaseChange();
+    static void onFreeChangeInputLetterCase(std::string &strIn);
+
     /**
-     * A state setter for 'disguised' where the derived class
-     * will behave as its base class (hiding its own abilities).
-     * But still need to set 'disguised' on/off conditions.
+     * A condition setter for 'disguised' where the derived class
+     * will behave as its base class (hiding its own abilities)
+     * due to certain circumstances. This is a one way process.
      */
-    void disguise(mt::CR_BOL isIt) { disguised = isIt; }
+    static void checkDisguise(
+      Command *command,
+      mt::CR_STR occurrenceMethodName
+    );
 
   protected:
     std::string name;
     VEC_COM items;
+    bool used = false;
+
+    /**
+     * Requires a conditional statement on this variable
+     * in derived class that listed in 'disguiseFlags'.
+     */
+    bool disguised = false;
 
     Command *holder = nullptr,
-      *next = nullptr,
       *ultimate = nullptr;
 
     // can only be set through the 'Program'
@@ -86,16 +107,9 @@ namespace cli_menu {
       usingDashesBoundaryLine,
       dialogued;
 
-    bool accumulating = false,
-      disguised = false,
-      required = false;
-
     static const std::string
       cannotProcessErrorString,
       cannotSkipErrorString;
-
-    bool run();
-    bool run(ParamData &paramData);
 
     bool runTo(
       Command *target,
@@ -116,10 +130,6 @@ namespace cli_menu {
     std::string getFullNameWithUltimate();
     Command *getUnusedNext(Command *start);
     void updateRequiredSelf(mt::CR_BOL adding);
-
-    static void printDialogError(mt::CR_STR reason);
-    static bool isTemporaryLetterCaseChange();
-    static void onFreeChangeInputLetterCase(std::string &strIn);
 
     // secure original strings
     static void copyMatchNames(
@@ -180,8 +190,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL required_in = false
     );
 
     Command(
@@ -189,16 +198,14 @@ namespace cli_menu {
       mt::CR_STR description_in,
       CR_SP_PLAIN_CALLBACK callback_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL required_in = false
     );
 
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       Command *holder_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL required_in = false
     );
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
@@ -212,8 +219,6 @@ namespace cli_menu {
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
     void setAsUltimate();
     void resignFromUltimate();
-
-    void setAccumulating(mt::CR_BOL isIt) { accumulating = isIt; }
     void setRequired(mt::CR_BOL isIt) { required = isIt; }
 
     mt::UI getLevel() { return level; }
@@ -265,7 +270,6 @@ namespace cli_menu {
     bool isSupporter() { return holder && holder == ultimate; }
     bool isRequired() { return isGroup() || required; }
     bool isOptional() { return !isRequired(); }
-    bool isAccumulating() { return accumulating; }
     bool isUsed() { return used; }
 
     std::string getInlineRootNames(
