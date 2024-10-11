@@ -10,13 +10,12 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
     callback_in, holder_in,
-    required_in, accumulating_in
+    required_in
   ) {}
 
   Toggle::Toggle(
@@ -24,26 +23,23 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
     callback_in, holder_in,
-    required_in, accumulating_in
+    required_in
   ) {}
 
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     Command *holder_in,
-    mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
-    holder_in, required_in,
-    accumulating_in
+    holder_in, required_in
   ) {}
 
   void Toggle::setData(
@@ -88,6 +84,7 @@ namespace cli_menu {
             setData(paramData, true);
             return this;
           }
+
           // redirected to first item
           return matchTo(items[0], inputs, paramData);
         }
@@ -99,6 +96,7 @@ namespace cli_menu {
               mt_uti::StrTools::getStringToLowercase(inputs[i-1])
             );
 
+            // between 1 or 2 is true
             if (boolFlag) {
               setData(paramData, Control::revealBoolean(boolFlag));
             }
@@ -107,15 +105,19 @@ namespace cli_menu {
           return matchTo(getUnusedNext(this), inputs, paramData);
         }
       }
-      // pointing to neighbor or itself (Program)
+      // pointing to neighbor or itself (program)
       return matchTo(getUnusedNext(this), inputs, paramData);
     }
     // 'inputs' completion
     else if (Command::dialogued) {
       return dialogTo(holder, paramData);
     }
-    // callback or print error
-    else return this;
+    // invoke callback
+    else if (getRequiredCount() == 0) {
+      return holder;
+    }
+    // incomplete print error
+    return this;
   }
 
   Command *Toggle::question(ParamData &paramData) {
@@ -136,24 +138,31 @@ namespace cli_menu {
       }
       else if (Control::enterTest(buffer)) {
         // directly completed
-        if (getRequiredCount() == 0 && isOptional()) {
+        if (getRequiredCount() == 0) {
+          if (!used) setData(paramData, false);
           return ultimate;
         }
         // required items are not complete
-        else Command::printDialogError(cannotProcessErrorString);
+        else {
+          Message::printDialogError(cannotProcessErrorString);
+        }
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
-        if (isOptional()) {
+        if (isOptional() ||
+          (isRequired() && used)
+        ) {
           return questionTo(getUnusedNext(this), paramData);
         }
         // required items are not complete
-        else Command::printDialogError(cannotSkipErrorString);
+        else Message::printDialogError(
+          cannotSkipErrorString
+        );
       }
       else if (Control::selectTest(buffer)) {
         return dialog(paramData);
       }
-      else Command::printDialogError(
+      else Message::printDialogError(
         "Only accept boolean values"
       );
     }
