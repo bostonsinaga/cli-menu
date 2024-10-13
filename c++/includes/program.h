@@ -70,6 +70,7 @@ namespace cli_menu {
     void printHelp() override;
     void printError() override;
 
+    // will remove the root at the end
     void run(
       mt::CR_INT argc,
       char *argv[],
