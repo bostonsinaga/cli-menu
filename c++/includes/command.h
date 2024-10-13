@@ -140,35 +140,39 @@ namespace cli_menu {
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
 
-    virtual Command *match(
+    virtual mt::USI match(
       mt::VEC_STR &inputs,
-      ParamData &paramData
-    ) { return nullptr; }
+      ParamData &paramData,
+      Command **lastCom
+    ) { return FLAG::ERROR; }
 
-    /**
-     * Returns parent if no neighbors.
-     * Returns itself if this a 'Program'.
-     */
-    Command *matchTo(
+    mt::USI matchTo(
       Command *target,
       mt::VEC_STR &inputs,
-      ParamData &paramData
+      ParamData &paramData,
+      Command **lastCom
     );
 
-    virtual Command *question(ParamData &paramData) {
-      return nullptr;
-    }
+    virtual mt::USI question(
+      ParamData &paramData,
+      Command **lastCom
+    ) { return FLAG::ERROR; }
 
-    Command *questionTo(
+    mt::USI questionTo(
       Command *target,
-      ParamData &paramData
+      ParamData &paramData,
+      Command **lastCom
     );
 
-    Command *dialog(ParamData &paramData);
+    mt::USI dialog(
+      ParamData &paramData,
+      Command **lastCom
+    );
 
-    Command *dialogTo(
+    mt::USI dialogTo(
       Command *target,
-      ParamData &paramData
+      ParamData &paramData,
+      Command **lastCom
     );
 
     /**
@@ -181,7 +185,7 @@ namespace cli_menu {
     ~Command() {}
 
   public:
-    enum DIALOG { CANCELED, COMPLETE };
+    enum FLAG { COMPLETED, ERROR, CANCELED };
 
     Command() {}
 

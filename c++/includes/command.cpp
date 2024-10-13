@@ -494,22 +494,17 @@ namespace cli_menu {
     return next->getUnusedNext(start);
   }
 
-  Command *Command::matchTo(
+  mt::USI Command::matchTo(
     Command *target,
     mt::VEC_STR &inputs,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
     if (target) {
-      return target->match(inputs, paramData);
+      return target->match(inputs, paramData, lastCom);
     }
-    else if (isGroup()) {
-      // this is a 'Program' or without 'Program'
-      if (!holder) return this;
-
-      // contained by the 'Program'
-      return holder;
-    }
-    return ultimate;
+    else if (isGroup()) return FLAG::ERROR;
+    return FLAG::COMPLETED;
   }
 
   //________|
@@ -550,15 +545,19 @@ namespace cli_menu {
    * The 'ultimate' is guaranteed to exist because
    * this method always called at supporter level.
    */
-  Command *Command::questionTo(
+  mt::USI Command::questionTo(
     Command *target,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
-    if (target) return target->question(paramData);
-    return ultimate;
+    if (target) return target->question(paramData, lastCom);
+    return FLAG::COMPLETED;
   }
 
-  Command *Command::dialog(ParamData &paramData) {
+  mt::USI Command::dialog(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
     /** Print name list */
     static std::string inlineNames = "";
 
@@ -576,7 +575,7 @@ namespace cli_menu {
       Message::setDialogInput(nameTest);
 
       if (Control::cancelTest(nameTest)) {
-        break; // returns nullptr below
+        break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(nameTest)) {
         Message::printDialogError(
@@ -587,14 +586,14 @@ namespace cli_menu {
       else if (Control::nextTest(nameTest)) {
         // pointing to neighbor
         if (next) {
-          return next->dialog(paramData);
+          return next->dialog(paramData, lastCom);
         }
         // redirected to first item
         else if (getNumberOfItems() > 0) {
           if (isUltimate()) {
-            return items[0]->question(paramData);
+            return items[0]->question(paramData, lastCom);
           }
-          return items[0]->dialog(paramData);
+          return items[0]->dialog(paramData, lastCom);
         }
         // group that has no items
         else {
@@ -614,9 +613,9 @@ namespace cli_menu {
 
         if (found) {
           if (found->isSupporter()) {
-            return found->question(paramData);
+            return found->question(paramData, lastCom);
           }
-          return found->dialog(paramData);
+          return found->dialog(paramData, lastCom);
         }
         else if (isUltimate() || isSupporter()) {
           Message::printDialogError("Parameter not found");
@@ -625,15 +624,16 @@ namespace cli_menu {
       }
     }
 
-    return nullptr; // canceled
+    return FLAG::CANCELED;
   }
 
-  Command *Command::dialogTo(
+  mt::USI Command::dialogTo(
     Command *target,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
-    if (target) return target->dialog(paramData);
-    return nullptr;
+    if (target) return target->dialog(paramData, lastCom);
+    return FLAG::COMPLETED;
   }
 
   //___________________|
