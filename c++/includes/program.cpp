@@ -157,21 +157,14 @@ namespace cli_menu {
     // Process |
     //_________|
 
-    Command *lastCom = nullptr;
+    Command *lastCom = this;
+    mt::USI flag;
     bool noItems = false;
 
     if (items.size() > 0) {
-      lastCom = matchTo(items[0], inputs, paramData);
-    }
-    else noItems = true;
+      flag = matchTo(items[0], inputs, paramData, &lastCom);
 
-    if (lastCom) {
-      // program
-      if (lastCom == this) {
-        printError();
-      }
-      // ultimate
-      else if (lastCom->isUltimate()) {
+      if (flag == FLAG::COMPLETED) {
         // check if has any callback
         if (!runTo(lastCom, paramData)) {
           Message::printNamed(
@@ -187,27 +180,35 @@ namespace cli_menu {
           name
         );
       }
-      // supporter
-      else if (lastCom->isSupporter()) {
-        lastCom->getUltimate()->printError();
+      else if (flag == FLAG::ERROR) {
+        // program
+        if (lastCom == this) {
+          if (!runTo(lastCom, paramData)) {
+            printError();
+          }
+        }
+        // supporter
+        else if (lastCom->isSupporter()) {
+          lastCom->getUltimate()->printError();
+        }
+        // group
+        else if (!(lastCom->isUltimate() ||
+          runTo(lastCom, paramData)
+        ) || lastCom->isUltimate()) {
+          lastCom->printError();
+        }
       }
-      // group
-      else if (!runTo(lastCom, paramData)) {
-        lastCom->printError();
-      }
-    }
-    // nullptr no items
-    else if (noItems)  {
-        Message::printNamed(
-        Message::STATUS::ERROR,
-        "No items.",
+      // canceled
+      else Message::printNamed(
+        Message::STATUS::CANCELED,
+        "Program terminated.",
         name
       );
     }
-    // nullptr canceled
+    // no items
     else Message::printNamed(
-      Message::STATUS::CANCELED,
-      "Program terminated.",
+      Message::STATUS::ERROR,
+      "No items available.",
       name
     );
 
