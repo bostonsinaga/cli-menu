@@ -24,12 +24,16 @@ namespace cli_menu {
     );
 
   protected:
-    // always called after ultimate (open question)
-    Command *question(ParamData &paramData) override;
-
-    Command *match(
+    mt::USI match(
       mt::VEC_STR &inputs,
-      ParamData &paramData
+      ParamData &paramData,
+      Command **lastCom
+    ) override;
+
+    // always called after ultimate (open question)
+    mt::USI question(
+      ParamData &paramData,
+      Command **lastCom
     ) override;
 
   public:

@@ -111,9 +111,10 @@ namespace cli_menu {
     return "cor";
   }
 
-  Command *Parameter::match(
+  mt::USI Parameter::match(
     mt::VEC_STR &inputs,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
     std::string copyName, copyInput;
 
@@ -128,52 +129,63 @@ namespace cli_menu {
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
         inputs.pop_back();
+        *lastCom = this;
 
         if (isGroup()) {
 
           // call default callback or print error
           if (items.size() == 0) {
 
-            // only capture the last
-            if (inputs.size() > 0) setData(
-              paramData, inputs[i-1]
-            );
+            // only capture the last reversed 'inputs'
+            if (inputs.size() > 0) {
+              setData(paramData, inputs[i-1]);
+              inputs.pop_back();
+            }
 
-            return this;
+            return FLAG::COMPLETED;
           }
+
           // redirected to first item
-          return matchTo(items[0], inputs, paramData);
+          return matchTo(items[0], inputs, paramData, lastCom);
         }
         // supporter
         else {
-          // inputs has arguments
+          // 'inputs' has arguments
           if (inputs.size() > 0) {
             setData(paramData, inputs[i-1]);
-            return matchTo(getUnusedNext(this), inputs, paramData);
+            inputs.pop_back();
+            return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
           }
-          // inputs has no arguments
+          // 'inputs' has no arguments
           else if (Command::dialogued) {
-            return dialog(paramData);
+            return dialog(paramData, lastCom);
           }
-          else return this; // print error
+          else return FLAG::ERROR;
         }
       }
-      // pointing to neighbor or itself (program)
-      return matchTo(getUnusedNext(this), inputs, paramData);
+
+      // pointing to neighbor
+      return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
     }
     // 'inputs' completion
-    else if (Command::dialogued) {
-      return dialogTo(holder, paramData);
+    else if (Command::dialogued &&
+      (isGroup() || (ultimate && getRequiredCount() != 0))
+    ) {
+      return dialogTo(holder, paramData, lastCom);
     }
     // invoke callback
-    else if (getRequiredCount() == 0) {
-      return holder;
+    else if (ultimate && getRequiredCount() == 0) {
+      *lastCom = this;
+      return FLAG::COMPLETED;
     }
-    // incomplete print error
-    return this;
+    // print error of incompleteness
+    return FLAG::ERROR;
   }
 
-  Command *Parameter::question(ParamData &paramData) {
+  mt::USI Parameter::question(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
     mt::VEC_STR valVec;
     std::string buffer;
 
@@ -187,13 +199,14 @@ namespace cli_menu {
 
       // control input
       if (Control::cancelTest(controlStr)) {
-        break; // returns nullptr below
+        break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
         // directly completed
         if (getRequiredCount() == 0) {
+          *lastCom = ultimate;
           checkout(paramData, valVec);
-          return ultimate;
+          return FLAG::COMPLETED;
         }
         // required items are not complete
         else {
@@ -205,8 +218,9 @@ namespace cli_menu {
         if (isOptional() ||
           (isRequired() && used)
         ) {
+          *lastCom = ultimate;
           checkout(paramData, valVec);
-          return questionTo(getUnusedNext(this), paramData);
+          return questionTo(getUnusedNext(this), paramData, lastCom);
         }
         // required items are not complete
         else {
@@ -214,7 +228,7 @@ namespace cli_menu {
         }
       }
       else if (Control::selectTest(controlStr)) {
-        return dialog(paramData);
+        return dialog(paramData, lastCom);
       }
       // value input
       else {
@@ -224,7 +238,7 @@ namespace cli_menu {
       }
     }
 
-    return nullptr; // canceled
+    return FLAG::CANCELED;
   }
 }
 

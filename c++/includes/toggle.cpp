@@ -60,9 +60,10 @@ namespace cli_menu {
     return getDashedName() + getMainLabel();
   }
 
-  Command *Toggle::match(
+  mt::USI Toggle::match(
     mt::VEC_STR &inputs,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
     std::string copyName, copyInput;
 
@@ -76,17 +77,18 @@ namespace cli_menu {
 
       if (copyName == DashTest::cleanDouble(copyInput)) {
         inputs.pop_back();
+        *lastCom = this;
 
         if (isGroup()) {
 
           // callback or print error
           if (items.size() == 0) {
             setData(paramData, true);
-            return this;
+            return FLAG::ERROR;
           }
 
           // redirected to first item
-          return matchTo(items[0], inputs, paramData);
+          return matchTo(items[0], inputs, paramData, lastCom);
         }
         // supporter
         else {
@@ -102,25 +104,31 @@ namespace cli_menu {
             }
             else setData(paramData, true);
           }
-          return matchTo(getUnusedNext(this), inputs, paramData);
+
+          return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
         }
       }
-      // pointing to neighbor or itself (program)
-      return matchTo(getUnusedNext(this), inputs, paramData);
+
+      // pointing to neighbor
+      return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
     }
     // 'inputs' completion
     else if (Command::dialogued) {
-      return dialogTo(holder, paramData);
+      return dialogTo(holder, paramData, lastCom);
     }
     // invoke callback
-    else if (getRequiredCount() == 0) {
-      return holder;
+    else if (ultimate && getRequiredCount() == 0) {
+      *lastCom = this;
+      return FLAG::COMPLETED;
     }
-    // incomplete print error
-    return this;
+    // print error of incompleteness
+    return FLAG::ERROR;
   }
 
-  Command *Toggle::question(ParamData &paramData) {
+  mt::USI Toggle::question(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
     std::string buffer;
     printAfterBoundaryLine(getFullNameWithUltimate());
 
@@ -130,17 +138,19 @@ namespace cli_menu {
       int boolFlag = Control::booleanTest(buffer);
 
       if (boolFlag) {
+        *lastCom = ultimate;
         setData(paramData, Control::revealBoolean(boolFlag));
-        return questionTo(getUnusedNext(this), paramData);
+        return questionTo(getUnusedNext(this), paramData, lastCom);
       }
       else if (Control::cancelTest(buffer)) {
-        break; // returns nullptr below
+        break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(buffer)) {
         // directly completed
         if (getRequiredCount() == 0) {
           if (!used) setData(paramData, false);
-          return ultimate;
+          *lastCom = ultimate;
+          return FLAG::COMPLETED;
         }
         // required items are not complete
         else {
@@ -152,7 +162,8 @@ namespace cli_menu {
         if (isOptional() ||
           (isRequired() && used)
         ) {
-          return questionTo(getUnusedNext(this), paramData);
+          *lastCom = ultimate;
+          return questionTo(getUnusedNext(this), paramData, lastCom);
         }
         // required items are not complete
         else Message::printDialogError(
@@ -160,14 +171,14 @@ namespace cli_menu {
         );
       }
       else if (Control::selectTest(buffer)) {
-        return dialog(paramData);
+        return dialog(paramData, lastCom);
       }
       else Message::printDialogError(
         "Only accept boolean values"
       );
     }
 
-    return nullptr; // canceled
+    return FLAG::CANCELED;
   }
 }
 
