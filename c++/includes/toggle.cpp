@@ -117,7 +117,7 @@ namespace cli_menu {
       return askNeighbor(inputs, paramData, lastCom);
     }
     // 'inputs' completion
-    else if (Command::dialogued) {
+    else if (isMatchNeedDialog()) {
       return dialogTo(
         static_cast<Cm*>(parent),
         paramData, lastCom
@@ -125,7 +125,7 @@ namespace cli_menu {
     }
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
-      *lastCom = this;
+      *lastCom = ultimate;
       return FLAG::COMPLETED;
     }
     // print error of incompleteness
