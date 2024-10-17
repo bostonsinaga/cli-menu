@@ -129,9 +129,12 @@ namespace cli_menu {
     if (ct > 0) std::cout << std::endl << boundaryLine;
   }
 
-  void Message::printDialogError(mt::CR_STR reason) {
+  void Message::printDialogError(
+    mt::CR_STR reason,
+    mt::CR_BOL endNewlineCount
+  ) {
     printString(
-      "\n> " + reason + "\n\n",
+      "\n> " + reason + std::string(endNewlineCount, '\n'),
       Color::RED
     );
   }

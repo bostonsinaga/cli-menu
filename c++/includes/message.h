@@ -60,7 +60,10 @@ namespace cli_menu {
       mt::CR_CH character = '-'
     );
 
-    static void printDialogError(mt::CR_STR reason);
+    static void printDialogError(
+      mt::CR_STR reason,
+      mt::CR_BOL endNewlineCount = 2
+    );
 
     // decorated input interface
     static void setDialogInput(
