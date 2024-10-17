@@ -113,8 +113,8 @@ namespace cli_menu {
         }
       }
 
-      // pointing to neighbor
-      return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
+      // point to neighbor if input not matched
+      return askNeighbor(inputs, paramData, lastCom);
     }
     // 'inputs' completion
     else if (Command::dialogued) {
@@ -160,9 +160,7 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else {
-          Message::printDialogError(cannotProcessErrorString);
-        }
+        else Message::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
@@ -173,16 +171,12 @@ namespace cli_menu {
           return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
-        else Message::printDialogError(
-          cannotSkipErrorString
-        );
+        else Message::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(buffer)) {
         return dialog(paramData, lastCom);
       }
-      else Message::printDialogError(
-        "Only accept boolean values"
-      );
+      else Message::printDialogError("Only accept boolean values");
     }
 
     return FLAG::CANCELED;

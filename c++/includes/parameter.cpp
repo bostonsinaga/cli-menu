@@ -161,14 +161,16 @@ namespace cli_menu {
           }
           // 'inputs' has no arguments
           else if (Command::dialogued) {
-            return dialog(paramData, lastCom);
+            Message::printDialogError(cannotProcessErrorString, 1);
+            return question(paramData, lastCom);
           }
+          // no dialog
           else return FLAG::ERROR;
         }
       }
 
-      // pointing to neighbor
-      return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
+      // point to neighbor if input not matched
+      return askNeighbor(inputs, paramData, lastCom);
     }
     // 'inputs' completion
     else if (Command::dialogued &&
@@ -215,9 +217,7 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else {
-          Message::printDialogError(cannotProcessErrorString);
-        }
+        else Message::printDialogError(cannotProcessErrorString);
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
@@ -229,9 +229,7 @@ namespace cli_menu {
           return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
-        else {
-          Message::printDialogError(cannotSkipErrorString);
-        }
+        else Message::printDialogError(cannotSkipErrorString);
       }
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData, lastCom);
