@@ -8,6 +8,8 @@ namespace cli_menu {
   // CONSTRUCTORS |
   //______________|
 
+  Command *Command::circularCheckpoint = nullptr;
+
   bool Command::usingCaseSensitiveName = true,
     Command::usingLowercaseName = false,
     Command::usingUppercaseName = false,
@@ -289,7 +291,6 @@ namespace cli_menu {
         Message::printDialogError(
           "Cannot process before parameters"
         );
-        continue;
       }
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
@@ -304,12 +305,9 @@ namespace cli_menu {
           return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
         // group that has no children
-        else {
-          Message::printDialogError(
-            "The command has only one parameter"
-          );
-          continue;
-        }
+        else Message::printDialogError(
+          "The command has only one parameter"
+        );
       }
       // find developer defined command
       else {
@@ -342,6 +340,23 @@ namespace cli_menu {
   ) {
     if (target) return target->dialog(paramData, lastCom);
     return FLAG::COMPLETED;
+  }
+
+  mt::USI Command::askNeighbor(
+    mt::VEC_STR &inputs,
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    if (!circularCheckpoint) {
+      circularCheckpoint = this;
+    }
+
+    if (next != circularCheckpoint) {
+      return matchTo(static_cast<Cm*>(next), inputs, paramData, lastCom);
+    }
+
+    circularCheckpoint = nullptr;
+    return FLAG::ERROR;
   }
 
   //___________________|

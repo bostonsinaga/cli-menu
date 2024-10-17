@@ -21,6 +21,7 @@ namespace cli_menu {
     SP_PLAIN_CALLBACK plainCallback = nullptr;
     bool required = false;
 
+    static Command *circularCheckpoint;
     static const int disguiseCount = 1;
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
@@ -138,6 +139,13 @@ namespace cli_menu {
 
     mt::USI dialogTo(
       Command *target,
+      ParamData &paramData,
+      Command **lastCom
+    );
+
+    // point to neighbor if input not matched
+    mt::USI askNeighbor(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     );
