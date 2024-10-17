@@ -279,16 +279,19 @@ namespace cli_menu {
     while (true) {
       Message::setDialogInput(nameTest);
 
-      if (Control::cancelTest(nameTest)) {
+      // copy to secure original input
+      std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
+
+      if (Control::cancelTest(controlStr)) {
         break; // returns 'FLAG::CANCELED' below
       }
-      else if (Control::enterTest(nameTest)) {
+      else if (Control::enterTest(controlStr)) {
         Message::printDialogError(
           "Cannot process before parameters"
         );
         continue;
       }
-      else if (Control::nextTest(nameTest)) {
+      else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
         if (next) {
           return static_cast<Cm*>(next)->dialog(paramData, lastCom);
