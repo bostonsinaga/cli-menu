@@ -359,6 +359,11 @@ namespace cli_menu {
     return FLAG::ERROR;
   }
 
+  bool Command::isMatchNeedDialog() {
+    return Command::dialogued &&
+    (isGroup() || (ultimate && getRequiredCount() != 0));
+  }
+
   //___________________|
   // ADVANCED MESSAGES |
   //___________________|

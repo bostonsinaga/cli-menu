@@ -150,6 +150,9 @@ namespace cli_menu {
       Command **lastCom
     );
 
+    // invoked in 'match' method when 'inputs' is empty
+    bool isMatchNeedDialog();
+
     /**
      * Prints '-' signs horizontally before names list or
      * names list with prominent background color.
