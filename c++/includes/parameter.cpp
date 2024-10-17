@@ -10,13 +10,13 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL type_in,
     CR_SP_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in,
     mt::CR_BOL accumulating_in
   ):
   Command::Command(
     name_in, description_in,
-    callback_in, holder_in,
+    callback_in, parent_in,
     required_in
   ) {
     type = type_in;
@@ -28,13 +28,13 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL type_in,
     CR_SP_PLAIN_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in,
     mt::CR_BOL accumulating_in
   ):
   Command::Command(
     name_in, description_in,
-    callback_in, holder_in,
+    callback_in, parent_in,
     required_in
   ) {
     type = type_in;
@@ -45,13 +45,13 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_BOL type_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in,
     mt::CR_BOL accumulating_in
   ):
   Command::Command(
     name_in, description_in,
-    holder_in, required_in
+    parent_in, required_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -134,7 +134,7 @@ namespace cli_menu {
         if (isGroup()) {
 
           // call default callback or print error
-          if (items.size() == 0) {
+          if (children.size() == 0) {
 
             // only capture the last reversed 'inputs'
             if (inputs.size() > 0) {
@@ -145,8 +145,11 @@ namespace cli_menu {
             return FLAG::COMPLETED;
           }
 
-          // redirected to first item
-          return matchTo(items[0], inputs, paramData, lastCom);
+          // redirected to first child
+          return matchTo(
+            static_cast<Cm*>(children[0]), 
+            inputs, paramData, lastCom
+          );
         }
         // supporter
         else {
@@ -154,7 +157,7 @@ namespace cli_menu {
           if (inputs.size() > 0) {
             setData(paramData, inputs[i-1]);
             inputs.pop_back();
-            return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
+            return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
           }
           // 'inputs' has no arguments
           else if (Command::dialogued) {
@@ -165,13 +168,16 @@ namespace cli_menu {
       }
 
       // pointing to neighbor
-      return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
+      return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
     }
     // 'inputs' completion
     else if (Command::dialogued &&
       (isGroup() || (ultimate && getRequiredCount() != 0))
     ) {
-      return dialogTo(holder, paramData, lastCom);
+      return dialogTo(
+        static_cast<Cm*>(parent),
+        paramData, lastCom
+      );
     }
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
@@ -220,7 +226,7 @@ namespace cli_menu {
         ) {
           *lastCom = ultimate;
           checkout(paramData, valVec);
-          return questionTo(getUnusedNext(this), paramData, lastCom);
+          return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
         else {
