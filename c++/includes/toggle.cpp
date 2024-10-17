@@ -9,12 +9,12 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
-    callback_in, holder_in,
+    callback_in, parent_in,
     required_in
   ) {}
 
@@ -22,24 +22,24 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
-    callback_in, holder_in,
+    callback_in, parent_in,
     required_in
   ) {}
 
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
   ):
   Command(
     name_in, description_in,
-    holder_in, required_in
+    parent_in, required_in
   ) {}
 
   void Toggle::setData(
@@ -82,18 +82,22 @@ namespace cli_menu {
         if (isGroup()) {
 
           // callback or print error
-          if (items.size() == 0) {
+          if (children.size() == 0) {
             setData(paramData, true);
             return FLAG::ERROR;
           }
 
-          // redirected to first item
-          return matchTo(items[0], inputs, paramData, lastCom);
+          // redirected to first child
+          return matchTo(
+            static_cast<Cm*>(children[0]),
+            inputs, paramData, lastCom
+          );
         }
         // supporter
         else {
           // actually there is no need for argument
           if (inputs.size() > 0) {
+
             int boolFlag = Control::booleanTest(
               mt_uti::StrTools::getStringToLowercase(inputs[i-1])
             );
@@ -105,16 +109,19 @@ namespace cli_menu {
             else setData(paramData, true);
           }
 
-          return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
+          return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
         }
       }
 
       // pointing to neighbor
-      return matchTo(getUnusedNext(this), inputs, paramData, lastCom);
+      return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
     }
     // 'inputs' completion
     else if (Command::dialogued) {
-      return dialogTo(holder, paramData, lastCom);
+      return dialogTo(
+        static_cast<Cm*>(parent),
+        paramData, lastCom
+      );
     }
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
@@ -140,7 +147,7 @@ namespace cli_menu {
       if (boolFlag) {
         *lastCom = ultimate;
         setData(paramData, Control::revealBoolean(boolFlag));
-        return questionTo(getUnusedNext(this), paramData, lastCom);
+        return questionTo(getUnusedNeighbor(this), paramData, lastCom);
       }
       else if (Control::cancelTest(buffer)) {
         break; // returns 'FLAG::CANCELED' below
@@ -163,7 +170,7 @@ namespace cli_menu {
           (isRequired() && used)
         ) {
           *lastCom = ultimate;
-          return questionTo(getUnusedNext(this), paramData, lastCom);
+          return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
         else Message::printDialogError(
