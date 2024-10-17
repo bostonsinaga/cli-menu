@@ -22,345 +22,38 @@ namespace cli_menu {
     {"Program", "Toggle"}
   };
 
-  void Command::setMetaData(
-    mt::CR_STR name_in,
-    mt::CR_STR description_in,
-    Command *holder_in,
-    mt::CR_BOL required_in
-  ) {
-    name = name_in;
-    description = description_in;
-    required = required_in;
-    setHolder(holder_in);
-  }
-
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
-  ) {
-    setMetaData(
-      name_in, description_in,
-      holder_in, required_in
-    );
-
+  ): TREE(name_in, parent_in) {
+    description = description_in;
     callback = callback_in;
+    required = required_in;
   }
 
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     CR_SP_PLAIN_CALLBACK callback_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
-  ) {
-    setMetaData(
-      name_in, description_in,
-      holder_in, required_in
-    );
-
+  ): TREE(name_in, parent_in) {
+    description = description_in;
     plainCallback = callback_in;
+    required = required_in;
   }
 
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    Command *holder_in,
+    Command *parent_in,
     mt::CR_BOL required_in
-  ) {
-    setMetaData(
-      name_in, description_in,
-      holder_in, required_in
-    );
-  }
-
-  //___________________|
-  // PARENT - CHILDREN |
-  //___________________|
-
-  bool Command::hasItem(Command *command) {
-    for (Command *com : items) {
-      if (com == command) return true;
-    }
-    return false;
-  }
-
-  bool Command::hasItem(mt::CR_STR name_in) {
-    for (Command *com : items) {
-      if (com->name == name_in) return true;
-    }
-    return false;
-  }
-
-  Command *Command::getItem(mt::CR_INT index) {
-    return mt_uti::VecTools<Command*>::getAt(items, index, nullptr);
-  }
-
-  Command *Command::getItem(mt::CR_STR name_in) {
-    bool needToUppercase = Command::isTemporaryLetterCaseChange();
-
-    for (Command *com : items) {
-      std::string nm = com->name;
-
-      if (needToUppercase) {
-        mt_uti::StrTools::changeStringToUppercase(nm);
-      }
-
-      if (nm == name_in) return com;
-    }
-
-    return nullptr;
-  }
-
-  Command *Command::getRoot() {
-    Command *root = this;
-    while (root->holder) {
-      root = root->holder;
-    }
-    return root;
-  }
-
-  void Command::connectNext(int &index, VEC_COM &vecCom) {
-    if (index > 0) {
-      vecCom[index - 1]->next = vecCom[index];
-
-      // connect last index to the first
-      if (index == vecCom.size() - 1) {
-        vecCom[index]->next = vecCom[0];
-      }
-    }
-  }
-
-  void Command::setItems(
-    CR_VEC_COM newItems,
-    mt::CR_BOL needEmpty,
-    mt::CR_BOL validating
-  ) {
-    int startIdx = 0;
-
-    if (needEmpty) items = {};
-    else startIdx = items.size();
-
-    // slower (safe)
-    if (validating) {
-      for (Command *com : newItems) {
-        if (com) items.push_back(com);
-      }
-      cleanDuplicatesInItems();
-    }
-    // faster (danger)
-    else items = newItems;
-
-    for (int i = startIdx; i < items.size(); i++) {
-      items[i]->setHolder(this, false);
-      Command::connectNext(i, items);
-    }
-  }
-
-  VEC_COM Command::setItemsRelease(
-    CR_VEC_COM newItems,
-    mt::CR_BOL validating
-  ) {
-    if (!isSupporter()) {
-      VEC_COM oldItems = items;
-      setItems(newItems, true, validating);
-      return oldItems;
-    }
-    return {};
-  }
-
-  void Command::setItemsReplace(
-    CR_VEC_COM newItems,
-    mt::CR_BOL validating
-  ) {
-    if (!isSupporter()) {
-      cleanItems();
-      setItems(newItems, true, validating);
-    }
-  }
-
-  void Command::addItems(
-    CR_VEC_COM newItems,
-    mt::CR_BOL validating
-  ) {
-    if (!isSupporter()) {
-      setItems(newItems, false, validating);
-    }
-  }
-
-  void Command::addItem(
-    Command *command,
-    mt::CR_BOL reconnected
-  ) {
-    if (command && !isSupporter()) {
-      Command::checkDisguise(
-        command, "cli_menu::Command::addItem"
-      );
-
-      if (reconnected) {
-        command->setHolder(this, false);
-      }
-
-      if (!items.empty()) {
-        items.back()->next = command;
-      }
-
-      items.push_back(command);
-      cleanDuplicateToLastAdded(command);
-      if (isUltimate()) updateRequiredItems(command, true);
-    }
-  }
-
-  void Command::setHolder(
-    Command *newHolder,
-    mt::CR_BOL reconnected
-  ) {
-    if (newHolder) {
-      if (holder) {
-        holder->releaseItem(this);
-      }
-
-      if (reconnected) {
-        newHolder->addItem(this, false);
-      }
-
-      if (newHolder->isUltimate()) {
-        ultimate = newHolder;
-      }
-
-      holder = newHolder;
-      level = holder->level + 1;
-    }
-  }
-
-  void Command::cleanDuplicatesInItems() {
-    std::tuple<VEC_COM, VEC_COM>
-      wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateInside(
-        items, false,
-        [](Command *rep, Command *com)->bool {
-          if (rep->name == com->name) return true;
-          return false;
-        }
-      );
-
-    // remove duplicates of same name
-    for (Command *com : std::get<1>(wastedTuple)) {
-      com->remove();
-    }
-  }
-
-  void Command::cleanDuplicateToLastAdded(Command *command) {
-    std::tuple<VEC_COM, VEC_COM>
-      wastedTuple = mt_uti::VecTools<Command*>::cleanDuplicateToMember(
-        items, command, false,
-        [](Command *rep, Command *com)->bool {
-          if (rep->name == com->name) return true;
-          return false;
-        }
-      );
-
-    // remove duplicates of same name
-    for (Command *com : std::get<1>(wastedTuple)) {
-      com->remove();
-    }
-  }
-
-  void Command::cleanItems() {
-    for (Command *com : items) {
-      com->remove(false);
-    }
-  }
-
-  void Command::sewNext(mt::CR_INT index) {
-    if (index > 0) {
-      // connect between except the index
-      if (index + 1 < items.size()) {
-        items[index - 1]->next = items[index + 1];
-      }
-      // connect last index to the first
-      else if (index == items.size() - 1) {
-        items[index]->next = items[0];
-      }
-    }
-  }
-
-  Command* Command::dismantle(mt::CR_INT index) {
-    Command *target = items[index];
-    sewNext(index);
-    if (isUltimate()) updateRequiredItems(target, false);
-    mt_uti::VecTools<Command*>::cutSingle(items, index);
-    return target;
-  }
-
-  void Command::dismantleRemove(mt::CR_INT index) {
-    dismantle(index)->remove(true);
-  }
-
-  Command* Command::dismantleRelease(mt::CR_INT index) {
-    items[index]->level = 0;
-    items[index]->holder = nullptr;
-    items[index]->ultimate = nullptr;
-    return dismantle(index);
-  }
-
-  void Command::removeItem(Command *command) {
-    if (!command) return;
-
-    for (int i = 0; i < items.size(); i++) {
-      if (items[i] == command) {
-        dismantleRemove(i);
-        break;
-      }
-    }
-  }
-
-  void Command::removeItem(mt::CR_INT index) {
-    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
-      dismantleRemove(index);
-    }
-  }
-
-  Command *Command::releaseItem(Command *command) {
-    if (!command) return nullptr;
-
-    for (int i = 0; i < items.size(); i++) {
-      if (items[i] == command) {
-        return dismantleRelease(i);
-      }
-    }
-
-    return nullptr;
-  }
-
-  Command *Command::releaseItem(mt::CR_INT index) {
-    if (mt_uti::VecTools<Command*>::hasIndex(items, index)) {
-      return dismantleRelease(index);
-    }
-    return nullptr;
-  }
-
-  VEC_COM Command::releaseItems() {
-    VEC_COM released = items;
-
-    for (Command *com : items) {
-      com->level = 0;
-      com->holder = nullptr;
-      com->ultimate = nullptr;
-    }
-
-    items = {};
-    requiredItems = {};
-    return released;
-  }
-
-  void Command::remove(mt::CR_BOL firstOccurrence) {
-    if (firstOccurrence && holder) {
-      holder->releaseItem(this);
-    }
-    cleanItems();
-    delete this;
+  ): TREE(name_in, parent_in) {
+    description = description_in;
+    required = required_in;
   }
 
   //__________|
@@ -394,9 +87,11 @@ namespace cli_menu {
       if (adding) {
         requiredItems.push_back(command);
       }
-      else mt_uti::VecTools<Command*>::cutSingle(
+      else mt_uti::VecTools<TREE*>::cutSingle(
         requiredItems,
-        mt_uti::VecTools<Command*>::getIndex(requiredItems, command)
+        mt_uti::VecTools<TREE*>::getIndex(
+          requiredItems, command
+        )
       );
     }
   }
@@ -414,16 +109,15 @@ namespace cli_menu {
 
   void Command::collapseUltimateItems(
     Command *newUltimate,
-    VEC_COM &united
+    VEC_TREE &united
   ) {
     ultimate = newUltimate;
-    mt_uti::VecTools<Command*>::concat(united, items);
+    VEC_TREE released = releaseChildren();
+    mt_uti::VecTools<TREE*>::concat(united, released);
 
-    for (Command *com : items) {
-      com->collapseUltimateItems(newUltimate, united);
+    for (TREE *node : released) {
+      static_cast<Cm*>(node)->collapseUltimateItems(newUltimate, united);
     }
-
-    items = {};
   }
 
   void Command::setCallback(CR_SP_CALLBACK callback_in) {
@@ -437,23 +131,29 @@ namespace cli_menu {
   }
 
   void Command::setAsUltimate() {
-    VEC_COM united;
+    VEC_TREE united;
 
     collapseUltimateItems(this, united);
-    items = united;
-    Command::cleanDuplicatesInItems();
+    children = united;
+    cleanDuplicatesInChildren();
 
     for (int i = 0; i < united.size(); i++) {
-      connectNext(i, united);
-      updateRequiredItems(united[i], true);
-      united[i]->holder = this;
-      united[i]->level = level + 1;
+
+      if (i < united.size() - 1) {
+        united[i]->connect(united[i+1]);
+      }
+
+      updateRequiredItems(static_cast<Cm*>(united[i]), true);
+      united[i]->setParent(this, false);
     }
   }
 
   void Command::resignFromUltimate() {
     if (isUltimate()) {
-      for (Command *com : items) com->ultimate = nullptr;
+      for (TREE *node : children) {
+        static_cast<Cm*>(node)->ultimate = nullptr;
+      }
+
       ultimate = nullptr;
       requiredItems = {};
     }
@@ -488,10 +188,14 @@ namespace cli_menu {
     return false;
   }
 
-  Command *Command::getUnusedNext(Command *start) {
-    if (!next || next == start) return nullptr;
-    else if (!next->used) return next;
-    return next->getUnusedNext(start);
+  Command *Command::getUnusedNeighbor(Command *start) {
+    if (!next || next == start) {
+      return nullptr;
+    }
+    else if (!static_cast<Cm*>(next)->used) {
+      return static_cast<Cm*>(next);
+    }
+    return static_cast<Cm*>(next)->getUnusedNeighbor(start);
   }
 
   mt::USI Command::matchTo(
@@ -561,8 +265,9 @@ namespace cli_menu {
     /** Print name list */
     static std::string inlineNames = "";
 
-    if (inlineNames.empty() && holder) {
-      inlineNames += holder->getInlineRootNames(" ", true);
+    if (inlineNames.empty() && parent) {
+      inlineNames += static_cast<Cm*>(parent)
+        ->getInlineRootNames(" ", true);
     }
 
     inlineNames += " " + getFullName();
@@ -586,16 +291,16 @@ namespace cli_menu {
       else if (Control::nextTest(nameTest)) {
         // pointing to neighbor
         if (next) {
-          return next->dialog(paramData, lastCom);
+          return static_cast<Cm*>(next)->dialog(paramData, lastCom);
         }
-        // redirected to first item
-        else if (getNumberOfItems() > 0) {
+        // redirected to first child
+        else if (getNumberOfChildren() > 0) {
           if (isUltimate()) {
-            return items[0]->question(paramData, lastCom);
+            return static_cast<Cm*>(children[0])->question(paramData, lastCom);
           }
-          return items[0]->dialog(paramData, lastCom);
+          return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
-        // group that has no items
+        // group that has no children
         else {
           Message::printDialogError(
             "The command has only one parameter"
@@ -608,8 +313,8 @@ namespace cli_menu {
         Command *found;
         Command::onFreeChangeInputLetterCase(nameTest);
 
-        if (isGroup()) found = getItem(nameTest);
-        else found = ultimate->getItem(nameTest);
+        if (isGroup()) found = static_cast<Cm*>(getChild(nameTest));
+        else found = static_cast<Cm*>(ultimate->getChild(nameTest));
 
         if (found) {
           if (found->isSupporter()) {
@@ -645,7 +350,7 @@ namespace cli_menu {
     mt::CR_BOL fully
   ) {
     std::string text;
-    Command *root = holder;
+    Command *root = static_cast<Cm*>(parent);
 
     static const std::function<void(Command*)>
       add = [&](Command *com) {
@@ -657,7 +362,7 @@ namespace cli_menu {
     // looping up to root
     while (root) {
       add(root);
-      root = root->holder;
+      root = static_cast<Cm*>(root->parent);
     }
 
     return text;
@@ -671,13 +376,13 @@ namespace cli_menu {
     static std::string separator = std::string(spacesCount, ' ');
 
     std::string text;
-    Command *root = holder;
+    TREE *root = parent;
     int tabsCount = 0;
 
     // looping up to root
     while (root) {
-      tabsCount += root->name.length() + separator.length();
-      root = root->holder;
+      tabsCount += root->getName().length() + separator.length();
+      root = root->getParent();
     }
 
     text += name + separator;
@@ -687,7 +392,7 @@ namespace cli_menu {
     }
 
     // display a neat description
-    if (withDescription && items.empty()) {
+    if (withDescription && children.empty()) {
       mt::VEC_STR lines {""};
 
       // detect newline characters
@@ -716,16 +421,16 @@ namespace cli_menu {
         text += lines[i];
       }
     }
-    // has items (recursion)
-    else for (int i = 0; i < items.size(); i++) {
-      text += items[i]->getBranchLeafString(
+    // has children (recursion)
+    else for (int i = 0; i < getNumberOfChildren(); i++) {
+      text += static_cast<Cm*>(children[i])->getBranchLeafString(
         spacesCount, i, withDescription
       );
     }
 
     // add newline to every index except the last
-    if (holder &&
-      columnIndex < holder->items.size() - 1
+    if (parent &&
+      columnIndex < parent->getNumberOfChildren() - 1
     ) { text += "\n"; }
 
     return text;
@@ -770,16 +475,16 @@ namespace cli_menu {
   void Command::changeTreeNamesToLowercase() {
     mt_uti::StrTools::changeStringToLowercase(name);
 
-    for (Command *com : items) {
-      com->changeTreeNamesToLowercase();
+    for (TREE *node : children) {
+      static_cast<Cm*>(node)->changeTreeNamesToLowercase();
     }
   }
 
   void Command::changeTreeNamesToUppercase() {
     mt_uti::StrTools::changeStringToUppercase(name);
 
-    for (Command *com : items) {
-      com->changeTreeNamesToUppercase();
+    for (TREE *node : children) {
+      static_cast<Cm*>(node)->changeTreeNamesToUppercase();
     }
   }
 

@@ -4,22 +4,21 @@
 #include "control.h"
 
 namespace cli_menu {
-
-  class Command;
-  typedef std::vector<Command*> VEC_COM;
-  typedef const VEC_COM& CR_VEC_COM;
-
   /**
    * It is recommended to use derived classes
    * for feature completeness.
    */
-  class Command {
+  class Command : public mt_ds::tree::Node {
+  protected:
+    typedef mt_ds::tree::Node TREE;
+    typedef mt_ds::tree::VEC_NODE VEC_TREE;
+    typedef mt_ds::tree::CR_VEC_NODE CR_VEC_TREE;
+    typedef Command Cm;
+
   private:
     std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
-    Command *next = nullptr;
-    mt::UI level = 0;
     bool required = false;
 
     static const int disguiseCount = 1;
@@ -30,28 +29,7 @@ namespace cli_menu {
     bool run(ParamData &paramData);
 
     // only exists in the 'ultimate' scope
-    VEC_COM requiredItems;
-
-    void cleanDuplicatesInItems();
-    void cleanDuplicateToLastAdded(Command *command);
-    void cleanItems();
-    void sewNext(mt::CR_INT index);
-    void remove(mt::CR_BOL firstOccurrence);
-
-    static void connectNext(
-      int &index,
-      VEC_COM &vecCom
-    );
-
-    void setItems(
-      CR_VEC_COM newItems,
-      mt::CR_BOL needEmpty,
-      mt::CR_BOL validating
-    );
-
-    Command* dismantle(mt::CR_INT index);
-    void dismantleRemove(mt::CR_INT index);
-    Command* dismantleRelease(mt::CR_INT index);
+    VEC_TREE requiredItems;
 
     void printDialogStatus();
     virtual std::string getFillingStatusString();
@@ -63,14 +41,7 @@ namespace cli_menu {
 
     void collapseUltimateItems(
       Command *newUltimate,
-      VEC_COM &united
-    );
-
-    void setMetaData(
-      mt::CR_STR name_in,
-      mt::CR_STR description_in,
-      Command *holder_in,
-      mt::CR_BOL required_in
+      VEC_TREE &united
     );
 
     static bool isTemporaryLetterCaseChange();
@@ -87,8 +58,7 @@ namespace cli_menu {
     );
 
   protected:
-    std::string name;
-    VEC_COM items;
+    Command *ultimate = nullptr;
     bool used = false;
 
     /**
@@ -96,9 +66,6 @@ namespace cli_menu {
      * in derived class that listed in 'disguiseFlags'.
      */
     bool disguised = false;
-
-    Command *holder = nullptr,
-      *ultimate = nullptr;
 
     // can only be set through the 'Program'
     static bool usingCaseSensitiveName,
@@ -128,7 +95,7 @@ namespace cli_menu {
 
     std::string getMainLabel();
     std::string getFullNameWithUltimate();
-    Command *getUnusedNext(Command *start);
+    Command *getUnusedNeighbor(Command *start);
     void updateRequiredSelf(mt::CR_BOL adding);
 
     // secure original strings
@@ -181,9 +148,6 @@ namespace cli_menu {
      */
     void printAfterBoundaryLine(std::string comName);
 
-    // destructor only invoked from 'remove' method
-    ~Command() {}
-
   public:
     enum FLAG { COMPLETED, ERROR, CANCELED };
 
@@ -193,7 +157,7 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       CR_SP_CALLBACK callback_in,
-      Command *holder_in = nullptr,
+      Command *parent_in = nullptr,
       mt::CR_BOL required_in = false
     );
 
@@ -201,14 +165,14 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       CR_SP_PLAIN_CALLBACK callback_in,
-      Command *holder_in = nullptr,
+      Command *parent_in = nullptr,
       mt::CR_BOL required_in = false
     );
 
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      Command *holder_in = nullptr,
+      Command *parent_in = nullptr,
       mt::CR_BOL required_in = false
     );
 
@@ -216,62 +180,23 @@ namespace cli_menu {
     virtual std::string getDashedName() { return name; }
     virtual std::string getFullName() { return name; }
 
-    std::string getName() { return name; }
-    std::string getDescription() { return description; }
-
     void setCallback(CR_SP_CALLBACK callback_in);
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
     void setAsUltimate();
     void resignFromUltimate();
     void setRequired(mt::CR_BOL isIt) { required = isIt; }
 
-    mt::UI getLevel() { return level; }
-    size_t getNumberOfItems() { return items.size(); }
-
-    VEC_COM getItems() { return items; }
-    Command *getHolder() { return holder; }
-    Command *getNext() { return next; }
+    std::string getDescription() { return description; }
     Command *getUltimate() { return ultimate; }
-
-    bool hasItem(Command *command);
-    bool hasItem(mt::CR_STR name_in);
-    Command *getItem(mt::CR_INT index);
-    Command *getItem(mt::CR_STR name_in);
-    Command *getRoot();
-
-    VEC_COM setItemsRelease(
-      CR_VEC_COM newItems,
-      mt::CR_BOL validating = true
-    );
-
-    void setItemsReplace(
-      CR_VEC_COM newItems,
-      mt::CR_BOL validating = true
-    );
-
-    void addItems(
-      CR_VEC_COM newItems,
-      mt::CR_BOL validating = true
-    );
 
     /**
      * NOTE :
-     * Cannot change 'items',
-     * if this an 'ultimate' supporter.
+     * Cannot change 'children' if this a supporter.
      */
-    void addItem(Command *command, mt::CR_BOL reconnected = true);
-    void setHolder(Command *newHolder, mt::CR_BOL reconnected = true);
-
-    void removeItem(Command *command);
-    void removeItem(mt::CR_INT index);
-    Command *releaseItem(Command *command);
-    Command *releaseItem(mt::CR_INT index);
-    VEC_COM releaseItems();
-    void remove() { remove(true); }
 
     bool isUltimate() { return this == ultimate; }
     bool isGroup() { return !ultimate || isUltimate(); }
-    bool isSupporter() { return holder && holder == ultimate; }
+    bool isSupporter() { return parent && parent == ultimate; }
     bool isRequired() { return isGroup() || required; }
     bool isOptional() { return !isRequired(); }
     bool isUsed() { return used; }
