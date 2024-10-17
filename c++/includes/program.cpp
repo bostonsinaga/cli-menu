@@ -121,8 +121,8 @@ namespace cli_menu {
     char *argv[],
     mt::CR_BOL completingDialog
   ) {
-    // in case if this added to items of 'Command'
-    if (holder) {
+    // in case if this added to children of 'Command'
+    if (parent) {
       remove();
       return;
     }
@@ -159,10 +159,12 @@ namespace cli_menu {
 
     Command *lastCom = this;
     mt::USI flag;
-    bool noItems = false;
 
-    if (items.size() > 0) {
-      flag = matchTo(items[0], inputs, paramData, &lastCom);
+    if (children.size() > 0) {
+      flag = matchTo(
+        static_cast<Cm*>(children[0]),
+        inputs, paramData, &lastCom
+      );
 
       if (flag == FLAG::COMPLETED) {
         // check if has any callback
@@ -205,7 +207,7 @@ namespace cli_menu {
         name
       );
     }
-    // no items
+    // no children
     else Message::printNamed(
       Message::STATUS::ERROR,
       "No items available.",
