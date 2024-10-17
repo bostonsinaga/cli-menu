@@ -19,59 +19,22 @@ namespace cli_menu {
   };
 
   int Control::test(mt::CR_STR str) {
-    int spaceChange = 0;
-
-    static std::function<bool(mt::CR_CH)>
-      isSpace = [](mt::CR_CH ch)->bool {
-        return ch == ' ' || ch == '\t';
-      },
-      isNotSpace = [](mt::CR_CH ch)->bool {
-        return ch != ' ' && ch != '\t';
-      };
+    bool prevSpaced = false;
+    std::string input;
 
     // force return when 'abc123 space abc123' is detected
     for (mt::CR_CH ch : str) {
-      if (isNotSpace(ch)) {
-        if (spaceChange == 0) spaceChange = 1;
-        else if (spaceChange == 2) return 0;
+      if (ch != ' ' && ch != '\t') {
+        if (prevSpaced && !input.empty()) break;
+        input += ch;
       }
-      else if (spaceChange == 1 && isSpace(ch)) {
-        spaceChange = 2;
-      }
+      else prevSpaced = true;
     }
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < count; j++) {
-
-        if (str.length() >= NAMES[j][i].length()) {
-          bool found = false;
-
-          for (int k = 0;
-            k <= str.length() - NAMES[j][i].length();
-            k++
-          ) {
-            bool kWillBreak = false;
-
-            for (int l = 0; l < NAMES[j][i].length(); l++) {
-              if (str[l+k] != NAMES[j][i][l]) {
-                if (isNotSpace(str[l+k])) {
-                  kWillBreak = true;
-                  found = false;
-                }
-                else if (found) {
-                  kWillBreak = true;
-                }
-                break;
-              }
-              else found = true;
-            }
-
-            if (kWillBreak) break;
-          }
-
-          if (found) return j+1;
-        }
+        if (input == NAMES[j][i]) return j+1;
       }
     }
 
