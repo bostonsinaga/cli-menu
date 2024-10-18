@@ -80,10 +80,10 @@ namespace cli_menu {
         *lastCom = this;
 
         if (isGroup()) {
+          setData(paramData, true);
 
-          // callback or print error
+          // invoke callback or print error
           if (children.size() == 0) {
-            setData(paramData, true);
             return FLAG::ERROR;
           }
 
