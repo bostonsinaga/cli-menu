@@ -66,12 +66,41 @@ namespace cli_menu {
       paramData.numbers.push_back({});
     }
     // space or newline is a separator
-    else paramData.numbers.push_back(
-      mt_uti::Scanner<double>::parseNumbers(str)
-    );
+    else {
+      paramData.texts.push_back("");
+      paramData.numbers.push_back(
+        mt_uti::Scanner<double>::parseNumbers(str)
+      );
+    }
 
     paramData.conditions.push_back(false);
     updateRequiredSelf(false);
+  }
+
+  bool Parameter::popBackSet(
+    mt::VEC_STR &inputs,
+    ParamData &paramData
+  ) {
+    // only capture the last reversed 'inputs'
+    if (inputs.size() > 0) {
+      setData(paramData, inputs[inputs.size() - 1]);
+      inputs.pop_back();
+      return true;
+    }
+    return false;
+  }
+
+  mt::USI Parameter::notPopBackSet(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    // has no argument
+    if (Command::dialogued) {
+      Message::printDialogError(cannotProcessErrorString, 1);
+      return question(paramData, lastCom);
+    }
+    // no dialog
+    return FLAG::ERROR;
   }
 
   void Parameter::checkout(
@@ -119,12 +148,11 @@ namespace cli_menu {
     std::string copyName, copyInput;
 
     if (inputs.size() > 0) {
-      const int i = inputs.size() - 1;
 
       // copy to secure original strings
       Command::copyMatchNames(
         copyName, copyInput,
-        name, inputs[i]
+        name, inputs[inputs.size() - 1]
       );
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
@@ -133,16 +161,14 @@ namespace cli_menu {
 
         if (isGroup()) {
 
-          // call default callback or print error
+          // 'inputs' may be empty
+          if (!popBackSet(inputs, paramData)) {
+            return notPopBackSet(paramData, lastCom);
+          }
+
+          // invoke callback or print error
           if (children.size() == 0) {
-
-            // only capture the last reversed 'inputs'
-            if (inputs.size() > 0) {
-              setData(paramData, inputs[i-1]);
-              inputs.pop_back();
-            }
-
-            return FLAG::COMPLETED;
+            return FLAG::ERROR;
           }
 
           // redirected to first child
@@ -153,19 +179,12 @@ namespace cli_menu {
         }
         // supporter
         else {
-          // 'inputs' has arguments
-          if (inputs.size() > 0) {
-            setData(paramData, inputs[i-1]);
-            inputs.pop_back();
+          // has argument
+          if (popBackSet(inputs, paramData)) {
             return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
           }
-          // 'inputs' has no arguments
-          else if (Command::dialogued) {
-            Message::printDialogError(cannotProcessErrorString, 1);
-            return question(paramData, lastCom);
-          }
-          // no dialog
-          else return FLAG::ERROR;
+          // 'inputs' is empty
+          return notPopBackSet(paramData, lastCom);
         }
       }
 

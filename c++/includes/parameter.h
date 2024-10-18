@@ -17,7 +17,19 @@ namespace cli_menu {
       mt::CR_STR str
     );
 
-    // used in 'question' for 'setData'
+    // invoked in 'match' for 'setData'
+    bool popBackSet(
+      mt::VEC_STR &inputs,
+      ParamData &paramData
+    );
+
+    // invoked after 'popBackSet'
+    mt::USI notPopBackSet(
+      ParamData &paramData,
+      Command **lastCom
+    );
+
+    // invoked in 'question' for 'setData'
     void checkout(
       ParamData &paramData,
       mt::CR_VEC_STR valVec
