@@ -96,7 +96,14 @@ namespace cli_menu {
   ) {
     // has no argument
     if (Command::dialogued) {
-      Message::printDialogError(cannotProcessErrorString, 1);
+
+      Message::printDialogError(
+        "The last " + std::string(
+          isSupporter() ? "parameter" : "group"
+        ) + " need an argument", 1
+      );
+
+      questionedGroup = true; // once
       return question(paramData, lastCom);
     }
     // no dialog
@@ -138,6 +145,10 @@ namespace cli_menu {
     if (!used) return "emp";
     else if (accumulating) return "acc";
     return "cor";
+  }
+
+  bool Parameter::isGroupNeedQuestion() {
+    return isSupporter() || questionedGroup;
   }
 
   mt::USI Parameter::match(
@@ -214,7 +225,10 @@ namespace cli_menu {
     mt::VEC_STR valVec;
     std::string buffer;
 
-    printAfterBoundaryLine(getFullNameWithUltimate());
+    printAfterBoundaryLine(
+      isGroup() ? getAccumulatedInlineRootNames(" ", true) :
+        getFullNameWithUltimate()
+    );
 
     while (true) {
       Message::setDialogInput(buffer);
@@ -234,7 +248,7 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else Message::printDialogError(cannotProcessErrorString);
+        else Message::printDialogError(error_string_enter);
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
@@ -246,7 +260,7 @@ namespace cli_menu {
           return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
-        else Message::printDialogError(cannotSkipErrorString);
+        else Message::printDialogError(error_string_next);
       }
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData, lastCom);

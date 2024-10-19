@@ -10,6 +10,7 @@ namespace cli_menu {
     std::string argument;
 
     bool accumulating = false,
+      questionedGroup = false,
       type = false;
 
     void setData(
@@ -48,6 +49,9 @@ namespace cli_menu {
       Command **lastCom
     ) override;
 
+    std::string getFillingStatusString() override;
+    bool isGroupNeedQuestion() override;
+
   public:
     enum {TEXT, NUMBER};
     Parameter(): Command() {}
@@ -85,7 +89,6 @@ namespace cli_menu {
     std::string getStringifiedType();
     std::string getDashedName() override;
     std::string getFullName() override;
-    std::string getFillingStatusString() override;
     mt::USI getInheritanceFlag() override { return PARAMETER; }
 
     void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
