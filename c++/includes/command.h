@@ -95,6 +95,7 @@ namespace cli_menu {
       return ultimate->requiredItems.size();
     }
 
+    Color getMainLabelColor();
     std::string getMainLabel();
     std::string getFullNameWithUltimate();
     Command *getUnusedNeighbor(Command *start);
