@@ -19,6 +19,7 @@ namespace cli_menu {
     std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
+    VEC_TREE requiredItems;
     bool required = false;
 
     static Command *circularCheckpoint;
@@ -29,12 +30,15 @@ namespace cli_menu {
     bool run();
     bool run(ParamData &paramData);
 
-    // only exists in the 'ultimate' scope
-    VEC_TREE requiredItems;
-
     void printDialogStatus();
     virtual std::string getFillingStatusString();
     virtual bool isGroupNeedQuestion() { return isSupporter(); }
+
+    /**
+     * Specifying 'Group' or 'Command' string
+     * as children level name.
+     */
+    void printGroupNotFound();
 
     void updateRequiredItems(
       Command *command,
@@ -91,10 +95,7 @@ namespace cli_menu {
       mt::CR_BOL withDescription
     );
 
-    mt::UI getRequiredCount() {
-      return ultimate->requiredItems.size();
-    }
-
+    mt::UI getRequiredCount();
     Color getMainLabelColor();
     std::string getMainLabel();
     std::string getFullNameWithUltimate();
@@ -152,7 +153,10 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    // invoked in 'match' method when 'inputs' is empty
+    /**
+     * Invoked in 'match' when
+     * 'inputs' is empty and has 'requiredItems'.
+     */
     bool isMatchNeedDialog();
 
     /**

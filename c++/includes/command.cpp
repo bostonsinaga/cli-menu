@@ -62,6 +62,13 @@ namespace cli_menu {
   // ULTIMATE |
   //__________|
 
+  mt::UI Command::getRequiredCount() {
+    if (isSupporter()) {
+      return ultimate->requiredItems.size();
+    }
+    return requiredItems.size();
+  }
+
   Color Command::getMainLabelColor() {
     if (Command::usingDashesBoundaryLine) {
       return Color::MINT;
@@ -107,9 +114,10 @@ namespace cli_menu {
       // occurs once (safeguard)
       used = true;
 
-      if (ultimate) {
+      if (isSupporter()) {
         ultimate->updateRequiredItems(this, adding);
       }
+      else updateRequiredItems(this, adding);
     }
   }
 
@@ -254,6 +262,36 @@ namespace cli_menu {
     return "cor";
   }
 
+  void Command::printGroupNotFound() {
+    int groupOrCommand = 0;
+    std::string usedLevelName;
+
+    for (TREE *node : children) {
+      Command *usedUltimate = static_cast<Command*>(node)->ultimate;
+
+      if (groupOrCommand == 0 && usedUltimate) {
+        groupOrCommand = 1;
+      }
+      else if (groupOrCommand == 1 && !usedUltimate) {
+        groupOrCommand = 2;
+      }
+    }
+
+    switch (groupOrCommand) {
+      case 1: {
+        usedLevelName = "Command";
+      break;}
+      case 2: {
+        usedLevelName = "Group/Command";
+      break;}
+      default: {
+        usedLevelName = "Group";
+      }
+    }
+
+    Message::printDialogError(usedLevelName + " not found");
+  }
+
   /**
    * The 'ultimate' is guaranteed to exist because
    * this method always called at supporter level.
@@ -325,7 +363,7 @@ namespace cli_menu {
         else if (isUltimate() || isSupporter()) {
           Message::printDialogError("Parameter not found");
         }
-        else Message::printDialogError("Group not found");
+        else printGroupNotFound();
       }
     }
 
@@ -359,8 +397,33 @@ namespace cli_menu {
   }
 
   bool Command::isMatchNeedDialog() {
-    return Command::dialogued &&
-    (isGroup() || (ultimate && getRequiredCount() != 0));
+    if (Command::dialogued && getRequiredCount()) {
+
+      // program or group
+      if (!parent ||
+        (parent && !static_cast<Command*>(parent)->ultimate)
+      ) {
+        std::string usedName = parent ? parent->getName() : name,
+          usedLevelName = parent->getParent() ? "group" : "program";
+
+        Message::printDialogError(
+          "The '" + usedName + "' "
+          + usedLevelName + " has items to be used", 1
+        );
+
+        return true;
+      }
+      // ultimate or supporter
+      else {
+        Message::printDialogError(
+          "The '" + parent->getName()
+          + "' command has required parameters to be filled in", 1
+        );
+        return true;
+      }
+      return false;
+    }
+    return false;
   }
 
   //___________________|
