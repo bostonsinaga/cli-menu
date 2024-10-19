@@ -218,14 +218,16 @@ namespace cli_menu {
   //________|
 
   const std::string
-    Command::cannotProcessErrorString = "Cannot process until all required parameters are met",
-    Command::cannotSkipErrorString = "Cannot skip with empty input on required parameter";
+    Command::error_string_enter = "Cannot process until all required parameters are met",
+    Command::error_string_next = "Cannot skip with empty input on required parameter";
 
   void Command::printDialogStatus() {
     std::string status = " (";
+    Color fontColor;
 
-    if (isGroup()) {
+    if (!isGroupNeedQuestion()) {
       status += "sel"; // 1st
+      fontColor = Color::MAGENTA;
     }
     // supporter
     else {
@@ -235,10 +237,11 @@ namespace cli_menu {
       else status += "opt, ";
 
       status += getFillingStatusString(); // 3rd
+      fontColor = Color::VIOLET;
     }
 
     Message::printItalicString(
-      status + ")\n", Color::MAGENTA
+      status + ")\n", fontColor
     );
   }
 
@@ -264,19 +267,11 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    /** Print name list */
-    static std::string inlineNames = "";
-
-    if (inlineNames.empty() && parent) {
-      inlineNames += static_cast<Cm*>(parent)
-        ->getInlineRootNames(" ", true);
-    }
-
-    inlineNames += " " + getFullName();
-    printAfterBoundaryLine(inlineNames);
-
-    /** Get user input */
     std::string nameTest;
+
+    printAfterBoundaryLine(
+      getAccumulatedInlineRootNames(" ", true)
+    );
 
     while (true) {
       Message::setDialogInput(nameTest);
@@ -389,6 +384,22 @@ namespace cli_menu {
     }
 
     return text;
+  }
+
+  std::string Command::getAccumulatedInlineRootNames(
+    mt::CR_STR separator,
+    mt::CR_BOL fully
+  ) {
+    static std::string inlineNames = "";
+
+    if (inlineNames.empty() && parent) {
+      inlineNames += " " + static_cast<Cm*>(parent)
+        ->getInlineRootNames(separator, fully);
+    }
+    else inlineNames += " ";
+
+    inlineNames += getFullName();
+    return inlineNames;
   }
 
   std::string Command::getBranchLeafString(
@@ -528,7 +539,8 @@ namespace cli_menu {
       );
     }
     else Message::printString(
-      comName, Color::BLACK, Color::WHITE
+      comName, Color::BLACK,
+      isGroup() ? Color(223, 223, 223) : Color::WHITE
     );
 
     // has a newline at the end

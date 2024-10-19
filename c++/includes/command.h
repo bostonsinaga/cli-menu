@@ -34,6 +34,7 @@ namespace cli_menu {
 
     void printDialogStatus();
     virtual std::string getFillingStatusString();
+    virtual bool isGroupNeedQuestion() { return isSupporter(); }
 
     void updateRequiredItems(
       Command *command,
@@ -76,8 +77,8 @@ namespace cli_menu {
       dialogued;
 
     static const std::string
-      cannotProcessErrorString,
-      cannotSkipErrorString;
+      error_string_enter,
+      error_string_next;
 
     bool runTo(
       Command *target,
@@ -213,6 +214,11 @@ namespace cli_menu {
     bool isUsed() { return used; }
 
     std::string getInlineRootNames(
+      mt::CR_STR separator,
+      mt::CR_BOL fully
+    );
+
+    std::string getAccumulatedInlineRootNames(
       mt::CR_STR separator,
       mt::CR_BOL fully
     );
