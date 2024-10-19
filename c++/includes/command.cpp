@@ -62,23 +62,27 @@ namespace cli_menu {
   // ULTIMATE |
   //__________|
 
+  Color Command::getMainLabelColor() {
+    if (Command::usingDashesBoundaryLine) {
+      return Color::MINT;
+    }
+    return Color::TEAL;
+  }
+
   std::string Command::getMainLabel() {
     if (isUltimate()) {
-      Color fontColor;
-
-      if (Command::usingDashesBoundaryLine) {
-        fontColor = Color::MINT;
-      }
-      else fontColor = Color::TEAL;
-
-      return Color::getString("[MAIN]", fontColor);
+      return Color::getString(
+        "[MAIN]", getMainLabelColor()
+      );
     }
     return "";
   }
 
   // the 'ultimate' confirmed to exist when this invoked
   std::string Command::getFullNameWithUltimate() {
-    return " " + ultimate->getFullName() + " " + getFullName();
+    return " " + Color::getString(
+      ultimate->name, getMainLabelColor()
+    ) + " " + getFullName();
   }
 
   void Command::updateRequiredItems(
