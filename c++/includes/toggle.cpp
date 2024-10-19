@@ -160,7 +160,7 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else Message::printDialogError(cannotProcessErrorString);
+        else Message::printDialogError(error_string_enter);
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
@@ -171,7 +171,7 @@ namespace cli_menu {
           return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
-        else Message::printDialogError(cannotSkipErrorString);
+        else Message::printDialogError(error_string_next);
       }
       else if (Control::selectTest(buffer)) {
         return dialog(paramData, lastCom);
