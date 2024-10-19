@@ -131,8 +131,10 @@ namespace cli_menu {
 
   void Message::printDialogError(
     mt::CR_STR reason,
-    mt::CR_BOL endNewlineCount
+    int endNewlineCount
   ) {
+    if (endNewlineCount < 0) endNewlineCount = 0;
+
     printString(
       "\n> " + reason + std::string(endNewlineCount, '\n'),
       Color::RED

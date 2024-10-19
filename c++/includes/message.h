@@ -62,7 +62,7 @@ namespace cli_menu {
 
     static void printDialogError(
       mt::CR_STR reason,
-      mt::CR_BOL endNewlineCount = 2
+      int endNewlineCount = 2
     );
 
     // decorated input interface
