@@ -53,9 +53,10 @@ int main(int argc, char *argv[]) {
     CM_PLAIN_CALLBACK(programFun)
   );
 
-  cm::Toggle *dialog = new cm::Toggle(
+  cm::Parameter *dialog = new cm::Parameter(
     "dialog",
     "Start conversation",
+    cm::Parameter::NUMBER,
     CM_CALLBACK(dialogFun),
     test
   );
