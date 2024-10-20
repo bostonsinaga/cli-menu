@@ -10,7 +10,7 @@ namespace cli_menu {
    */
   class Command : public mt_ds::tree::Node {
   protected:
-    typedef mt_ds::tree::Node TREE;
+    using TREE = mt_ds::tree::Node;
     typedef mt_ds::tree::VEC_NODE VEC_TREE;
     typedef mt_ds::tree::CR_VEC_NODE CR_VEC_TREE;
     typedef Command Cm;
@@ -26,6 +26,14 @@ namespace cli_menu {
     static const int disguiseCount = 1;
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
+
+    void setChildren(
+      CR_VEC_TREE newChildren,
+      mt::CR_BOL needEmpty,
+      mt::CR_BOL validating
+    ) override;
+
+    TREE* dismantle(mt::CR_INT index) override;
 
     bool run();
     bool run(ParamData &paramData);
@@ -48,6 +56,12 @@ namespace cli_menu {
     void collapseUltimateItems(
       Command *newUltimate,
       VEC_TREE &united
+    );
+
+    // this only invoked by 'ultimate'
+    void relateToSupporter(
+      TREE *node,
+      mt::CR_BOL connected
     );
 
     static bool isTemporaryLetterCaseChange();
@@ -192,6 +206,13 @@ namespace cli_menu {
       Command *parent_in = nullptr,
       mt::CR_BOL required_in = false
     );
+
+    void addChild(
+      TREE *node,
+      mt::CR_BOL reconnected = true
+    ) override;
+
+    VEC_TREE releaseChildren() override;
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
     virtual std::string getDashedName() { return name; }

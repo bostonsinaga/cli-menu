@@ -58,6 +58,68 @@ namespace cli_menu {
     required = required_in;
   }
 
+  void Command::setChildren(
+    CR_VEC_TREE newChildren,
+    mt::CR_BOL needEmpty,
+    mt::CR_BOL validating
+  ) {
+    if (isGroup()) {
+      TREE::setChildren(
+        newChildren,
+        needEmpty,
+        validating
+      );
+
+      if (ultimate) {
+        for (TREE *node : newChildren) {
+          relateToSupporter(node, true);
+        }
+      }
+    }
+  }
+
+  void Command::addChild(
+    TREE *node,
+    mt::CR_BOL reconnected
+  ) {
+    if (isGroup()) {
+      TREE::addChild(node, reconnected);
+      
+      if (ultimate) {
+        relateToSupporter(node, true);
+      }
+    }
+  }
+
+  // the 'node[index]' is guaranteed to always be exist
+  Command::TREE *Command::dismantle(mt::CR_INT index) {
+    if (isGroup()) {
+      TREE *node = TREE::dismantle(index);
+
+      if (ultimate) {
+        relateToSupporter(node, false);
+      }
+
+      return node;
+    }
+    return nullptr;
+  }
+
+  Command::VEC_TREE Command::releaseChildren() {
+    if (isGroup()) {
+      VEC_TREE released = TREE::releaseChildren();
+
+      if (ultimate) {        
+        for (TREE *node : released) {
+          relateToSupporter(node, false);
+        }
+      }
+
+      return released;
+    }
+    return {};
+  }
+
   //__________|
   // ULTIMATE |
   //__________|
@@ -100,12 +162,14 @@ namespace cli_menu {
       if (adding) {
         requiredItems.push_back(command);
       }
-      else mt_uti::VecTools<TREE*>::cutSingle(
-        requiredItems,
-        mt_uti::VecTools<TREE*>::getIndex(
-          requiredItems, command
-        )
-      );
+      else if (!requiredItems.empty()) {
+        mt_uti::VecTools<TREE*>::cutSingle(
+          requiredItems,
+          mt_uti::VecTools<TREE*>::getIndex(
+            requiredItems, command
+          )
+        );
+      }
     }
   }
 
@@ -125,12 +189,23 @@ namespace cli_menu {
     Command *newUltimate,
     VEC_TREE &united
   ) {
-    ultimate = newUltimate;
     VEC_TREE released = releaseChildren();
     mt_uti::VecTools<TREE*>::concat(united, released);
+    ultimate = newUltimate;
 
     for (TREE *node : released) {
       static_cast<Cm*>(node)->collapseUltimateItems(newUltimate, united);
+    }
+  }
+
+  void Command::relateToSupporter(
+    TREE *node,
+    mt::CR_BOL connected
+  ) {
+    if (node) {
+      Command *com = static_cast<Cm*>(node);
+      com->ultimate = connected ? this : nullptr;
+      updateRequiredItems(com, connected);
     }
   }
 
@@ -267,7 +342,7 @@ namespace cli_menu {
     std::string usedLevelName;
 
     for (TREE *node : children) {
-      Command *usedUltimate = static_cast<Command*>(node)->ultimate;
+      Command *usedUltimate = static_cast<Cm*>(node)->ultimate;
 
       if (groupOrCommand == 0 && usedUltimate) {
         groupOrCommand = 1;
@@ -282,7 +357,7 @@ namespace cli_menu {
         usedLevelName = "Command";
       break;}
       case 2: {
-        usedLevelName = "Group/Command";
+        usedLevelName = "Group/command";
       break;}
       default: {
         usedLevelName = "Group";
@@ -401,7 +476,7 @@ namespace cli_menu {
 
       // program or group
       if (!parent ||
-        (parent && !static_cast<Command*>(parent)->ultimate)
+        (parent && !static_cast<Cm*>(parent)->ultimate)
       ) {
         std::string usedName = parent ? parent->getName() : name,
           usedLevelName = parent->getParent() ? "group" : "program";
