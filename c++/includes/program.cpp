@@ -203,14 +203,14 @@ namespace cli_menu {
       // canceled
       else Message::printNamed(
         Message::STATUS::CANCELED,
-        "Program terminated.",
+        "Inputs discarded.",
         name
       );
     }
     // no children
     else Message::printNamed(
       Message::STATUS::ERROR,
-      "No items available.",
+      "No group/command available.",
       name
     );
 
