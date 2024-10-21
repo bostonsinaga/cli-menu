@@ -2,7 +2,7 @@
 #include "cli-menu.h"
 
 void programFun() {
-  std::cout << "\nWill have default function from 'Program' which displaying error message";
+  std::cout << "\nProgram is called..";
 }
 
 CM_FUNCTION(dialogFun) {
@@ -53,39 +53,53 @@ int main(int argc, char *argv[]) {
     CM_PLAIN_CALLBACK(programFun)
   );
 
-  cm::Parameter *dialog = new cm::Parameter(
+  cm::Toggle *dialog = new cm::Toggle(
     "dialog",
     "Start conversation",
+    false,
+    test,
+    CM_CALLBACK(dialogFun)
+  );
+
+  cm::Parameter *sentence = new cm::Parameter(
+    "sentence",
+    "Start conversation",
+    false,
+    dialog,
     cm::Parameter::NUMBER,
-    CM_CALLBACK(dialogFun),
-    test
+    false,
+    CM_CALLBACK(sentenceFun)
   );
 
   cm::Parameter *fileIn = new cm::Parameter(
     "file-in",
     "Filename input",
+    true,
+    sentence,
     cm::Parameter::TEXT,
-    CM_CALLBACK(fileInFun),
-    dialog,
-    true
+    false,
+    CM_CALLBACK(fileInFun)
   );
 
   cm::Parameter *fileOut = new cm::Parameter(
     "file-out",
     "Filename output",
+    false,
+    fileIn,
     cm::Parameter::TEXT,
-    CM_CALLBACK(fileOutFun),
-    fileIn
+    false,
+    CM_CALLBACK(fileOutFun)
   );
 
   cm::Toggle *tidy = new cm::Toggle(
     "tidy",
     "Tidy up text",
-    CM_CALLBACK(tidyFun),
-    fileOut
+    false,
+    fileOut,
+    CM_CALLBACK(tidyFun)
   );
 
-  dialog->setAsUltimate();
+  sentence->setAsUltimate();
   test->run(argc, argv, true);
   return 0;
 }
