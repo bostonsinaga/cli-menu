@@ -35,12 +35,20 @@ namespace cm = cli_menu;
  *   BOL[copy_flag] == true   --> argument
  */
 
+#ifndef CM_FUNPAR
+#define CM_FUNPAR mt::CR_VEC_STR TEXTS, mt::CR_VEC2_DBL NUMBERS, mt::CR_VEC_BOL CONDITIONS
+#endif
+
+#ifdef CLI_MENU_FUNPAR
+#undef CLI_MENU_FUNPAR
+#endif
+
+#ifndef CLI_MENU_FUNPAR
+#define CLI_MENU_FUNPAR mt::CR_VEC_STR TEXTS, mt::CR_VEC2_DBL NUMBERS, mt::CR_VEC_BOL CONDITIONS
+#endif
+
 #ifndef CM_FUNCTION
-#define CM_FUNCTION(NAME) void NAME(\
-  mt::CR_VEC_STR TEXTS,\
-  mt::CR_VEC2_DBL NUMBERS,\
-  mt::CR_VEC_BOL CONDITIONS\
-)
+#define CM_FUNCTION(NAME) void NAME(CLI_MENU_FUNPAR)
 #endif
 
 #ifdef CLI_MENU_FUNCTION
@@ -48,11 +56,7 @@ namespace cm = cli_menu;
 #endif
 
 #ifndef CLI_MENU_FUNCTION
-#define CLI_MENU_FUNCTION(NAME) void NAME(\
-  mt::CR_VEC_STR TEXTS,\
-  mt::CR_VEC2_DBL NUMBERS,\
-  mt::CR_VEC_BOL CONDITIONS\
-)
+#define CLI_MENU_FUNCTION(NAME) void NAME(CLI_MENU_FUNPAR)
 #endif
 
 /** CALLBACK */
