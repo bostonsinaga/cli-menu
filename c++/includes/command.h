@@ -187,24 +187,24 @@ namespace cli_menu {
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      CR_SP_CALLBACK callback_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in,
+      Command *parent_in,
+      CR_SP_CALLBACK callback_in
     );
 
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in,
+      Command *parent_in,
+      CR_SP_PLAIN_CALLBACK callback_in
     );
 
     Command(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false
+      mt::CR_BOL required_in,
+      Command *parent_in
     );
 
     void addChild(
@@ -235,8 +235,8 @@ namespace cli_menu {
     bool isUltimate() { return this == ultimate; }
     bool isGroup() { return !ultimate || isUltimate(); }
     bool isSupporter() { return parent && parent == ultimate; }
-    bool isRequired() { return isGroup() || required; }
-    bool isOptional() { return !isRequired(); }
+    bool isRequired() { return required; }
+    bool isOptional() { return !required; }
     bool isUsed() { return used; }
 
     std::string getInlineRootNames(

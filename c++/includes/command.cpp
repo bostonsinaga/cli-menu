@@ -27,9 +27,9 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL required_in
+    CR_SP_CALLBACK callback_in
   ): TREE(name_in, parent_in) {
     description = description_in;
     callback = callback_in;
@@ -39,9 +39,9 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL required_in
+    CR_SP_PLAIN_CALLBACK callback_in
   ): TREE(name_in, parent_in) {
     description = description_in;
     plainCallback = callback_in;
@@ -51,8 +51,8 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    Command *parent_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    Command *parent_in
   ): TREE(name_in, parent_in) {
     description = description_in;
     required = required_in;
@@ -297,6 +297,10 @@ namespace cli_menu {
       return target->match(inputs, paramData, lastCom);
     }
     else if (isGroup()) return FLAG::ERROR;
+
+    // supporter points its parent
+    *lastCom = ultimate;
+
     return FLAG::COMPLETED;
   }
 
@@ -472,12 +476,14 @@ namespace cli_menu {
   }
 
   bool Command::isMatchNeedDialog() {
-    if (Command::dialogued && getRequiredCount()) {
+    Command *parCom = static_cast<Cm*>(parent);
 
+    if (Command::dialogued &&
+      parCom->getRequiredCount()
+    ) {
       // program or group
-      if (!parent ||
-        (parent && !static_cast<Cm*>(parent)->ultimate)
-      ) {
+      if (!parent || (parent && !parCom->ultimate)) {
+
         std::string usedName = parent ? parent->getName() : name,
           usedLevelName = parent->getParent() ? "group" : "program";
 
