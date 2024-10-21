@@ -59,30 +59,30 @@ namespace cli_menu {
     Parameter(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
+      mt::CR_BOL required_in,
+      Command *parent_in,
       mt::CR_BOL type_in,
-      CR_SP_CALLBACK callback_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL accumulating_in,
+      CR_SP_CALLBACK callback_in
     );
 
     Parameter(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
+      mt::CR_BOL required_in,
+      Command *parent_in,
       mt::CR_BOL type_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL accumulating_in,
+      CR_SP_PLAIN_CALLBACK callback_in
     );
 
     Parameter(
       mt::CR_STR name_in,
       mt::CR_STR description_in,
+      mt::CR_BOL required_in,
+      Command *parent_in,
       mt::CR_BOL type_in,
-      Command *parent_in = nullptr,
-      mt::CR_BOL required_in = false,
-      mt::CR_BOL accumulating_in = false
+      mt::CR_BOL accumulating_in
     );
 
     bool getType() { return type; }

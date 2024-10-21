@@ -8,16 +8,16 @@ namespace cli_menu {
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    mt::CR_BOL type_in,
-    CR_SP_CALLBACK callback_in,
-    Command *parent_in,
     mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    Command *parent_in,
+    mt::CR_BOL type_in,
+    mt::CR_BOL accumulating_in,
+    CR_SP_CALLBACK callback_in
   ):
   Command::Command(
     name_in, description_in,
-    callback_in, parent_in,
-    required_in
+    required_in, parent_in,
+    callback_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -26,16 +26,16 @@ namespace cli_menu {
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    mt::CR_BOL type_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
-    Command *parent_in,
     mt::CR_BOL required_in,
-    mt::CR_BOL accumulating_in
+    Command *parent_in,
+    mt::CR_BOL type_in,
+    mt::CR_BOL accumulating_in,
+    CR_SP_PLAIN_CALLBACK callback_in
   ):
   Command::Command(
     name_in, description_in,
-    callback_in, parent_in,
-    required_in
+    required_in, parent_in,
+    callback_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -44,14 +44,14 @@ namespace cli_menu {
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    mt::CR_BOL type_in,
-    Command *parent_in,
     mt::CR_BOL required_in,
+    Command *parent_in,
+    mt::CR_BOL type_in,
     mt::CR_BOL accumulating_in
   ):
   Command::Command(
     name_in, description_in,
-    parent_in, required_in
+    required_in, parent_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -99,7 +99,7 @@ namespace cli_menu {
 
       Message::printDialogError(
         "The last " + std::string(
-          isSupporter() ? "parameter" : "group"
+          ultimate ? "parameter" : "group"
         ) + " need an argument", 1
       );
 
