@@ -8,38 +8,38 @@ namespace cli_menu {
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL required_in
+    CR_SP_CALLBACK callback_in
   ):
   Command(
     name_in, description_in,
-    callback_in, parent_in,
-    required_in
+    required_in, parent_in,
+    callback_in
   ) {}
 
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL required_in
+    CR_SP_PLAIN_CALLBACK callback_in
   ):
   Command(
     name_in, description_in,
-    callback_in, parent_in,
-    required_in
+    required_in, parent_in,
+    callback_in
   ) {}
 
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
-    Command *parent_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    Command *parent_in
   ):
   Command(
     name_in, description_in,
-    parent_in, required_in
+    required_in, parent_in
   ) {}
 
   void Toggle::setData(

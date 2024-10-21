@@ -32,7 +32,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_CALLBACK callback_in
   ):
-  Toggle(name_in, description_in, callback_in, nullptr, true) {
+  Toggle(name_in, description_in, true, nullptr, callback_in) {
     author = "Anonymous";
     version = version_in;
   }
@@ -44,7 +44,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     CR_SP_PLAIN_CALLBACK callback_in
   ):
-  Toggle(name_in, description_in, callback_in, nullptr, true) {
+  Toggle(name_in, description_in, true, nullptr, callback_in) {
     author = "Anonymous";
     version = version_in;
   }
@@ -55,7 +55,7 @@ namespace cli_menu {
     mt::CR_STR author_in,
     CR_VERSION version_in
   ):
-  Toggle(name_in, description_in, nullptr, true) {
+  Toggle(name_in, description_in, true, nullptr) {
     author = "Anonymous";
     version = version_in;
   }
@@ -203,7 +203,7 @@ namespace cli_menu {
       // canceled
       else Message::printNamed(
         Message::STATUS::CANCELED,
-        "Inputs discarded.",
+        "Input discarded.",
         name
       );
     }
