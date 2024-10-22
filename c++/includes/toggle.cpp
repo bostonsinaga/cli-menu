@@ -79,7 +79,7 @@ namespace cli_menu {
         inputs.pop_back();
         *lastCom = this;
 
-        if (isGroup()) {
+        if (isParent()) {
           setData(paramData, true);
 
           // invoke callback or print error
