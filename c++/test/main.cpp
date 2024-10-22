@@ -2,7 +2,7 @@
 #include "cli-menu.h"
 
 void programFun() {
-  std::cout << "\nProgram is called..";
+  std::cout << "\nProgram is called..\n";
 }
 
 CM_FUNCTION(dialogFun) {
@@ -29,19 +29,19 @@ CM_FUNCTION(dialogFun) {
 }
 
 CM_FUNCTION(sentenceFun) {
-  std::cout << "\nSentence is called..";
+  std::cout << "\nSentence is called..\n";
 }
 
 CM_FUNCTION(fileInFun) {
-  std::cout << "\nRead..";
+  std::cout << "\nRead..\n";
 }
 
 CM_FUNCTION(fileOutFun) {
-  std::cout << "\nWrite..";
+  std::cout << "\nWrite..\n";
 }
 
 CM_FUNCTION(tidyFun) {
-  std::cout << "\nTidy up..";
+  std::cout << "\nTidy up..\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -53,18 +53,20 @@ int main(int argc, char *argv[]) {
     CM_PLAIN_CALLBACK(programFun)
   );
 
-  cm::Toggle *dialog = new cm::Toggle(
+  cm::Parameter *dialog = new cm::Parameter(
     "dialog",
     "Start conversation",
-    false,
+    true,
     test,
+    cm::Parameter::NUMBER,
+    false,
     CM_CALLBACK(dialogFun)
   );
 
   cm::Parameter *sentence = new cm::Parameter(
     "sentence",
     "Start conversation",
-    false,
+    true,
     dialog,
     cm::Parameter::NUMBER,
     false,
