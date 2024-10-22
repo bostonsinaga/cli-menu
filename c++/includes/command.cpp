@@ -63,17 +63,16 @@ namespace cli_menu {
     mt::CR_BOL needEmpty,
     mt::CR_BOL validating
   ) {
-    if (isGroup()) {
+    if (isContainer()) {
       TREE::setChildren(
         newChildren,
         needEmpty,
         validating
       );
 
-      if (ultimate) {
-        for (TREE *node : newChildren) {
-          relateToSupporter(node, true);
-        }
+      for (TREE *node : newChildren) {
+        relateToSupporter(node, true);
+        updateRequiredItems(static_cast<Cm*>(node), true);
       }
     }
   }
@@ -82,37 +81,31 @@ namespace cli_menu {
     TREE *node,
     mt::CR_BOL reconnected
   ) {
-    if (isGroup()) {
+    if (isContainer()) {
       TREE::addChild(node, reconnected);
-      
-      if (ultimate) {
-        relateToSupporter(node, true);
-      }
+      relateToSupporter(node, true);
+      updateRequiredItems(static_cast<Cm*>(node), true);
     }
   }
 
   // the 'node[index]' is guaranteed to always be exist
   Command::TREE *Command::dismantle(mt::CR_INT index) {
-    if (isGroup()) {
+    if (isParent()) {
       TREE *node = TREE::dismantle(index);
-
-      if (ultimate) {
-        relateToSupporter(node, false);
-      }
-
+      relateToSupporter(node, false);
+      updateRequiredItems(static_cast<Cm*>(node), false);
       return node;
     }
     return nullptr;
   }
 
   Command::VEC_TREE Command::releaseChildren() {
-    if (isGroup()) {
+    if (isParent()) {
       VEC_TREE released = TREE::releaseChildren();
 
-      if (ultimate) {        
-        for (TREE *node : released) {
-          relateToSupporter(node, false);
-        }
+      for (TREE *node : released) {
+        relateToSupporter(node, false);
+        updateRequiredItems(static_cast<Cm*>(node), false);
       }
 
       return released;
@@ -148,10 +141,16 @@ namespace cli_menu {
   }
 
   // the 'ultimate' confirmed to exist when this invoked
-  std::string Command::getFullNameWithUltimate() {
-    return " " + Color::getString(
-      ultimate->name, getMainLabelColor()
-    ) + " " + getFullName();
+  std::string Command::getFullNameWithUltimate(
+    mt::CR_STR separator,
+    mt::CR_BOL startWithSeparator,
+    mt::CR_BOL endWithSeparator
+  ) {
+    return (startWithSeparator ? separator : "")
+      + Color::getString(
+        ultimate->name, getMainLabelColor()
+      ) + separator + getFullName()
+      + (endWithSeparator ? separator : "");
   }
 
   void Command::updateRequiredItems(
@@ -202,10 +201,8 @@ namespace cli_menu {
     TREE *node,
     mt::CR_BOL connected
   ) {
-    if (node) {
-      Command *com = static_cast<Cm*>(node);
-      com->ultimate = connected ? this : nullptr;
-      updateRequiredItems(com, connected);
+    if (node && isUltimate()) {
+      static_cast<Cm*>(node)->ultimate = connected ? this : nullptr;
     }
   }
 
@@ -296,7 +293,7 @@ namespace cli_menu {
     if (target) {
       return target->match(inputs, paramData, lastCom);
     }
-    else if (isGroup()) return FLAG::ERROR;
+    else if (isParent()) return FLAG::ERROR;
 
     // supporter points its parent
     *lastCom = ultimate;
@@ -389,10 +386,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string nameTest;
-
-    printAfterBoundaryLine(
-      getAccumulatedInlineRootNames(" ", true)
-    );
+    printAfterBoundaryLine(getInlineRootNames());
 
     while (true) {
       Message::setDialogInput(nameTest);
@@ -430,7 +424,7 @@ namespace cli_menu {
         Command *found;
         Command::onFreeChangeInputLetterCase(nameTest);
 
-        if (isGroup()) found = static_cast<Cm*>(getChild(nameTest));
+        if (isParent()) found = static_cast<Cm*>(getChild(nameTest));
         else found = static_cast<Cm*>(ultimate->getChild(nameTest));
 
         if (found) {
@@ -513,41 +507,35 @@ namespace cli_menu {
 
   std::string Command::getInlineRootNames(
     mt::CR_STR separator,
-    mt::CR_BOL fully
+    mt::CR_BOL fully,
+    mt::CR_BOL startWithSeparator,
+    mt::CR_BOL endWithSeparator
   ) {
     std::string text;
-    Command *root = static_cast<Cm*>(parent);
-
-    static const std::function<void(Command*)>
-      add = [&](Command *com) {
-        text = (fully ? com->getFullName() : com->name) + separator;
-      };
-
-    add(this);
+    Command *root = this;
 
     // looping up to root
-    while (root) {
-      add(root);
+    do {
+      text = (fully ? root->getFullName() : root->name)
+        + separator + text;
+
       root = static_cast<Cm*>(root->parent);
+    }
+    while (root);
+
+    if (startWithSeparator) {
+      text = separator + text;
+    }
+
+    // remove last separator
+    if (!endWithSeparator &&
+      !separator.empty() &&
+      text.length() >= separator.length()
+    ) {
+      text.erase(text.length() - separator.length());
     }
 
     return text;
-  }
-
-  std::string Command::getAccumulatedInlineRootNames(
-    mt::CR_STR separator,
-    mt::CR_BOL fully
-  ) {
-    static std::string inlineNames = "";
-
-    if (inlineNames.empty() && parent) {
-      inlineNames += " " + static_cast<Cm*>(parent)
-        ->getInlineRootNames(separator, fully);
-    }
-    else inlineNames += " ";
-
-    inlineNames += getFullName();
-    return inlineNames;
   }
 
   std::string Command::getBranchLeafString(
@@ -688,7 +676,7 @@ namespace cli_menu {
     }
     else Message::printString(
       comName, Color::BLACK,
-      isGroup() ? Color(223, 223, 223) : Color::WHITE
+      isParent() ? Color(223, 223, 223) : Color::WHITE
     );
 
     // has a newline at the end
@@ -696,11 +684,11 @@ namespace cli_menu {
 
     /** Once displayed */
 
-    // group or supporter parameter
-    if (!ultimate || (isSupporter() && getInheritanceFlag() == PARAMETER)) {
+    // container or 'Parameter' supporter
+    if (!(isSupporter() && getInheritanceFlag() == TOGGLE)) {
       Control::printHelp(isSupporter());
     }
-    // supporter toggle
+    // 'Toggle' supporter
     else {
       static bool isClosedInit = true;
 
@@ -722,7 +710,7 @@ namespace cli_menu {
     Message::printBoundaryLine();
     std::cout << description;
 
-    if (isGroup()) {
+    if (isParent()) {
       Message::printBoundaryLine();
       std::cout << getBranchLeafString(1, !isUltimate());
     }

@@ -1,6 +1,12 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
+/***
+  DELETION_LIST:
+  > getAccumulatedInlineRootNames
+
+ */
+
 #include "control.h"
 
 namespace cli_menu {
@@ -112,9 +118,15 @@ namespace cli_menu {
     mt::UI getRequiredCount();
     Color getMainLabelColor();
     std::string getMainLabel();
-    std::string getFullNameWithUltimate();
     Command *getUnusedNeighbor(Command *start);
     void updateRequiredSelf(mt::CR_BOL adding);
+
+    // format: 'separator + ultimate + separator + this + separator'
+    std::string getFullNameWithUltimate(
+      mt::CR_STR separator = " ",
+      mt::CR_BOL startWithSeparator = true,
+      mt::CR_BOL endWithSeparator = false
+    );
 
     // secure original strings
     static void copyMatchNames(
@@ -233,20 +245,20 @@ namespace cli_menu {
      */
 
     bool isUltimate() { return this == ultimate; }
-    bool isGroup() { return !ultimate || isUltimate(); }
+    bool isGroup() { return !(ultimate || children.empty()); }
     bool isSupporter() { return parent && parent == ultimate; }
     bool isRequired() { return required; }
     bool isOptional() { return !required; }
+    bool isContainer() { return !ultimate || isUltimate(); }
+    bool isParent() { return isGroup() || isUltimate(); }
+    bool isToddler() { return (!ultimate && children.empty()) || isSupporter(); }
     bool isUsed() { return used; }
 
     std::string getInlineRootNames(
-      mt::CR_STR separator,
-      mt::CR_BOL fully
-    );
-
-    std::string getAccumulatedInlineRootNames(
-      mt::CR_STR separator,
-      mt::CR_BOL fully
+      mt::CR_STR separator = " ",
+      mt::CR_BOL fully = true,
+      mt::CR_BOL startWithSeparator = true,
+      mt::CR_BOL endWithSeparator = false
     );
 
     std::string getBranchLeafString(
