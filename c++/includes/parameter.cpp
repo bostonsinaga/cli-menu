@@ -74,7 +74,7 @@ namespace cli_menu {
     }
 
     paramData.conditions.push_back(false);
-    updateRequiredSelf(false);
+    used = true;
   }
 
   bool Parameter::popBackSet(
@@ -170,7 +170,7 @@ namespace cli_menu {
         inputs.pop_back();
         *lastCom = this;
 
-        if (isGroup()) {
+        if (isParent()) {
 
           // 'inputs' may be empty
           if (!popBackSet(inputs, paramData)) {
@@ -226,8 +226,7 @@ namespace cli_menu {
     std::string buffer;
 
     printAfterBoundaryLine(
-      isGroup() ? getAccumulatedInlineRootNames(" ", true) :
-        getFullNameWithUltimate()
+      isParent() ? getInlineRootNames() : getFullNameWithUltimate()
     );
 
     while (true) {
@@ -257,7 +256,15 @@ namespace cli_menu {
         ) {
           *lastCom = ultimate;
           checkout(paramData, valVec);
-          return questionTo(getUnusedNeighbor(this), paramData, lastCom);
+
+          // back to selection
+          if (isGroup()) return dialog(paramData, lastCom);
+
+          // directly ask first supporter
+          return questionTo(
+            isUltimate() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
+            paramData, lastCom
+          );
         }
         // required items are not complete
         else Message::printDialogError(error_string_next);
@@ -268,7 +275,7 @@ namespace cli_menu {
       // value input
       else {
         // to be able to '.enter'
-        updateRequiredSelf(false);
+        used = true;
         valVec.push_back(buffer);
       }
     }
