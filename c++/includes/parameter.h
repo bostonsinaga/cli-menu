@@ -10,7 +10,6 @@ namespace cli_menu {
     std::string argument;
 
     bool accumulating = false,
-      questionedGroup = false,
       type = false;
 
     void setData(
