@@ -1,12 +1,6 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-/***
-  DELETION_LIST:
-  > getAccumulatedInlineRootNames
-
- */
-
 #include "control.h"
 
 namespace cli_menu {
@@ -26,7 +20,6 @@ namespace cli_menu {
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
     VEC_TREE requiredItems;
-    bool required = false;
 
     static Command *circularCheckpoint;
     static const int disguiseCount = 1;
@@ -47,12 +40,6 @@ namespace cli_menu {
     void printDialogStatus();
     virtual std::string getFillingStatusString();
     virtual bool isGroupNeedQuestion() { return isSupporter(); }
-
-    /**
-     * Specifying 'Group' or 'Command' string
-     * as children level name.
-     */
-    void printGroupNotFound();
 
     void updateRequiredItems(
       Command *command,
@@ -85,7 +72,10 @@ namespace cli_menu {
 
   protected:
     Command *ultimate = nullptr;
-    bool used = false;
+
+    bool questionedGroup = false,
+      required = false,
+      used = false;
 
     /**
      * Requires a conditional statement on this variable
@@ -99,10 +89,6 @@ namespace cli_menu {
       usingUppercaseName,
       usingDashesBoundaryLine,
       dialogued;
-
-    static const std::string
-      error_string_enter,
-      error_string_next;
 
     bool runTo(
       Command *target,
@@ -127,6 +113,24 @@ namespace cli_menu {
       mt::CR_BOL startWithSeparator = true,
       mt::CR_BOL endWithSeparator = false
     );
+
+    std::string getLevelName(
+      mt::CR_BOL toEndUser = true,
+      mt::CR_BOL isFirstCapitalLetter = false
+    );
+
+    std::string getChildrenLevelName(
+      mt::CR_BOL toEndUser = true,
+      mt::CR_BOL onlyRequired = true,
+      mt::CR_BOL isFirstCapitalLetter = false
+    );
+
+    /**
+     * Error message generators of level that has neighbors
+     * or children that its 'paramData' section must be set.
+     */
+    void printEnterError();
+    void printNextError();
 
     // secure original strings
     static void copyMatchNames(
