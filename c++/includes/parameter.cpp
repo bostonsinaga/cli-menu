@@ -98,7 +98,7 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printDialogError(
-        "The last " + getLevelName() + " needs an argument", 1
+        "The last " + getLevelName() + " needs an argument.", 1
       );
 
       questionedGroup = true;
@@ -147,6 +147,27 @@ namespace cli_menu {
 
   bool Parameter::isGroupNeedQuestion() {
     return isSupporter() || questionedGroup;
+  }
+
+  bool Parameter::onEnter(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    // need argument
+    if (!used && isRequired()) {
+      Message::printDialogError(
+        "This " + getLevelName() + " needs an argument."
+      );
+    }
+    // directly completed
+    else if (getRequiredCount() == 0) {
+      *lastCom = ultimate ? ultimate : this;
+      return true;
+    }
+    // required items are not complete
+    else printEnterError();
+
+    return false;
   }
 
   mt::USI Parameter::match(
@@ -238,20 +259,10 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
-        // need argument
-        if (!used && isRequired()) {
-          Message::printDialogError(
-            "This " + getLevelName() + " needs an argument"
-          );
-        }
-        // directly completed
-        else if (getRequiredCount() == 0) {
-          *lastCom = ultimate ? ultimate : this;
+        if (onEnter(paramData, lastCom)) {
           checkout(paramData, valVec);
           return FLAG::COMPLETED;
         }
-        // required items are not complete
-        else printEnterError();
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question

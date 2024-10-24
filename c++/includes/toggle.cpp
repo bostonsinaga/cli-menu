@@ -60,6 +60,21 @@ namespace cli_menu {
     return getDashedName() + getMainLabel();
   }
 
+  bool Toggle::onEnter(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    // directly completed
+    if (getRequiredCount() == 0) {
+      *lastCom = ultimate ? ultimate : this;
+      return true;
+    }
+    // required items are not complete
+    else printEnterError();
+
+    return false;
+  }
+
   mt::USI Toggle::match(
     mt::VEC_STR &inputs,
     ParamData &paramData,
@@ -153,20 +168,10 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(buffer)) {
-        // need argument
-        if (!used && isRequired()) {
-          Message::printDialogError(
-            "This " + getLevelName() + " needs a condition"
-          );
-        }
-        // directly completed
-        else if (getRequiredCount() == 0) {
-          *lastCom = ultimate ? ultimate : this;
+        if (onEnter(paramData, lastCom)) {
           if (!used) setData(paramData, false);
           return FLAG::COMPLETED;
         }
-        // required items are not complete
-        else printEnterError();
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
@@ -182,7 +187,7 @@ namespace cli_menu {
       else if (Control::selectTest(buffer)) {
         return dialog(paramData, lastCom);
       }
-      else Message::printDialogError("Only accept boolean values");
+      else Message::printDialogError("Only accept boolean values.");
     }
 
     return FLAG::CANCELED;
