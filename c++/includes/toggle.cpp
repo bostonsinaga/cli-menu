@@ -153,14 +153,20 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(buffer)) {
+        // need argument
+        if (!used && isRequired()) {
+          Message::printDialogError(
+            "This " + getLevelName() + " needs a condition"
+          );
+        }
         // directly completed
-        if (getRequiredCount() == 0) {
+        else if (getRequiredCount() == 0) {
+          *lastCom = ultimate ? ultimate : this;
           if (!used) setData(paramData, false);
-          *lastCom = ultimate;
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else Message::printDialogError(error_string_enter);
+        else printEnterError();
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
@@ -171,7 +177,7 @@ namespace cli_menu {
           return questionTo(getUnusedNeighbor(this), paramData, lastCom);
         }
         // required items are not complete
-        else Message::printDialogError(error_string_next);
+        else printNextError();
       }
       else if (Control::selectTest(buffer)) {
         return dialog(paramData, lastCom);
