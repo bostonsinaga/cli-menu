@@ -98,12 +98,10 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printDialogError(
-        "The last " + std::string(
-          ultimate ? "parameter" : "group"
-        ) + " need an argument", 1
+        "The last " + getLevelName() + " needs an argument", 1
       );
 
-      questionedGroup = true; // once
+      questionedGroup = true;
       return question(paramData, lastCom);
     }
     // no dialog
@@ -240,14 +238,20 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
+        // need argument
+        if (!used && isRequired()) {
+          Message::printDialogError(
+            "This " + getLevelName() + " needs an argument"
+          );
+        }
         // directly completed
-        if (getRequiredCount() == 0) {
-          *lastCom = ultimate;
+        else if (getRequiredCount() == 0) {
+          *lastCom = ultimate ? ultimate : this;
           checkout(paramData, valVec);
           return FLAG::COMPLETED;
         }
         // required items are not complete
-        else Message::printDialogError(error_string_enter);
+        else printEnterError();
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
@@ -267,13 +271,25 @@ namespace cli_menu {
           );
         }
         // required items are not complete
-        else Message::printDialogError(error_string_next);
+        else printNextError();
       }
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData, lastCom);
       }
       // value input
       else {
+        bool isEmpty = true;
+
+        // ignore empty 'buffer'
+        for (char &ch : buffer) {
+          if (ch != ' ' && ch != '\t' && ch != '\n') {
+            isEmpty = false;
+            break;
+          }
+        }
+
+        if (isEmpty) continue;
+
         // to be able to '.enter'
         used = true;
         valVec.push_back(buffer);
