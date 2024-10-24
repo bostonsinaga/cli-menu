@@ -320,14 +320,14 @@ namespace cli_menu {
     if (ultimate) {
       if (getRequiredCount() > 1) {
         Message::printDialogError(
-          "Cannot process until all required parameters are met"
+          "Cannot process until all required parameters are met."
         );
       }
       // 'requiredItems' remaining 1
       else Message::printDialogError(
-        "This command still has a parameter named '"
+        "Cannot be processed. This command still has a parameter named '"
         + requiredItems.back()->getName()
-        + "' that must be filled in"
+        + "' that must be filled in."
       );
     }
     // group or toddler
@@ -335,8 +335,8 @@ namespace cli_menu {
       const std::string
         levelName = getChildrenLevelName(),
         errStr[2] = {
-          "This group still has ",
-          " that must be used"
+          "Cannot be processed. This group still has ",
+          " that must be used."
         };
 
       if (getRequiredCount() > 1) {
@@ -358,12 +358,12 @@ namespace cli_menu {
     if (isSupporter()) {
       // there is the word 'input' because this could be 'Toggle'
       Message::printDialogError(
-        "Cannot skip with empty input on required parameter"
+        "Cannot skip with empty input on required parameter."
       );
     }
     // group, ultimate, or toddler
     else Message::printDialogError(
-      "Cannot skip this " + getLevelName() + " with empty argument"
+      "Cannot skip this " + getLevelName() + " with empty argument."
     );
   }
 
@@ -581,9 +581,9 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
-        Message::printDialogError(
-          "Cannot process before parameters"
-        );
+        if (onEnter(paramData, lastCom)) {
+          return FLAG::COMPLETED;
+        }
       }
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
@@ -599,7 +599,7 @@ namespace cli_menu {
         }
         // group that has no children
         else Message::printDialogError(
-          "The command has only one parameter"
+          "This command has only one parameter."
         );
       }
       // find developer defined command
@@ -617,10 +617,10 @@ namespace cli_menu {
           return found->dialog(paramData, lastCom);
         }
         else if (isUltimate() || isSupporter()) {
-          Message::printDialogError("Parameter not found");
+          Message::printDialogError("Parameter not found.");
         }
         else Message::printDialogError(
-          getChildrenLevelName(true, true, true) + " not found"
+          getChildrenLevelName(true, true, true) + " not found."
         );
       }
     }
@@ -667,7 +667,7 @@ namespace cli_menu {
           "The '" + (parent ? parent->getName() : name) + "' "
           + getLevelName() + " has "
           + getChildrenLevelName()
-          + " to be used", 1
+          + " to be used.", 1
         );
 
         return true;
@@ -678,7 +678,7 @@ namespace cli_menu {
           "The '" + parent->getName()
           + "' command has required "
           + getChildrenLevelName()
-          + " to be filled in", 1
+          + " to be filled in.", 1
         );
         return true;
       }
