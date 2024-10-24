@@ -132,6 +132,11 @@ namespace cli_menu {
     void printEnterError();
     void printNextError();
 
+    virtual bool onEnter(
+      ParamData &paramData,
+      Command **lastCom
+    ) { return FLAG::ERROR; }
+
     // secure original strings
     static void copyMatchNames(
       std::string &hookName, std::string &hookInput,
