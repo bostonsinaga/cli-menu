@@ -63,6 +63,38 @@ int main(int argc, char *argv[]) {
     CM_CALLBACK(dialogFun)
   );
 
+  cm::Parameter *foo = new cm::Parameter(
+    "foo",
+    "foo description",
+    true,
+    dialog,
+    cm::Parameter::TEXT,
+    false
+  );
+
+  cm::Toggle *go = new cm::Toggle(
+    "go",
+    "go description",
+    true,
+    dialog
+  );
+
+  cm::Toggle *run = new cm::Toggle(
+    "run",
+    "run description",
+    true,
+    go
+  );
+
+  cm::Parameter *stop = new cm::Parameter(
+    "run",
+    "run description",
+    false,
+    go,
+    cm::Parameter::NUMBER,
+    false
+  );
+
   cm::Parameter *sentence = new cm::Parameter(
     "sentence",
     "Start conversation",
@@ -101,7 +133,9 @@ int main(int argc, char *argv[]) {
     CM_CALLBACK(tidyFun)
   );
 
+  go->setAsUltimate();
   sentence->setAsUltimate();
+
   test->run(argc, argv, true);
   return 0;
 }
