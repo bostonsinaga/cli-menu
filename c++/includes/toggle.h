@@ -13,6 +13,11 @@ namespace cli_menu {
     );
 
   protected:
+    bool onEnter(
+      ParamData &paramData,
+      Command **lastCom
+    ) override;
+
     mt::USI match(
       mt::VEC_STR &inputs,
       ParamData &paramData,

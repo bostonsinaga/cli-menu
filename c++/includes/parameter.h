@@ -36,6 +36,14 @@ namespace cli_menu {
     );
 
   protected:
+    std::string getFillingStatusString() override;
+    bool isGroupNeedQuestion() override;
+
+    bool onEnter(
+      ParamData &paramData,
+      Command **lastCom
+    ) override;
+
     mt::USI match(
       mt::VEC_STR &inputs,
       ParamData &paramData,
@@ -47,9 +55,6 @@ namespace cli_menu {
       ParamData &paramData,
       Command **lastCom
     ) override;
-
-    std::string getFillingStatusString() override;
-    bool isGroupNeedQuestion() override;
 
   public:
     enum {TEXT, NUMBER};
