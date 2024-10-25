@@ -101,7 +101,6 @@ namespace cli_menu {
         "The last " + getLevelName() + " needs an argument.", 1
       );
 
-      questionedGroup = true;
       return question(paramData, lastCom);
     }
     // no dialog
@@ -243,9 +242,13 @@ namespace cli_menu {
   ) {
     mt::VEC_STR valVec;
     std::string buffer;
+    const bool notSupporter = !isSupporter();
 
-    printAfterBoundaryLine(
-      isParent() ? getInlineRootNames() : getFullNameWithUltimate()
+    // to be able to display 'question' version in 'printDialogStatus' call
+    if (notSupporter) questionedGroup = true;
+
+    printAfterBoundaryLine(notSupporter ?
+      getInlineRootNames() : getFullNameWithUltimate()
     );
 
     while (true) {
