@@ -407,6 +407,7 @@ namespace cli_menu {
     ultimate = newUltimate;
 
     for (TREE *node : released) {
+      node->resign();
       static_cast<Cm*>(node)->collapseUltimateItems(newUltimate, united);
     }
   }
