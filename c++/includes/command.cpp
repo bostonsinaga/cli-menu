@@ -213,7 +213,7 @@ namespace cli_menu {
           if (curCom->ultimate) {
             anyUltimate++;
           }
-          else if (children.empty()) {
+          else if (curCom->getNumberOfChildren() == 0) {
             anyToddler++;
           }
           else anyGroup++;
@@ -282,7 +282,21 @@ namespace cli_menu {
       pluralConditions = mt::VEC_BOL{children.size() > 1};
     }
     // toddler or supporter
-    else return "";
+    else if (parent) {
+      return static_cast<Cm*>(parent)->getChildrenLevelName(
+        toEndUser,
+        onlyRequired,
+        isFirstCapitalLetter
+      );
+    }
+    // program or orphan
+    else {
+      levelNames = toEndUser ?
+        mt::VEC_STR{"command"} :
+        mt::VEC_STR{"toddler"};
+
+      pluralConditions = mt::VEC_BOL{false};
+    }
 
     std::string renderedName;
     bool isLast;
@@ -598,9 +612,18 @@ namespace cli_menu {
           }
           return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
-        // group that has no children
+        // toddler
+        else if (parent) {
+          Message::printDialogError(
+            "The '" + parent->getName()
+            + "' group has only one "
+            + getChildrenLevelName() + "."
+          );
+        }
+        // program or orphan
         else Message::printDialogError(
-          "This command has only one parameter."
+          "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
+          + " has no connections."
         );
       }
       // find developer defined command
@@ -655,19 +678,23 @@ namespace cli_menu {
     return FLAG::ERROR;
   }
 
+  /**
+   * This will not be used by program or orphan because there is
+   * already a condition for empty children in 'Program::run'.
+   */
   bool Command::isMatchNeedDialog() {
     Command *parCom = static_cast<Cm*>(parent);
 
-    if (Command::dialogued &&
+    if (Command::dialogued && parCom &&
       parCom->getRequiredCount()
     ) {
-      // program, group, or toddler
-      if (!parent || (parent && !parCom->ultimate)) {
+      // group or toddler
+      if (!parCom->ultimate) {
 
         Message::printDialogError(
-          "The '" + (parent ? parent->getName() : name) + "' "
-          + getLevelName() + " has "
-          + getChildrenLevelName()
+          "The '" + parCom->name + "' "
+          + parCom->getLevelName() + " has "
+          + parCom->getChildrenLevelName()
           + " to be used.", 1
         );
 
@@ -676,7 +703,7 @@ namespace cli_menu {
       // ultimate or supporter
       else {
         Message::printDialogError(
-          "The '" + parent->getName()
+          "The '" + parCom->name
           + "' command has required "
           + getChildrenLevelName()
           + " to be filled in.", 1
