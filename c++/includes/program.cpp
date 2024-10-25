@@ -210,7 +210,7 @@ namespace cli_menu {
     // no children
     else Message::printNamed(
       Message::STATUS::ERROR,
-      "No group/command available.",
+      "No groups/commands available.",
       name
     );
 
