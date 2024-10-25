@@ -638,6 +638,12 @@ namespace cli_menu {
           if (found->isSupporter()) {
             return found->question(paramData, lastCom);
           }
+
+          // 'Parameter' needs to call 'question' first
+          if (getInheritanceFlag() == PARAMETER) {
+            return found->question(paramData, lastCom);
+          }
+
           return found->dialog(paramData, lastCom);
         }
         else if (isUltimate() || isSupporter()) {
