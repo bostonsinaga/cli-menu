@@ -87,8 +87,8 @@ int main(int argc, char *argv[]) {
   );
 
   cm::Parameter *stop = new cm::Parameter(
-    "run",
-    "run description",
+    "stop",
+    "stop description",
     false,
     go,
     cm::Parameter::NUMBER,
