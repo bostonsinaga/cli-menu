@@ -137,6 +137,10 @@ namespace cli_menu {
       Command **lastCom
     ) { return FLAG::ERROR; }
 
+    Command *chooseLastCommand() {
+      return ultimate ? ultimate : this;
+    }
+
     // secure original strings
     static void copyMatchNames(
       std::string &hookName, std::string &hookInput,
@@ -170,7 +174,7 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    mt::USI dialog(
+    virtual mt::USI dialog(
       ParamData &paramData,
       Command **lastCom
     );
