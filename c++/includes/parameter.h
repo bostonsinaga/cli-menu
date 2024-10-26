@@ -56,6 +56,14 @@ namespace cli_menu {
       Command **lastCom
     ) override;
 
+    mt::USI dialog(
+      ParamData &paramData,
+      Command **lastCom
+    ) override {
+      if (!used) return question(paramData, lastCom);
+      return Command::dialog(paramData, lastCom);
+    }
+
   public:
     enum {TEXT, NUMBER};
     Parameter(): Command() {}
