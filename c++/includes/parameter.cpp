@@ -160,7 +160,7 @@ namespace cli_menu {
     }
     // directly completed
     else if (getRequiredCount() == 0) {
-      *lastCom = ultimate ? ultimate : this;
+      *lastCom = chooseLastCommand();
       return true;
     }
     // required items are not complete
@@ -272,11 +272,17 @@ namespace cli_menu {
         if (isOptional() ||
           (isRequired() && used)
         ) {
-          *lastCom = ultimate;
+          *lastCom = chooseLastCommand();
           checkout(paramData, valVec);
 
           // back to selection
-          if (isGroup()) return dialog(paramData, lastCom);
+          if (isGroup()) {
+            return dialog(paramData, lastCom);
+          }
+          // toddler
+          else if (!ultimate) {
+            return dialogTo(getUnusedNeighbor(this), paramData, lastCom);
+          }
 
           // directly ask first supporter
           return questionTo(
