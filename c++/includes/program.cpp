@@ -113,7 +113,7 @@ namespace cli_menu {
   }
 
   void Program::printError() {
-    std::cerr << "Program Error..";
+    std::cout << "Program Error..";
   }
 
   void Program::run(
