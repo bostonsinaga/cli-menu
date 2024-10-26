@@ -152,7 +152,10 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    printAfterBoundaryLine(getFullNameWithUltimate());
+
+    printAfterBoundaryLine(!isSupporter() ?
+      getInlineRootNames() : getFullNameWithUltimate()
+    );
 
     while (true) {
       Message::setDialogInput(buffer);
