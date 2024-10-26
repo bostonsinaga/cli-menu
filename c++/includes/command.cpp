@@ -566,10 +566,6 @@ namespace cli_menu {
     return "cor";
   }
 
-  /**
-   * The 'ultimate' is guaranteed to exist because
-   * this method always called at supporter level.
-   */
   mt::USI Command::questionTo(
     Command *target,
     ParamData &paramData,
@@ -607,10 +603,13 @@ namespace cli_menu {
         }
         // redirected to first child
         else if (getNumberOfChildren() > 0) {
+          const Command *firstCh = static_cast<Cm*>(children[0]);
+
           if (isUltimate()) {
-            return static_cast<Cm*>(children[0])->question(paramData, lastCom);
+            return firstCh->question(paramData, lastCom);
           }
-          return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
+
+          return firstCh->dialog(paramData, lastCom);
         }
         // toddler
         else if (parent) {
@@ -620,7 +619,7 @@ namespace cli_menu {
             + getChildrenLevelName() + "."
           );
         }
-        // program or orphan
+        // program or orphan (rarely occurs)
         else Message::printDialogError(
           "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
           + " has no connections."
@@ -638,12 +637,6 @@ namespace cli_menu {
           if (found->isSupporter()) {
             return found->question(paramData, lastCom);
           }
-
-          // 'Parameter' needs to call 'question' first
-          if (getInheritanceFlag() == PARAMETER) {
-            return found->question(paramData, lastCom);
-          }
-
           return found->dialog(paramData, lastCom);
         }
         else if (isUltimate() || isSupporter()) {
@@ -939,7 +932,7 @@ namespace cli_menu {
   }
 
   void Command::printError() {
-    std::cerr << "Command Error..";
+    std::cout << "Command Error..";
   }
 
   void Command::checkDisguise(
