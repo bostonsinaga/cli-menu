@@ -30,13 +30,11 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     CR_SP_CALLBACK callback_in
-  ): TREE(name_in, parent_in) {
+  ): TREE(name_in) {
     description = description_in;
     callback = callback_in;
     required = required_in;
-
-    if (parent) static_cast<Cm*>(parent)
-      ->updateRequiredItems(static_cast<Cm*>(this), true);
+    setParent(parent_in);
   }
 
   Command::Command(
@@ -45,13 +43,11 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     CR_SP_PLAIN_CALLBACK callback_in
-  ): TREE(name_in, parent_in) {
+  ): TREE(name_in) {
     description = description_in;
     plainCallback = callback_in;
     required = required_in;
-
-    if (parent) static_cast<Cm*>(parent)
-      ->updateRequiredItems(static_cast<Cm*>(this), true);
+    setParent(parent_in);
   }
 
   Command::Command(
@@ -59,12 +55,10 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in
-  ): TREE(name_in, parent_in) {
+  ): TREE(name_in) {
     description = description_in;
     required = required_in;
-
-    if (parent) static_cast<Cm*>(parent)
-      ->updateRequiredItems(static_cast<Cm*>(this), true);
+    setParent(parent_in);
   }
 
   void Command::setChildren(
@@ -381,26 +375,36 @@ namespace cli_menu {
     );
   }
 
+  void Command::printOrphanError() {
+    Message::printDialogError(
+      "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
+      + " has no connections."
+    );
+  }
+
   void Command::updateRequiredItems(
     Command *command,
     mt::CR_BOL adding
   ) {
     if (command->required) {
-      if (adding) {
+      int reqIdx = mt_uti::VecTools<TREE*>::getIndex(
+        requiredItems, command
+      );
+
+      // 'reqIdx' as duplication guard
+      if (adding && reqIdx == -1) {
         requiredItems.push_back(command);
       }
+      // 'reqIdx' always exists
       else if (!requiredItems.empty()) {
         mt_uti::VecTools<TREE*>::cutSingle(
-          requiredItems,
-          mt_uti::VecTools<TREE*>::getIndex(
-            requiredItems, command
-          )
+          requiredItems, reqIdx
         );
       }
     }
   }
 
-  void Command::updateRequiredSelf(mt::CR_BOL adding) {
+  void Command::updateRequiredUsed(mt::CR_BOL adding) {
     if (!used) {
       // occurs once (safeguard)
       used = true;
@@ -603,13 +607,7 @@ namespace cli_menu {
         }
         // redirected to first child
         else if (getNumberOfChildren() > 0) {
-          const Command *firstCh = static_cast<Cm*>(children[0]);
-
-          if (isUltimate()) {
-            return firstCh->question(paramData, lastCom);
-          }
-
-          return firstCh->dialog(paramData, lastCom);
+          return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
         // toddler
         else if (parent) {
@@ -620,23 +618,31 @@ namespace cli_menu {
           );
         }
         // program or orphan (rarely occurs)
-        else Message::printDialogError(
-          "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
-          + " has no connections."
-        );
+        else printOrphanError();
       }
       // find developer defined command
       else {
         Command *found;
         Command::onFreeChangeInputLetterCase(nameTest);
 
-        if (isParent()) found = static_cast<Cm*>(getChild(nameTest));
-        else found = static_cast<Cm*>(ultimate->getChild(nameTest));
+        if (isParent()) {
+          found = static_cast<Cm*>(getChild(nameTest));
+        }
+        else {
+          TREE *usedParent;
+
+          if (ultimate) usedParent = ultimate;
+          else if (parent) usedParent = parent;
+          // program or orphan
+          else {
+            printOrphanError();
+            continue;
+          }
+
+          found = static_cast<Cm*>(usedParent->getChild(nameTest));
+        }
 
         if (found) {
-          if (found->isSupporter()) {
-            return found->question(paramData, lastCom);
-          }
           return found->dialog(paramData, lastCom);
         }
         else if (isUltimate() || isSupporter()) {
@@ -889,9 +895,9 @@ namespace cli_menu {
     }
     else Message::printString(
       comName, Color::BLACK,
-      isParent() && !questionedGroup ?
-        Color(223, 223, 255) :
-        Color(223, 255, 223)
+      isContainer() && !questionedGroup ?
+        Color(223, 223, 255) :  // light blue
+        Color(223, 255, 223)    // light green
     );
 
     // has a newline at the end
