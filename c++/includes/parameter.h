@@ -7,32 +7,24 @@ namespace cli_menu {
 
   class Parameter : public Command {
   private:
-    std::string argument;
-
     bool accumulating = false,
       type = false;
 
     void setData(
       ParamData &paramData,
-      mt::CR_STR str
+      mt::CR_STR argument
     );
 
-    // invoked in 'match' for 'setData'
+    void resetArgument(ParamData &paramData);
+
     bool popBackSet(
       mt::VEC_STR &inputs,
       ParamData &paramData
     );
 
-    // invoked after 'popBackSet'
     mt::USI notPopBackSet(
       ParamData &paramData,
       Command **lastCom
-    );
-
-    // invoked in 'question' for 'setData'
-    void checkout(
-      ParamData &paramData,
-      mt::CR_VEC_STR valVec
     );
 
   protected:
@@ -59,10 +51,7 @@ namespace cli_menu {
     mt::USI dialog(
       ParamData &paramData,
       Command **lastCom
-    ) override {
-      if (!used) return question(paramData, lastCom);
-      return Command::dialog(paramData, lastCom);
-    }
+    ) override;
 
   public:
     enum {TEXT, NUMBER};
