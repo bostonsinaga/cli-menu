@@ -395,7 +395,7 @@ namespace cli_menu {
       if (adding && reqIdx == -1) {
         requiredItems.push_back(command);
       }
-      // 'reqIdx' always exists
+      // 'reqIdx' always positive
       else if (!requiredItems.empty()) {
         mt_uti::VecTools<TREE*>::cutSingle(
           requiredItems, reqIdx
@@ -406,13 +406,11 @@ namespace cli_menu {
 
   void Command::updateRequiredUsed(mt::CR_BOL adding) {
     if (!used) {
-      // occurs once (safeguard)
       used = true;
 
-      if (isSupporter()) {
-        ultimate->updateRequiredItems(this, adding);
+      if (parent) {
+        static_cast<Cm*>(parent)->updateRequiredItems(this, adding);
       }
-      else updateRequiredItems(this, adding);
     }
   }
 
