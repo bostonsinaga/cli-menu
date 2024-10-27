@@ -72,6 +72,7 @@ namespace cli_menu {
 
   protected:
     Command *ultimate = nullptr;
+    int paramDataIndex = -1;
 
     bool questionedGroup = false,
       required = false,
@@ -105,7 +106,7 @@ namespace cli_menu {
     Color getMainLabelColor();
     std::string getMainLabel();
     Command *getUnusedNeighbor(Command *start);
-    void updateRequiredSelf(mt::CR_BOL adding);
+    void updateRequiredUsed(mt::CR_BOL adding);
 
     // format: 'separator + ultimate + separator + this + separator'
     std::string getFullNameWithUltimate(
@@ -125,12 +126,10 @@ namespace cli_menu {
       mt::CR_BOL isFirstCapitalLetter = false
     );
 
-    /**
-     * Error message generators of level that has neighbors
-     * or children that its 'paramData' section must be set.
-     */
+    // error message generators for levels
     void printEnterError();
     void printNextError();
+    void printOrphanError();
 
     virtual bool onEnter(
       ParamData &paramData,
