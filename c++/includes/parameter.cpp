@@ -59,22 +59,58 @@ namespace cli_menu {
 
   void Parameter::setData(
     ParamData &paramData,
-    mt::CR_STR str
+    mt::CR_STR argument
   ) {
-    if (type == TEXT) {
-      paramData.texts.push_back(str);
-      paramData.numbers.push_back({});
+    bool isEmpty = true;
+
+    // ignore empty argument
+    for (mt::CR_CH ch : argument) {
+      if (ch != ' ' && ch != '\t' && ch != '\n') {
+        isEmpty = false;
+        break;
+      }
     }
-    // space or newline is a separator
+
+    if (isEmpty) return;
+
+    if (!used) {
+      if (type == TEXT) {
+        paramData.texts.push_back(argument);
+        paramData.numbers.push_back({});
+      }
+      // space or newline is a separator
+      else {
+        paramData.texts.push_back("");
+        paramData.numbers.push_back(
+          mt_uti::Scanner<double>::parseNumbers(argument)
+        );
+      }
+
+      paramData.conditions.push_back(false);
+      paramDataIndex = paramData.texts.size() - 1;
+    }
+    // accumulated to get multiline input
     else {
-      paramData.texts.push_back("");
-      paramData.numbers.push_back(
-        mt_uti::Scanner<double>::parseNumbers(str)
+      if (type == TEXT) {
+        paramData.texts[paramDataIndex] += argument;
+      }
+      // space or newline is a separator
+      else mt_uti::VecTools<double>::concat(
+        paramData.numbers[paramDataIndex],
+        mt_uti::Scanner<double>::parseNumbers(argument)
       );
     }
 
-    paramData.conditions.push_back(false);
-    used = true;
+    updateRequiredUsed(false);
+  }
+
+  void Parameter::resetArgument(ParamData &paramData) {
+    if (used && !accumulating) {
+      if (type == TEXT) {
+        paramData.texts[paramDataIndex] = "";
+      }
+      else paramData.numbers[paramDataIndex] = {};
+    }
   }
 
   bool Parameter::popBackSet(
@@ -83,6 +119,7 @@ namespace cli_menu {
   ) {
     // only capture the last reversed 'inputs'
     if (inputs.size() > 0) {
+      resetArgument(paramData);
       setData(paramData, inputs[inputs.size() - 1]);
       inputs.pop_back();
       return true;
@@ -105,20 +142,6 @@ namespace cli_menu {
     }
     // no dialog
     return FLAG::ERROR;
-  }
-
-  void Parameter::checkout(
-    ParamData &paramData,
-    mt::CR_VEC_STR valVec
-  ) {
-    // concatenate multiline strings from 'valVec'
-    std::string united = mt_uti::StrTools::uniteVector(valVec, "\n");
-
-    // recall can be accumulated in argument
-    setData(
-      paramData,
-      accumulating ? argument + united : united
-    );
   }
 
   std::string Parameter::getStringifiedType() {
@@ -240,9 +263,9 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    mt::VEC_STR valVec;
     std::string buffer;
     const bool notSupporter = !isSupporter();
+    resetArgument(paramData);
 
     // to be able to display 'question' version in 'printDialogStatus' call
     if (notSupporter) questionedGroup = true;
@@ -263,7 +286,6 @@ namespace cli_menu {
       }
       else if (Control::enterTest(controlStr)) {
         if (onEnter(paramData, lastCom)) {
-          checkout(paramData, valVec);
           return FLAG::COMPLETED;
         }
       }
@@ -273,7 +295,6 @@ namespace cli_menu {
           (isRequired() && used)
         ) {
           *lastCom = chooseLastCommand();
-          checkout(paramData, valVec);
 
           // back to selection
           if (isGroup()) {
@@ -297,26 +318,22 @@ namespace cli_menu {
         return dialog(paramData, lastCom);
       }
       // value input
-      else {
-        bool isEmpty = true;
-
-        // ignore empty 'buffer'
-        for (char &ch : buffer) {
-          if (ch != ' ' && ch != '\t' && ch != '\n') {
-            isEmpty = false;
-            break;
-          }
-        }
-
-        if (isEmpty) continue;
-
-        // to be able to '.enter'
-        used = true;
-        valVec.push_back(buffer);
-      }
+      else setData(paramData, buffer);
     }
 
     return FLAG::CANCELED;
+  }
+
+  mt::USI Parameter::dialog(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    if (!used || isSupporter()) {
+      return question(paramData, lastCom);
+    }
+
+    // no need to set argument exclusively
+    return Command::dialog(paramData, lastCom);
   }
 }
 
