@@ -88,6 +88,7 @@ namespace cli_menu {
 
       paramData.conditions.push_back(false);
       paramDataIndex = paramData.texts.size() - 1;
+      updateRequiredUsed(false);
     }
     // accumulated to get multiline input
     else {
@@ -100,8 +101,6 @@ namespace cli_menu {
         mt_uti::Scanner<double>::parseNumbers(argument)
       );
     }
-
-    updateRequiredUsed(false);
   }
 
   void Parameter::resetArgument(ParamData &paramData) {
