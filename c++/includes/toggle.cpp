@@ -44,12 +44,16 @@ namespace cli_menu {
 
   void Toggle::setData(
     ParamData &paramData,
-    mt::CR_BOL cond
+    mt::CR_BOL condition
   ) {
-    paramData.conditions.push_back(cond);
-    paramData.texts.push_back("");
-    paramData.numbers.push_back({});
-    updateRequiredSelf(false);
+    if (!used) {
+      paramData.conditions.push_back(condition);
+      paramData.texts.push_back("");
+      paramData.numbers.push_back({});
+      paramDataIndex = paramData.conditions.size() - 1;
+      updateRequiredUsed(false);
+    }
+    else paramData.conditions[paramDataIndex] = condition;
   }
 
   std::string Toggle::getDashedName() {
@@ -67,6 +71,7 @@ namespace cli_menu {
     // directly completed
     if (getRequiredCount() == 0) {
       *lastCom = ultimate ? ultimate : this;
+      setData(paramData, false);
       return true;
     }
     // required items are not complete
@@ -172,7 +177,6 @@ namespace cli_menu {
       }
       else if (Control::enterTest(buffer)) {
         if (onEnter(paramData, lastCom)) {
-          if (!used) setData(paramData, false);
           return FLAG::COMPLETED;
         }
       }
@@ -194,6 +198,19 @@ namespace cli_menu {
     }
 
     return FLAG::CANCELED;
+  }
+
+  mt::USI Toggle::dialog(
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    if (isSupporter()) {
+      return question(paramData, lastCom);
+    }
+
+    // no need to set condition exclusively
+    setData(paramData, true);
+    return Command::dialog(paramData, lastCom);
   }
 }
 
