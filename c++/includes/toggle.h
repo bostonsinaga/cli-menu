@@ -9,7 +9,7 @@ namespace cli_menu {
   private:
     void setData(
       ParamData &paramData,
-      mt::CR_BOL cond
+      mt::CR_BOL condition
     );
 
   protected:
@@ -26,6 +26,11 @@ namespace cli_menu {
 
     // always called after ultimate (closed question)
     mt::USI question(
+      ParamData &paramData,
+      Command **lastCom
+    ) override;
+
+    mt::USI dialog(
       ParamData &paramData,
       Command **lastCom
     ) override;
