@@ -375,13 +375,6 @@ namespace cli_menu {
     );
   }
 
-  void Command::printOrphanError() {
-    Message::printDialogError(
-      "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
-      + " has no connections."
-    );
-  }
-
   void Command::updateRequiredItems(
     Command *command,
     mt::CR_BOL adding
@@ -540,7 +533,7 @@ namespace cli_menu {
     std::string status = " (";
     Color fontColor;
 
-    if (!isGroupNeedQuestion()) {
+    if (!(isSupporter() || questionedGroup)) {
       status += "sel"; // 1st
       fontColor = Color::MAGENTA;
     }
@@ -599,24 +592,14 @@ namespace cli_menu {
         }
       }
       else if (Control::nextTest(controlStr)) {
-        // pointing to neighbor
-        if (next) {
-          return static_cast<Cm*>(next)->dialog(paramData, lastCom);
-        }
         // redirected to first child
-        else if (getNumberOfChildren() > 0) {
+        if (isParent()) {
           return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
-        // toddler
-        else if (parent) {
-          Message::printDialogError(
-            "The '" + parent->getName()
-            + "' group has only one "
-            + getChildrenLevelName() + "."
-          );
-        }
-        // program or orphan (rarely occurs)
-        else printOrphanError();
+        // pointing to neighbor
+        return dialogTo(
+          getUnusedNeighbor(this), paramData, lastCom
+        );
       }
       // find developer defined command
       else {
@@ -631,9 +614,11 @@ namespace cli_menu {
 
           if (ultimate) usedParent = ultimate;
           else if (parent) usedParent = parent;
-          // program or orphan
-          else {
-            printOrphanError();
+          else { // program or orphan (rarely occurred)
+            Message::printDialogError(
+              "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
+              + " has no connections."
+            );
             continue;
           }
 
