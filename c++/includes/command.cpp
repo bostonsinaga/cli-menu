@@ -889,21 +889,32 @@ namespace cli_menu {
     // has a newline at the end
     printDialogStatus();
 
-    /** Once displayed */
+    // once at toddler level of 'Toggle'
+    if (getInheritanceFlag() == TOGGLE &&
+      isToddler()
+    ) {
+      static bool isInit = true;
 
-    // container or 'Parameter' supporter
-    if (!(isSupporter() && getInheritanceFlag() == TOGGLE)) {
-      Control::printHelp(isSupporter());
-    }
-    // 'Toggle' supporter
-    else {
-      static bool isClosedInit = true;
-
-      if (isClosedInit && isSupporter()) {
-        isClosedInit = false;
+      if (isInit && isSupporter()) {
+        isInit = false;
 
         Message::printItalicString(
           "  yes = y, no = n, or boolean\n"
+        );
+      }
+    }
+    // once on the first call
+    else {
+      static bool isInit = true;
+
+      if (isInit) {
+        isInit = false;
+
+        Message::printItalicString(
+          std::string("  .back     = :b, .cancel = :c,\n") +
+          std::string("  .enter    = :e, .help   = :h,\n") +
+          std::string("  .list     = :l, .next   = :n,\n") +
+          std::string("  .previous = :p, .select = :s\n")
         );
       }
     }
