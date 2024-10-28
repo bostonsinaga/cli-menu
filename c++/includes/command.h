@@ -125,8 +125,8 @@ namespace cli_menu {
       mt::CR_BOL isFirstCapitalLetter = false
     );
 
-    // error message generators for levels
-    void printEnterError();
+    // error message selectors for controls
+    bool isEnterError(mt::CR_BOL fromChild = false);
     void printNextError();
 
     virtual bool onEnter(
