@@ -29,7 +29,6 @@ namespace cli_menu {
 
   protected:
     std::string getFillingStatusString() override;
-    bool isGroupNeedQuestion() override;
 
     bool onEnter(
       ParamData &paramData,
