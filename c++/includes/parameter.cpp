@@ -166,10 +166,6 @@ namespace cli_menu {
     return "cor";
   }
 
-  bool Parameter::isGroupNeedQuestion() {
-    return isSupporter() || questionedGroup;
-  }
-
   bool Parameter::onEnter(
     ParamData &paramData,
     Command **lastCom
@@ -266,7 +262,7 @@ namespace cli_menu {
     const bool notSupporter = !isSupporter();
     resetArgument(paramData);
 
-    // to be able to display 'question' version in 'printDialogStatus' call
+    // question display on non-supporters
     if (notSupporter) questionedGroup = true;
 
     printAfterBoundaryLine(notSupporter ?
@@ -299,15 +295,15 @@ namespace cli_menu {
           if (isGroup()) {
             return dialog(paramData, lastCom);
           }
-          // toddler
-          else if (!ultimate) {
-            return dialogTo(getUnusedNeighbor(this), paramData, lastCom);
+          // ultimate
+          else if (isUltimate()) {
+            return questionTo(
+              static_cast<Cm*>(children[0]), paramData, lastCom
+            );
           }
-
-          // choose first child or neighbor
-          return questionTo(
-            isParent() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
-            paramData, lastCom
+          // toddler
+          return dialogTo(
+            getUnusedNeighbor(this), paramData, lastCom
           );
         }
         // required items are not complete
