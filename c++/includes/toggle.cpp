@@ -186,7 +186,12 @@ namespace cli_menu {
           (isRequired() && used)
         ) {
           *lastCom = ultimate;
-          return questionTo(getUnusedNeighbor(this), paramData, lastCom);
+
+          // choose first child or neighbor
+          return questionTo(
+            isParent() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
+            paramData, lastCom
+          );
         }
         // required items are not complete
         else printNextError();

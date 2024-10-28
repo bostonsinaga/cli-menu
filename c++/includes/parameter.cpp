@@ -304,9 +304,9 @@ namespace cli_menu {
             return dialogTo(getUnusedNeighbor(this), paramData, lastCom);
           }
 
-          // directly ask first supporter
+          // choose first child or neighbor
           return questionTo(
-            isUltimate() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
+            isParent() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
             paramData, lastCom
           );
         }
