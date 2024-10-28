@@ -157,8 +157,12 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
+    const bool notSupporter = !isSupporter();
 
-    printAfterBoundaryLine(!isSupporter() ?
+    // question display on non-supporters
+    if (notSupporter) questionedGroup = true;
+
+    printAfterBoundaryLine(notSupporter ?
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
@@ -187,10 +191,9 @@ namespace cli_menu {
         ) {
           *lastCom = ultimate;
 
-          // choose first child or neighbor
+          // pointing to neighbor
           return questionTo(
-            isParent() ? static_cast<Cm*>(children[0]) : getUnusedNeighbor(this),
-            paramData, lastCom
+            getUnusedNeighbor(this), paramData, lastCom
           );
         }
         // required items are not complete
@@ -209,7 +212,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (isSupporter()) {
+    if (isToddler()) {
       return question(paramData, lastCom);
     }
 
