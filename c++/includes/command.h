@@ -39,7 +39,6 @@ namespace cli_menu {
 
     void printDialogStatus();
     virtual std::string getFillingStatusString();
-    virtual bool isGroupNeedQuestion() { return isSupporter(); }
 
     void updateRequiredItems(
       Command *command,
@@ -129,7 +128,6 @@ namespace cli_menu {
     // error message generators for levels
     void printEnterError();
     void printNextError();
-    void printOrphanError();
 
     virtual bool onEnter(
       ParamData &paramData,
