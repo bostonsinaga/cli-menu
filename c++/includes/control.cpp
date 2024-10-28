@@ -83,35 +83,6 @@ namespace cli_menu {
     if (testedFlag > 1) return true;
     return false;
   }
-
-  void Control::printHelp(mt::CR_BOL isSupporter) {
-    static int groupPhase = isSupporter;
-    if (groupPhase == 3) return;
-
-    switch (groupPhase) {
-      case 0: {
-        Message::printItalicString(
-          std::string("  .back = :b, .cancel   = :c,\n") +
-          std::string("  .help = :h, .list     = :l,\n") +
-          std::string("  .next = :n, .previous = :p\n")
-        );
-        groupPhase = 2;
-      break;}
-      case 1: {
-        Message::printItalicString(
-          std::string("  .back     = :b, .cancel = :c,\n") +
-          std::string("  .enter    = :e, .help   = :h,\n") +
-          std::string("  .list     = :l, .next   = :n,\n") +
-          std::string("  .previous = :p, .select = :s\n")
-        );
-        groupPhase = 3;
-      break;}
-      case 2: {
-        Message::printItalicString("  .enter = :e, .select = :s\n");
-        groupPhase = 3;
-      break;}
-    }
-  }
 }
 
 #endif // __CLI_MENU__CONTROL_CPP__

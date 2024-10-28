@@ -29,8 +29,6 @@ namespace cli_menu {
     // returns 0 (other), 1 (false), 2 (true)
     static int booleanTest(mt::CR_STR str);
     static bool revealBoolean(mt::CR_INT testedFlag);
-
-    static void printHelp(mt::CR_BOL isSupporter);
   };
 }
 
