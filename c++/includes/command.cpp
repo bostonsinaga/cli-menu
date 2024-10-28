@@ -643,8 +643,11 @@ namespace cli_menu {
         if (found) {
           return found->dialog(paramData, lastCom);
         }
-        else if (isUltimate() || isSupporter()) {
+        else if (isUltimate()) {
           Message::printDialogError("Parameter not found.");
+        }
+        else if (children.empty()) {
+          Message::printDialogError("This command does not have any parameters.");
         }
         else Message::printDialogError(
           getChildrenLevelName(true, true, true) + " not found."
