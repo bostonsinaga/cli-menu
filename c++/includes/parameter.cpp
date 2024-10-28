@@ -177,12 +177,10 @@ namespace cli_menu {
       );
     }
     // directly completed
-    else if (getRequiredCount() == 0) {
+    else if (!isEnterError()) {
       *lastCom = chooseLastCommand();
       return true;
     }
-    // required items are not complete
-    else printEnterError();
 
     return false;
   }

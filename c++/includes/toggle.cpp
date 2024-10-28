@@ -69,13 +69,11 @@ namespace cli_menu {
     Command **lastCom
   ) {
     // directly completed
-    if (getRequiredCount() == 0) {
+    if (!isEnterError()) {
       *lastCom = ultimate ? ultimate : this;
       setData(paramData, false);
       return true;
     }
-    // required items are not complete
-    else printEnterError();
 
     return false;
   }
