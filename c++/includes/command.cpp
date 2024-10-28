@@ -323,10 +323,22 @@ namespace cli_menu {
     return renderedName;
   }
 
-  // invoked in 'question' when 'requiredItems' is not empty
-  void Command::printEnterError() {
+  // invoked in 'onEnter'
+  bool Command::isEnterError(mt::CR_BOL fromChild) {
+    Command *parCom = static_cast<Cm*>(parent);
+
+    const mt::UI reqCt = getRequiredCount(),
+      parReqCt = parCom ? parCom->getRequiredCount() : 0;
+
+    // complete
+    if (!reqCt) {
+      if (parReqCt) return parCom->isEnterError(true);
+      return false;
+    }
+
+    // incomplete
     if (ultimate) {
-      if (getRequiredCount() > 1) {
+      if (reqCt > 1) {
         Message::printDialogError(
           "Cannot process until all required parameters are met."
         );
@@ -343,11 +355,13 @@ namespace cli_menu {
       const std::string
         levelName = getChildrenLevelName(),
         errStr[2] = {
-          "Cannot be processed. This group still has ",
+          "Cannot be processed. "
+           + (fromChild ? "The '" + name + "'" : "This")
+           + " group still has ",
           " that must be used."
         };
 
-      if (getRequiredCount() > 1) {
+      if (reqCt > 1) {
         Message::printDialogError(
           errStr[0] + levelName + errStr[1]
         );
@@ -359,6 +373,8 @@ namespace cli_menu {
         + "'" + errStr[1]
       );
     }
+
+    return true;
   }
 
   // invoked in 'question' when 'requiredItems' is not empty
