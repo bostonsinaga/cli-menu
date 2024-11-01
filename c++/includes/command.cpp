@@ -172,7 +172,9 @@ namespace cli_menu {
       levelName = toEndUser ? "command" : "ultimate";
     }
     else if (isSupporter()) {
-      levelName = toEndUser ? "parameter" : "supporter";
+      levelName = toEndUser ? (
+        getInheritanceFlag() == PARAMETER ? "parameter" : "toggle"
+      ) : "supporter";
     }
     else levelName = toEndUser ? "command" : "toddler";
 
@@ -189,15 +191,19 @@ namespace cli_menu {
     mt::CR_BOL onlyRequired,
     mt::CR_BOL isFirstCapitalLetter
   ) {
-    mt::VEC_STR levelNames;
-    mt::VEC_BOL pluralConditions;
+    static const mt::USI maxCount = 4;
+    mt::VEC_USI indexes;
+    std::string availableNames[maxCount], levelNames[maxCount];
+    bool pluralConditions[] = {false, false, false, false};
+    mt::USI availableCount = 0;
 
     if (isGroup()) {
-      int anyGroup = 0,
-        anyToddler = 0,
-        anyUltimate = 0;
+      levelNames[0] = "command";
+      levelNames[1] = "group";
+      levelNames[2] = "toddler";
+      levelNames[3] = "ultimate";
 
-      // count level occurrences for conditions below
+      // capture level occurrences
       for (TREE *node : children) {
         Command *curCom = static_cast<Cm*>(node);
 
@@ -205,75 +211,48 @@ namespace cli_menu {
           (onlyRequired && curCom->required)
         ) {
           if (curCom->ultimate) {
-            anyUltimate++;
+            indexes.push_back(toEndUser ? 0 : 3);
           }
           else if (curCom->getNumberOfChildren() == 0) {
-            anyToddler++;
+            indexes.push_back(toEndUser ? 0 : 2);
           }
-          else anyGroup++;
+          else indexes.push_back(1);
         }
-      }
-
-      /** Determining Name and Plural */
-
-      if (anyGroup && anyToddler && anyUltimate) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"group", "command"} :
-          mt::VEC_STR{"group", "toddler", "ultimate"};
-
-        pluralConditions = toEndUser ?
-          mt::VEC_BOL{anyGroup > 1, anyToddler > 1 || anyUltimate > 1} :
-          mt::VEC_BOL{anyGroup > 1, anyToddler > 1, anyUltimate > 1};
-      }
-      else if (anyGroup && anyToddler) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"group", "command"} :
-          mt::VEC_STR{"group", "toddler"};
-
-        pluralConditions = mt::VEC_BOL{anyGroup > 1, anyToddler > 1};
-      }
-      else if (anyToddler && anyUltimate) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"command"} :
-          mt::VEC_STR{"toddler", "ultimate"};
-
-        pluralConditions = toEndUser ?
-          mt::VEC_BOL{anyToddler > 1 || anyUltimate > 1} :
-          mt::VEC_BOL{anyToddler > 1, anyUltimate > 1};
-      }
-      else if (anyGroup && anyUltimate) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"group", "command"} :
-          mt::VEC_STR{"group", "ultimate"};
-
-        pluralConditions = mt::VEC_BOL{anyGroup > 1, anyUltimate > 1};
-      }
-      else if (anyGroup) {
-        levelNames = mt::VEC_STR{"group"};
-        pluralConditions = mt::VEC_BOL{anyGroup > 1};
-      }
-      else if (anyToddler) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"command"} :
-          mt::VEC_STR{"toddler"};
-
-        pluralConditions = mt::VEC_BOL{anyToddler > 1};
-      }
-      else if (anyUltimate) {
-        levelNames = toEndUser ?
-          mt::VEC_STR{"command"} :
-          mt::VEC_STR{"ultimate"};
-
-        pluralConditions = mt::VEC_BOL{anyUltimate > 1};
       }
     }
     // ultimate does not need to count with loop
     else if (isUltimate()) {
-      levelNames = toEndUser ?
-        mt::VEC_STR{"parameter"} :
-        mt::VEC_STR{"supporter"};
+      if (toEndUser) {
+        levelNames[0] = "command";
+        levelNames[1] = "parameter";
+        levelNames[2] = "toggle";
 
-      pluralConditions = mt::VEC_BOL{children.size() > 1};
+        // capture supporter occurrences
+        for (TREE *node : children) {
+          Command *curCom = static_cast<Cm*>(node);
+
+          if (!onlyRequired ||
+            (onlyRequired && curCom->required)
+          ) {
+            switch (curCom->getInheritanceFlag()) {
+              case PARAMETER: {
+                indexes.push_back(1);
+              break;}
+              case TOGGLE: {
+                indexes.push_back(2);
+              break;}
+              default: {
+                indexes.push_back(0);
+              }
+            }
+          }
+        }
+      }
+      else {
+        availableCount = 1;
+        availableNames[0] = "supporter";
+        pluralConditions[0] = getRequiredCount() > 1;
+      }
     }
     // toddler or supporter
     else if (parent) {
@@ -285,33 +264,56 @@ namespace cli_menu {
     }
     // program or orphan
     else {
-      levelNames = toEndUser ?
-        mt::VEC_STR{"command"} :
-        mt::VEC_STR{"toddler"};
-
-      pluralConditions = mt::VEC_BOL{false};
+      availableCount = 1;
+      availableNames[0] = toEndUser ? "command": "toddler";
     }
 
+    mt::USI pluralCount = 0;
+    mt::USI occurrences[] = {0, 0, 0, 0};
+
+    // set names and plural conditions
+    for (mt::USI &i : indexes) {
+      if (occurrences[i] < 2) {
+
+        if (occurrences[i] < 1) {
+          availableNames[availableCount] = levelNames[i];
+          availableCount++;
+        }
+        else {
+          pluralCount++;
+          pluralConditions[availableCount - 1] = true;
+        }
+
+        // possible values: 0, 1, 2
+        occurrences[i]++;
+      }
+      else if (pluralCount == maxCount) break;
+    }
+
+    // the product
     std::string renderedName;
     bool isLast;
 
     // concatenate string vector into a sentence
-    for (int i = 0; i < levelNames.size(); i++) {
+    for (int i = 0; i < availableCount; i++) {
 
-      isLast = i == levelNames.size() - 1;
+      if (availableNames[i].empty()) break;
+      else {
+        isLast = i == availableCount - 1;
 
-      if (isLast && levelNames.size() > 1) {
-        renderedName += "or ";
-      }
+        if (isLast && availableCount > 1) {
+          renderedName += "or ";
+        }
 
-      renderedName += levelNames[i];
+        renderedName += availableNames[i];
 
-      if (pluralConditions[i]) {
-        renderedName += 's';
-      }
+        if (pluralConditions[i]) {
+          renderedName += 's';
+        }
 
-      if (!isLast) {
-        renderedName += levelNames.size() > 2 ? ", " : " ";
+        if (!isLast) {
+          renderedName += availableCount > 2 ? ", " : " ";
+        }
       }
     }
 
@@ -323,71 +325,83 @@ namespace cli_menu {
     return renderedName;
   }
 
-  // invoked in 'onEnter'
-  bool Command::isEnterError(mt::CR_BOL fromChild) {
+  // for toddlers
+  bool Command::doParentAllowEnter(mt::CR_BOL fromChild) {
+
     Command *parCom = static_cast<Cm*>(parent);
+    const mt::UI parReqCt = parCom ? parCom->getRequiredCount() : 0;
 
-    const mt::UI reqCt = getRequiredCount(),
-      parReqCt = parCom ? parCom->getRequiredCount() : 0;
-
-    // complete
-    if (!reqCt) {
-      if (parReqCt) return parCom->isEnterError(true);
-      return false;
-    }
-
-    // incomplete
-    if (ultimate) {
-      if (reqCt > 1) {
-        Message::printDialogError(
-          "Cannot process until all required parameters are met."
-        );
-      }
-      // 'requiredItems' remaining 1
-      else Message::printDialogError(
-        "Cannot be processed. This command still has a parameter named '"
-        + requiredItems.back()->getName()
-        + "' that must be filled in."
-      );
-    }
-    // group or toddler
+    // all complete
+    if (!parReqCt) return true;
     else {
+      // error strings
       const std::string
-        levelName = getChildrenLevelName(),
-        errStr[2] = {
-          "Cannot be processed. "
-           + (fromChild ? "The '" + name + "'" : "This")
-           + " group still has ",
-          " that must be used."
-        };
+        firstErrStr = "Cannot be processed. The "
+          + parCom->getLevelName() + " '"
+          + parCom->name + "' still has ",
+        lastErrStr = " that must be "
+          + std::string(ultimate ? "filled in." : "used.");
 
-      if (reqCt > 1) {
+      // some incomplete
+      if (parReqCt > 1) Message::printDialogError(
+        firstErrStr + parCom->getChildrenLevelName() + lastErrStr
+      );
+      // self incomplete
+      else if (parCom->requiredItems.back() == this) {
         Message::printDialogError(
-          errStr[0] + levelName + errStr[1]
+          "Cannot process before this "
+          + getLevelName() + " is filled in."
         );
       }
-      // 'requiredItems' remaining 1
-      else Message::printDialogError(
-        errStr[0] + "a " + levelName + " named '"
-        + requiredItems.back()->getName()
-        + "'" + errStr[1]
-      );
+      // one incomplete
+      else {
+        Command *oneLeftReq = static_cast<Cm*>(parCom->requiredItems.back());
+
+        Message::printDialogError(
+          firstErrStr + "a " + oneLeftReq->getLevelName()
+          + " named '" + oneLeftReq->name
+          + "'" + lastErrStr
+        );
+      }
     }
 
-    return true;
+    return false;
   }
 
-  // invoked in 'question' when 'requiredItems' is not empty
-  void Command::printNextError() {
-    if (isSupporter()) {
-      // there is the word 'input' because this could be 'Toggle'
+  // called in 'question' when 'requiredItems' contains
+  void Command::printRequiredNextError() {
+    // for any level
+    Message::printDialogError(
+      "Cannot skip this " + getLevelName() + " with empty "
+      + (getInheritanceFlag() == PARAMETER ? "argument" : "condition") + "."
+    );
+  }
+
+  // for single toddler
+  void Command::printSingleNextError() {
+    if (parent) {
+      Command* parCom = static_cast<Cm*>(parent);
+
       Message::printDialogError(
-        "Cannot skip with empty input on required parameter."
+        "The '" + parCom->name + "' "
+        + parCom->getLevelName() + " has only one "
+        + parCom->getChildrenLevelName() + "."
       );
     }
-    // group, ultimate, or toddler
-    else Message::printDialogError(
-      "Cannot skip this " + getLevelName() + " with empty argument."
+    else printOrphanError();
+  }
+
+  // for program or orphan (rarely used)
+  void Command::printOrphanError() {
+    Message::printDialogError(
+      "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
+      + " has no connections."
+    );
+  }
+
+  Command *Command::chooseLastCommand(mt::CR_BOL onlyParent) {
+    return ultimate ? ultimate : (
+      onlyParent && parent ? static_cast<Cm*>(parent) : this
     );
   }
 
@@ -405,7 +419,9 @@ namespace cli_menu {
         requiredItems.push_back(command);
       }
       // 'reqIdx' always positive
-      else if (!requiredItems.empty()) {
+      else if (!adding && !requiredItems.empty()) {
+        command->required = false;
+
         mt_uti::VecTools<TREE*>::cutSingle(
           requiredItems, reqIdx
         );
@@ -427,13 +443,17 @@ namespace cli_menu {
     Command *newUltimate,
     VEC_TREE &united
   ) {
-    VEC_TREE released = releaseChildren();
+    VEC_TREE released = children;
     mt_uti::VecTools<TREE*>::concat(united, released);
+
+    // avoid calling 'updateRequiredItems'
     ultimate = newUltimate;
+    children = {};
 
     for (TREE *node : released) {
-      node->resign();
-      static_cast<Cm*>(node)->collapseUltimateItems(newUltimate, united);
+      Command *com = static_cast<Cm*>(node);
+      com->parent = nullptr;
+      com->collapseUltimateItems(newUltimate, united);
     }
   }
 
@@ -535,8 +555,8 @@ namespace cli_menu {
     }
     else if (isParent()) return FLAG::ERROR;
 
-    // supporter points its parent
-    *lastCom = ultimate;
+    // toddler pointing to its parent
+    *lastCom = chooseLastCommand(true);
 
     return FLAG::COMPLETED;
   }
@@ -558,7 +578,9 @@ namespace cli_menu {
       status += "par, "; // 1st
 
       if (required) status += "req, "; // 2nd
-      else status += "opt, ";
+      else status += Color::getString(
+        "opt", Color::MAGENTA
+      ) + ", ";
 
       status += getFillingStatusString(); // 3rd
       fontColor = Color::VIOLET;
@@ -574,7 +596,7 @@ namespace cli_menu {
 
   std::string Command::getFillingStatusString() {
     if (!used) return "emp";
-    return "cor";
+    return Color::getString("cor", Color::MAGENTA);
   }
 
   mt::USI Command::questionTo(
@@ -603,19 +625,33 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
-        if (onEnter(paramData, lastCom)) {
+        // pointing to first child
+        if (isParent()) {
+          return dialogTo(
+            static_cast<Cm*>(children[0]), paramData, lastCom
+          );
+        }
+        // directly completed
+        else if (doParentAllowEnter()) {
+          *lastCom = chooseLastCommand();
+
+          if (getInheritanceFlag() == TOGGLE) {
+            setData(paramData, false);
+          }
+
           return FLAG::COMPLETED;
         }
       }
       else if (Control::nextTest(controlStr)) {
+        // pointing to neighbor
+        if (next) {
+          return static_cast<Cm*>(next)->dialog(paramData, lastCom);
+        }
         // redirected to first child
-        if (isParent()) {
+        else if (isParent()) {
           return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
         }
-        // pointing to neighbor
-        return dialogTo(
-          getUnusedNeighbor(this), paramData, lastCom
-        );
+        else printSingleNextError();
       }
       // find developer defined command
       else {
@@ -630,11 +666,8 @@ namespace cli_menu {
 
           if (ultimate) usedParent = ultimate;
           else if (parent) usedParent = parent;
-          else { // program or orphan (rarely occurred)
-            Message::printDialogError(
-              "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
-              + " has no connections."
-            );
+          else {
+            printOrphanError();
             continue;
           }
 
@@ -678,7 +711,10 @@ namespace cli_menu {
     }
 
     if (next != circularCheckpoint) {
-      return matchTo(static_cast<Cm*>(next), inputs, paramData, lastCom);
+      return matchTo(
+        static_cast<Cm*>(next),
+        inputs, paramData, lastCom
+      );
     }
 
     circularCheckpoint = nullptr;
