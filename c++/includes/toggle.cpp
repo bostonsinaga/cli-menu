@@ -64,20 +64,6 @@ namespace cli_menu {
     return getDashedName() + getMainLabel();
   }
 
-  bool Toggle::onEnter(
-    ParamData &paramData,
-    Command **lastCom
-  ) {
-    // directly completed
-    if (!isEnterError()) {
-      *lastCom = ultimate ? ultimate : this;
-      setData(paramData, false);
-      return true;
-    }
-
-    return false;
-  }
-
   mt::USI Toggle::match(
     mt::VEC_STR &inputs,
     ParamData &paramData,
@@ -111,7 +97,7 @@ namespace cli_menu {
             inputs, paramData, lastCom
           );
         }
-        // supporter
+        // toddler
         else {
           // actually there is no need for argument
           if (inputs.size() > 0) {
@@ -127,7 +113,10 @@ namespace cli_menu {
             else setData(paramData, true);
           }
 
-          return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
+          return matchTo(
+            getUnusedNeighbor(this),
+            inputs, paramData, lastCom
+          );
         }
       }
 
@@ -171,31 +160,53 @@ namespace cli_menu {
 
       if (boolFlag) {
         *lastCom = ultimate;
-        setData(paramData, Control::revealBoolean(boolFlag));
-        return questionTo(getUnusedNeighbor(this), paramData, lastCom);
+
+        setData(
+          paramData,
+          Control::revealBoolean(boolFlag)
+        );
+
+        // toddler
+        return questionTo(
+          getUnusedNeighbor(this), paramData, lastCom
+        );
       }
       else if (Control::cancelTest(buffer)) {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(buffer)) {
-        if (onEnter(paramData, lastCom)) {
+        // pointing to first child
+        if (isParent()) {
+          return dialogTo(
+            static_cast<Cm*>(children[0]), paramData, lastCom
+          );
+        }
+        // directly completed
+        else if (doParentAllowEnter()) {
+          *lastCom = chooseLastCommand();
+          setData(paramData, false);
           return FLAG::COMPLETED;
         }
       }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
-        if (isOptional() ||
-          (isRequired() && used)
-        ) {
+        if (isOptional() || (isRequired() && used)) {
           *lastCom = ultimate;
 
           // pointing to neighbor
-          return questionTo(
+          if (notSupporter) {
+            if (next) return dialogTo(
+              static_cast<Cm*>(next), paramData, lastCom
+            );
+            else printSingleNextError();
+          }
+          // supporter
+          else return questionTo(
             getUnusedNeighbor(this), paramData, lastCom
           );
         }
         // required items are not complete
-        else printNextError();
+        else printRequiredNextError();
       }
       else if (Control::selectTest(buffer)) {
         return dialog(paramData, lastCom);
