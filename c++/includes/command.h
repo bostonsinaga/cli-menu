@@ -26,6 +26,16 @@ namespace cli_menu {
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
 
+    virtual void setData(
+      ParamData &paramData,
+      mt::CR_STR argument
+    ) {}
+
+    virtual void setData(
+      ParamData &paramData,
+      mt::CR_BOL condition
+    ) {}
+
     void setChildren(
       CR_VEC_TREE newChildren,
       mt::CR_BOL needEmpty,
@@ -126,17 +136,14 @@ namespace cli_menu {
     );
 
     // error message selectors for controls
-    bool isEnterError(mt::CR_BOL fromChild = false);
-    void printNextError();
+    bool doParentAllowEnter(mt::CR_BOL fromChild = false);
+    void printRequiredNextError();
+    void printSingleNextError();
+    void printOrphanError();
 
-    virtual bool onEnter(
-      ParamData &paramData,
-      Command **lastCom
-    ) { return FLAG::ERROR; }
-
-    Command *chooseLastCommand() {
-      return ultimate ? ultimate : this;
-    }
+    Command *chooseLastCommand(
+      mt::CR_BOL onlyParent = false
+    );
 
     // secure original strings
     static void copyMatchNames(
@@ -202,7 +209,7 @@ namespace cli_menu {
     void printAfterBoundaryLine(std::string comName);
 
   public:
-    enum FLAG { COMPLETED, ERROR, CANCELED };
+    enum FLAG { CANCELED, COMPLETED, ERROR };
 
     Command() {}
 
