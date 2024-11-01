@@ -161,28 +161,13 @@ namespace cli_menu {
   }
 
   std::string Parameter::getFillingStatusString() {
+    std::string usedStr;
+
     if (!used) return "emp";
-    else if (accumulating) return "acc";
-    return "cor";
-  }
+    else if (accumulating) usedStr = "acc";
+    else usedStr = "cor";
 
-  bool Parameter::onEnter(
-    ParamData &paramData,
-    Command **lastCom
-  ) {
-    // need argument
-    if (!used && isRequired()) {
-      Message::printDialogError(
-        "This " + getLevelName() + " needs an argument."
-      );
-    }
-    // directly completed
-    else if (!isEnterError()) {
-      *lastCom = chooseLastCommand();
-      return true;
-    }
-
-    return false;
+    return Color::getString(usedStr, Color::MAGENTA);
   }
 
   mt::USI Parameter::match(
@@ -222,11 +207,14 @@ namespace cli_menu {
             inputs, paramData, lastCom
           );
         }
-        // supporter
+        // toddler
         else {
           // has argument
           if (popBackSet(inputs, paramData)) {
-            return matchTo(getUnusedNeighbor(this), inputs, paramData, lastCom);
+            return matchTo(
+              getUnusedNeighbor(this),
+              inputs, paramData, lastCom
+            );
           }
           // 'inputs' is empty
           return notPopBackSet(paramData, lastCom);
@@ -278,34 +266,47 @@ namespace cli_menu {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
-        if (onEnter(paramData, lastCom)) {
+        // need argument
+        if (!used && isRequired()) {
+          Message::printDialogError(
+            "This " + getLevelName() + " needs an argument."
+          );
+        }
+        // pointing to first child
+        else if (isParent()) {
+          return dialogTo(
+            static_cast<Cm*>(children[0]), paramData, lastCom
+          );
+        }
+        // directly completed
+        else if (doParentAllowEnter()) {
+          *lastCom = chooseLastCommand();
           return FLAG::COMPLETED;
         }
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
-        if (isOptional() ||
-          (isRequired() && used)
-        ) {
+        if (isOptional() || (isRequired() && used)) {
           *lastCom = chooseLastCommand();
 
-          // back to selection
-          if (isGroup()) {
-            return dialog(paramData, lastCom);
-          }
-          // ultimate
-          else if (isUltimate()) {
-            return questionTo(
-              static_cast<Cm*>(children[0]), paramData, lastCom
+          if (notSupporter) {
+            // back to selection
+            if (isParent()) {
+              return dialog(paramData, lastCom);
+            }
+            // pointing to neighbor
+            else if (next) return dialogTo(
+              static_cast<Cm*>(next), paramData, lastCom
             );
+            else printSingleNextError();
           }
-          // toddler
-          return dialogTo(
+          // supporter
+          else return questionTo(
             getUnusedNeighbor(this), paramData, lastCom
           );
         }
         // required items are not complete
-        else printNextError();
+        else printRequiredNextError();
       }
       else if (Control::selectTest(controlStr)) {
         return dialog(paramData, lastCom);
@@ -321,7 +322,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (!used || isSupporter()) {
+    if (!used || isToddler()) {
       return question(paramData, lastCom);
     }
 
