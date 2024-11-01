@@ -10,14 +10,9 @@ namespace cli_menu {
     void setData(
       ParamData &paramData,
       mt::CR_BOL condition
-    );
-
-  protected:
-    bool onEnter(
-      ParamData &paramData,
-      Command **lastCom
     ) override;
 
+  protected:
     mt::USI match(
       mt::VEC_STR &inputs,
       ParamData &paramData,

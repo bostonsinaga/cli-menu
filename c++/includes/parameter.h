@@ -13,7 +13,7 @@ namespace cli_menu {
     void setData(
       ParamData &paramData,
       mt::CR_STR argument
-    );
+    ) override;
 
     void resetArgument(ParamData &paramData);
 
@@ -29,11 +29,6 @@ namespace cli_menu {
 
   protected:
     std::string getFillingStatusString() override;
-
-    bool onEnter(
-      ParamData &paramData,
-      Command **lastCom
-    ) override;
 
     mt::USI match(
       mt::VEC_STR &inputs,
