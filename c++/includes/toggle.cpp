@@ -182,7 +182,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doParentAllowEnter()) {
+        else if (doUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
           setData(paramData, false);
           return FLAG::COMPLETED;

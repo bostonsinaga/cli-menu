@@ -279,7 +279,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doParentAllowEnter()) {
+        else if (doUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
           return FLAG::COMPLETED;
         }
