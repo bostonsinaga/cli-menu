@@ -325,47 +325,48 @@ namespace cli_menu {
     return renderedName;
   }
 
-  // for toddlers
-  bool Command::doParentAllowEnter(mt::CR_BOL fromChild) {
+  // for supporters
+  bool Command::doUltimateAllowEnter(mt::CR_BOL fromChild) {
 
-    Command *parCom = static_cast<Cm*>(parent);
-    const mt::UI parReqCt = parCom ? parCom->getRequiredCount() : 0;
+    if (ultimate) {
+      Command *ulCom = static_cast<Cm*>(ultimate);
+      const mt::UI reqCt = ulCom->getRequiredCount();
 
-    // all complete
-    if (!parReqCt) return true;
-    else {
-      // error strings
-      const std::string
-        firstErrStr = "Cannot be processed. The "
-          + parCom->getLevelName() + " '"
-          + parCom->name + "' still has ",
-        lastErrStr = " that must be "
-          + std::string(ultimate ? "filled in." : "used.");
-
-      // some incomplete
-      if (parReqCt > 1) Message::printDialogError(
-        firstErrStr + parCom->getChildrenLevelName() + lastErrStr
-      );
-      // self incomplete
-      else if (parCom->requiredItems.back() == this) {
-        Message::printDialogError(
-          "Cannot process before this "
-          + getLevelName() + " is filled in."
-        );
-      }
-      // one incomplete
+      // all complete
+      if (!reqCt) return true;
       else {
-        Command *oneLeftReq = static_cast<Cm*>(parCom->requiredItems.back());
+        // error strings
+        const std::string
+          firstErrStr = "Cannot be processed. The command '"
+            + ulCom->name + "' still has ",
+          lastErrStr = " that must be filled in.";
 
-        Message::printDialogError(
-          firstErrStr + "a " + oneLeftReq->getLevelName()
-          + " named '" + oneLeftReq->name
-          + "'" + lastErrStr
+        // some incomplete
+        if (reqCt > 1) Message::printDialogError(
+          firstErrStr + ulCom->getChildrenLevelName() + lastErrStr
         );
+        // self incomplete
+        else if (ulCom->requiredItems.back() == this) {
+          Message::printDialogError(
+            "Cannot process before this "
+            + getLevelName() + " is filled in."
+          );
+        }
+        // one incomplete
+        else {
+          Command *remaining = static_cast<Cm*>(ulCom->requiredItems.back());
+
+          Message::printDialogError(
+            firstErrStr + "a " + remaining->getLevelName()
+            + " named '" + remaining->name
+            + "'" + lastErrStr
+          );
+        }
       }
     }
 
-    return false;
+    // toddler
+    return true;
   }
 
   // called in 'question' when 'requiredItems' contains
@@ -452,7 +453,13 @@ namespace cli_menu {
 
     for (TREE *node : released) {
       Command *com = static_cast<Cm*>(node);
+
+      // do not call 'resign'
+      com->next = nullptr;
+      com->previous = nullptr;
+      com->head = com;
       com->parent = nullptr;
+
       com->collapseUltimateItems(newUltimate, united);
     }
   }
@@ -632,7 +639,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doParentAllowEnter()) {
+        else if (doUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
 
           if (getInheritanceFlag() == TOGGLE) {
