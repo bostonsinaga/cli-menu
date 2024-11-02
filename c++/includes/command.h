@@ -136,7 +136,7 @@ namespace cli_menu {
     );
 
     // error message selectors for controls
-    bool doParentAllowEnter(mt::CR_BOL fromChild = false);
+    bool doUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printRequiredNextError();
     void printSingleNextError();
     void printOrphanError();
