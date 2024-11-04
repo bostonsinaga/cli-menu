@@ -162,7 +162,7 @@ namespace cli_menu {
 
     if (children.size() > 0) {
       flag = matchTo(
-        static_cast<Cm*>(children[0]),
+        static_cast<Cm*>(children.front()),
         inputs, paramData, &lastCom
       );
 
