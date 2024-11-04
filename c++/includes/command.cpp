@@ -337,31 +337,34 @@ namespace cli_menu {
       else {
         // error strings
         const std::string
-          firstErrStr = "Cannot be processed. The command '"
-            + ulCom->name + "' still has ",
-          lastErrStr = " that must be filled in.";
+          errStr_1 = "Cannot process before ",
+          errStr_2 = errStr_1
+            + std::string(reqCt == 1 ? "a " : "")
+            + "required ";
+
+        Command *oneLeft = nullptr;
+
+        if (reqCt == 1) {
+          oneLeft = static_cast<Cm*>(ulCom->requiredItems.back());
+        }
 
         // some incomplete
         if (reqCt > 1) Message::printDialogError(
-          firstErrStr + ulCom->getChildrenLevelName() + lastErrStr
+          errStr_2 + ulCom->getChildrenLevelName() + "."
         );
         // self incomplete
-        else if (ulCom->requiredItems.back() == this) {
-          Message::printDialogError(
-            "Cannot process before this "
-            + getLevelName() + " is filled in."
-          );
-        }
+        else if (oneLeft == this) Message::printDialogError(
+          errStr_1 + "this " + getLevelName() + " is " + std::string(
+            getInheritanceFlag() == PARAMETER ? "filled in." : "specified."
+          )
+        );
         // one incomplete
-        else {
-          Command *remaining = static_cast<Cm*>(ulCom->requiredItems.back());
+        else Message::printDialogError(
+          errStr_2 + oneLeft->getLevelName()
+          + " named '" + oneLeft->name + "'."
+        );
 
-          Message::printDialogError(
-            firstErrStr + "a " + remaining->getLevelName()
-            + " named '" + remaining->name
-            + "'" + lastErrStr
-          );
-        }
+        return false;
       }
     }
 
@@ -724,7 +727,13 @@ namespace cli_menu {
       );
     }
 
+    // reset value
     circularCheckpoint = nullptr;
+
+    if (isMatchNeedDialog()) return dialogTo(
+      static_cast<Cm*>(parent), paramData, lastCom
+    );
+
     return FLAG::ERROR;
   }
 
@@ -734,30 +743,53 @@ namespace cli_menu {
    */
   bool Command::isMatchNeedDialog() {
     Command *parCom = static_cast<Cm*>(parent);
+    const mt::UI reqCt = parCom ? parCom->getRequiredCount() : 0;
 
-    if (Command::dialogued && parCom &&
-      parCom->getRequiredCount()
-    ) {
+    if (Command::dialogued && parCom && reqCt) {
+      Command *oneLeft = nullptr;
+
+      if (reqCt == 1) {
+        oneLeft = static_cast<Cm*>(parCom->requiredItems.back());
+      }
+
       // group or toddler
       if (!parCom->ultimate) {
 
-        Message::printDialogError(
-          "The '" + parCom->name + "' "
-          + parCom->getLevelName() + " has "
-          + parCom->getChildrenLevelName()
-          + " to be used.", 1
+        const std::string
+          firstErrStr = "The '" + parCom->name + "' group has ",
+          lastErrStr = " that need"
+            + std::string(reqCt == 1 ? "s": "")
+            + " to be used.";
+
+        if (reqCt > 1) Message::printDialogError(
+          firstErrStr + parCom->getChildrenLevelName()
+          + lastErrStr, 1
+        );
+        // one incomplete
+        else Message::printDialogError(
+          firstErrStr + "a " + oneLeft->getLevelName()
+          + " named '" + oneLeft->name + "'"
+          + lastErrStr, 1
         );
 
         return true;
       }
       // ultimate or supporter
       else {
-        Message::printDialogError(
-          "The '" + parCom->name
-          + "' command has required "
-          + getChildrenLevelName()
-          + " to be filled in.", 1
+        const std::string
+          errStr = "The '" + parCom->name
+            + "' command has " + (reqCt == 1 ? "a " : "")
+            + "required ";
+
+        if (reqCt > 1) Message::printDialogError(
+          errStr + getChildrenLevelName() + ".", 1
         );
+        // one missed
+        else Message::printDialogError(
+          errStr + oneLeft->getLevelName()
+          + " named '" + oneLeft->name + "'.", 1
+        );
+
         return true;
       }
       return false;
