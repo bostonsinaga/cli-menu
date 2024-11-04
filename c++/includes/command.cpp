@@ -638,7 +638,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children[0]), paramData, lastCom
+            static_cast<Cm*>(children.front()), paramData, lastCom
           );
         }
         // directly completed
@@ -659,7 +659,7 @@ namespace cli_menu {
         }
         // redirected to first child
         else if (isParent()) {
-          return static_cast<Cm*>(children[0])->dialog(paramData, lastCom);
+          return static_cast<Cm*>(children.front())->dialog(paramData, lastCom);
         }
         else printSingleNextError();
       }
