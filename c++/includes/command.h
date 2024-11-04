@@ -145,8 +145,20 @@ namespace cli_menu {
       mt::CR_BOL onlyParent = false
     );
 
+    // secure original name
+    static void copyMatchName(
+      std::string &hookName,
+      mt::CR_STR oriName
+    );
+
+    // secure original input
+    static void copyMatchInput(
+      std::string &hookInput,
+      mt::CR_STR oriInput
+    );
+
     // secure original strings
-    static void copyMatchNames(
+    static void copyMatchStrings(
       std::string &hookName, std::string &hookInput,
       mt::CR_STR oriName, mt::CR_STR oriInput
     );
