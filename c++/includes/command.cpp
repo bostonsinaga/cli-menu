@@ -911,8 +911,10 @@ namespace cli_menu {
   }
 
   bool Command::isTemporaryLetterCaseChange() {
-    return !Command::usingCaseSensitiveName &&
-      !Command::usingLowercaseName && !Command::usingUppercaseName;
+    return !(Command::usingCaseSensitiveName ||
+      Command::usingLowercaseName ||
+      Command::usingUppercaseName
+    );
   }
 
   void Command::onFreeChangeInputLetterCase(std::string &strIn) {
@@ -924,18 +926,31 @@ namespace cli_menu {
     }
   }
 
-  void Command::copyMatchNames(
-    std::string &hookName, std::string &hookInput,
-    mt::CR_STR oriName, mt::CR_STR oriInput
+  static void copyMatchName(
+    std::string &hookName,
+    mt::CR_STR oriName
   ) {
     hookName = oriName;
 
     if (Command::isTemporaryLetterCaseChange()) {
       mt_uti::StrTools::changeStringToUppercase(hookName);
     }
+  }
 
+  void Command::copyMatchInput(
+    std::string &hookInput,
+    mt::CR_STR oriInput
+  ) {
     hookInput = oriInput;
     Command::onFreeChangeInputLetterCase(hookInput);
+  }
+
+  void Command::copyMatchStrings(
+    std::string &hookName, std::string &hookInput,
+    mt::CR_STR oriName, mt::CR_STR oriInput
+  ) {
+    copyMatchName(hookName, oriName);
+    copyMatchInput(hookInput, oriInput);
   }
 
   void Command::changeTreeNamesToLowercase() {
