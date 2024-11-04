@@ -227,8 +227,7 @@ namespace cli_menu {
     // 'inputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent),
-        paramData, lastCom
+        static_cast<Cm*>(parent), paramData, lastCom
       );
     }
     // invoke callback
@@ -267,7 +266,7 @@ namespace cli_menu {
       }
       else if (Control::enterTest(controlStr)) {
         // need argument
-        if (!used && isRequired()) {
+        if (!used && !ultimate && isRequired()) {
           Message::printDialogError(
             "This " + getLevelName() + " needs an argument."
           );
