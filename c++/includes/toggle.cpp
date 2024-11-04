@@ -93,7 +93,7 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children[0]),
+            static_cast<Cm*>(children.front()),
             inputs, paramData, lastCom
           );
         }
@@ -178,7 +178,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children[0]), paramData, lastCom
+            static_cast<Cm*>(children.front()), paramData, lastCom
           );
         }
         // directly completed
