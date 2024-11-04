@@ -74,7 +74,7 @@ namespace cli_menu {
     if (inputs.size() > 0) {
       const int i = inputs.size() - 1;
 
-      Command::copyMatchNames(
+      Command::copyMatchStrings(
         copyName, copyInput,
         name, inputs[i]
       );
