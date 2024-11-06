@@ -611,14 +611,18 @@ namespace cli_menu {
 
   mt::USI Command::questionTo(
     Command *target,
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (target) return target->question(paramData, lastCom);
+    if (target) return target->question(
+      inputs, paramData, lastCom
+    );
     return FLAG::COMPLETED;
   }
 
   mt::USI Command::dialog(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -638,7 +642,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), paramData, lastCom
+            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
         // directly completed
@@ -655,11 +659,15 @@ namespace cli_menu {
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
         if (next) {
-          return static_cast<Cm*>(next)->dialog(paramData, lastCom);
+          return static_cast<Cm*>(next)->dialog(
+            inputs, paramData, lastCom
+          );
         }
         // redirected to first child
         else if (isParent()) {
-          return static_cast<Cm*>(children.front())->dialog(paramData, lastCom);
+          return static_cast<Cm*>(children.front())->dialog(
+            inputs, paramData, lastCom
+          );
         }
         else printSingleNextError();
       }
@@ -685,7 +693,7 @@ namespace cli_menu {
         }
 
         if (found) {
-          return found->dialog(paramData, lastCom);
+          return found->dialog(inputs, paramData, lastCom);
         }
         else if (isUltimate()) {
           Message::printDialogError("Parameter not found.");
@@ -704,10 +712,13 @@ namespace cli_menu {
 
   mt::USI Command::dialogTo(
     Command *target,
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (target) return target->dialog(paramData, lastCom);
+    if (target) return target->dialog(
+      inputs, paramData, lastCom
+    );
     return FLAG::COMPLETED;
   }
 
@@ -722,8 +733,7 @@ namespace cli_menu {
 
     if (next != circularCheckpoint) {
       return matchTo(
-        static_cast<Cm*>(next),
-        inputs, paramData, lastCom
+        static_cast<Cm*>(next), inputs, paramData, lastCom
       );
     }
 
@@ -731,7 +741,7 @@ namespace cli_menu {
     circularCheckpoint = nullptr;
 
     if (isMatchNeedDialog()) return dialogTo(
-      static_cast<Cm*>(parent), paramData, lastCom
+      static_cast<Cm*>(parent), inputs, paramData, lastCom
     );
 
     return FLAG::ERROR;

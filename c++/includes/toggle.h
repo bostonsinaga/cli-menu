@@ -21,11 +21,13 @@ namespace cli_menu {
 
     // always called after ultimate (closed question)
     mt::USI question(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     ) override;
 
     mt::USI dialog(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     ) override;

@@ -93,8 +93,7 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children.front()),
-            inputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
         // toddler
@@ -114,8 +113,7 @@ namespace cli_menu {
           }
 
           return matchTo(
-            getUnusedNeighbor(this),
-            inputs, paramData, lastCom
+            getUnusedNeighbor(this), inputs, paramData, lastCom
           );
         }
       }
@@ -126,8 +124,7 @@ namespace cli_menu {
     // 'inputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent),
-        paramData, lastCom
+        static_cast<Cm*>(parent), inputs, paramData, lastCom
       );
     }
     // invoke callback
@@ -140,6 +137,7 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::question(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -168,7 +166,7 @@ namespace cli_menu {
 
         // toddler
         return questionTo(
-          getUnusedNeighbor(this), paramData, lastCom
+          getUnusedNeighbor(this), inputs, paramData, lastCom
         );
       }
       else if (Control::cancelTest(buffer)) {
@@ -178,7 +176,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), paramData, lastCom
+            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
         // directly completed
@@ -196,20 +194,20 @@ namespace cli_menu {
           // pointing to neighbor
           if (notSupporter) {
             if (next) return dialogTo(
-              static_cast<Cm*>(next), paramData, lastCom
+              static_cast<Cm*>(next), inputs, paramData, lastCom
             );
             else printSingleNextError();
           }
           // supporter
           else return questionTo(
-            getUnusedNeighbor(this), paramData, lastCom
+            getUnusedNeighbor(this), inputs, paramData, lastCom
           );
         }
         // required items are not complete
         else printRequiredNextError();
       }
       else if (Control::selectTest(buffer)) {
-        return dialog(paramData, lastCom);
+        return dialog(inputs, paramData, lastCom);
       }
       else Message::printDialogError("Only accept boolean values.");
     }
@@ -218,16 +216,17 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::dialog(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (isToddler()) {
-      return question(paramData, lastCom);
+      return question(inputs, paramData, lastCom);
     }
 
     // no need to set condition exclusively
     setData(paramData, true);
-    return Command::dialog(paramData, lastCom);
+    return Command::dialog(inputs, paramData, lastCom);
   }
 }
 

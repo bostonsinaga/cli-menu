@@ -182,23 +182,27 @@ namespace cli_menu {
     );
 
     virtual mt::USI question(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     ) { return FLAG::ERROR; }
 
     mt::USI questionTo(
       Command *target,
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     virtual mt::USI dialog(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     mt::USI dialogTo(
       Command *target,
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     );
