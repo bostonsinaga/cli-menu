@@ -112,12 +112,60 @@ namespace cli_menu {
     }
   }
 
+  bool Parameter::checkArgument(
+    LINKED_LIST *node,
+    mt::CR_STR copyInput,
+    bool &found
+  ) {
+    std::string copyName;
+
+    Command::copyMatchName(
+      copyName, node->getName()
+    );
+
+    if (copyName == DashTest::cleanSingle(copyInput) ||
+      copyName == DashTest::cleanDouble(copyInput)
+    ) {
+      found = true;
+      return false;
+    }
+
+    return true;
+  }
+
   bool Parameter::popBackSet(
     mt::VEC_STR &inputs,
     ParamData &paramData
   ) {
     // only capture the last reversed 'inputs'
     if (inputs.size() > 0) {
+
+      std::string copyInput;
+      LINKED_LIST *iter;
+
+      bool found = false,
+        checking = true;
+
+      Command::copyMatchInput(
+        copyInput, inputs[inputs.size() - 1]
+      );
+
+      // 'iter' selection
+      if (isParent()) iter = children.front();
+      else if (next) iter = next;
+      else checking = false;
+
+      if (checking) {
+        iter->iterate<mt::CR_STR, bool&>(
+          Parameter:: checkArgument, copyInput, found
+        );
+
+        // question in the middle
+        if (found && required) {
+          
+        }
+      }
+
       resetArgument(paramData);
       setData(paramData, inputs[inputs.size() - 1]);
       inputs.pop_back();
@@ -175,12 +223,11 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    std::string copyName, copyInput;
-
     if (inputs.size() > 0) {
+      std::string copyName, copyInput;
 
       // copy to secure original strings
-      Command::copyMatchNames(
+      Command::copyMatchStrings(
         copyName, copyInput,
         name, inputs[inputs.size() - 1]
       );
@@ -203,7 +250,7 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children[0]), 
+            static_cast<Cm*>(children.front()), 
             inputs, paramData, lastCom
           );
         }
@@ -274,7 +321,7 @@ namespace cli_menu {
         // pointing to first child
         else if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children[0]), paramData, lastCom
+            static_cast<Cm*>(children.front()), paramData, lastCom
           );
         }
         // directly completed
