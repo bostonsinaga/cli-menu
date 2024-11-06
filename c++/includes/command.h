@@ -10,7 +10,9 @@ namespace cli_menu {
    */
   class Command : public mt_ds::tree::Node {
   protected:
+    using LINKED_LIST = mt_ds::linked_list::Node;
     using TREE = mt_ds::tree::Node;
+
     typedef mt_ds::tree::VEC_NODE VEC_TREE;
     typedef mt_ds::tree::CR_VEC_NODE CR_VEC_TREE;
     typedef Command Cm;
