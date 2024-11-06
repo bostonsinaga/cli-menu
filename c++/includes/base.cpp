@@ -19,14 +19,14 @@ namespace cli_menu {
     return false;
   }
 
-  std::string DashTest::cleanSingle(std::string &str) {
+  std::string DashTest::cleanSingle(mt::CR_STR str) {
     if (isSingle(str)) {
       return str.substr(1);
     }
     return "";
   }
 
-  std::string DashTest::cleanDouble(std::string &str) {
+  std::string DashTest::cleanDouble(mt::CR_STR str) {
     if (isDouble(str)) {
       return str.substr(2);
     }
