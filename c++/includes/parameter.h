@@ -25,10 +25,12 @@ namespace cli_menu {
 
     bool popBackSet(
       mt::VEC_STR &inputs,
-      ParamData &paramData
+      ParamData &paramData,
+      Command **lastCom
     );
 
     mt::USI notPopBackSet(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     );
@@ -44,11 +46,13 @@ namespace cli_menu {
 
     // always called after ultimate (open question)
     mt::USI question(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     ) override;
 
     mt::USI dialog(
+      mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
     ) override;

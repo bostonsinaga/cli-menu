@@ -135,7 +135,8 @@ namespace cli_menu {
 
   bool Parameter::popBackSet(
     mt::VEC_STR &inputs,
-    ParamData &paramData
+    ParamData &paramData,
+    Command **lastCom
   ) {
     // only capture the last reversed 'inputs'
     if (inputs.size() > 0) {
@@ -162,7 +163,7 @@ namespace cli_menu {
 
         // question in the middle
         if (found && required) {
-          
+          question(inputs, paramData, lastCom);
         }
       }
 
@@ -175,6 +176,7 @@ namespace cli_menu {
   }
 
   mt::USI Parameter::notPopBackSet(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -185,7 +187,7 @@ namespace cli_menu {
         "The last " + getLevelName() + " needs an argument.", 1
       );
 
-      return question(paramData, lastCom);
+      return question(inputs, paramData, lastCom);
     }
     // no dialog
     return FLAG::ERROR;
@@ -228,8 +230,7 @@ namespace cli_menu {
 
       // copy to secure original strings
       Command::copyMatchStrings(
-        copyName, copyInput,
-        name, inputs[inputs.size() - 1]
+        copyName, copyInput, name, inputs[inputs.size() - 1]
       );
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
@@ -239,8 +240,8 @@ namespace cli_menu {
         if (isParent()) {
 
           // 'inputs' may be empty
-          if (!popBackSet(inputs, paramData)) {
-            return notPopBackSet(paramData, lastCom);
+          if (!popBackSet(inputs, paramData, lastCom)) {
+            return notPopBackSet(inputs, paramData, lastCom);
           }
 
           // invoke callback or print error
@@ -250,21 +251,19 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children.front()), 
-            inputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
         // toddler
         else {
           // has argument
-          if (popBackSet(inputs, paramData)) {
+          if (popBackSet(inputs, paramData, lastCom)) {
             return matchTo(
-              getUnusedNeighbor(this),
-              inputs, paramData, lastCom
+              getUnusedNeighbor(this), inputs, paramData, lastCom
             );
           }
           // 'inputs' is empty
-          return notPopBackSet(paramData, lastCom);
+          return notPopBackSet(inputs, paramData, lastCom);
         }
       }
 
@@ -274,7 +273,7 @@ namespace cli_menu {
     // 'inputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent), paramData, lastCom
+        static_cast<Cm*>(parent), inputs, paramData, lastCom
       );
     }
     // invoke callback
@@ -287,6 +286,7 @@ namespace cli_menu {
   }
 
   mt::USI Parameter::question(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -321,7 +321,7 @@ namespace cli_menu {
         // pointing to first child
         else if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), paramData, lastCom
+            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
         // directly completed
@@ -338,24 +338,24 @@ namespace cli_menu {
           if (notSupporter) {
             // back to selection
             if (isParent()) {
-              return dialog(paramData, lastCom);
+              return dialog(inputs, paramData, lastCom);
             }
             // pointing to neighbor
             else if (next) return dialogTo(
-              static_cast<Cm*>(next), paramData, lastCom
+              static_cast<Cm*>(next), inputs, paramData, lastCom
             );
             else printSingleNextError();
           }
           // supporter
           else return questionTo(
-            getUnusedNeighbor(this), paramData, lastCom
+            getUnusedNeighbor(this), inputs, paramData, lastCom
           );
         }
         // required items are not complete
         else printRequiredNextError();
       }
       else if (Control::selectTest(controlStr)) {
-        return dialog(paramData, lastCom);
+        return dialog(inputs, paramData, lastCom);
       }
       // value input
       else setData(paramData, buffer);
@@ -365,15 +365,18 @@ namespace cli_menu {
   }
 
   mt::USI Parameter::dialog(
+    mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (!used || isToddler()) {
-      return question(paramData, lastCom);
+      return question(inputs, paramData, lastCom);
     }
 
     // no need to set argument exclusively
-    return Command::dialog(paramData, lastCom);
+    return Command::dialog(
+      inputs, paramData, lastCom
+    );
   }
 }
 
