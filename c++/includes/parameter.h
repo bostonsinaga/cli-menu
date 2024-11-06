@@ -17,6 +17,12 @@ namespace cli_menu {
 
     void resetArgument(ParamData &paramData);
 
+    static bool checkArgument(
+      LINKED_LIST *node,
+      mt::CR_STR copyInput,
+      bool &found
+    );
+
     bool popBackSet(
       mt::VEC_STR &inputs,
       ParamData &paramData
