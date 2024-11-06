@@ -926,7 +926,7 @@ namespace cli_menu {
     }
   }
 
-  static void copyMatchName(
+  void Command::copyMatchName(
     std::string &hookName,
     mt::CR_STR oriName
   ) {
