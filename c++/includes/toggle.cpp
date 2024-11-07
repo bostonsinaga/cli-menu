@@ -86,11 +86,6 @@ namespace cli_menu {
         if (isParent()) {
           setData(paramData, true);
 
-          // invoke callback or print error
-          if (children.size() == 0) {
-            return FLAG::ERROR;
-          }
-
           // redirected to first child
           return matchTo(
             static_cast<Cm*>(children.front()), inputs, paramData, lastCom
@@ -133,7 +128,7 @@ namespace cli_menu {
       return FLAG::COMPLETED;
     }
     // print error of incompleteness
-    return FLAG::ERROR;
+    return FLAG::FAILED;
   }
 
   mt::USI Toggle::question(
