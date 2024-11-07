@@ -563,7 +563,7 @@ namespace cli_menu {
     if (target) {
       return target->match(inputs, paramData, lastCom);
     }
-    else if (isParent()) return FLAG::ERROR;
+    else if (isParent()) return FLAG::FAILED;
 
     // toddler pointing to its parent
     *lastCom = chooseLastCommand(true);
@@ -744,7 +744,7 @@ namespace cli_menu {
       static_cast<Cm*>(parent), inputs, paramData, lastCom
     );
 
-    return FLAG::ERROR;
+    return FLAG::FAILED;
   }
 
   /**
