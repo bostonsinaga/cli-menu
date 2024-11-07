@@ -7,8 +7,12 @@ namespace cli_menu {
 
   class Parameter : public Command {
   private:
+    using LINKED_LIST = mt_ds::linked_list::Node;
+
     bool accumulating = false,
       type = false;
+
+    static const std::string needsArgStr;
 
     void setData(
       ParamData &paramData,
@@ -23,7 +27,11 @@ namespace cli_menu {
       bool &found
     );
 
-    bool popBackSet(
+    LINKED_LIST *getContinuation(
+      mt::CR_BOL needUnused = false
+    );
+
+    mt::USI popBackSet(
       mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
@@ -33,6 +41,13 @@ namespace cli_menu {
       mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
+    );
+
+    mt::USI middleMatch(
+      mt::VEC_STR &inputs,
+      ParamData &paramData,
+      Command **lastCom,
+      mt::CR_BOL needUnused = false
     );
 
   protected:
