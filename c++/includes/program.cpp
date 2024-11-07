@@ -166,46 +166,57 @@ namespace cli_menu {
         inputs, paramData, &lastCom
       );
 
-      if (flag == FLAG::COMPLETED) {
-        // check if has any callback
-        if (!runTo(lastCom, paramData)) {
+      switch (flag) {
+        case FLAG::COMPLETED: {
+          // check if has any callback
+          if (!runTo(lastCom, paramData)) {
+            Message::printNamed(
+              Message::STATUS::ERROR,
+              "No callback.",
+              lastCom->getName()
+            );
+          }
+          // succeeded after main callback
+          else Message::printNamed(
+            Message::STATUS::SUCCEED,
+            "Output file written to 'foo.kml'.",
+            name
+          );
+        break;}
+        case FLAG::CANCELED: {
+          Message::printNamed(
+            Message::STATUS::CANCELED,
+            "Input discarded.",
+            name
+          );
+        break;}
+        case FLAG::FAILED: {
+          // program
+          if (lastCom == this) {
+            if (!runTo(lastCom, paramData)) {
+              printError();
+            }
+          }
+          // supporter
+          else if (lastCom->isSupporter()) {
+            lastCom->getUltimate()->printError();
+          }
+          // group
+          else if (!(lastCom->isUltimate() ||
+            runTo(lastCom, paramData)
+          ) || lastCom->isUltimate()) {
+            lastCom->printError();
+          }
+        break;}
+        // error
+        default: {
           Message::printNamed(
             Message::STATUS::ERROR,
-            "No callback.",
-            lastCom->getName()
+            "There should be an error handler.",
+            name
           );
         }
-        // succeeded after main callback
-        else Message::printNamed(
-          Message::STATUS::SUCCEED,
-          "Output file written to 'foo.kml'.",
-          name
-        );
       }
-      else if (flag == FLAG::ERROR) {
-        // program
-        if (lastCom == this) {
-          if (!runTo(lastCom, paramData)) {
-            printError();
-          }
-        }
-        // supporter
-        else if (lastCom->isSupporter()) {
-          lastCom->getUltimate()->printError();
-        }
-        // group
-        else if (!(lastCom->isUltimate() ||
-          runTo(lastCom, paramData)
-        ) || lastCom->isUltimate()) {
-          lastCom->printError();
-        }
-      }
-      // canceled
-      else Message::printNamed(
-        Message::STATUS::CANCELED,
-        "Input discarded.",
-        name
-      );
     }
     // no children
     else Message::printNamed(
