@@ -5,6 +5,8 @@
 
 namespace cli_menu {
 
+  const std::string Parameter::needsArgStr = " needs an argument.";
+
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
@@ -112,6 +114,7 @@ namespace cli_menu {
     }
   }
 
+  // check if 'copyInput' is a command keyword
   bool Parameter::checkArgument(
     LINKED_LIST *node,
     mt::CR_STR copyInput,
@@ -120,7 +123,7 @@ namespace cli_menu {
     std::string copyName;
 
     Command::copyMatchName(
-      copyName, node->getName()
+      copyName, static_cast<Parameter*>(node)->name
     );
 
     if (copyName == DashTest::cleanSingle(copyInput) ||
@@ -133,7 +136,15 @@ namespace cli_menu {
     return true;
   }
 
-  bool Parameter::popBackSet(
+  Parameter::LINKED_LIST *Parameter::getContinuation(
+    mt::CR_BOL needUnused
+  ) {
+    if (isParent()) return children.front();
+    else if (needUnused) return getUnusedNeighbor(this);
+    return next;
+  }
+
+  mt::USI Parameter::popBackSet(
     mt::VEC_STR &inputs,
     ParamData &paramData,
     Command **lastCom
@@ -141,38 +152,38 @@ namespace cli_menu {
     // only capture the last reversed 'inputs'
     if (inputs.size() > 0) {
 
+      bool found = false;
       std::string copyInput;
-      LINKED_LIST *iter;
-
-      bool found = false,
-        checking = true;
+      LINKED_LIST *continuation = getContinuation();
 
       Command::copyMatchInput(
         copyInput, inputs[inputs.size() - 1]
       );
 
-      // 'iter' selection
-      if (isParent()) iter = children.front();
-      else if (next) iter = next;
-      else checking = false;
-
-      if (checking) {
-        iter->iterate<mt::CR_STR, bool&>(
+      if (continuation) {
+        continuation->iterate<mt::CR_STR, bool&>(
           Parameter:: checkArgument, copyInput, found
         );
 
         // question in the middle
         if (found && required) {
-          question(inputs, paramData, lastCom);
+
+          Message::printDialogError(
+            "The '" + name + "' " + getLevelName() + needsArgStr, 1
+          );
+
+          return question(inputs, paramData, lastCom);
         }
       }
 
       resetArgument(paramData);
       setData(paramData, inputs[inputs.size() - 1]);
       inputs.pop_back();
-      return true;
+
+      return FLAG::PASSED;
     }
-    return false;
+
+    return FLAG::ERROR;
   }
 
   mt::USI Parameter::notPopBackSet(
@@ -184,13 +195,13 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printDialogError(
-        "The last " + getLevelName() + " needs an argument.", 1
+        "The last " + getLevelName() + needsArgStr, 1
       );
 
       return question(inputs, paramData, lastCom);
     }
     // no dialog
-    return FLAG::ERROR;
+    return FLAG::FAILED;
   }
 
   std::string Parameter::getStringifiedType() {
@@ -237,34 +248,22 @@ namespace cli_menu {
         inputs.pop_back();
         *lastCom = this;
 
-        if (isParent()) {
+        mt::USI popBackSetFlag = popBackSet(inputs, paramData, lastCom);
 
-          // 'inputs' may be empty
-          if (!popBackSet(inputs, paramData, lastCom)) {
-            return notPopBackSet(inputs, paramData, lastCom);
-          }
+        // 'inputs' may be empty
+        if (popBackSetFlag == FLAG::PASSED) {
 
-          // invoke callback or print error
-          if (children.size() == 0) {
-            return FLAG::ERROR;
-          }
-
-          // redirected to first child
-          return matchTo(
-            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
+          // redirected to first child or unused neighbor
+          return middleMatch(
+            inputs, paramData, lastCom, true
           );
         }
-        // toddler
-        else {
-          // has argument
-          if (popBackSet(inputs, paramData, lastCom)) {
-            return matchTo(
-              getUnusedNeighbor(this), inputs, paramData, lastCom
-            );
-          }
-          // 'inputs' is empty
-          return notPopBackSet(inputs, paramData, lastCom);
+        else if (popBackSetFlag != FLAG::ERROR) {
+          return popBackSetFlag;
         }
+
+        // 'inputs' is empty, could invoke 'question'
+        return notPopBackSet(inputs, paramData, lastCom);
       }
 
       // point to neighbor if input not matched
@@ -282,7 +281,20 @@ namespace cli_menu {
       return FLAG::COMPLETED;
     }
     // print error of incompleteness
-    return FLAG::ERROR;
+    return FLAG::FAILED;
+  }
+
+  // match continues after question in the middle
+  mt::USI Parameter::middleMatch(
+    mt::VEC_STR &inputs,
+    ParamData &paramData,
+    Command **lastCom,
+    mt::CR_BOL needUnused
+  ) {
+    return matchTo(
+      static_cast<Cm*>(getContinuation(needUnused)),
+      inputs, paramData, lastCom
+    );
   }
 
   mt::USI Parameter::question(
@@ -315,8 +327,12 @@ namespace cli_menu {
         // need argument
         if (!used && !ultimate && isRequired()) {
           Message::printDialogError(
-            "This " + getLevelName() + " needs an argument."
+            "This " + getLevelName() + needsArgStr
           );
+        }
+        // question in the middle, back to match
+        else if (!inputs.empty()) {
+          return middleMatch(inputs, paramData, lastCom);
         }
         // pointing to first child
         else if (isParent()) {
@@ -335,7 +351,12 @@ namespace cli_menu {
         if (isOptional() || (isRequired() && used)) {
           *lastCom = chooseLastCommand();
 
-          if (notSupporter) {
+          // question in the middle, back to match
+          if (!inputs.empty()) {
+            return middleMatch(inputs, paramData, lastCom);
+          }
+          // parent
+          else if (notSupporter) {
             // back to selection
             if (isParent()) {
               return dialog(inputs, paramData, lastCom);
@@ -355,7 +376,13 @@ namespace cli_menu {
         else printRequiredNextError();
       }
       else if (Control::selectTest(controlStr)) {
-        return dialog(inputs, paramData, lastCom);
+        // question in the middle, cannot go to selection
+        if (!inputs.empty()) {
+          Message::printDialogError(
+            "Cannot select while inputs queue has not been processed."
+          );
+        }
+        else return dialog(inputs, paramData, lastCom);
       }
       // value input
       else setData(paramData, buffer);
