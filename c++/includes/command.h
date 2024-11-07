@@ -10,7 +10,6 @@ namespace cli_menu {
    */
   class Command : public mt_ds::tree::Node {
   protected:
-    using LINKED_LIST = mt_ds::linked_list::Node;
     using TREE = mt_ds::tree::Node;
 
     typedef mt_ds::tree::VEC_NODE VEC_TREE;
@@ -172,7 +171,7 @@ namespace cli_menu {
       mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
-    ) { return FLAG::ERROR; }
+    ) { return FLAG::FAILED; }
 
     mt::USI matchTo(
       Command *target,
@@ -185,7 +184,7 @@ namespace cli_menu {
       mt::VEC_STR &inputs,
       ParamData &paramData,
       Command **lastCom
-    ) { return FLAG::ERROR; }
+    ) { return FLAG::FAILED; }
 
     mt::USI questionTo(
       Command *target,
@@ -227,7 +226,7 @@ namespace cli_menu {
     void printAfterBoundaryLine(std::string comName);
 
   public:
-    enum FLAG { CANCELED, COMPLETED, ERROR };
+    enum FLAG { CANCELED, COMPLETED, ERROR, FAILED, PASSED };
 
     Command() {}
 
