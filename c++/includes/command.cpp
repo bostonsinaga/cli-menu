@@ -156,10 +156,7 @@ namespace cli_menu {
       + (endWithSeparator ? separator : "");
   }
 
-  std::string Command::getLevelName(
-    mt::CR_BOL toEndUser,
-    mt::CR_BOL isFirstCapitalLetter
-  ) {
+  std::string Command::getLevelName(mt::CR_BOL toEndUser) {
     std::string levelName;
 
     if (!parent) {
@@ -178,18 +175,12 @@ namespace cli_menu {
     }
     else levelName = toEndUser ? "command" : "toddler";
 
-    // change first character to uppercase
-    if (isFirstCapitalLetter) {
-      levelName[0] = char(std::toupper(levelName[0]));
-    }
-
     return levelName;
   }
 
   std::string Command::getChildrenLevelName(
     mt::CR_BOL toEndUser,
-    mt::CR_BOL onlyRequired,
-    mt::CR_BOL isFirstCapitalLetter
+    mt::CR_BOL onlyRequired
   ) {
     static const mt::USI maxCount = 4;
     mt::VEC_USI indexes;
@@ -258,8 +249,7 @@ namespace cli_menu {
     else if (parent) {
       return static_cast<Cm*>(parent)->getChildrenLevelName(
         toEndUser,
-        onlyRequired,
-        isFirstCapitalLetter
+        onlyRequired
       );
     }
     // program or orphan
@@ -317,11 +307,6 @@ namespace cli_menu {
       }
     }
 
-    // change first character to uppercase
-    if (isFirstCapitalLetter) {
-      renderedName[0] = char(std::toupper(renderedName[0]));
-    }
-
     return renderedName;
   }
 
@@ -375,9 +360,9 @@ namespace cli_menu {
   // called in 'question' when 'requiredItems' contains
   void Command::printRequiredNextError() {
     // for any level
-    Message::printDialogError(
-      "Cannot skip this " + getLevelName() + " with empty "
-      + (getInheritanceFlag() == PARAMETER ? "argument" : "condition") + "."
+    Message::printNeatDialogError(
+      "cannot skip this " + getLevelName() + " with empty "
+      + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
     );
   }
 
@@ -386,10 +371,10 @@ namespace cli_menu {
     if (parent) {
       Command* parCom = static_cast<Cm*>(parent);
 
-      Message::printDialogError(
-        "The '" + parCom->name + "' "
+      Message::printNeatDialogError(
+        "the '" + parCom->name + "' "
         + parCom->getLevelName() + " has only one "
-        + parCom->getChildrenLevelName() + "."
+        + parCom->getChildrenLevelName()
       );
     }
     else printOrphanError();
@@ -397,9 +382,9 @@ namespace cli_menu {
 
   // for program or orphan (rarely used)
   void Command::printOrphanError() {
-    Message::printDialogError(
-      "This " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
-      + " has no connections."
+    Message::printNeatDialogError(
+      "this " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
+      + " has no connections"
     );
   }
 
@@ -696,13 +681,15 @@ namespace cli_menu {
           return found->dialog(inputs, paramData, lastCom);
         }
         else if (isUltimate()) {
-          Message::printDialogError("Parameter not found.");
+          Message::printNeatDialogError("parameter not found");
         }
         else if (children.empty()) {
-          Message::printDialogError("This command does not have any parameters.");
+          Message::printNeatDialogError(
+            "this command does not have any parameters"
+          );
         }
-        else Message::printDialogError(
-          getChildrenLevelName(true, true, true) + " not found."
+        else Message::printNeatDialogError(
+          getChildrenLevelName() + " not found"
         );
       }
     }
