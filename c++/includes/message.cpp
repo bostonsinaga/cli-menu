@@ -5,6 +5,42 @@
 
 namespace cli_menu {
 
+  void Message::editToCapitalFirstPeriodEnd(
+    std::string &text,
+    int &forwardSpaceBoundaryIndex,
+    int &reverseSpaceBoundaryIndex
+  ) {
+    if (!text.empty()) {
+      // forward
+      for (forwardSpaceBoundaryIndex = 0;
+        forwardSpaceBoundaryIndex < text.length();
+        forwardSpaceBoundaryIndex++
+      ) {
+        if (!mt_uti::StrTools::isSpaceLine(text[forwardSpaceBoundaryIndex])) {
+          mt_uti::StrTools::changeToUppercase(text[forwardSpaceBoundaryIndex]);
+          forwardSpaceBoundaryIndex--;
+          break;
+        }
+      }
+
+      // reverse
+      for (reverseSpaceBoundaryIndex = text.length() - 1;
+        reverseSpaceBoundaryIndex >= 0;
+        reverseSpaceBoundaryIndex--
+      ) {
+        if (!mt_uti::StrTools::isSpaceLine(text[reverseSpaceBoundaryIndex])) {
+          text = text.substr(
+            0, reverseSpaceBoundaryIndex + 1) + '.'
+            + text.substr(reverseSpaceBoundaryIndex + 1
+          );
+
+          reverseSpaceBoundaryIndex += 2;
+          break;
+        }
+      }
+    }
+  }
+
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
       case STATUS::HINT: {
@@ -30,16 +66,40 @@ namespace cli_menu {
     std::cout << Color::getItalicString(text);
   }
 
+  void Message::printNeatItalicString(std::string text) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+    std::cout << Color::getItalicString(text, i, j);
+  }
+
   void Message::printUnderlineString(mt::CR_STR text) {
     std::cout << Color::getUnderlineString(text);
   }
 
+  void Message::printNeatUnderlineString(std::string text) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+    std::cout << Color::getUnderlineString(text, i, j);
+  }
+
   void Message::printString(
     mt::CR_STR text,
     CR_CLR foreground
   ) {
     std::cout << Color::getString(
       text, foreground
+    );
+  }
+
+  void Message::printNeatString(
+    std::string text,
+    CR_CLR foreground
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getString(
+      text, foreground, i, j
     );
   }
 
@@ -50,6 +110,19 @@ namespace cli_menu {
   ) {
     std::cout << Color::getString(
       text, foreground, background
+    );
+  }
+
+  void Message::printNeatString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getString(
+      text, foreground, background, i, j
     );
   }
 
@@ -62,6 +135,18 @@ namespace cli_menu {
     );
   }
 
+  void Message::printNeatItalicString(
+    std::string text,
+    CR_CLR foreground
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getItalicString(
+      text, foreground, i, j
+    );
+  }
+
   void Message::printItalicString(
     mt::CR_STR text,
     CR_CLR foreground,
@@ -69,6 +154,19 @@ namespace cli_menu {
   ) {
     std::cout << Color::getItalicString(
       text, foreground, background
+    );
+  }
+
+  void Message::printNeatItalicString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getItalicString(
+      text, foreground, background, i, j
     );
   }
 
@@ -81,6 +179,18 @@ namespace cli_menu {
     );
   }
 
+  void Message::printNeatUnderlineString(
+    std::string text,
+    CR_CLR foreground
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getUnderlineString(
+      text, foreground, i, j
+    );
+  }
+
   void Message::printUnderlineString(
     mt::CR_STR text,
     CR_CLR foreground,
@@ -88,28 +198,50 @@ namespace cli_menu {
   ) {
     std::cout << Color::getUnderlineString(
       text, foreground, background
+    );
+  }
+
+  void Message::printNeatUnderlineString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getUnderlineString(
+      text, foreground, background, i, j
     );
   }
 
   void Message::printNamed(
     mt::CR_INT flag,
     mt::CR_STR text,
-    std::string name,
+    mt::CR_STR name,
     mt::CR_BOL toUppercase
   ) {
     if (text.length() > 0) {
       std::cout << std::endl;
 
-      if (toUppercase) {
-        mt_uti::StrTools::changeStringToUppercase(name);
-      }
-
       if (name != "") {
-        std::cout << name << ": ";
+        std::cout << (toUppercase ?
+          mt_uti::StrTools::getStringToUppercase(name) : name
+        ) << ": ";
       }
 
       std::cout << getColoredTag(flag) << text << std::endl;
     }
+  }
+
+  void Message::printNeatNamed(
+    mt::CR_INT flag,
+    std::string text,
+    mt::CR_STR name,
+    mt::CR_BOL toUppercase
+  ) {
+    int i, j;
+    editToCapitalFirstPeriodEnd(text, i, j);
+    printNamed(flag, text, name, toUppercase);
   }
 
   void Message::printBoundaryLine(
@@ -133,11 +265,31 @@ namespace cli_menu {
     mt::CR_STR reason,
     int endNewlineCount
   ) {
-    if (endNewlineCount < 0) endNewlineCount = 0;
+    if (endNewlineCount < 0) {
+      endNewlineCount = 0;
+    }
 
     printString(
       "\n> " + reason + std::string(endNewlineCount, '\n'),
       Color::RED
+    );
+  }
+
+  void Message::printNeatDialogError(
+    mt::CR_STR reason,
+    int endNewlineCount
+  ) {
+    if (endNewlineCount < 0) {
+      endNewlineCount = 0;
+    }
+
+    int i, j;
+    std::string text = reason + std::string(endNewlineCount, '\n');
+
+    editToCapitalFirstPeriodEnd(text, i, j);
+
+    std::cout << Color::getString(
+      "\n> " + text, Color::RED, -1, j
     );
   }
 
