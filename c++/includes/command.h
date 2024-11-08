@@ -126,14 +126,12 @@ namespace cli_menu {
     );
 
     std::string getLevelName(
-      mt::CR_BOL toEndUser = true,
-      mt::CR_BOL isFirstCapitalLetter = false
+      mt::CR_BOL toEndUser = true
     );
 
     std::string getChildrenLevelName(
       mt::CR_BOL toEndUser = true,
       mt::CR_BOL onlyRequired = true,
-      mt::CR_BOL isFirstCapitalLetter = false
     );
 
     // error message selectors for controls
