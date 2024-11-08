@@ -204,7 +204,9 @@ namespace cli_menu {
       else if (Control::selectTest(buffer)) {
         return dialog(inputs, paramData, lastCom);
       }
-      else Message::printDialogError("Only accept boolean values.");
+      else Message::printNeatDialogError(
+        "only accept boolean values"
+      );
     }
 
     return FLAG::CANCELED;
