@@ -18,20 +18,26 @@ namespace cli_menu {
     static std::string correctNewlines(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      mt::CR_STR colorEscapeCode
-    );
-
-    static std::string getString(
-      std::string &text,
-      mt::CR_STR styleEscapeCode,
-      CR_CLR foreground
+      mt::CR_STR colorEscapeCode,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
       CR_CLR foreground,
-      CR_CLR background
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
+    );
+
+    static std::string getString(
+      std::string &text,
+      mt::CR_STR styleEscapeCode,
+      CR_CLR foreground,
+      CR_CLR background,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
   public:
@@ -62,43 +68,59 @@ namespace cli_menu {
 
     static std::string getString(
       std::string text,
-      CR_CLR foreground
+      CR_CLR foreground,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getString(
       std::string text,
       CR_CLR foreground,
-      CR_CLR background
-    );
-
-    static std::string getItalicString(
-      std::string text
+      CR_CLR background,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getItalicString(
       std::string text,
-      CR_CLR foreground
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getItalicString(
       std::string text,
       CR_CLR foreground,
-      CR_CLR background
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
-    static std::string getUnderlineString(
-      std::string text
+    static std::string getItalicString(
+      std::string text,
+      CR_CLR foreground,
+      CR_CLR background,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getUnderlineString(
       std::string text,
-      CR_CLR foreground
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground,
-      CR_CLR background
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
+    );
+
+    static std::string getUnderlineString(
+      std::string text,
+      CR_CLR foreground,
+      CR_CLR background,
+      mt::CR_INT forwardSpaceBoundaryIndex = -1,
+      mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
     static void printPresets();

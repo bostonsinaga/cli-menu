@@ -47,42 +47,63 @@ namespace cli_menu {
   std::string Color::correctNewlines(
     std::string &text,
     mt::CR_STR styleEscapeCode,
-    mt::CR_STR colorEscapeCode
+    mt::CR_STR colorEscapeCode,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
     if (text.empty()) return "";
 
     std::string newlines[2];
     bool anyNl = false;
+    const int lastIndex = text.length() - 1;
 
-    // newlines at front
-    for (int i = 0; i < text.size() - 1; i++) {
-      if (text[i] == '\n') {
-        text.erase(text.begin());
-        newlines[0] += "\n";
-        anyNl = true;
-        i--;
+    // forward newlines
+    if (forwardSpaceBoundaryIndex < 0) {
+
+      for (int i = 0; i < lastIndex; i++) {
+        if (text[i] == '\n') {
+          text.erase(text.begin());
+          newlines[0] += "\n";
+          anyNl = true;
+          i--;
+        }
+        else break;
       }
-      else break;
+    }
+    else {
+      anyNl = true;
+      text.erase(0, forwardSpaceBoundaryIndex + 1);
+      newlines[0] += std::string(forwardSpaceBoundaryIndex + 1, '\n');
     }
 
     if (!anyNl) newlines[0] = "";
     else anyNl = false;
 
-    // newlines at back
-    for (int i = text.size() - 1; i > 0; i--) {
-      if (text[i] == '\n') {
-        text.erase(text.begin() + text.size() - 1);
-        newlines[1] += "\n";
-        anyNl = true;
+    // reverse newlines
+    if (forwardSpaceBoundaryIndex < 0 ||
+      reverseSpaceBoundaryIndex > lastIndex
+    ) {
+      for (int i = lastIndex; i > 0; i--) {
+        if (text[i] == '\n') {
+          text.pop_back();
+          newlines[1] += "\n";
+          anyNl = true;
+        }
+        else break;
       }
-      else break;
+    }
+    else {
+      anyNl = true;
+      const int linesCt = text.length() - reverseSpaceBoundaryIndex;
+      text.erase(reverseSpaceBoundaryIndex);
+      newlines[1] += std::string(linesCt, '\n');
     }
 
     if (!anyNl) newlines[1] = "";
     mt::VEC_STR fractions;
 
     // inner newline detection
-    for (int i = 0; i < text.size(); i++) {
+    for (int i = 0; i < text.length(); i++) {
       if (text[i] == '\n') {
         fractions.push_back(text.substr(0, i));
         text.erase(0, i+1);
@@ -92,7 +113,7 @@ namespace cli_menu {
        * Also an antidote correction.
        * Adding parameter codes around it.
        */
-      else if (i+3 < text.size() &&
+      else if (i+3 < text.length() &&
         text[i] == '\x1B' &&
         text[i+1] == '[' &&
         text[i+2] == '0' &&
@@ -127,7 +148,9 @@ namespace cli_menu {
   std::string Color::getString(
     std::string &text,
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground
+    CR_CLR foreground,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
     return correctNewlines(
       text,
@@ -135,7 +158,9 @@ namespace cli_menu {
       "\x1B[38;2;"
         + std::to_string(foreground.r) + ";"
         + std::to_string(foreground.g) + ";" 
-        + std::to_string(foreground.b) + "m"
+        + std::to_string(foreground.b) + "m",
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
     );
   }
 
@@ -143,7 +168,9 @@ namespace cli_menu {
     std::string &text,
     mt::CR_STR styleEscapeCode,
     CR_CLR foreground,
-    CR_CLR background
+    CR_CLR background,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
     return correctNewlines(
       text,
@@ -154,65 +181,115 @@ namespace cli_menu {
         + std::to_string(foreground.b) + ";48;2;"
         + std::to_string(background.r) + ";"
         + std::to_string(background.g) + ";" 
-        + std::to_string(background.b) + "m"
+        + std::to_string(background.b) + "m",
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
     );
   }
 
   std::string Color::getString(
     std::string text,
-    CR_CLR foreground
+    CR_CLR foreground,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, "", foreground);
+    return getString(
+      text, "", foreground,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   std::string Color::getString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background
+    CR_CLR background,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, "", foreground, background);
-  }
-
-  std::string Color::getItalicString(
-    std::string text
-  ) {
-    return correctNewlines(text, italic, "");
+    return getString(
+      text, "", foreground, background,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   std::string Color::getItalicString(
     std::string text,
-    CR_CLR foreground
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, italic, foreground);
+    return correctNewlines(
+      text, italic, "",
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   std::string Color::getItalicString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, italic, foreground, background);
+    return getString(
+      text, italic, foreground,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
-  std::string Color::getUnderlineString(
-    std::string text
+  std::string Color::getItalicString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return correctNewlines(text, underline, "");
+    return getString(
+      text, italic, foreground, background,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   std::string Color::getUnderlineString(
     std::string text,
-    CR_CLR foreground
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, underline, foreground);
+    return correctNewlines(
+      text, underline, "",
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   std::string Color::getUnderlineString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
   ) {
-    return getString(text, underline, foreground, background);
+    return getString(
+      text, underline, foreground,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
+  }
+
+  std::string Color::getUnderlineString(
+    std::string text,
+    CR_CLR foreground,
+    CR_CLR background,
+    mt::CR_INT forwardSpaceBoundaryIndex,
+    mt::CR_INT reverseSpaceBoundaryIndex
+  ) {
+    return getString(
+      text, underline, foreground, background,
+      forwardSpaceBoundaryIndex,
+      reverseSpaceBoundaryIndex
+    );
   }
 
   void Color::printPresets() {
