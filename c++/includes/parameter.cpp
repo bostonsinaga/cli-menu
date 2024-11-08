@@ -378,7 +378,7 @@ namespace cli_menu {
       else if (Control::selectTest(controlStr)) {
         // question in the middle, cannot go to selection
         if (!inputs.empty()) {
-          Message::printDialogError(
+          Message::printNeatDialogError(
             "cannot select while inputs queue has not been processed"
           );
         }
