@@ -131,7 +131,7 @@ namespace cli_menu {
 
     std::string getChildrenLevelName(
       mt::CR_BOL toEndUser = true,
-      mt::CR_BOL onlyRequired = true,
+      mt::CR_BOL onlyRequired = true
     );
 
     // error message selectors for controls
@@ -282,9 +282,9 @@ namespace cli_menu {
     bool isRequired() { return required; }
     bool isOptional() { return !required; }
     bool isContainer() { return !ultimate || isUltimate(); }
-    bool isParent() { return isGroup() || isUltimate(); }
-    bool isToddler() { return (!ultimate && children.empty()) || isSupporter(); }
     bool isUsed() { return used; }
+    bool isParent();
+    bool isToddler();
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",

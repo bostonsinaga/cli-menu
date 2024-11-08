@@ -556,6 +556,30 @@ namespace cli_menu {
     return FLAG::COMPLETED;
   }
 
+  bool Command::isParent() {
+    static Command* recentCom = nullptr;
+    static bool recentState = false;
+
+    if (recentCom != this) {
+      recentCom = this;
+      recentState = isGroup() || isUltimate();
+    }
+
+    return recentState;
+  }
+
+  bool Command::isToddler() {
+    static Command* recentCom = nullptr;
+    static bool recentState = false;
+
+    if (recentCom != this) {
+      recentCom = this;
+      recentState = (!ultimate && children.empty()) || isSupporter();
+    }
+
+    return recentState;
+  }
+
   //________|
   // DIALOG |
   //________|
