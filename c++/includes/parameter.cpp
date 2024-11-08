@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  const std::string Parameter::needsArgStr = " needs an argument.";
+  const std::string Parameter::needsArgStr = " needs an argument";
 
   Parameter::Parameter(
     mt::CR_STR name_in,
@@ -168,8 +168,8 @@ namespace cli_menu {
         // question in the middle
         if (found && required) {
 
-          Message::printDialogError(
-            "The '" + name + "' " + getLevelName() + needsArgStr, 1
+          Message::printNeatDialogError(
+            "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
           return question(inputs, paramData, lastCom);
@@ -194,8 +194,8 @@ namespace cli_menu {
     // has no argument
     if (Command::dialogued) {
 
-      Message::printDialogError(
-        "The last " + getLevelName() + needsArgStr, 1
+      Message::printNeatDialogError(
+        "the last " + getLevelName() + needsArgStr, 1
       );
 
       return question(inputs, paramData, lastCom);
@@ -327,7 +327,7 @@ namespace cli_menu {
         // need argument
         if (!used && !ultimate && isRequired()) {
           Message::printDialogError(
-            "This " + getLevelName() + needsArgStr
+            "this " + getLevelName() + needsArgStr
           );
         }
         // question in the middle, back to match
@@ -379,7 +379,7 @@ namespace cli_menu {
         // question in the middle, cannot go to selection
         if (!inputs.empty()) {
           Message::printDialogError(
-            "Cannot select while inputs queue has not been processed."
+            "cannot select while inputs queue has not been processed"
           );
         }
         else return dialog(inputs, paramData, lastCom);
