@@ -24,7 +24,7 @@ namespace cli_menu {
 
     // force return when 'abc123 space abc123' is detected
     for (mt::CR_CH ch : str) {
-      if (ch != ' ' && ch != '\t') {
+      if (!mt_uti::StrTools::isWhitespace(ch)) {
         if (prevSpaced && !input.empty()) break;
         input += ch;
       }
