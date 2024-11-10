@@ -162,7 +162,7 @@ namespace cli_menu {
 
       if (continuation) {
         continuation->iterate<mt::CR_STR, bool&>(
-          Parameter:: checkArgument, copyInput, found
+          Parameter::checkArgument, copyInput, found
         );
 
         // question in the middle
