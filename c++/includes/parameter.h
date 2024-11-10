@@ -109,7 +109,9 @@ namespace cli_menu {
     std::string getStringifiedType();
     std::string getDashedName() override;
     std::string getFullName() override;
+
     mt::USI getInheritanceFlag() override { return PARAMETER; }
+    std::string getInheritanceName() override { return "parameter"; }
 
     void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
     bool isAccumulating() { return accumulating; }
