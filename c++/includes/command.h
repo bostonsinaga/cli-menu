@@ -215,7 +215,7 @@ namespace cli_menu {
      * Invoked in 'match' when
      * 'inputs' is empty and has 'requiredItems'.
      */
-    bool isMatchNeedDialog();
+    bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
     /**
      * Prints '-' signs horizontally before names list or
@@ -259,6 +259,8 @@ namespace cli_menu {
     VEC_TREE releaseChildren() override;
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
+    virtual std::string getInheritanceName() { return "command"; }
+
     virtual std::string getDashedName() { return name; }
     virtual std::string getFullName() { return name; }
 
