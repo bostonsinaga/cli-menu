@@ -60,7 +60,9 @@ namespace cli_menu {
 
     std::string getDashedName() override;
     std::string getFullName() override;
+
     mt::USI getInheritanceFlag() override { return TOGGLE; }
+    std::string getInheritanceName() override { return "toggle"; }
   };
 }
 
