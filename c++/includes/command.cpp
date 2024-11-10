@@ -169,9 +169,7 @@ namespace cli_menu {
       levelName = toEndUser ? "command" : "ultimate";
     }
     else if (isSupporter()) {
-      levelName = toEndUser ? (
-        getInheritanceFlag() == PARAMETER ? "parameter" : "toggle"
-      ) : "supporter";
+      levelName = toEndUser ? getInheritanceName() : "supporter";
     }
     else levelName = toEndUser ? "command" : "toddler";
 
@@ -383,8 +381,7 @@ namespace cli_menu {
   // for program or orphan (rarely used)
   void Command::printOrphanError() {
     Message::printNeatDialogError(
-      "this " + std::string(getInheritanceFlag() == PROGRAM ? "program" : "command")
-      + " has no connections"
+      "this " + getInheritanceName() + " has no connections"
     );
   }
 
@@ -738,7 +735,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (!circularCheckpoint) {
+    if (!circularCheckpoint && next) {
       circularCheckpoint = this;
     }
 
@@ -748,10 +745,24 @@ namespace cli_menu {
       );
     }
 
-    // reset value
-    circularCheckpoint = nullptr;
+    std::string inputLevelName = "input";
 
-    if (isMatchNeedDialog()) return dialogTo(
+    if (DashTest::isSingle(inputs.back())) {
+      inputLevelName = "toggle";
+    }
+    else if (DashTest::isDouble(inputs.back())) {
+      inputLevelName = "parameter";
+    }
+
+    Message::printNeatDialogError(
+      "unknown " + inputLevelName + " named '" + name + "'", 1
+    );
+
+    // reset values
+    circularCheckpoint = nullptr;
+    inputs = {};
+
+    if (isMatchNeedDialog(false)) return dialogTo(
       static_cast<Cm*>(parent), inputs, paramData, lastCom
     );
 
@@ -762,59 +773,60 @@ namespace cli_menu {
    * This will not be used by program or orphan because there is
    * already a condition for empty children in 'Program::run'.
    */
-  bool Command::isMatchNeedDialog() {
+  bool Command::isMatchNeedDialog(mt::CR_BOL withMessage) {
     Command *parCom = static_cast<Cm*>(parent);
     const mt::UI reqCt = parCom ? parCom->getRequiredCount() : 0;
 
     if (Command::dialogued && parCom && reqCt) {
-      Command *oneLeft = nullptr;
 
-      if (reqCt == 1) {
-        oneLeft = static_cast<Cm*>(parCom->requiredItems.back());
+      if (withMessage) {
+        Command *oneLeft = nullptr;
+
+        if (reqCt == 1) {
+          oneLeft = static_cast<Cm*>(parCom->requiredItems.back());
+        }
+
+        // group or toddler
+        if (!parCom->ultimate) {
+
+          const std::string
+            firstErrStr = "The '" + parCom->name + "' group has ",
+            lastErrStr = " that need"
+              + std::string(reqCt == 1 ? "s": "")
+              + " to be used.";
+
+          if (reqCt > 1) Message::printDialogError(
+            firstErrStr + parCom->getChildrenLevelName()
+            + lastErrStr, 1
+          );
+          // one incomplete
+          else Message::printDialogError(
+            firstErrStr + "a " + oneLeft->getLevelName()
+            + " named '" + oneLeft->name + "'"
+            + lastErrStr, 1
+          );
+        }
+        // ultimate or supporter
+        else {
+          const std::string
+            errStr = "The '" + parCom->name
+              + "' command has " + (reqCt == 1 ? "a " : "")
+              + "required ";
+
+          if (reqCt > 1) Message::printDialogError(
+            errStr + getChildrenLevelName() + ".", 1
+          );
+          // one missed
+          else Message::printDialogError(
+            errStr + oneLeft->getLevelName()
+            + " named '" + oneLeft->name + "'.", 1
+          );
+        }
       }
 
-      // group or toddler
-      if (!parCom->ultimate) {
-
-        const std::string
-          firstErrStr = "The '" + parCom->name + "' group has ",
-          lastErrStr = " that need"
-            + std::string(reqCt == 1 ? "s": "")
-            + " to be used.";
-
-        if (reqCt > 1) Message::printDialogError(
-          firstErrStr + parCom->getChildrenLevelName()
-          + lastErrStr, 1
-        );
-        // one incomplete
-        else Message::printDialogError(
-          firstErrStr + "a " + oneLeft->getLevelName()
-          + " named '" + oneLeft->name + "'"
-          + lastErrStr, 1
-        );
-
-        return true;
-      }
-      // ultimate or supporter
-      else {
-        const std::string
-          errStr = "The '" + parCom->name
-            + "' command has " + (reqCt == 1 ? "a " : "")
-            + "required ";
-
-        if (reqCt > 1) Message::printDialogError(
-          errStr + getChildrenLevelName() + ".", 1
-        );
-        // one missed
-        else Message::printDialogError(
-          errStr + oneLeft->getLevelName()
-          + " named '" + oneLeft->name + "'.", 1
-        );
-
-        return true;
-      }
-      return false;
+      return true;
     }
+
     return false;
   }
 
