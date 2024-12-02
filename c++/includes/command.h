@@ -211,6 +211,10 @@ namespace cli_menu {
       Command **lastCom
     );
 
+    // used in 'isMatchNeedDialog' method
+    bool areChildrenAllToddlers();
+    bool areNeighborsAllToddlers();
+
     /**
      * Invoked in 'match' when
      * 'inputs' is empty and has 'requiredItems'.
@@ -280,13 +284,14 @@ namespace cli_menu {
 
     bool isUltimate() { return this == ultimate; }
     bool isGroup() { return !(ultimate || children.empty()); }
-    bool isSupporter() { return parent && parent == ultimate; }
+    bool isDependence() { return parent && parent == ultimate; }
+    bool isIndependence() { return !ultimate && children.empty(); }
     bool isRequired() { return required; }
     bool isOptional() { return !required; }
     bool isContainer() { return !ultimate || isUltimate(); }
     bool isUsed() { return used; }
-    bool isParent();
-    bool isToddler();
+    bool isParent() { return isGroup() || isUltimate(); }
+    bool isToddler() { return isIndependence() || isDependence(); }
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",

@@ -121,7 +121,7 @@ namespace cli_menu {
   //__________|
 
   mt::UI Command::getRequiredCount() {
-    if (isSupporter()) {
+    if (isDependence()) {
       return ultimate->requiredItems.size();
     }
     return requiredItems.size();
@@ -168,7 +168,7 @@ namespace cli_menu {
     else if (isUltimate()) {
       levelName = toEndUser ? "command" : "ultimate";
     }
-    else if (isSupporter()) {
+    else if (isDependence()) {
       levelName = toEndUser ? getInheritanceName() : "supporter";
     }
     else levelName = toEndUser ? "command" : "toddler";
@@ -553,30 +553,6 @@ namespace cli_menu {
     return FLAG::COMPLETED;
   }
 
-  bool Command::isParent() {
-    static Command* recentCom = nullptr;
-    static bool recentState = false;
-
-    if (recentCom != this) {
-      recentCom = this;
-      recentState = isGroup() || isUltimate();
-    }
-
-    return recentState;
-  }
-
-  bool Command::isToddler() {
-    static Command* recentCom = nullptr;
-    static bool recentState = false;
-
-    if (recentCom != this) {
-      recentCom = this;
-      recentState = (!ultimate && children.empty()) || isSupporter();
-    }
-
-    return recentState;
-  }
-
   //________|
   // DIALOG |
   //________|
@@ -585,7 +561,7 @@ namespace cli_menu {
     std::string status = " (";
     Color fontColor;
 
-    if (!(isSupporter() || questionedGroup)) {
+    if (!(isDependence() || questionedGroup)) {
       status += "sel"; // 1st
       fontColor = Color::MAGENTA;
     }
@@ -774,6 +750,7 @@ namespace cli_menu {
    * already a condition for empty children in 'Program::run'.
    */
   bool Command::isMatchNeedDialog(mt::CR_BOL withMessage) {
+
     Command *parCom = static_cast<Cm*>(parent);
     const mt::UI reqCt = parCom ? parCom->getRequiredCount() : 0;
 
@@ -1034,7 +1011,7 @@ namespace cli_menu {
     ) {
       static bool isInit = true;
 
-      if (isInit && isSupporter()) {
+      if (isInit && isDependence()) {
         isInit = false;
 
         Message::printItalicString(
