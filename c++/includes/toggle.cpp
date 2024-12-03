@@ -191,7 +191,7 @@ namespace cli_menu {
             if (next) return dialogTo(
               static_cast<Cm*>(next), inputs, paramData, lastCom
             );
-            else printSingleNextError();
+            else printNullptrNextError();
           }
           // supporter
           else return questionTo(
