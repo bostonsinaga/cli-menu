@@ -152,15 +152,20 @@ namespace cli_menu {
     // only capture the last reversed 'inputs'
     if (inputs.size() > 0) {
 
-      bool found = false;
-      std::string copyInput;
-      LINKED_LIST *continuation = getContinuation();
+      bool found = false,
+        notDependence = isIndependence();
 
-      Command::copyMatchInput(
-        copyInput, inputs[inputs.size() - 1]
-      );
+      std::string copyInput;
+      LINKED_LIST *continuation;
+
+      if (notDependence) continuation = nullptr;
+      else continuation = getContinuation();
 
       if (continuation) {
+        Command::copyMatchInput(
+          copyInput, inputs[inputs.size() - 1]
+        );
+
         continuation->iterate<mt::CR_STR, bool&>(
           Parameter::checkArgument, copyInput, found
         );
@@ -169,7 +174,7 @@ namespace cli_menu {
         if (found && required) {
 
           Message::printNeatDialogError(
-            "the '" + name + "' " + getLevelName() + needsArgStr, 1
+            "the '" + name + "' " + getLevelName(true) + needsArgStr, 1
           );
 
           return question(inputs, paramData, lastCom);
@@ -180,6 +185,7 @@ namespace cli_menu {
       setData(paramData, inputs[inputs.size() - 1]);
       inputs.pop_back();
 
+      if (notDependence) return FLAG::COMPLETED;
       return FLAG::PASSED;
     }
 
@@ -195,7 +201,7 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printNeatDialogError(
-        "the last " + getLevelName() + needsArgStr, 1
+        "the last " + getLevelName(true) + needsArgStr, 1
       );
 
       return question(inputs, paramData, lastCom);
@@ -214,11 +220,10 @@ namespace cli_menu {
   }
 
   std::string Parameter::getFullName() {
-    return getDashedName()
-      + Color::getString(
-        "<" + getStringifiedType() + ">",
-        Command::usingDashesBoundaryLine ? Color::AZURE : Color(0, 95, 223)
-      ) + getMainLabel();
+    return getDashedName() + Color::getString(
+      "<" + getStringifiedType() + ">",
+      Command::usingDashesBoundaryLine ? Color::AZURE : Color(0, 95, 223)
+    ) + getMainLabel();
   }
 
   std::string Parameter::getFillingStatusString() {
@@ -248,7 +253,9 @@ namespace cli_menu {
         inputs.pop_back();
         *lastCom = this;
 
-        mt::USI popBackSetFlag = popBackSet(inputs, paramData, lastCom);
+        const mt::USI popBackSetFlag = popBackSet(
+          inputs, paramData, lastCom
+        );
 
         // 'inputs' may be empty
         if (popBackSetFlag == FLAG::PASSED) {
@@ -303,13 +310,13 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    const bool notSupporter = !isSupporter();
+    const bool notDependence = !isDependence();
     resetArgument(paramData);
 
-    // question display on non-supporters
-    if (notSupporter) questionedGroup = true;
+    // question display on non-dependences
+    if (notDependence) questionedGroup = true;
 
-    printAfterBoundaryLine(notSupporter ?
+    printAfterBoundaryLine(notDependence ?
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
@@ -327,7 +334,7 @@ namespace cli_menu {
         // need argument
         if (!used && !ultimate && isRequired()) {
           Message::printDialogError(
-            "this " + getLevelName() + needsArgStr
+            "this " + getLevelName(true) + needsArgStr
           );
         }
         // question in the middle, back to match
@@ -356,7 +363,7 @@ namespace cli_menu {
             return middleMatch(inputs, paramData, lastCom);
           }
           // parent
-          else if (notSupporter) {
+          else if (notDependence) {
             // back to selection
             if (isParent()) {
               return dialog(inputs, paramData, lastCom);
@@ -365,9 +372,9 @@ namespace cli_menu {
             else if (next) return dialogTo(
               static_cast<Cm*>(next), inputs, paramData, lastCom
             );
-            else printSingleNextError();
+            else printNullptrNextError();
           }
-          // supporter
+          // dependence
           else return questionTo(
             getUnusedNeighbor(this), inputs, paramData, lastCom
           );
