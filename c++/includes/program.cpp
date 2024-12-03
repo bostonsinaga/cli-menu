@@ -161,6 +161,7 @@ namespace cli_menu {
     mt::USI flag;
 
     if (children.size() > 0) {
+
       flag = matchTo(
         static_cast<Cm*>(children.front()),
         inputs, paramData, &lastCom
@@ -197,8 +198,8 @@ namespace cli_menu {
               printError();
             }
           }
-          // supporter
-          else if (lastCom->isSupporter()) {
+          // dependence
+          else if (lastCom->isDependence()) {
             lastCom->getUltimate()->printError();
           }
           // group
