@@ -126,18 +126,18 @@ namespace cli_menu {
     );
 
     std::string getLevelName(
-      mt::CR_BOL toEndUser = true
+      mt::CR_BOL toEndUser
     );
 
     std::string getChildrenLevelName(
-      mt::CR_BOL toEndUser = true,
-      mt::CR_BOL onlyRequired = true
+      mt::CR_BOL toEndUser,
+      mt::CR_BOL onlyRequired
     );
 
     // error message selectors for controls
     bool doUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printRequiredNextError();
-    void printSingleNextError();
+    void printNullptrNextError();
     void printOrphanError();
 
     Command *chooseLastCommand(
