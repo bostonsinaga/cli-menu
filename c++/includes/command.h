@@ -62,7 +62,7 @@ namespace cli_menu {
     );
 
     // this only invoked by 'ultimate'
-    void relateToSupporter(
+    void relateToDependence(
       TREE *node,
       mt::CR_BOL connected
     );
@@ -279,7 +279,7 @@ namespace cli_menu {
 
     /**
      * NOTE :
-     * Cannot change 'children' if this a supporter.
+     * Cannot change 'children' if this a dependence.
      */
 
     bool isUltimate() { return this == ultimate; }

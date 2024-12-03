@@ -74,7 +74,7 @@ namespace cli_menu {
       );
 
       for (TREE *node : newChildren) {
-        relateToSupporter(node, true);
+        relateToDependence(node, true);
         updateRequiredItems(static_cast<Cm*>(node), true);
       }
     }
@@ -86,7 +86,7 @@ namespace cli_menu {
   ) {
     if (isContainer()) {
       TREE::addChild(node, reconnected);
-      relateToSupporter(node, true);
+      relateToDependence(node, true);
       updateRequiredItems(static_cast<Cm*>(node), true);
     }
   }
@@ -95,7 +95,7 @@ namespace cli_menu {
   Command::TREE *Command::dismantle(mt::CR_INT index) {
     if (isParent()) {
       TREE *node = TREE::dismantle(index);
-      relateToSupporter(node, false);
+      relateToDependence(node, false);
       updateRequiredItems(static_cast<Cm*>(node), false);
       return node;
     }
@@ -107,7 +107,7 @@ namespace cli_menu {
       VEC_TREE released = TREE::releaseChildren();
 
       for (TREE *node : released) {
-        relateToSupporter(node, false);
+        relateToDependence(node, false);
         updateRequiredItems(static_cast<Cm*>(node), false);
       }
 
@@ -169,9 +169,9 @@ namespace cli_menu {
       levelName = toEndUser ? "command" : "ultimate";
     }
     else if (isDependence()) {
-      levelName = toEndUser ? getInheritanceName() : "supporter";
+      levelName = toEndUser ? getInheritanceName() : "dependence";
     }
-    else levelName = toEndUser ? "command" : "toddler";
+    else levelName = toEndUser ? "command" : "independence";
 
     return levelName;
   }
@@ -189,7 +189,7 @@ namespace cli_menu {
     if (isGroup()) {
       levelNames[0] = "command";
       levelNames[1] = "group";
-      levelNames[2] = "toddler";
+      levelNames[2] = "independence";
       levelNames[3] = "ultimate";
 
       // capture level occurrences
@@ -216,7 +216,7 @@ namespace cli_menu {
         levelNames[1] = "parameter";
         levelNames[2] = "toggle";
 
-        // capture supporter occurrences
+        // capture dependence occurrences
         for (TREE *node : children) {
           Command *curCom = static_cast<Cm*>(node);
 
@@ -239,11 +239,11 @@ namespace cli_menu {
       }
       else {
         availableCount = 1;
-        availableNames[0] = "supporter";
+        availableNames[0] = "dependence";
         pluralConditions[0] = getRequiredCount() > 1;
       }
     }
-    // toddler or supporter
+    // toddler
     else if (parent) {
       return static_cast<Cm*>(parent)->getChildrenLevelName(
         toEndUser,
@@ -253,7 +253,7 @@ namespace cli_menu {
     // program or orphan
     else {
       availableCount = 1;
-      availableNames[0] = toEndUser ? "command": "toddler";
+      availableNames[0] = toEndUser ? "command": "independence";
     }
 
     mt::USI pluralCount = 0;
@@ -308,7 +308,7 @@ namespace cli_menu {
     return renderedName;
   }
 
-  // for supporters
+  // for dependences
   bool Command::doUltimateAllowEnter(mt::CR_BOL fromChild) {
 
     if (ultimate) {
@@ -449,7 +449,7 @@ namespace cli_menu {
     }
   }
 
-  void Command::relateToSupporter(
+  void Command::relateToDependence(
     TREE *node,
     mt::CR_BOL connected
   ) {
@@ -565,7 +565,7 @@ namespace cli_menu {
       status += "sel"; // 1st
       fontColor = Color::MAGENTA;
     }
-    // supporter
+    // dependence
     else {
       status += "par, "; // 1st
 
@@ -783,7 +783,7 @@ namespace cli_menu {
             + lastErrStr, 1
           );
         }
-        // ultimate or supporter
+        // ultimate or dependence
         else {
           const std::string
             errStr = "The '" + parCom->name
