@@ -28,16 +28,16 @@ CM_FUNCTION(dialogFun) {
   }
 }
 
+CM_FUNCTION(fooFun) {
+  std::cout << "\nFoo is called..\n";
+}
+
 CM_FUNCTION(sentenceFun) {
   std::cout << "\nSentence is called..\n";
 }
 
-CM_FUNCTION(fileInFun) {
-  std::cout << "\nRead..\n";
-}
-
-CM_FUNCTION(fileOutFun) {
-  std::cout << "\nWrite..\n";
+CM_FUNCTION(wordFun) {
+  std::cout << "\nWrite word..\n";
 }
 
 CM_FUNCTION(tidyFun) {
@@ -69,7 +69,8 @@ int main(int argc, char *argv[]) {
     true,
     dialog,
     cm::Parameter::TEXT,
-    false
+    false,
+    CM_CALLBACK(fooFun)
   );
 
   cm::Toggle *go = new cm::Toggle(
@@ -79,63 +80,51 @@ int main(int argc, char *argv[]) {
     dialog
   );
 
-  cm::Toggle *run = new cm::Toggle(
+  cm::Parameter *run = new cm::Parameter(
     "run",
     "run description",
-    true,
-    go
-  );
-
-  cm::Parameter *stop = new cm::Parameter(
-    "stop",
-    "stop description",
     false,
     go,
     cm::Parameter::NUMBER,
     false
   );
 
+  cm::Toggle *stop = new cm::Toggle(
+    "stop",
+    "stop description",
+    true,
+    go
+  );
+
   cm::Parameter *sentence = new cm::Parameter(
     "sentence",
-    "Start conversation",
+    "sentence description",
     true,
     dialog,
-    cm::Parameter::NUMBER,
+    cm::Parameter::TEXT,
     false,
     CM_CALLBACK(sentenceFun)
   );
 
-  cm::Parameter *fileIn = new cm::Parameter(
-    "file-in",
-    "Filename input",
+  cm::Parameter *word = new cm::Parameter(
+    "word",
+    "word description",
     true,
     sentence,
     cm::Parameter::TEXT,
     false,
-    CM_CALLBACK(fileInFun)
-  );
-
-  cm::Parameter *fileOut = new cm::Parameter(
-    "file-out",
-    "Filename output",
-    false,
-    fileIn,
-    cm::Parameter::TEXT,
-    false,
-    CM_CALLBACK(fileOutFun)
+    CM_CALLBACK(wordFun)
   );
 
   cm::Toggle *tidy = new cm::Toggle(
     "tidy",
-    "Tidy up text",
+    "tidy description",
     false,
-    fileOut,
+    sentence,
     CM_CALLBACK(tidyFun)
   );
 
-  go->setAsUltimate();
   sentence->setAsUltimate();
-
   test->run(argc, argv, true);
   return 0;
 }
