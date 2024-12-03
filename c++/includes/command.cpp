@@ -279,15 +279,14 @@ namespace cli_menu {
     }
 
     // the product
-    std::string renderedName;
-    bool isLast;
+    std::string renderedName = "";
 
     // concatenate string vector into a sentence
     for (int i = 0; i < availableCount; i++) {
 
       if (availableNames[i].empty()) break;
       else {
-        isLast = i == availableCount - 1;
+        const bool isLast = i == availableCount - 1;
 
         if (isLast && availableCount > 1) {
           renderedName += "or ";
@@ -333,17 +332,17 @@ namespace cli_menu {
 
         // some incomplete
         if (reqCt > 1) Message::printDialogError(
-          errStr_2 + ulCom->getChildrenLevelName() + "."
+          errStr_2 + ulCom->getChildrenLevelName(true, true) + "."
         );
         // self incomplete
         else if (oneLeft == this) Message::printDialogError(
-          errStr_1 + "this " + getLevelName() + " is " + std::string(
+          errStr_1 + "this " + getLevelName(true) + " is " + std::string(
             getInheritanceFlag() == PARAMETER ? "filled in." : "specified."
           )
         );
         // one incomplete
         else Message::printDialogError(
-          errStr_2 + oneLeft->getLevelName()
+          errStr_2 + oneLeft->getLevelName(true)
           + " named '" + oneLeft->name + "'."
         );
 
@@ -359,20 +358,20 @@ namespace cli_menu {
   void Command::printRequiredNextError() {
     // for any level
     Message::printNeatDialogError(
-      "cannot skip this " + getLevelName() + " with empty "
+      "cannot skip this " + getLevelName(true) + " with empty "
       + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
     );
   }
 
   // for single toddler
-  void Command::printSingleNextError() {
+  void Command::printNullptrNextError() {
     if (parent) {
       Command* parCom = static_cast<Cm*>(parent);
 
       Message::printNeatDialogError(
         "the '" + parCom->name + "' "
-        + parCom->getLevelName() + " has only one "
-        + parCom->getChildrenLevelName()
+        + parCom->getLevelName(true) + " has only one "
+        + parCom->getChildrenLevelName(true, false)
       );
     }
     else printOrphanError();
@@ -651,7 +650,7 @@ namespace cli_menu {
             inputs, paramData, lastCom
           );
         }
-        else printSingleNextError();
+        else printNullptrNextError();
       }
       // find developer defined command
       else {
@@ -686,7 +685,7 @@ namespace cli_menu {
           );
         }
         else Message::printNeatDialogError(
-          getChildrenLevelName() + " not found"
+          getChildrenLevelName(true, false) + " not found"
         );
       }
     }
@@ -715,11 +714,9 @@ namespace cli_menu {
       circularCheckpoint = this;
     }
 
-    if (next != circularCheckpoint) {
-      return matchTo(
-        static_cast<Cm*>(next), inputs, paramData, lastCom
-      );
-    }
+    if (next != circularCheckpoint) return matchTo(
+      static_cast<Cm*>(next), inputs, paramData, lastCom
+    );
 
     std::string inputLevelName = "input";
 
@@ -773,12 +770,12 @@ namespace cli_menu {
               + " to be used.";
 
           if (reqCt > 1) Message::printDialogError(
-            firstErrStr + parCom->getChildrenLevelName()
+            firstErrStr + parCom->getChildrenLevelName(true, true)
             + lastErrStr, 1
           );
           // one incomplete
           else Message::printDialogError(
-            firstErrStr + "a " + oneLeft->getLevelName()
+            firstErrStr + "a " + oneLeft->getLevelName(true)
             + " named '" + oneLeft->name + "'"
             + lastErrStr, 1
           );
@@ -791,11 +788,11 @@ namespace cli_menu {
               + "required ";
 
           if (reqCt > 1) Message::printDialogError(
-            errStr + getChildrenLevelName() + ".", 1
+            errStr + getChildrenLevelName(true, true) + ".", 1
           );
           // one missed
           else Message::printDialogError(
-            errStr + oneLeft->getLevelName()
+            errStr + oneLeft->getLevelName(true)
             + " named '" + oneLeft->name + "'.", 1
           );
         }
