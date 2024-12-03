@@ -137,12 +137,12 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    const bool notSupporter = !isSupporter();
+    const bool notDependence = !isDependence();
 
     // question display on non-supporters
-    if (notSupporter) questionedGroup = true;
+    if (notDependence) questionedGroup = true;
 
-    printAfterBoundaryLine(notSupporter ?
+    printAfterBoundaryLine(notDependence ?
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
@@ -187,7 +187,7 @@ namespace cli_menu {
           *lastCom = ultimate;
 
           // pointing to neighbor
-          if (notSupporter) {
+          if (notDependence) {
             if (next) return dialogTo(
               static_cast<Cm*>(next), inputs, paramData, lastCom
             );
