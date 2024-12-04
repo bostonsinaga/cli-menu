@@ -45,10 +45,7 @@ namespace cli_menu {
     ) override;
 
     TREE* dismantle(mt::CR_INT index) override;
-
-    bool run();
     bool run(ParamData &paramData);
-
     void printDialogStatus();
     virtual std::string getFillingStatusString();
 
