@@ -17,6 +17,7 @@ namespace cli_menu {
     typedef Command Cm;
 
   private:
+    bool propagatingCallback = true;
     std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
@@ -237,7 +238,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      CR_SP_CALLBACK callback_in
+      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL propagatingCallback_in = true
     );
 
     Command(
@@ -245,7 +247,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      CR_SP_PLAIN_CALLBACK callback_in
+      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL propagatingCallback_in = true
     );
 
     Command(

@@ -14,12 +14,12 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL type_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_CALLBACK callback_in
-  ):
-  Command::Command(
+    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL propagatingCallback_in
+  ) : Command::Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in
+    callback_in, propagatingCallback_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -32,12 +32,12 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL type_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_PLAIN_CALLBACK callback_in
-  ):
-  Command::Command(
+    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL propagatingCallback_in
+  ) : Command::Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in
+    callback_in, propagatingCallback_in
   ) {
     type = type_in;
     accumulating = accumulating_in;
@@ -50,8 +50,7 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL type_in,
     mt::CR_BOL accumulating_in
-  ):
-  Command::Command(
+  ) : Command::Command(
     name_in, description_in,
     required_in, parent_in
   ) {

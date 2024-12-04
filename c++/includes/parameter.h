@@ -83,7 +83,8 @@ namespace cli_menu {
       Command *parent_in,
       mt::CR_BOL type_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_CALLBACK callback_in
+      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL propagatingCallback_in = true
     );
 
     Parameter(
@@ -93,7 +94,8 @@ namespace cli_menu {
       Command *parent_in,
       mt::CR_BOL type_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_PLAIN_CALLBACK callback_in
+      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL propagatingCallback_in = true
     );
 
     Parameter(

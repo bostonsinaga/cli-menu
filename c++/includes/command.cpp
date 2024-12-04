@@ -29,11 +29,13 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    CR_SP_CALLBACK callback_in
-  ): TREE(name_in) {
+    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL propagatingCallback_in
+  ) : TREE(name_in) {
     description = description_in;
     callback = callback_in;
     required = required_in;
+    propagatingCallback = propagatingCallback_in;
     setParent(parent_in);
   }
 
@@ -42,11 +44,13 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    CR_SP_PLAIN_CALLBACK callback_in
-  ): TREE(name_in) {
+    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL propagatingCallback_in
+  ) : TREE(name_in) {
     description = description_in;
     plainCallback = callback_in;
     required = required_in;
+    propagatingCallback = propagatingCallback_in;
     setParent(parent_in);
   }
 
@@ -55,7 +59,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in
-  ): TREE(name_in) {
+  ) : TREE(name_in) {
     description = description_in;
     required = required_in;
     setParent(parent_in);
