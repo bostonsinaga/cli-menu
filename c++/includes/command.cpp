@@ -500,25 +500,32 @@ namespace cli_menu {
     }
   }
 
-  bool Command::run() {
-    if (plainCallback) {
-      (*plainCallback)();
-      return true;
-    }
-    return false;
-  }
-
   bool Command::run(ParamData &paramData) {
+    bool called = false;
+
     if (callback) {
+
       (*callback)(
         paramData.texts,
         paramData.numbers,
         paramData.conditions
       );
+
+      called = true;
+    }
+    else if (plainCallback) {
+      (*plainCallback)();
+      called = true;
+    }
+
+    if (propagatingCallback) {
+      if (parent) {
+        return static_cast<Cm*>(parent)->run(paramData);
+      }
       return true;
     }
-    else if (run()) return true;
-    return false;
+
+    return called;
   }
 
   bool Command::runTo(
