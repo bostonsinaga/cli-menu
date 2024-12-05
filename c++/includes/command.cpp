@@ -567,6 +567,23 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
+  bool Command::printDirectInputsQueueError(
+    mt::VEC_STR &inputs,
+    mt::CR_STR controlName
+  ) {
+    if (!inputs.empty()) {
+      Message::printNeatDialogError(
+        "cannot " + controlName + " while direct inputs queue has not been processed"
+      );
+      return true;
+    }
+
+    // will be an opposite in overridden 'dialog' method
+    selecting = true;
+
+    return false;
+  }
+
   void Command::printDialogStatus() {
     std::string status = " (";
     Color fontColor;
@@ -662,6 +679,11 @@ namespace cli_menu {
           );
         }
         else printNullptrNextError();
+      }
+      else if (Control::selectTest(controlStr)) {
+        Message::printNeatDialogError(
+          "already in selection mode"
+        );
       }
       // find developer defined command
       else {
