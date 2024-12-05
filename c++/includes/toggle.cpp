@@ -151,6 +151,7 @@ namespace cli_menu {
       mt_uti::StrTools::changeStringToLowercase(buffer);
       int boolFlag = Control::booleanTest(buffer);
 
+      // value input
       if (boolFlag) {
         *lastCom = ultimate;
 
@@ -202,7 +203,16 @@ namespace cli_menu {
         else printRequiredNextError();
       }
       else if (Control::selectTest(buffer)) {
-        return dialog(inputs, paramData, lastCom);
+
+        // trying to skip input filling
+        if (!printDirectInputsQueueError(inputs, "select")) {
+
+          if (required) Message::printNeatDialogError(
+            "cannot select before condition is given"
+          );
+
+          return dialog(inputs, paramData, lastCom);
+        }
       }
       else Message::printNeatDialogError(
         "only accept boolean values"
@@ -217,9 +227,12 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (isToddler()) {
+    if (isToddler() && !selecting) {
       return question(inputs, paramData, lastCom);
     }
+
+    // this may set to true in 'printDirectInputsQueueError' method
+    selecting = false;
 
     // no need to set condition exclusively
     setData(paramData, true);

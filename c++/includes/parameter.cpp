@@ -382,13 +382,15 @@ namespace cli_menu {
         else printRequiredNextError();
       }
       else if (Control::selectTest(controlStr)) {
-        // question in the middle, cannot go to selection
-        if (!inputs.empty()) {
-          Message::printNeatDialogError(
-            "cannot select while inputs queue has not been processed"
+
+        // trying to skip input filling
+        if (!printDirectInputsQueueError(inputs, "select")) {
+
+          if (required) Message::printNeatDialogError(
+            "cannot select before arguments are given"
           );
+          else return dialog(inputs, paramData, lastCom);
         }
-        else return dialog(inputs, paramData, lastCom);
       }
       // value input
       else setData(paramData, buffer);
@@ -402,9 +404,12 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (!used || isToddler()) {
+    if ((!used || isToddler()) && !selecting) {
       return question(inputs, paramData, lastCom);
     }
+
+    // this was set to true after 'printDirectInputsQueueError' call
+    selecting = false;
 
     // no need to set argument exclusively
     return Command::dialog(
