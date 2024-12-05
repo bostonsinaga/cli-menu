@@ -84,6 +84,7 @@ namespace cli_menu {
 
     bool questionedGroup = false,
       required = false,
+      selecting = false,
       used = false;
 
     /**
@@ -214,10 +215,19 @@ namespace cli_menu {
     bool areNeighborsAllToddlers();
 
     /**
-     * Invoked in 'match' when
+     * Invoked in 'match' method when
      * 'inputs' is empty and has 'requiredItems'.
      */
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
+
+    /**
+     * Invoked in 'question' method to
+     * prioritize the rest of direct inputs queue.
+     */
+    bool printDirectInputsQueueError(
+      mt::VEC_STR &inputs,
+      mt::CR_STR controlName
+    );
 
     /**
      * Prints '-' signs horizontally before names list or
