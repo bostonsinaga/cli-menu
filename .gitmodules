@@ -1,3 +1,3 @@
-[submodule "c++/submodules/mini-tools"]
+[submodule "submodules/mini-tools"]
 	path = submodules/mini-tools
 	url = https://github.com/bostonsinaga/mini-tools.git
