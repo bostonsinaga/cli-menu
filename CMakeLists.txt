@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(test)
 
-set(minitools_dir submodules/mini-tools/c++/includes)
+set(minitools_dir submodules/mini-tools/includes)
 
 add_subdirectory(${minitools_dir})
 add_subdirectory(includes)
