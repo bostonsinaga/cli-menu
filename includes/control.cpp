@@ -43,28 +43,44 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Control::cancelTest(mt::CR_STR str) {
-    return test(str) == CANCEL + 1;
-  }
-
-  bool Control::selectTest(mt::CR_STR str) {
-    return test(str) == SELECT + 1;
-  }
-
-  bool Control::previousTest(mt::CR_STR str) {
-    return test(str) == PREVIOUS + 1;
-  }
-
-  bool Control::nextTest(mt::CR_STR str) {
-    return test(str) == NEXT + 1;
-  }
-
   bool Control::backTest(mt::CR_STR str) {
-    return test(str) == BACK + 1;
+    return Control::test(str) == BACK + 1;
+  }
+
+  bool Control::cancelTest(mt::CR_STR str) {
+    return Control::test(str) == CANCEL + 1;
+  }
+
+  bool Control::copyTest(mt::CR_STR str) {
+    return Control::test(str) == COPY + 1;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return test(str) == ENTER + 1;
+    return Control::test(str) == ENTER + 1;
+  }
+
+  bool Control::helpTest(mt::CR_STR str) {
+    return Control::test(str) == HELP + 1;
+  }
+
+  bool Control::listTest(mt::CR_STR str) {
+    return Control::test(str) == LIST + 1;
+  }
+
+  bool Control::modifyTest(mt::CR_STR str) {
+    return Control::test(str) == MODIFY + 1;
+  }
+
+  bool Control::nextTest(mt::CR_STR str) {
+    return Control::test(str) == NEXT + 1;
+  }
+
+  bool Control::previousTest(mt::CR_STR str) {
+    return Control::test(str) == PREVIOUS + 1;
+  }
+
+  bool Control::selectTest(mt::CR_STR str) {
+    return Control::test(str) == SELECT + 1;
   }
 
   int Control::booleanTest(mt::CR_STR str) {
