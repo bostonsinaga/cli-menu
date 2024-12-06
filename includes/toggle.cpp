@@ -226,7 +226,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if ((!selecting && isParent()) || isToddler()) {
+    if (parent && ((!selecting && isParent()) || isToddler())) {
       return question(inputs, paramData, lastCom);
     }
 
