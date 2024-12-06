@@ -8,14 +8,16 @@ namespace cli_menu {
    * All tests argument are expected to be lowercase.
    */
   const std::string Control::NAMES[count][2] = {
-    { ".back", ":b" },
-    { ".cancel", ":c" },
-    { ".enter", ":e" },
-    { ".help", ":h" }, 
-    { ".list", ":l" },
-    { ".next", ":n" },
+    { ".back",     ":b" },
+    { ".cancel",   ":x" },
+    { ".copy",     ":c" },
+    { ".enter",    ":e" },
+    { ".help",     ":h" }, 
+    { ".list",     ":l" },
+    { ".modify",   ":m" },
+    { ".next",     ":n" },
     { ".previous", ":p" },
-    { ".select", ":s" }
+    { ".select",   ":s" }
   };
 
   int Control::test(mt::CR_STR str) {
@@ -82,6 +84,21 @@ namespace cli_menu {
   bool Control::revealBoolean(mt::CR_INT testedFlag) {
     if (testedFlag > 1) return true;
     return false;
+  }
+
+  void Control::printParameterHelp() {
+    Message::printItalicString(
+      std::string("  .back     = :b, .cancel = :c,\n") +
+      std::string("  .enter    = :e, .help   = :h,\n") +
+      std::string("  .list     = :l, .next   = :n,\n") +
+      std::string("  .previous = :p, .select = :s\n")
+    );
+  }
+
+  void Control::printToggleHelp() {
+    Message::printItalicString(
+      "  yes = y, no = n, or boolean\n"
+    );
   }
 }
 
