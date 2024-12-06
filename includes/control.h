@@ -9,9 +9,10 @@ namespace cli_menu {
   private:
     enum {
       BACK = 0, CANCEL = 1,
-      ENTER = 2, HELP  = 3, 
-      LIST = 4, NEXT = 5,
-      PREVIOUS = 6, SELECT = 7
+      COPY = 2, ENTER = 3,
+      HELP = 4, LIST = 5,
+      MODIFY = 6, NEXT = 7,
+      PREVIOUS = 8, SELECT = 9
     };
 
     static const int count = 10;
@@ -19,9 +20,13 @@ namespace cli_menu {
     static int test(mt::CR_STR str);
 
   public:
-    static bool cancelTest(mt::CR_STR str);
     static bool backTest(mt::CR_STR str);
+    static bool cancelTest(mt::CR_STR str);
+    static bool copyTest(mt::CR_STR str);
     static bool enterTest(mt::CR_STR str);
+    static bool helpTest(mt::CR_STR str);
+    static bool listTest(mt::CR_STR str);
+    static bool modifyTest(mt::CR_STR str);
     static bool nextTest(mt::CR_STR str);
     static bool previousTest(mt::CR_STR str);
     static bool selectTest(mt::CR_STR str);
