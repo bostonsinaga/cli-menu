@@ -7,7 +7,7 @@ namespace cli_menu {
   /**
    * All tests argument are expected to be lowercase.
    */
-  const std::string Control::NAMES[count][2] = {
+  const std::string Control::NAMES[Control::count][2] = {
     { ".back",     ":b" },
     { ".cancel",   ":x" },
     { ".copy",     ":c" },
@@ -35,7 +35,7 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < count; j++) {
+      for (int j = 0; j < Control::count; j++) {
         if (input == NAMES[j][i]) return j+1;
       }
     }
@@ -87,12 +87,30 @@ namespace cli_menu {
   }
 
   void Control::printParameterHelp() {
-    Message::printItalicString(
-      std::string("  .back     = :b, .cancel = :c,\n") +
-      std::string("  .enter    = :e, .help   = :h,\n") +
-      std::string("  .list     = :l, .next   = :n,\n") +
-      std::string("  .previous = :p, .select = :s\n")
-    );
+    static int mostDigits[] = {0, 0};
+    static std::string text = "";
+
+    if (!(mostDigits[0] || mostDigits[1])) {
+      bool even;
+
+      for (int i = 0; i < Control::count; i++) {
+        even = !(i % 2);
+
+        if (Control::NAMES[i][0].length() > mostDigits[even]) {
+          mostDigits[even] = Control::NAMES[i][0].length();
+        }
+      }
+
+      for (int i = 0; i < Control::count; i++) {
+        even = !(i % 2);
+
+        text += (even ? "  " : " ") + Control::NAMES[i][0] + std::string(
+          mostDigits[even] - Control::NAMES[i][0].length(), ' '
+        ) + " = " + Control::NAMES[i][1] + (even ? "," : "\n");
+      }
+    }
+
+    Message::printItalicString(text);
   }
 
   void Control::printToggleHelp() {
