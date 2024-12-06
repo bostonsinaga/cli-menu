@@ -210,23 +210,21 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    // used in 'isMatchNeedDialog' method
-    bool areChildrenAllToddlers();
-    bool areNeighborsAllToddlers();
-
-    /**
-     * Invoked in 'match' method when
-     * 'inputs' is empty and has 'requiredItems'.
-     */
+    // 'inputs' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    /**
-     * Invoked in 'question' method to
-     * prioritize the rest of direct inputs queue.
-     */
+    // prioritize the rest of direct inputs queue
     bool printDirectInputsQueueError(
       mt::VEC_STR &inputs,
       mt::CR_STR controlName
+    );
+
+    // reusable selection control handler
+    mt::USI tryToSkipWithSelection(
+      mt::VEC_STR &inputs,
+      ParamData &paramData,
+      Command **lastCom,
+      mt::CR_STR additionalMessage
     );
 
     /**
@@ -236,7 +234,13 @@ namespace cli_menu {
     void printAfterBoundaryLine(std::string comName);
 
   public:
-    enum FLAG { CANCELED, COMPLETED, ERROR, FAILED, PASSED };
+    enum FLAG {
+      CANCELED,  // original
+      COMPLETED, // original
+      ERROR,     // pseudo
+      FAILED,    // original
+      PASSED     // pseudo
+    };
 
     Command() {}
 

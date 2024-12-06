@@ -577,11 +577,37 @@ namespace cli_menu {
       );
       return true;
     }
-
-    // will be an opposite in overridden 'dialog' method
-    selecting = true;
-
     return false;
+  }
+
+  mt::USI Command::tryToSkipWithSelection(
+    mt::VEC_STR &inputs,
+    ParamData &paramData,
+    Command **lastCom,
+    mt::CR_STR additionalMessage
+  ) {
+    if (!printDirectInputsQueueError(inputs, "select")) {
+
+      if (required) {
+        Message::printNeatDialogError(
+          "cannot select before " + additionalMessage
+        );
+
+        return FLAG::ERROR;
+      }
+      else {
+        // will be an opposite in overridden 'dialog' method
+        selecting = true;
+
+        if (isToddler()) return static_cast<Cm*>(parent)->dialog(
+          inputs, paramData, lastCom
+        );
+
+        return dialog(inputs, paramData, lastCom);
+      }
+    }
+
+    return FLAG::ERROR;
   }
 
   void Command::printDialogStatus() {
@@ -714,7 +740,7 @@ namespace cli_menu {
         }
         else if (children.empty()) {
           Message::printNeatDialogError(
-            "this command does not have any parameters"
+            "this " + getLevelName(true) + " does not have any parameters or toggles"
           );
         }
         else Message::printNeatDialogError(
