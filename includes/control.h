@@ -14,7 +14,7 @@ namespace cli_menu {
       PREVIOUS = 6, SELECT = 7
     };
 
-    static const int count = 8;
+    static const int count = 10;
     static const std::string NAMES[count][2];
     static int test(mt::CR_STR str);
 
