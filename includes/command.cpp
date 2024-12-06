@@ -1069,10 +1069,7 @@ namespace cli_menu {
 
       if (isInit && isDependence()) {
         isInit = false;
-
-        Message::printItalicString(
-          "  yes = y, no = n, or boolean\n"
-        );
+        Control::printToggleHelp();
       }
     }
     // once on the first call
@@ -1081,13 +1078,7 @@ namespace cli_menu {
 
       if (isInit) {
         isInit = false;
-
-        Message::printItalicString(
-          std::string("  .back     = :b, .cancel = :c,\n") +
-          std::string("  .enter    = :e, .help   = :h,\n") +
-          std::string("  .list     = :l, .next   = :n,\n") +
-          std::string("  .previous = :p, .select = :s\n")
-        );
+        Control::printParameterHelp();
       }
     }
 
