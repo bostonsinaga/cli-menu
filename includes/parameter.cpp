@@ -383,13 +383,13 @@ namespace cli_menu {
       }
       else if (Control::selectTest(controlStr)) {
 
-        // trying to skip input filling
-        if (!printDirectInputsQueueError(inputs, "select")) {
+        const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
+          inputs, paramData, lastCom,
+          "arguments are given"
+        );
 
-          if (required) Message::printNeatDialogError(
-            "cannot select before arguments are given"
-          );
-          else return dialog(inputs, paramData, lastCom);
+        if (tryToSkipWithSelectionFlag != FLAG::ERROR) {
+          return tryToSkipWithSelectionFlag;
         }
       }
       // value input
@@ -404,7 +404,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if ((!used || isToddler()) && !selecting) {
+    if ((!used && !selecting && isParent()) || isToddler()) {
       return question(inputs, paramData, lastCom);
     }
 

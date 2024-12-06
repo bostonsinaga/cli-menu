@@ -204,14 +204,13 @@ namespace cli_menu {
       }
       else if (Control::selectTest(buffer)) {
 
-        // trying to skip input filling
-        if (!printDirectInputsQueueError(inputs, "select")) {
+        const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
+          inputs, paramData, lastCom,
+          "condition is given"
+        );
 
-          if (required) Message::printNeatDialogError(
-            "cannot select before condition is given"
-          );
-
-          return dialog(inputs, paramData, lastCom);
+        if (tryToSkipWithSelectionFlag != FLAG::ERROR) {
+          return tryToSkipWithSelectionFlag;
         }
       }
       else Message::printNeatDialogError(
@@ -227,7 +226,7 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (isToddler() && !selecting) {
+    if ((!selecting && isParent()) || isToddler()) {
       return question(inputs, paramData, lastCom);
     }
 
