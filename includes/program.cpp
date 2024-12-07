@@ -22,7 +22,7 @@ namespace cli_menu {
   }
 
   Program::Program(): Toggle() {
-    author = "Anonymous";
+    author = "anonymous";
   }
 
   Program::Program(
@@ -36,7 +36,7 @@ namespace cli_menu {
     name_in, description_in, true, nullptr,
     callback_in, propagatingCallback_in
   ) {
-    author = "Anonymous";
+    author = author_in;
     version = version_in;
   }
 
@@ -51,7 +51,7 @@ namespace cli_menu {
     name_in, description_in, true, nullptr,
     callback_in, propagatingCallback_in
   ) {
-    author = "Anonymous";
+    author = author_in;
     version = version_in;
   }
 
@@ -63,7 +63,7 @@ namespace cli_menu {
   ) : Toggle(
     name_in, description_in, true, nullptr
   ) {
-    author = "Anonymous";
+    author = author_in;
     version = version_in;
   }
 
@@ -100,22 +100,27 @@ namespace cli_menu {
       Toggle::printHelp();
     }
     else {
+      Message::printBoundaryLine(0, 1);
+
       std::cout
-        << "Welcome to '" << mt_uti::StrTools::getStringToUppercase(name)
-        << "'\n\nversion: " << version.stringify()
+        << Color::getString(
+          "Welcome to '" + mt_uti::StrTools::getStringToUppercase(name),
+          Color::WHITE
+        ) << "'\n\nversion: " << version.stringify()
         << "\nauthor: " << author;
 
       Message::printBoundaryLine();
 
       std::cout
-        << "HINT:\n"
+        << Color::getString("\nHINTS:\n", Color::WHITE)
         << "* Use '-' for parameter and '--' for toggle\n"
         << "* The <req> or <opt> are only available in parameter (text/number)\n"
         << "* The toggle (boolean) always optional, except for main command and groups\n"
         << "* Please type '--[command] --help' to view detailed information";
 
       Message::printBoundaryLine();
-      std::cout << getBranchLeafString(1, true);
+      std::cout << "\n" << getBranchLeafString(1, true);
+      Message::printBoundaryLine(1, 2);
     }
   }
 
