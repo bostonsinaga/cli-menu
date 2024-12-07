@@ -51,7 +51,9 @@ namespace cli_menu {
     );
 
   protected:
-    std::string getFillingStatusString() override;
+    std::string getFillingStatusString(
+      mt::CR_BOL usingAbbreviations
+    ) override;
 
     mt::USI match(
       mt::VEC_STR &inputs,
