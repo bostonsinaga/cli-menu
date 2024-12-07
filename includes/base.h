@@ -7,7 +7,7 @@
 namespace cli_menu {
 
   // inheritance flags
-  enum {COMMAND, PROGRAM, PARAMETER, TOGGLE};
+  enum { COMMAND, PROGRAM, PARAMETER, TOGGLE };
 
   // callback format
   typedef std::function<void(mt::CR_VEC_STR, mt::CR_VEC2_DBL, mt::CR_VEC_BOL)> CALLBACK;
@@ -22,6 +22,13 @@ namespace cli_menu {
     mt::VEC2_DBL numbers;
     mt::VEC_BOL conditions;
   };
+
+  template <typename T>
+  void SET_NO_NEGATIVE(T &num) {
+    if constexpr (mt::CheckType::isNumber<T>()) {
+      if (num < 0) num = 0;
+    }
+  }
 
   class DashTest {
   public:
