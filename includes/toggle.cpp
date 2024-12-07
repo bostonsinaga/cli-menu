@@ -182,6 +182,9 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
       }
+      else if (Control::helpTest(buffer)) {
+        printHelp();
+      }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
         if (isOptional() || (isRequired() && used)) {
