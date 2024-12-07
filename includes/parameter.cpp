@@ -225,12 +225,21 @@ namespace cli_menu {
     ) + getMainLabel();
   }
 
-  std::string Parameter::getFillingStatusString() {
+  std::string Parameter::getFillingStatusString(
+    mt::CR_BOL usingAbbreviations
+  ) {
     std::string usedStr;
 
-    if (!used) return "emp";
-    else if (accumulating) usedStr = "acc";
-    else usedStr = "cor";
+    if (usingAbbreviations) {
+      if (!used) return "emp";
+      else if (accumulating) usedStr = "acc";
+      else usedStr = "cor";
+    }
+    else {
+      if (!used) return "empty";
+      else if (accumulating) usedStr = "accumulation";
+      else usedStr = "correction";
+    }
 
     return Color::getString(usedStr, Color::MAGENTA);
   }
@@ -351,6 +360,9 @@ namespace cli_menu {
           *lastCom = chooseLastCommand();
           return FLAG::COMPLETED;
         }
+      }
+      else if (Control::helpTest(buffer)) {
+        printHelp();
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question
