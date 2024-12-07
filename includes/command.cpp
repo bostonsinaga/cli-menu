@@ -691,6 +691,9 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
       }
+      else if (Control::helpTest(controlStr)) {
+        printHelp();
+      }
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
         if (next) {
