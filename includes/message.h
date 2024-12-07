@@ -107,8 +107,8 @@ namespace cli_menu {
     );
 
     static void printBoundaryLine(
-      int startNewlinesCount = 1,
-      int endNewlinesCount = 0,
+      int startNewlinesCount,
+      int endNewlinesCount,
       mt::CR_INT count = 45,
       mt::CR_CH character = '-'
     );
