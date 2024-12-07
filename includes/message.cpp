@@ -245,6 +245,8 @@ namespace cli_menu {
   }
 
   void Message::printBoundaryLine(
+    int startNewlinesCount,
+    int endNewlinesCount,
     mt::CR_INT count,
     mt::CR_CH character
   ) {
@@ -252,39 +254,41 @@ namespace cli_menu {
     static char ch;
     static std::string boundaryLine;
 
+    SET_NO_NEGATIVE<int>(startNewlinesCount);
+    SET_NO_NEGATIVE<int>(endNewlinesCount);
+
     if (count > 0 && (ct != count || ch != character)) {
       ct = count;
       ch = character;
       boundaryLine = std::string(ct, ch);
     }
 
-    if (ct > 0) std::cout << std::endl << boundaryLine;
+    if (ct > 0) std::cout
+      << std::string(startNewlinesCount, '\n')
+      << boundaryLine
+      << std::string(endNewlinesCount, '\n');
   }
 
   void Message::printDialogError(
     mt::CR_STR reason,
-    int endNewlineCount
+    int endNewlinesCount
   ) {
-    if (endNewlineCount < 0) {
-      endNewlineCount = 0;
-    }
+    SET_NO_NEGATIVE<int>(endNewlinesCount);
 
     printString(
-      "\n> " + reason + std::string(endNewlineCount, '\n'),
+      "\n> " + reason + std::string(endNewlinesCount, '\n'),
       Color::RED
     );
   }
 
   void Message::printNeatDialogError(
     mt::CR_STR reason,
-    int endNewlineCount
+    int endNewlinesCount
   ) {
-    if (endNewlineCount < 0) {
-      endNewlineCount = 0;
-    }
+    SET_NO_NEGATIVE<int>(endNewlinesCount);
 
     int i, j;
-    std::string text = reason + std::string(endNewlineCount, '\n');
+    std::string text = reason + std::string(endNewlinesCount, '\n');
 
     editToCapitalFirstPeriodEnd(text, i, j);
 
