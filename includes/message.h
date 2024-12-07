@@ -107,18 +107,20 @@ namespace cli_menu {
     );
 
     static void printBoundaryLine(
+      int startNewlinesCount = 1,
+      int endNewlinesCount = 0,
       mt::CR_INT count = 45,
       mt::CR_CH character = '-'
     );
 
     static void printDialogError(
       mt::CR_STR reason,
-      int endNewlineCount = 2
+      int endNewlinesCount = 2
     );
 
     static void printNeatDialogError(
       mt::CR_STR reason,
-      int endNewlineCount = 2
+      int endNewlinesCount = 2
     );
 
     // decorated input interface
