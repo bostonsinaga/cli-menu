@@ -18,7 +18,6 @@ namespace cli_menu {
 
   private:
     bool propagatingCallback = true;
-    std::string description;
     SP_CALLBACK callback = nullptr;
     SP_PLAIN_CALLBACK plainCallback = nullptr;
     VEC_TREE requiredItems;
@@ -46,8 +45,25 @@ namespace cli_menu {
 
     TREE* dismantle(mt::CR_INT index) override;
     bool run(ParamData &paramData);
-    void printDialogStatus();
-    virtual std::string getFillingStatusString();
+
+    std::string getDialogStatusString(
+      mt::CR_BOL usingAbbreviations,
+      mt::CR_BOL withBrackets,
+      mt::CR_BOL forcedToDependenceVersion = false
+    );
+
+    void printDialogStatus(
+      mt::CR_BOL usingAbbreviations,
+      mt::CR_BOL withBrackets,
+      mt::CR_BOL forcedToDependenceVersion = false
+    );
+
+    std::string getHelpDialogStatusString();
+    void printHelpDialogStatus();
+
+    virtual std::string getFillingStatusString(
+      mt::CR_BOL usingAbbreviations
+    );
 
     void updateRequiredItems(
       Command *command,
@@ -80,6 +96,7 @@ namespace cli_menu {
 
   protected:
     Command *ultimate = nullptr;
+    std::string description;
     int paramDataIndex = -1;
 
     bool questionedGroup = false,
@@ -103,12 +120,6 @@ namespace cli_menu {
     bool runTo(
       Command *target,
       ParamData &paramData
-    );
-
-    std::string getBranchLeafString(
-      mt::CR_INT spacesCount,
-      mt::CR_INT columnIndex,
-      mt::CR_BOL withDescription
     );
 
     mt::UI getRequiredCount();
@@ -314,9 +325,9 @@ namespace cli_menu {
       mt::CR_BOL endWithSeparator = false
     );
 
-    std::string getBranchLeafString(
-      int spacesCount,
-      mt::CR_BOL withDescription
+    void printChildrenNamesDescriptions(
+      mt::CR_BOL startWithBoundaryLine = true,
+      mt::CR_BOL endWithBoundaryLine = true
     );
 
     virtual void printHelp();
