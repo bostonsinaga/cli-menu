@@ -610,38 +610,102 @@ namespace cli_menu {
     return FLAG::ERROR;
   }
 
-  void Command::printDialogStatus() {
-    std::string status = " (";
+  std::string Command::getDialogStatusString(
+    mt::CR_BOL usingAbbreviations,
+    mt::CR_BOL withBrackets,
+    mt::CR_BOL forcedToDependenceVersion
+  ) {
+    std::string status = withBrackets ? " (" : "";
     Color fontColor;
 
-    if (!(isDependence() || questionedGroup)) {
-      status += "sel"; // 1st
+    // independence or parent
+    if (!(isDependence() || questionedGroup || forcedToDependenceVersion)) {
+      status += usingAbbreviations ? "sel" : "selection";
       fontColor = Color::MAGENTA;
     }
     // dependence
     else {
-      status += "par, "; // 1st
+      // first
+      if (getInheritanceFlag() == PARAMETER) {
+        status += usingAbbreviations ? "par" : "parameter";
+      }
+      else status += usingAbbreviations ? "tog" : "toggle";
 
-      if (required) status += "req, "; // 2nd
+      status += ", ";
+
+      // second
+      if (required) {
+        status += std::string(
+          usingAbbreviations ? "req" : "required"
+        ) + ", ";
+      }
       else status += Color::getString(
-        "opt", Color::MAGENTA
+        usingAbbreviations ? "opt" : "optional",
+        Color::MAGENTA
       ) + ", ";
 
-      status += getFillingStatusString(); // 3rd
+      // third
+      status += getFillingStatusString(usingAbbreviations);
       fontColor = Color::VIOLET;
 
       // group returns to call 'dialog' method after 'question'
       questionedGroup = false;
     }
 
-    Message::printItalicString(
-      status + ")\n", fontColor
+    return Color::getItalicString(
+      status + (withBrackets ? ")\n" : "\n"), fontColor
     );
   }
 
-  std::string Command::getFillingStatusString() {
-    if (!used) return "emp";
-    return Color::getString("cor", Color::MAGENTA);
+  void Command::printDialogStatus(
+    mt::CR_BOL usingAbbreviations,
+    mt::CR_BOL withBrackets,
+    mt::CR_BOL forcedToDependenceVersion
+  ) {
+    static Command *curCom = nullptr;
+    static std::string text = "";
+
+    if (curCom != this) {
+      curCom = this;
+
+      text = getDialogStatusString(
+        usingAbbreviations,
+        withBrackets,
+        forcedToDependenceVersion
+      );
+    }
+
+    // the 'text' is reusable within the same instance
+    std::cout << text;
+  }
+
+  std::string Command::getHelpDialogStatusString() {
+    return Color::getString("THIS: ", Color::SKY_BLUE)
+      + getDialogStatusString(false, false, true) + "\n";
+  }
+
+  void Command::printHelpDialogStatus() {
+    static Command *curCom = nullptr;
+    static std::string text = "";
+
+    if (curCom != this) {
+      curCom = this;
+      text = getHelpDialogStatusString();
+    }
+
+    std::cout << text;
+  }
+
+  std::string Command::getFillingStatusString(
+    mt::CR_BOL usingAbbreviations
+  ) {
+    if (!used) {
+      return usingAbbreviations ? "emp" : "empty";
+    }
+
+    return Color::getString(
+      usingAbbreviations ? "cor" : "correction", Color::MAGENTA
+    );
   }
 
   mt::USI Command::questionTo(
@@ -903,82 +967,6 @@ namespace cli_menu {
     return text;
   }
 
-  std::string Command::getBranchLeafString(
-    mt::CR_INT spacesCount,
-    mt::CR_INT columnIndex,
-    mt::CR_BOL withDescription
-  ) {
-    static std::string separator = std::string(spacesCount, ' ');
-
-    std::string text;
-    TREE *root = parent;
-    int tabsCount = 0;
-
-    // looping up to root
-    while (root) {
-      tabsCount += root->getName().length() + separator.length();
-      root = root->getParent();
-    }
-
-    text += name + separator;
-
-    if (columnIndex > 0) {
-      text = std::string(tabsCount, ' ') + text;
-    }
-
-    // display a neat description
-    if (withDescription && children.empty()) {
-      mt::VEC_STR lines {""};
-
-      // detect newline characters
-      for (char &ch : description) {
-        lines.back().push_back(ch);
-        if (ch == '\n') lines.push_back("");
-      }
-
-      // get rid empty strings created due to detected newlines
-      for (int i = 0; i < lines.size(); i++) {
-        if (lines[i].empty()) {
-          mini_tools::utils::VecTools<std::string>::cutSingle(lines, i);
-          i--;
-        }
-      }
-
-      // push 'lines' vector to 'text' string
-      for (int i = 0; i < lines.size(); i++) {
-
-        if (i > 0 || columnIndex > 0) {
-          lines[i] = std::string(
-            tabsCount + name.length() + separator.length(), ' '
-          ) + lines[i];
-        }
-
-        text += lines[i];
-      }
-    }
-    // has children (recursion)
-    else for (int i = 0; i < getNumberOfChildren(); i++) {
-      text += static_cast<Cm*>(children[i])->getBranchLeafString(
-        spacesCount, i, withDescription
-      );
-    }
-
-    // add newline to every index except the last
-    if (parent &&
-      columnIndex < parent->getNumberOfChildren() - 1
-    ) { text += "\n"; }
-
-    return text;
-  }
-
-  std::string Command::getBranchLeafString(
-    int spacesCount,
-    mt::CR_BOL withDescription
-  ) {
-    if (spacesCount < 1) spacesCount = 1;
-    return getBranchLeafString(spacesCount, 0, withDescription);
-  }
-
   bool Command::isTemporaryLetterCaseChange() {
     return !(Command::usingCaseSensitiveName ||
       Command::usingLowercaseName ||
@@ -1045,7 +1033,7 @@ namespace cli_menu {
       static bool isInit = true;
 
       if (!isInit) {
-        Message::printBoundaryLine();
+        Message::printBoundaryLine(1, 0);
       }
 
       isInit = false;
@@ -1062,7 +1050,7 @@ namespace cli_menu {
     );
 
     // has a newline at the end
-    printDialogStatus();
+    printDialogStatus(true, true);
 
     // once at toddler level of 'Toggle'
     if (getInheritanceFlag() == TOGGLE &&
@@ -1089,14 +1077,69 @@ namespace cli_menu {
     std::cout << std::endl;
   }
 
+  void Command::printChildrenNamesDescriptions(
+    mt::CR_BOL startWithBoundaryLine,
+    mt::CR_BOL endWithBoundaryLine
+  ) {
+    static Command *curCom = nullptr;
+    static std::string text = "";
+
+    if (startWithBoundaryLine) {
+      Message::printBoundaryLine(1, 1);
+    }
+
+    if (curCom != this) {
+      curCom = this;
+
+      // current dialog status
+      text = getHelpDialogStatusString();
+
+      // loop variables
+      int maxLength = 0, iterLength;
+      std::string iterName;
+
+      // find the most name length
+      for (TREE *node : children) {
+        iterLength = static_cast<Cm*>(node)->name.length();
+
+        if (iterLength > maxLength) {
+          maxLength = iterLength;
+        }
+      }
+
+      // save to variable
+      for (int i = 0; i < children.size(); i++) {
+        iterName = static_cast<Cm*>(children[i])->name;
+
+        text += iterName
+          + std::string(maxLength - iterName.length() + 1, ' ') + ": \""
+          + static_cast<Cm*>(children[i])->description + "\"\n";
+      }
+    }
+
+    std::cout << text;
+
+    if (endWithBoundaryLine) {
+      Message::printBoundaryLine(0, 2);
+    }
+  }
+
   void Command::printHelp() {
-    std::cout << mt_uti::StrTools::getStringToUppercase(name) << ':';
-    Message::printBoundaryLine();
-    std::cout << description;
+    Message::printBoundaryLine(1, 1);
 
     if (isParent()) {
-      Message::printBoundaryLine();
-      std::cout << getBranchLeafString(1, !isUltimate());
+      std::cout << Color::getString(
+        mt_uti::StrTools::getStringToUppercase(name),
+        Color::WHITE
+      ) << ":\n\n";
+
+      std::cout << description;
+      printChildrenNamesDescriptions();
+    }
+    else {
+      printHelpDialogStatus();
+      std::cout << description;
+      Message::printBoundaryLine(1, 2);
     }
   }
 
