@@ -100,27 +100,29 @@ namespace cli_menu {
       Toggle::printHelp();
     }
     else {
-      Message::printBoundaryLine(0, 1);
-
-      std::cout
-        << Color::getString(
+      static const std::string text_1 = (
+        Color::getString(
           "Welcome to '" + mt_uti::StrTools::getStringToUppercase(name),
           Color::WHITE
-        ) << "'\n\nversion: " << version.stringify()
-        << "\nauthor: " << author;
+        ) + "'\n\n" + description
+        + "\n\nversion: " + version.stringify()
+        + "\nauthor: " + author
+      );
 
-      Message::printBoundaryLine();
+      static const std::string text_2 = (
+        Color::getString("\nHINTS:\n\n", Color::WHITE)
+        + "* Use '-' for parameter and '--' for toggle\n"
+        + "* The <req> or <opt> are only available in parameter (text/number)\n"
+        + "* The toggle (boolean) always optional, except for main command and groups\n"
+        + "* Please type '--[command] --help' to view detailed information"
+      );
 
-      std::cout
-        << Color::getString("\nHINTS:\n", Color::WHITE)
-        << "* Use '-' for parameter and '--' for toggle\n"
-        << "* The <req> or <opt> are only available in parameter (text/number)\n"
-        << "* The toggle (boolean) always optional, except for main command and groups\n"
-        << "* Please type '--[command] --help' to view detailed information";
+      Message::printBoundaryLine(1, 1);
+      std::cout << text_1;
+      Message::printBoundaryLine(1, 0);
+      std::cout << text_2;
 
-      Message::printBoundaryLine();
-      std::cout << "\n" << getBranchLeafString(1, true);
-      Message::printBoundaryLine(1, 2);
+      printChildrenNamesDescriptions();
     }
   }
 
