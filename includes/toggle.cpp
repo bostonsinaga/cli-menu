@@ -153,7 +153,7 @@ namespace cli_menu {
 
       // value input
       if (boolFlag) {
-        *lastCom = ultimate;
+        *lastCom = chooseLastCommand();
 
         setData(
           paramData,
@@ -207,6 +207,7 @@ namespace cli_menu {
       }
       else if (Control::selectTest(buffer)) {
 
+        // only available for toddlers
         const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
           inputs, paramData, lastCom,
           "condition is given"
@@ -229,14 +230,15 @@ namespace cli_menu {
     ParamData &paramData,
     Command **lastCom
   ) {
-    if (parent && ((!selecting && isParent()) || isToddler())) {
+    // only for toddlers
+    if (parent && !selecting && isToddler()) {
       return question(inputs, paramData, lastCom);
     }
 
     // this may set to true in 'printDirectInputsQueueError' method
     selecting = false;
 
-    // no need to set condition exclusively
+    // no need to set condition exclusively on parent
     setData(paramData, true);
     return Command::dialog(inputs, paramData, lastCom);
   }
