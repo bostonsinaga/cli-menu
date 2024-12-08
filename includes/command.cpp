@@ -543,6 +543,8 @@ namespace cli_menu {
     else if (!static_cast<Cm*>(next)->used) {
       return static_cast<Cm*>(next);
     }
+
+    // pass 'start' to keep remember it
     return static_cast<Cm*>(next)->getUnusedNeighbor(start);
   }
 
@@ -595,14 +597,19 @@ namespace cli_menu {
 
         return FLAG::ERROR;
       }
+      // the 'selecting' will be an opposite in overridden 'dialog' method
       else {
-        // will be an opposite in overridden 'dialog' method
+        if (isToddler()) {
+          Command *parCom = static_cast<Cm*>(parent);
+          parCom->selecting = true;
+
+          return parCom->dialog(
+            inputs, paramData, lastCom
+          );
+        }
+
+        // parent
         selecting = true;
-
-        if (isToddler()) return static_cast<Cm*>(parent)->dialog(
-          inputs, paramData, lastCom
-        );
-
         return dialog(inputs, paramData, lastCom);
       }
     }
