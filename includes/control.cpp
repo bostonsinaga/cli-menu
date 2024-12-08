@@ -103,17 +103,17 @@ namespace cli_menu {
   }
 
   void Control::printParameterHelp() {
-    static int mostDigits[] = {0, 0};
+    static int maxLengths[] = {0, 0};
     static std::string text = "";
 
-    if (!(mostDigits[0] || mostDigits[1])) {
+    if (!(maxLengths[0] || maxLengths[1])) {
       bool even;
 
       for (int i = 0; i < Control::count; i++) {
         even = !(i % 2);
 
-        if (Control::NAMES[i][0].length() > mostDigits[even]) {
-          mostDigits[even] = Control::NAMES[i][0].length();
+        if (Control::NAMES[i][0].length() > maxLengths[even]) {
+          maxLengths[even] = Control::NAMES[i][0].length();
         }
       }
 
@@ -121,7 +121,7 @@ namespace cli_menu {
         even = !(i % 2);
 
         text += (even ? "  " : " ") + Control::NAMES[i][0] + std::string(
-          mostDigits[even] - Control::NAMES[i][0].length(), ' '
+          maxLengths[even] - Control::NAMES[i][0].length(), ' '
         ) + " = " + Control::NAMES[i][1] + (even ? "," : "\n");
       }
     }
