@@ -175,6 +175,12 @@ namespace cli_menu {
             static_cast<Cm*>(children.front()), inputs, paramData, lastCom
           );
         }
+        // need condition
+        else if (isRequiredContainerEmpty()) {
+          Message::printDialogError(
+            "this " + getLevelName(true) + " needs a condition"
+          );
+        }
         // directly completed
         else if (doUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
