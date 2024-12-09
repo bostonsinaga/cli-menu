@@ -340,7 +340,7 @@ namespace cli_menu {
       }
       else if (Control::enterTest(controlStr)) {
         // need argument
-        if (!used && !ultimate && isRequired()) {
+        if (isRequiredContainerEmpty()) {
           Message::printDialogError(
             "this " + getLevelName(true) + needsArgStr
           );
