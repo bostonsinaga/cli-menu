@@ -123,6 +123,7 @@ namespace cli_menu {
       mt::CR_INT reverseSpaceBoundaryIndex = -1
     );
 
+    static bool areEqual(CR_CLR color_1, CR_CLR color_2);
     static void printPresets();
   };
 }

@@ -292,6 +292,15 @@ namespace cli_menu {
     );
   }
 
+  bool Color::areEqual(CR_CLR color_1, CR_CLR color_2) {
+    if (&color_1 == &color_2 || (
+      color_1.r == color_2.r &&
+      color_1.g == color_2.g && 
+      color_1.b == color_2.b
+    )) { return true; }
+    return false;
+  }
+
   void Color::printPresets() {
     std::cout
       << Color::getUnderlineString("PRESET COLORS:\n", Color::CHOCOLATE, Color::SKY_BLUE)
