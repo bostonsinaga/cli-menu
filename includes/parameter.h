@@ -10,7 +10,7 @@ namespace cli_menu {
     using LINKED_LIST = mt_ds::linked_list::Node;
 
     bool accumulating = false,
-      type = false;
+      argumentType = false;
 
     static const std::string needsArgStr;
 
@@ -83,7 +83,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      mt::CR_BOL type_in,
+      mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in,
       CR_SP_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
@@ -94,7 +94,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      mt::CR_BOL type_in,
+      mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in,
       CR_SP_PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
@@ -105,12 +105,12 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      mt::CR_BOL type_in,
+      mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in
     );
 
-    bool getType() { return type; }
-    std::string getStringifiedType();
+    bool getArgumentType() { return argumentType; }
+    std::string getStringifiedArgumentType();
     std::string getDashedName() override;
 
     std::string getFullName(

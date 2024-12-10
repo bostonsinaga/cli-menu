@@ -12,7 +12,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL type_in,
+    mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
     CR_SP_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
@@ -21,7 +21,7 @@ namespace cli_menu {
     required_in, parent_in,
     callback_in, propagatingCallback_in
   ) {
-    type = type_in;
+    argumentType = argumentType_in;
     accumulating = accumulating_in;
   }
 
@@ -30,7 +30,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL type_in,
+    mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
@@ -39,7 +39,7 @@ namespace cli_menu {
     required_in, parent_in,
     callback_in, propagatingCallback_in
   ) {
-    type = type_in;
+    argumentType = argumentType_in;
     accumulating = accumulating_in;
   }
 
@@ -48,13 +48,13 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL type_in,
+    mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in
   ) : Command::Command(
     name_in, description_in,
     required_in, parent_in
   ) {
-    type = type_in;
+    argumentType = argumentType_in;
     accumulating = accumulating_in;
   }
 
@@ -75,7 +75,7 @@ namespace cli_menu {
     if (isEmpty) return;
 
     if (!used) {
-      if (type == TEXT) {
+      if (argumentType == TEXT) {
         paramData.texts.push_back(argument);
         paramData.numbers.push_back({});
       }
@@ -93,7 +93,7 @@ namespace cli_menu {
     }
     // accumulated to get multiline input
     else {
-      if (type == TEXT) {
+      if (argumentType == TEXT) {
         paramData.texts[paramDataIndex] += argument;
       }
       // space or newline is a separator
@@ -106,7 +106,7 @@ namespace cli_menu {
 
   void Parameter::resetArgument(ParamData &paramData) {
     if (used && !accumulating) {
-      if (type == TEXT) {
+      if (argumentType == TEXT) {
         paramData.texts[paramDataIndex] = "";
       }
       else paramData.numbers[paramDataIndex] = {};
@@ -209,8 +209,8 @@ namespace cli_menu {
     return FLAG::FAILED;
   }
 
-  std::string Parameter::getStringifiedType() {
-    if (type == TEXT) return "text";
+  std::string Parameter::getStringifiedArgumentType() {
+    if (argumentType == TEXT) return "text";
     return "number";
   }
 
@@ -234,16 +234,14 @@ namespace cli_menu {
       nameStr, fullNameProfile.nameColor
     );
 
-    // add input type
+    // add input argumentType
     if (fullNameProfile.useInputType) {
-      inputTypeStr = "<" + getStringifiedType() + ">";
+      inputTypeStr = "<" + getStringifiedArgumentType() + ">";
     }
 
     /** Final assignments */
 
-    text = nameStr;
-
-    text += Color::getString(
+    text += nameStr + Color::getString(
       inputTypeStr,
       Command::usingDashesBoundaryLine ?
         Color::AZURE : Color(0, 95, 223)
