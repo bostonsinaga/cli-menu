@@ -11,6 +11,7 @@ namespace cli_menu {
   class Color {
   private:
     int r = 0, g = 0, b = 0;
+    bool empty = true;
 
     static const std::string
       antidote, italic, underline;
@@ -56,6 +57,8 @@ namespace cli_menu {
       mt::CR_INT g_in = 0,
       mt::CR_INT b_in = 0
     ) {
+      empty = false;
+
       if (r_in < 0) r = 0;
       else r = r_in;
 
@@ -64,6 +67,10 @@ namespace cli_menu {
 
       if (b_in < 0) b = 0;
       else b = b_in;
+    }
+
+    const bool isEmpty() const {
+      return empty;
     }
 
     static std::string getString(
