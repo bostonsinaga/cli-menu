@@ -10,6 +10,10 @@ namespace cli_menu {
 
   Command *Command::circularCheckpoint = nullptr;
 
+  const Command::FullNameProfile
+    Command::defaultFullNameProfile = {true, true, true},
+    Command::helpFullNameProfile = {false, true, true, Color::WHITE};
+
   bool Command::usingCaseSensitiveName = true,
     Command::usingLowercaseName = false,
     Command::usingUppercaseName = false,
@@ -139,24 +143,22 @@ namespace cli_menu {
   }
 
   std::string Command::getMainLabel() {
-    if (isUltimate()) {
-      return Color::getString(
-        "[MAIN]", getMainLabelColor()
-      );
-    }
-    return "";
+    return Color::getString(
+      "[" + getLevelName(true) + "]", getMainLabelColor()
+    );
   }
 
   // the 'ultimate' confirmed to exist when this invoked
   std::string Command::getFullNameWithUltimate(
     mt::CR_STR separator,
+    CR_FullNameProfile fullNameProfile,
     mt::CR_BOL startWithSeparator,
     mt::CR_BOL endWithSeparator
   ) {
     return (startWithSeparator ? separator : "")
       + Color::getString(
         ultimate->name, getMainLabelColor()
-      ) + separator + getFullName()
+      ) + separator + getFullName(fullNameProfile)
       + (endWithSeparator ? separator : "");
   }
 
@@ -617,6 +619,7 @@ namespace cli_menu {
     return FLAG::ERROR;
   }
 
+  // has a newline at the end
   std::string Command::getDialogStatusString(
     mt::CR_BOL usingAbbreviations,
     mt::CR_BOL withBrackets,
@@ -687,7 +690,7 @@ namespace cli_menu {
   }
 
   std::string Command::getHelpDialogStatusString() {
-    return Color::getString("THIS: ", Color::SKY_BLUE)
+    return Color::getString("THIS: ", Color::GREEN)
       + getDialogStatusString(false, false, true) + "\n";
   }
 
@@ -943,7 +946,8 @@ namespace cli_menu {
 
   std::string Command::getInlineRootNames(
     mt::CR_STR separator,
-    mt::CR_BOL fully,
+    CR_FullNameProfile fullNameProfile,
+    mt::CR_BOL selfOnly,
     mt::CR_BOL startWithSeparator,
     mt::CR_BOL endWithSeparator
   ) {
@@ -952,12 +956,10 @@ namespace cli_menu {
 
     // looping up to root
     do {
-      text = (fully ? root->getFullName() : root->name)
-        + separator + text;
-
+      text = root->getFullName(fullNameProfile) + separator + text;
       root = static_cast<Cm*>(root->parent);
     }
-    while (root);
+    while (root && !selfOnly);
 
     if (startWithSeparator) {
       text = separator + text;
@@ -1056,7 +1058,7 @@ namespace cli_menu {
         Color(223, 255, 223)    // light green
     );
 
-    // has a newline at the end
+    // dialog status in brackets
     printDialogStatus(true, true);
 
     // once at toddler level of 'Toggle'
@@ -1097,33 +1099,26 @@ namespace cli_menu {
 
     if (curCom != this) {
       curCom = this;
+      Command *loopCom;
 
       // current dialog status
       text = getHelpDialogStatusString();
 
-      // loop variables
-      int maxLength = 0, iterLength;
-      std::string iterName;
-
-      // find the most name length
-      for (TREE *node : children) {
-        iterLength = static_cast<Cm*>(node)->name.length();
-
-        if (iterLength > maxLength) {
-          maxLength = iterLength;
-        }
-      }
-
       // save to variable
       for (int i = 0; i < children.size(); i++) {
-        iterName = static_cast<Cm*>(children[i])->name;
 
-        text += iterName
-          + std::string(maxLength - iterName.length() + 1, ' ') + ": \""
-          + static_cast<Cm*>(children[i])->description + "\"\n";
+        loopCom = static_cast<Cm*>(children[i]);
+        if (i > 0) text += "\n";
+
+        text += loopCom->getInlineRootNames(
+          "", helpFullNameProfile, true, false
+        ) + ":" + loopCom->getDialogStatusString(true, true, true);
+
+        text += "\"" + loopCom->description + "\"\n";
       }
     }
 
+    // the 'text' is reusable within the same instance
     std::cout << text;
 
     if (endWithBoundaryLine) {
