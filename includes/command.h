@@ -135,8 +135,8 @@ namespace cli_menu {
     );
 
     mt::UI getRequiredCount();
-    Color getMainLabelColor();
-    std::string getMainLabel();
+    Color getLevelLabelColor();
+    std::string getLevelLabel();
     Command *getUnusedNeighbor(Command *start);
     void updateRequiredUsed(mt::CR_BOL adding);
 
