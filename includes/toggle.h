@@ -60,11 +60,13 @@ namespace cli_menu {
       Command *parent_in
     );
 
-    std::string getDashedName() override;
-    std::string getFullName() override;
-
     mt::USI getInheritanceFlag() override { return TOGGLE; }
     std::string getInheritanceName() override { return "toggle"; }
+    std::string getDashedName() override;
+
+    std::string getFullName(
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile
+    ) override;
   };
 }
 

@@ -112,7 +112,10 @@ namespace cli_menu {
     bool getType() { return type; }
     std::string getStringifiedType();
     std::string getDashedName() override;
-    std::string getFullName() override;
+
+    std::string getFullName(
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile
+    ) override;
 
     mt::USI getInheritanceFlag() override { return PARAMETER; }
     std::string getInheritanceName() override { return "parameter"; }
