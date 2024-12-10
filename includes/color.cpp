@@ -155,7 +155,7 @@ namespace cli_menu {
     return correctNewlines(
       text,
       styleEscapeCode,
-      "\x1B[38;2;"
+      foreground.empty ? "" : "\x1B[38;2;"
         + std::to_string(foreground.r) + ";"
         + std::to_string(foreground.g) + ";" 
         + std::to_string(foreground.b) + "m",
@@ -175,13 +175,14 @@ namespace cli_menu {
     return correctNewlines(
       text,
       styleEscapeCode,
-      "\x1B[38;2;"
+      foreground.empty ? "" : "\x1B[38;2;"
         + std::to_string(foreground.r) + ";"
         + std::to_string(foreground.g) + ";" 
-        + std::to_string(foreground.b) + ";48;2;"
-        + std::to_string(background.r) + ";"
-        + std::to_string(background.g) + ";" 
-        + std::to_string(background.b) + "m",
+        + std::to_string(foreground.b) +
+          (background.empty ? "m" : ";48;2;"
+            + std::to_string(background.r) + ";"
+            + std::to_string(background.g) + ";" 
+            + std::to_string(background.b) + "m"),
       forwardSpaceBoundaryIndex,
       reverseSpaceBoundaryIndex
     );
