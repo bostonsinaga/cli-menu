@@ -249,7 +249,7 @@ namespace cli_menu {
 
     // add level name
     if (fullNameProfile.useLevelName) {
-      text += getMainLabel();
+      text += getLevelLabel();
     }
 
     return text;
