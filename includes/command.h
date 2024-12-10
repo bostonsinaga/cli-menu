@@ -9,11 +9,23 @@ namespace cli_menu {
    * for feature completeness.
    */
   class Command : public mt_ds::tree::Node {
+  public:
+    // required by 'getFullName' method
+    struct FullNameProfile {
+      bool useDash, useInputType, useLevelName;
+      Color nameColor;
+    };
+
+    static const FullNameProfile
+      defaultFullNameProfile,
+      helpFullNameProfile;
+
   protected:
     using TREE = mt_ds::tree::Node;
 
     typedef mt_ds::tree::VEC_NODE VEC_TREE;
     typedef mt_ds::tree::CR_VEC_NODE CR_VEC_TREE;
+    typedef const FullNameProfile& CR_FullNameProfile;
     typedef Command Cm;
 
   private:
@@ -131,6 +143,7 @@ namespace cli_menu {
     // format: 'separator + ultimate + separator + this + separator'
     std::string getFullNameWithUltimate(
       mt::CR_STR separator = " ",
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile,
       mt::CR_BOL startWithSeparator = true,
       mt::CR_BOL endWithSeparator = false
     );
@@ -289,9 +302,11 @@ namespace cli_menu {
 
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
     virtual std::string getInheritanceName() { return "command"; }
-
     virtual std::string getDashedName() { return name; }
-    virtual std::string getFullName() { return name; }
+
+    virtual std::string getFullName(
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile
+    ) { return name; }
 
     void setCallback(CR_SP_CALLBACK callback_in);
     void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
@@ -324,7 +339,8 @@ namespace cli_menu {
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",
-      mt::CR_BOL fully = true,
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile,
+      mt::CR_BOL selfOnly = false,
       mt::CR_BOL startWithSeparator = true,
       mt::CR_BOL endWithSeparator = false
     );
