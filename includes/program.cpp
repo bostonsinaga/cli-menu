@@ -72,9 +72,11 @@ namespace cli_menu {
     return Command::getDashedName();
   }
 
-  std::string Program::getFullName() {
-    if (disguised) return Toggle::getFullName();
-    return Command::getFullName();
+  std::string Program::getFullName(
+    CR_FullNameProfile fullNameProfile
+  ) {
+    if (disguised) return Toggle::getFullName(fullNameProfile);
+    return Command::getFullName(fullNameProfile);
   }
 
   void Program::useCaseSensitiveName(mt::CR_BOL isIt) {

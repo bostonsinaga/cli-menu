@@ -63,9 +63,11 @@ namespace cli_menu {
 
     mt::USI getInheritanceFlag() override { return PROGRAM; }
     std::string getInheritanceName() override { return "program"; }
-
     std::string getDashedName() override;
-    std::string getFullName() override;
+
+    std::string getFullName(
+      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile
+    ) override;
 
     static void useCaseSensitiveName(mt::CR_BOL isIt);
     static void useLowercaseName(mt::CR_BOL isIt);
