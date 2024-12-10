@@ -218,11 +218,43 @@ namespace cli_menu {
     return "-" + name;
   }
 
-  std::string Parameter::getFullName() {
-    return getDashedName() + Color::getString(
-      "<" + getStringifiedType() + ">",
-      Command::usingDashesBoundaryLine ? Color::AZURE : Color(0, 95, 223)
-    ) + getMainLabel();
+  std::string Parameter::getFullName(
+    CR_FullNameProfile fullNameProfile
+  ) {
+    std::string nameStr, inputTypeStr, text;
+
+    // choose name
+    if (fullNameProfile.useDash) {
+      nameStr = getDashedName();
+    }
+    else nameStr = name;
+
+    // set 'nameStr' color
+    nameStr = Color::getString(
+      nameStr, fullNameProfile.nameColor
+    );
+
+    // add input type
+    if (fullNameProfile.useInputType) {
+      inputTypeStr = "<" + getStringifiedType() + ">";
+    }
+
+    /** Final assignments */
+
+    text = nameStr;
+
+    text += Color::getString(
+      inputTypeStr,
+      Command::usingDashesBoundaryLine ?
+        Color::AZURE : Color(0, 95, 223)
+    );
+
+    // add level name
+    if (fullNameProfile.useLevelName) {
+      text += getMainLabel();
+    }
+
+    return text;
   }
 
   std::string Parameter::getFillingStatusString(

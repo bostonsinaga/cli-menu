@@ -60,8 +60,32 @@ namespace cli_menu {
     return "--" + name;
   }
 
-  std::string Toggle::getFullName() {
-    return getDashedName() + getMainLabel();
+  std::string Toggle::getFullName(
+    CR_FullNameProfile fullNameProfile
+  ) {
+    std::string nameStr, text;
+
+    // choose name
+    if (fullNameProfile.useDash) {
+      nameStr = getDashedName();
+    }
+    else nameStr = name;
+
+    // set 'nameStr' color
+    nameStr = Color::getString(
+      nameStr, fullNameProfile.nameColor
+    );
+
+    /** Final assignments */
+
+    text = nameStr;
+
+    // add level name
+    if (fullNameProfile.useLevelName) {
+      text += getMainLabel();
+    }
+
+    return text;
   }
 
   mt::USI Toggle::match(
