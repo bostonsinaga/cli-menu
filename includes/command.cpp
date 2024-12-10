@@ -135,16 +135,17 @@ namespace cli_menu {
     return requiredItems.size();
   }
 
-  Color Command::getMainLabelColor() {
+  Color Command::getLevelLabelColor() {
     if (Command::usingDashesBoundaryLine) {
       return Color::MINT;
     }
     return Color::TEAL;
   }
 
-  std::string Command::getMainLabel() {
+  std::string Command::getLevelLabel() {
     return Color::getString(
-      "[" + getLevelName(true) + "]", getMainLabelColor()
+      "[" + mt_uti::StrTools::getStringToUppercase(getLevelName(true))
+      + "]", getLevelLabelColor()
     );
   }
 
@@ -157,7 +158,7 @@ namespace cli_menu {
   ) {
     return (startWithSeparator ? separator : "")
       + Color::getString(
-        ultimate->name, getMainLabelColor()
+        ultimate->name, getLevelLabelColor()
       ) + separator + getFullName(fullNameProfile)
       + (endWithSeparator ? separator : "");
   }
