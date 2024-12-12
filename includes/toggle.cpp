@@ -202,7 +202,7 @@ namespace cli_menu {
         // need condition
         else if (isRequiredContainerEmpty()) {
           Message::printDialogError(
-            "this " + getLevelName(true) + " needs a condition"
+            "this " + getLevelLabel() + " needs a condition"
           );
         }
         // directly completed
