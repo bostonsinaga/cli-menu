@@ -121,6 +121,7 @@ namespace cli_menu {
 
       return released;
     }
+
     return {};
   }
 
@@ -139,12 +140,12 @@ namespace cli_menu {
     if (Command::usingDashesBoundaryLine) {
       return Color::MINT;
     }
-    return Color::TEAL;
+    return Color(0, 159, 159);
   }
 
   std::string Command::getLevelLabel() {
     return Color::getString(
-      "[" + mt_uti::StrTools::getStringToUppercase(getLevelName(true))
+      "[" + mt_uti::StrTools::getStringToUppercase(getLevelName())
       + "]", getLevelLabelColor()
     );
   }
@@ -163,7 +164,7 @@ namespace cli_menu {
       + (endWithSeparator ? separator : "");
   }
 
-  std::string Command::getLevelName(mt::CR_BOL toEndUser) {
+  std::string Command::getLevelName() {
     std::string levelName;
 
     if (!parent) {
@@ -173,145 +174,80 @@ namespace cli_menu {
       levelName = "group";
     }
     else if (isUltimate()) {
-      levelName = toEndUser ? "command" : "ultimate";
+      levelName = "command";
     }
-    else if (isDependence()) {
-      levelName = toEndUser ? getInheritanceName() : "dependence";
-    }
-    else levelName = toEndUser ? "command" : "independence";
+    else levelName = "input";
 
     return levelName;
   }
 
-  std::string Command::getChildrenLevelName(
-    mt::CR_BOL toEndUser,
-    mt::CR_BOL onlyRequired
-  ) {
-    static const mt::USI maxCount = 4;
-    mt::VEC_USI indexes;
-    std::string availableNames[maxCount], levelNames[maxCount];
-    bool pluralConditions[] = {false, false, false, false};
-    mt::USI availableCount = 0;
+  std::string Command::getChildrenLevelName(mt::CR_BOL onlyRequired) {
 
-    if (isGroup()) {
-      levelNames[0] = "command";
-      levelNames[1] = "group";
-      levelNames[2] = "independence";
-      levelNames[3] = "ultimate";
+    // parent only
+    if (!children.empty()) {
 
-      // capture level occurrences
-      for (TREE *node : children) {
-        Command *curCom = static_cast<Cm*>(node);
+      static const int initAmount = 3;
+      Command *loopCom;
+
+      int indexes[] = {0, 0, 0},
+        finalAmount = initAmount;
+
+      std::string availableNames[] = {
+        "command", "group", "input"
+      };
+
+      // name selection
+      for (int i = 0; i < children.size(); i++) {
+        loopCom = static_cast<Cm*>(children[i]);
 
         if (!onlyRequired ||
-          (onlyRequired && curCom->required)
+          (onlyRequired && loopCom->required)
         ) {
-          if (curCom->ultimate) {
-            indexes.push_back(toEndUser ? 0 : 3);
-          }
-          else if (curCom->getNumberOfChildren() == 0) {
-            indexes.push_back(toEndUser ? 0 : 2);
-          }
-          else indexes.push_back(1);
+          if (loopCom->isGroup()) indexes[0]++;
+          else if (loopCom->isUltimate()) indexes[1]++;
+          else indexes[2]++;
         }
       }
-    }
-    // ultimate does not need to count with loop
-    else if (isUltimate()) {
-      if (toEndUser) {
-        levelNames[0] = "command";
-        levelNames[1] = "parameter";
-        levelNames[2] = "toggle";
 
-        // capture dependence occurrences
-        for (TREE *node : children) {
-          Command *curCom = static_cast<Cm*>(node);
+      // plural detection
+      for (int i = 0; i < initAmount; i++) {
+        if (indexes[i] > 1) {
+          availableNames[i] += "s";
+        }
+        else if (indexes[i] == 0) {
+          availableNames[i] = "";
+          finalAmount--;
+        }
+      }
 
-          if (!onlyRequired ||
-            (onlyRequired && curCom->required)
-          ) {
-            switch (curCom->getInheritanceFlag()) {
-              case PARAMETER: {
-                indexes.push_back(1);
-              break;}
-              case TOGGLE: {
-                indexes.push_back(2);
-              break;}
-              default: {
-                indexes.push_back(0);
+      std::string result;
+
+      // return value assignment
+      for (int i = 0; i < initAmount; i++) {
+
+        if (!availableNames[i].empty()) {
+          result += availableNames[i];
+
+          if (i < initAmount - 1) {
+            if (finalAmount == initAmount) {
+
+              if (i == initAmount - 2) {
+                result += ", or ";
               }
+              else result += ", ";
+            }
+            else if (finalAmount == 2) {
+              result += " or ";
             }
           }
         }
       }
-      else {
-        availableCount = 1;
-        availableNames[0] = "dependence";
-        pluralConditions[0] = getRequiredCount() > 1;
-      }
-    }
-    // toddler
-    else if (parent) {
-      return static_cast<Cm*>(parent)->getChildrenLevelName(
-        toEndUser,
-        onlyRequired
-      );
-    }
-    // program or orphan
-    else {
-      availableCount = 1;
-      availableNames[0] = toEndUser ? "command": "independence";
+
+      return result;
     }
 
-    mt::USI pluralCount = 0;
-    mt::USI occurrences[] = {0, 0, 0, 0};
-
-    // set names and plural conditions
-    for (mt::USI &i : indexes) {
-      if (occurrences[i] < 2) {
-
-        if (occurrences[i] < 1) {
-          availableNames[availableCount] = levelNames[i];
-          availableCount++;
-        }
-        else {
-          pluralCount++;
-          pluralConditions[availableCount - 1] = true;
-        }
-
-        // possible values: 0, 1, 2
-        occurrences[i]++;
-      }
-      else if (pluralCount == maxCount) break;
-    }
-
-    // the product
-    std::string renderedName = "";
-
-    // concatenate string vector into a sentence
-    for (int i = 0; i < availableCount; i++) {
-
-      if (availableNames[i].empty()) break;
-      else {
-        const bool isLast = i == availableCount - 1;
-
-        if (isLast && availableCount > 1) {
-          renderedName += "or ";
-        }
-
-        renderedName += availableNames[i];
-
-        if (pluralConditions[i]) {
-          renderedName += 's';
-        }
-
-        if (!isLast) {
-          renderedName += availableCount > 2 ? ", " : " ";
-        }
-      }
-    }
-
-    return renderedName;
+    // called by toddler or orphan
+    return "";
   }
 
   // for dependences
@@ -324,33 +260,23 @@ namespace cli_menu {
       // all complete
       if (!reqCt) return true;
       else {
-        // error strings
-        const std::string
-          errStr_1 = "Cannot process before ",
-          errStr_2 = errStr_1
-            + std::string(reqCt == 1 ? "a " : "")
-            + "required ";
+        const bool isOneLeft = reqCt == 1;
 
-        Command *oneLeft = nullptr;
+        Command *oneLeft = isOneLeft ?
+          static_cast<Cm*>(ulCom->requiredItems.back()) : nullptr;
 
-        if (reqCt == 1) {
-          oneLeft = static_cast<Cm*>(ulCom->requiredItems.back());
-        }
+        const bool
+          isThis = oneLeft == this,
+          isOneLeftNotThis = !isThis && isOneLeft;
 
-        // some incomplete
-        if (reqCt > 1) Message::printDialogError(
-          errStr_2 + ulCom->getChildrenLevelName(true, true) + "."
-        );
-        // self incomplete
-        else if (oneLeft == this) Message::printDialogError(
-          errStr_1 + "this " + getLevelName(true) + " is " + std::string(
-            getInheritanceFlag() == PARAMETER ? "filled in." : "specified."
-          )
-        );
-        // one incomplete
-        else Message::printDialogError(
-          errStr_2 + oneLeft->getLevelName(true)
-          + " named '" + oneLeft->name + "'."
+        Message::printNeatDialogError(
+          "unable to process before "
+          + std::string( isOneLeftNotThis ? "a " : "" )
+          + std::string( isThis ? "this " : "required " )
+          + ulCom->getChildrenLevelName(true)
+          + std::string( isOneLeftNotThis ? (" named '" + oneLeft->name) : " " )
+          + std::string( isOneLeftNotThis ? "' is" : (isThis ? "is" : "are") )
+          + " provided"
         );
 
         return false;
@@ -365,7 +291,7 @@ namespace cli_menu {
   void Command::printRequiredNextError() {
     // for any level
     Message::printNeatDialogError(
-      "cannot skip this " + getLevelName(true) + " with empty "
+      "cannot skip this " + getLevelName() + " with empty "
       + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
     );
   }
@@ -377,8 +303,8 @@ namespace cli_menu {
 
       Message::printNeatDialogError(
         "the '" + parCom->name + "' "
-        + parCom->getLevelName(true) + " has only one "
-        + parCom->getChildrenLevelName(true, false)
+        + parCom->getLevelName() + " has only one "
+        + parCom->getChildrenLevelName(false)
       );
     }
     else printOrphanError();
@@ -387,7 +313,7 @@ namespace cli_menu {
   // for program or orphan (rarely used)
   void Command::printOrphanError() {
     Message::printNeatDialogError(
-      "this " + getInheritanceName() + " has no connections"
+      "this input has no connections"
     );
   }
 
@@ -578,7 +504,7 @@ namespace cli_menu {
   ) {
     if (!inputs.empty()) {
       Message::printNeatDialogError(
-        "cannot " + controlName + " while direct inputs queue has not been processed"
+        "unable to " + controlName + " while direct inputs queue has not been processed"
       );
       return true;
     }
@@ -595,7 +521,7 @@ namespace cli_menu {
 
       if (required) {
         Message::printNeatDialogError(
-          "cannot select before " + additionalMessage
+          "unable to select before " + additionalMessage
         );
 
         return FLAG::ERROR;
@@ -814,15 +740,17 @@ namespace cli_menu {
           return found->dialog(inputs, paramData, lastCom);
         }
         else if (isUltimate()) {
-          Message::printNeatDialogError("parameter not found");
+          Message::printNeatDialogError("input not found");
         }
+        // toddler
         else if (children.empty()) {
           Message::printNeatDialogError(
-            "this " + getLevelName(true) + " does not have any parameters or toggles"
+            "this " + getLevelName() + " does not have any items"
           );
         }
+        // group
         else Message::printNeatDialogError(
-          getChildrenLevelName(true, false) + " not found"
+          getChildrenLevelName(false) + " not found"
         );
       }
     }
@@ -891,47 +819,44 @@ namespace cli_menu {
     if (Command::dialogued && parCom && reqCt) {
 
       if (withMessage) {
+        const bool isOneLeft = reqCt == 1;
         Command *oneLeft = nullptr;
 
-        if (reqCt == 1) {
+        if (isOneLeft == 1) {
           oneLeft = static_cast<Cm*>(parCom->requiredItems.back());
         }
 
         // group or toddler
         if (!parCom->ultimate) {
 
-          const std::string
-            firstErrStr = "The '" + parCom->name + "' group has ",
-            lastErrStr = " that need"
-              + std::string(reqCt == 1 ? "s": "")
-              + " to be used.";
+          const std::string firstErrStr = "The '"
+            + parCom->name + "' "
+            + parCom->getLevelName() + " has ";
+
+          const std::string lastErrStr = " that need"
+            + std::string(isOneLeft ? "s": "")
+            + " to be used.";
 
           if (reqCt > 1) Message::printDialogError(
-            firstErrStr + parCom->getChildrenLevelName(true, true)
+            firstErrStr + parCom->getChildrenLevelName(true)
             + lastErrStr, 1
           );
           // one incomplete
           else Message::printDialogError(
-            firstErrStr + "a " + oneLeft->getLevelName(true)
+            firstErrStr + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
             + lastErrStr, 1
           );
         }
         // ultimate or dependence
         else {
-          const std::string
-            errStr = "The '" + parCom->name
-              + "' command has " + (reqCt == 1 ? "a " : "")
-              + "required ";
+          const std::string errStr = "The '" + parCom->name
+            + "' command has " + std::string(isOneLeft ? "a " : "")
+            + "required input" + std::string(
+              isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
+            );
 
-          if (reqCt > 1) Message::printDialogError(
-            errStr + getChildrenLevelName(true, true) + ".", 1
-          );
-          // one missed
-          else Message::printDialogError(
-            errStr + oneLeft->getLevelName(true)
-            + " named '" + oneLeft->name + "'.", 1
-          );
+          Message::printDialogError(errStr, 1);
         }
       }
 
