@@ -118,8 +118,6 @@ namespace cli_menu {
     ) override;
 
     mt::USI getInheritanceFlag() override { return PARAMETER; }
-    std::string getInheritanceName() override { return "parameter"; }
-
     void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
     bool isAccumulating() { return accumulating; }
   };
