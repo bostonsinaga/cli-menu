@@ -173,7 +173,7 @@ namespace cli_menu {
         if (found && required) {
 
           Message::printNeatDialogError(
-            "the '" + name + "' " + getLevelName(true) + needsArgStr, 1
+            "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
           return question(inputs, paramData, lastCom);
@@ -200,7 +200,7 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printNeatDialogError(
-        "the last " + getLevelName(true) + needsArgStr, 1
+        "the last " + getLevelName() + needsArgStr, 1
       );
 
       return question(inputs, paramData, lastCom);
@@ -372,7 +372,7 @@ namespace cli_menu {
         // need argument
         if (isRequiredContainerEmpty()) {
           Message::printDialogError(
-            "this " + getLevelName(true) + needsArgStr
+            "this " + getLevelName() + needsArgStr
           );
         }
         // question in the middle, back to match
