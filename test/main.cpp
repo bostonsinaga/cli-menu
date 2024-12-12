@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
   cm::Toggle *clean = new cm::Toggle(
     "clean",
     "clean description",
-    false,
+    true,
     sentence,
     CM_CALLBACK(tidyFun)
   );
