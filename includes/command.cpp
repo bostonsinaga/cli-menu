@@ -872,8 +872,8 @@ namespace cli_menu {
 
   std::string Command::getInlineRootNames(
     mt::CR_STR separator,
-    CR_FullNameProfile fullNameProfile,
-    mt::CR_BOL selfOnly,
+    FullNameProfile fullNameProfile,
+    int listFormat,
     mt::CR_BOL startWithSeparator,
     mt::CR_BOL endWithSeparator
   ) {
@@ -884,8 +884,14 @@ namespace cli_menu {
     do {
       text = root->getFullName(fullNameProfile) + separator + text;
       root = static_cast<Cm*>(root->parent);
+
+      if (listFormat == INLINE_NAMES_LAST) {
+        fullNameProfile.useInputType = false;
+        fullNameProfile.useLevelName = false;
+        listFormat = INLINE_NAMES_NORMAL;
+      }
     }
-    while (root && !selfOnly);
+    while (root && listFormat != INLINE_NAMES_SELF);
 
     if (startWithSeparator) {
       text = separator + text;
@@ -1037,7 +1043,7 @@ namespace cli_menu {
         if (i > 0) text += "\n";
 
         text += loopCom->getInlineRootNames(
-          "", helpFullNameProfile, true, false
+          "", helpFullNameProfile, INLINE_NAMES_SELF, false
         ) + ":" + loopCom->getDialogStatusString(true, true, true);
 
         text += "\"" + loopCom->description + "\"\n";
