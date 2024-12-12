@@ -20,6 +20,13 @@ namespace cli_menu {
       defaultFullNameProfile,
       helpFullNameProfile;
 
+    // options for list format of 'getInlineRootNames' method
+    enum {
+      INLINE_NAMES_LAST,
+      INLINE_NAMES_NORMAL,
+      INLINE_NAMES_SELF
+    };
+
   protected:
     using TREE = mt_ds::tree::Node;
 
@@ -331,8 +338,8 @@ namespace cli_menu {
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",
-      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile,
-      mt::CR_BOL selfOnly = false,
+      FullNameProfile fullNameProfile = Command::defaultFullNameProfile,
+      int listFormat = INLINE_NAMES_LAST,
       mt::CR_BOL startWithSeparator = true,
       mt::CR_BOL endWithSeparator = false
     );
