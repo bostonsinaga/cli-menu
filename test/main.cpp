@@ -45,6 +45,7 @@ CM_FUNCTION(tidyFun) {
 }
 
 int main(int argc, char *argv[]) {
+
   cm::Program *test = new cm::Program(
     "test",
     "Test 'cli-menu' library",
@@ -119,6 +120,14 @@ int main(int argc, char *argv[]) {
   cm::Toggle *tidy = new cm::Toggle(
     "tidy",
     "tidy description",
+    false,
+    sentence,
+    CM_CALLBACK(tidyFun)
+  );
+
+  cm::Toggle *clean = new cm::Toggle(
+    "clean",
+    "clean description",
     false,
     sentence,
     CM_CALLBACK(tidyFun)
