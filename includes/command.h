@@ -148,14 +148,8 @@ namespace cli_menu {
       mt::CR_BOL endWithSeparator = false
     );
 
-    std::string getLevelName(
-      mt::CR_BOL toEndUser
-    );
-
-    std::string getChildrenLevelName(
-      mt::CR_BOL toEndUser,
-      mt::CR_BOL onlyRequired
-    );
+    std::string getLevelName();
+    std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
 
     // error message selectors for controls
     bool doUltimateAllowEnter(mt::CR_BOL fromChild = false);
@@ -299,9 +293,7 @@ namespace cli_menu {
     ) override;
 
     VEC_TREE releaseChildren() override;
-
     virtual mt::USI getInheritanceFlag() { return COMMAND; }
-    virtual std::string getInheritanceName() { return "command"; }
     virtual std::string getDashedName() { return name; }
 
     virtual std::string getFullName(
