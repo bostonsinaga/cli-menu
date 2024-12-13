@@ -124,7 +124,7 @@ namespace cli_menu {
       Message::printBoundaryLine(1, 0);
       std::cout << text_2;
 
-      printChildrenNamesDescriptions();
+      printChildrenNamesDescriptions(false);
     }
   }
 
