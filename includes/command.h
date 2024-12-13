@@ -345,6 +345,7 @@ namespace cli_menu {
     );
 
     void printChildrenNamesDescriptions(
+      mt::CR_BOL summarized,
       mt::CR_BOL startWithBoundaryLine = true,
       mt::CR_BOL endWithBoundaryLine = true
     );
