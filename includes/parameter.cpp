@@ -391,8 +391,11 @@ namespace cli_menu {
           return FLAG::COMPLETED;
         }
       }
-      else if (Control::helpTest(buffer)) {
+      else if (Control::helpTest(controlStr)) {
         printHelp();
+      }
+      else if (Control::listTest(controlStr)) {
+        printChildrenNamesDescriptions(true);
       }
       else if (Control::nextTest(controlStr)) {
         // proceed to next question

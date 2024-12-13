@@ -215,6 +215,9 @@ namespace cli_menu {
       else if (Control::helpTest(buffer)) {
         printHelp();
       }
+      else if (Control::listTest(buffer)) {
+        printChildrenNamesDescriptions(true);
+      }
       else if (Control::nextTest(buffer)) {
         // proceed to next question
         if (isOptional() || (isRequired() && used)) {
