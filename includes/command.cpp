@@ -695,6 +695,9 @@ namespace cli_menu {
       else if (Control::helpTest(controlStr)) {
         printHelp();
       }
+      else if (Control::listTest(controlStr)) {
+        printChildrenNamesDescriptions(true);
+      }
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
         if (next) {
@@ -1019,22 +1022,30 @@ namespace cli_menu {
   }
 
   void Command::printChildrenNamesDescriptions(
+    mt::CR_BOL summarized,
     mt::CR_BOL startWithBoundaryLine,
     mt::CR_BOL endWithBoundaryLine
   ) {
     static Command *curCom = nullptr;
     static std::string text = "";
+    static bool recentlySummarized = false;
 
     if (startWithBoundaryLine) {
       Message::printBoundaryLine(1, 1);
     }
 
-    if (curCom != this) {
+    if (curCom != this ||
+      recentlySummarized != summarized
+    ) {
       curCom = this;
+      recentlySummarized = summarized;
       Command *loopCom;
 
       // current dialog status
-      text = getHelpDialogStatusString();
+      if (!summarized) {
+        text = getHelpDialogStatusString();
+      }
+      else text = "";
 
       // save to variable
       for (int i = 0; i < children.size(); i++) {
@@ -1046,7 +1057,10 @@ namespace cli_menu {
           "", helpFullNameProfile, INLINE_NAMES_SELF, false
         ) + ":" + loopCom->getDialogStatusString(true, true, true);
 
-        text += "\"" + loopCom->description + "\"\n";
+        // for list control
+        if (!summarized) {
+          text += "\"" + loopCom->description + "\"\n";
+        }
       }
     }
 
@@ -1068,7 +1082,7 @@ namespace cli_menu {
       ) << ":\n\n";
 
       std::cout << description;
-      printChildrenNamesDescriptions();
+      printChildrenNamesDescriptions(false);
     }
     else {
       printHelpDialogStatus();
