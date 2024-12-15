@@ -250,8 +250,31 @@ namespace cli_menu {
     return "";
   }
 
+  // not for program or question in the middle
+  mt::USI Command::isItPossibleToGoBack(
+    mt::VEC_STR &inputs,
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    if (parent) {
+      used = false;
+      required = true;
+
+      return static_cast<Cm*>(parent)->question(
+        inputs,
+        paramData,
+        lastCom
+      );
+    }
+    else Message::printNeatDialogError(
+      "this is the root"
+    );
+
+    return FLAG::ERROR;
+  }
+
   // for dependences
-  bool Command::doUltimateAllowEnter(mt::CR_BOL fromChild) {
+  bool Command::doesUltimateAllowEnter(mt::CR_BOL fromChild) {
 
     if (ultimate) {
       Command *ulCom = static_cast<Cm*>(ultimate);
@@ -671,7 +694,17 @@ namespace cli_menu {
       // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
 
-      if (Control::cancelTest(controlStr)) {
+      if (Control::backTest(controlStr)) {
+
+        const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
+          inputs, paramData, lastCom
+        );
+
+        if (isItPossibleToGoBackFlag != FLAG::ERROR) {
+          return isItPossibleToGoBackFlag;
+        }
+      }
+      else if (Control::cancelTest(controlStr)) {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
@@ -682,7 +715,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doUltimateAllowEnter()) {
+        else if (doesUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
 
           if (getInheritanceFlag() == TOGGLE) {
