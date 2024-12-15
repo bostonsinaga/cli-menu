@@ -291,20 +291,20 @@ namespace cli_menu {
         inputs.pop_back();
         *lastCom = this;
 
-        const mt::USI popBackSetFlag = popBackSet(
+        const mt::USI flag = popBackSet(
           inputs, paramData, lastCom
         );
 
         // 'inputs' may be empty
-        if (popBackSetFlag == FLAG::PASSED) {
+        if (flag == FLAG::PASSED) {
 
           // redirected to first child or unused neighbor
           return middleMatch(
             inputs, paramData, lastCom, true
           );
         }
-        else if (popBackSetFlag != FLAG::ERROR) {
-          return popBackSetFlag;
+        else if (flag != FLAG::ERROR) {
+          return flag;
         }
 
         // 'inputs' is empty, could invoke 'question'
@@ -364,8 +364,15 @@ namespace cli_menu {
       // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
-      // control input
-      if (Control::cancelTest(controlStr)) {
+      if (Control::backTest(controlStr)) {
+
+        const mt::USI flag = isItPossibleToGoBack(
+          inputs, paramData, lastCom
+        );
+
+        if (flag != FLAG::ERROR) return flag;
+      }
+      else if (Control::cancelTest(controlStr)) {
         break; // returns 'FLAG::CANCELED' below
       }
       else if (Control::enterTest(controlStr)) {
@@ -386,7 +393,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doUltimateAllowEnter()) {
+        else if (doesUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
           return FLAG::COMPLETED;
         }

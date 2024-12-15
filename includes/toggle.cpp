@@ -189,6 +189,14 @@ namespace cli_menu {
           getUnusedNeighbor(this), inputs, paramData, lastCom
         );
       }
+      else if (Control::backTest(buffer)) {
+
+        const mt::USI flag = isItPossibleToGoBack(
+          inputs, paramData, lastCom
+        );
+
+        if (flag != FLAG::ERROR) return flag;
+      }
       else if (Control::cancelTest(buffer)) {
         break; // returns 'FLAG::CANCELED' below
       }
@@ -206,7 +214,7 @@ namespace cli_menu {
           );
         }
         // directly completed
-        else if (doUltimateAllowEnter()) {
+        else if (doesUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
           setData(paramData, false);
           return FLAG::COMPLETED;
