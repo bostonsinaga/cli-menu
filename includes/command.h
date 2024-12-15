@@ -159,10 +159,16 @@ namespace cli_menu {
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
 
     // error message selectors for controls
-    bool doUltimateAllowEnter(mt::CR_BOL fromChild = false);
+    bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printRequiredNextError();
     void printNullptrNextError();
     void printOrphanError();
+
+    mt::USI isItPossibleToGoBack(
+      mt::VEC_STR &inputs,
+      ParamData &paramData,
+      Command **lastCom
+    );
 
     Command *chooseLastCommand(
       mt::CR_BOL onlyParent = false
