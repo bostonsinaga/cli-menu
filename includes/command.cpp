@@ -257,14 +257,16 @@ namespace cli_menu {
     Command **lastCom
   ) {
     if (parent) {
-      used = false;
-      required = true;
+      if (!printDirectInputsError(inputs, "go back")) {
+        used = false;
+        required = true;
 
-      return static_cast<Cm*>(parent)->question(
-        inputs,
-        paramData,
-        lastCom
-      );
+        return static_cast<Cm*>(parent)->question(
+          inputs,
+          paramData,
+          lastCom
+        );
+      }
     }
     else Message::printNeatDialogError(
       "this is the root"
@@ -521,17 +523,43 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  bool Command::printDirectInputsQueueError(
+  bool Command::printDirectInputsError(
     mt::VEC_STR &inputs,
     mt::CR_STR controlName
   ) {
-    if (!inputs.empty()) {
-      Message::printNeatDialogError(
-        "unable to " + controlName + " while direct inputs queue has not been processed"
-      );
-      return true;
+    static Command *curCom = nullptr;
+    static std::string text = "";
+
+    if (inputs.empty()) return false;
+    else if (curCom != this) {
+      curCom = this;
+      text = "";
+
+      std::string strArr[5] = {
+        " before ", "", "direct input", "", " processed"
+      };
+
+      // singular
+      if (inputs.size() == 1 || (
+        inputs.size() == 2 && DashTest::isSingle(inputs.back())
+      )) {
+        strArr[1] = "a ";
+        strArr[3] = " is";
+      }
+      // plural
+      else strArr[3] = "s are";
+
+      // strings are united
+      for (int i = 0; i < 5; i++) {
+        text += strArr[i];
+      }
+
+      // final string
+      text = "unable to " + controlName + text;
     }
-    return false;
+
+    Message::printNeatDialogError(text);
+    return true;
   }
 
   mt::USI Command::tryToSkipWithSelection(
@@ -540,7 +568,7 @@ namespace cli_menu {
     Command **lastCom,
     mt::CR_STR additionalMessage
   ) {
-    if (!printDirectInputsQueueError(inputs, "select")) {
+    if (!printDirectInputsError(inputs, "select")) {
 
       if (required) {
         Message::printNeatDialogError(
