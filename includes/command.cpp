@@ -261,15 +261,20 @@ namespace cli_menu {
         used = false;
         required = true;
 
+        // program
+        if (!parent->getParent()) {
+          return static_cast<Cm*>(parent)->dialog(
+            inputs, paramData, lastCom
+          );
+        }
+
         return static_cast<Cm*>(parent)->question(
-          inputs,
-          paramData,
-          lastCom
+          inputs, paramData, lastCom
         );
       }
     }
-    else Message::printNeatDialogError(
-      "this is the root"
+    else Message::printDialogError(
+      "You are now at the root level. No more groups upward."
     );
 
     return FLAG::ERROR;
