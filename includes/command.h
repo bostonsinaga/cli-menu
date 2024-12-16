@@ -42,6 +42,8 @@ namespace cli_menu {
     VEC_TREE requiredItems;
 
     static Command *circularCheckpoint;
+    static const std::string directInputsErrorString;
+
     static const int disguiseCount = 1;
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
@@ -244,8 +246,8 @@ namespace cli_menu {
     // 'inputs' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    // prioritize the rest of direct inputs queue
-    bool printDirectInputsQueueError(
+    // prioritize the rest of direct inputs
+    bool printDirectInputsError(
       mt::VEC_STR &inputs,
       mt::CR_STR controlName
     );
