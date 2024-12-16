@@ -32,19 +32,19 @@ namespace cli_menu {
     );
 
     mt::USI popBackSet(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     mt::USI notPopBackSet(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     mt::USI middleMatch(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom,
       mt::CR_BOL needUnused = false
@@ -56,20 +56,20 @@ namespace cli_menu {
     ) override;
 
     mt::USI match(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     ) override;
 
     // always called after ultimate (open question)
     mt::USI question(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     ) override;
 
     mt::USI dialog(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     ) override;

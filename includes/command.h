@@ -167,7 +167,7 @@ namespace cli_menu {
     void printOrphanError();
 
     mt::USI isItPossibleToGoBack(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
@@ -198,63 +198,63 @@ namespace cli_menu {
     void changeTreeNamesToUppercase();
 
     virtual mt::USI match(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     ) { return FLAG::FAILED; }
 
     mt::USI matchTo(
       Command *target,
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     virtual mt::USI question(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     ) { return FLAG::FAILED; }
 
     mt::USI questionTo(
       Command *target,
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     virtual mt::USI dialog(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     mt::USI dialogTo(
       Command *target,
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
     // point to neighbor if input not matched
     mt::USI askNeighbor(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom
     );
 
-    // 'inputs' is empty and has 'requiredItems'
+    // 'directInputs' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    // prioritize the rest of direct inputs
+    // prioritize the rest of direct directInputs
     bool printDirectInputsError(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       mt::CR_STR controlName
     );
 
     // reusable selection control handler
     mt::USI tryToSkipWithSelection(
-      mt::VEC_STR &inputs,
+      mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom,
       mt::CR_STR additionalMessage

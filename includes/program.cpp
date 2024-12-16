@@ -147,7 +147,7 @@ namespace cli_menu {
     // Init |
     //______|
 
-    mt::VEC_STR inputs;
+    mt::VEC_STR directInputs;
     ParamData paramData;
     Command::dialogued = completingDialog;
 
@@ -156,11 +156,11 @@ namespace cli_menu {
      * to compare with program name e.g. "./bin/program.exe".
      */
     for (int i = 1; i < argc; i++) {
-      inputs.push_back(argv[i]);
+      directInputs.push_back(argv[i]);
     }
 
     // will get 'pop_back' in 'Command::match'
-    std::reverse(inputs.begin(), inputs.end());
+    std::reverse(directInputs.begin(), directInputs.end());
 
     if (Command::usingLowercaseName) {
       changeTreeNamesToLowercase();
@@ -180,7 +180,7 @@ namespace cli_menu {
 
       flag = matchTo(
         static_cast<Cm*>(children.front()),
-        inputs, paramData, &lastCom
+        directInputs, paramData, &lastCom
       );
 
       switch (flag) {

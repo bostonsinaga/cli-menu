@@ -252,24 +252,24 @@ namespace cli_menu {
 
   // not for program or question in the middle
   mt::USI Command::isItPossibleToGoBack(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (parent) {
-      if (!printDirectInputsError(inputs, "go back")) {
+      if (!printDirectInputsError(directInputs, "go back")) {
         used = false;
         required = true;
 
         // program
         if (!parent->getParent()) {
           return static_cast<Cm*>(parent)->dialog(
-            inputs, paramData, lastCom
+            directInputs, paramData, lastCom
           );
         }
 
         return static_cast<Cm*>(parent)->question(
-          inputs, paramData, lastCom
+          directInputs, paramData, lastCom
         );
       }
     }
@@ -509,12 +509,12 @@ namespace cli_menu {
 
   mt::USI Command::matchTo(
     Command *target,
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (target) {
-      return target->match(inputs, paramData, lastCom);
+      return target->match(directInputs, paramData, lastCom);
     }
     else if (isParent()) return FLAG::FAILED;
 
@@ -529,13 +529,13 @@ namespace cli_menu {
   //________|
 
   bool Command::printDirectInputsError(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     mt::CR_STR controlName
   ) {
     static Command *curCom = nullptr;
     static std::string text = "";
 
-    if (inputs.empty()) return false;
+    if (directInputs.empty()) return false;
     else if (curCom != this) {
       curCom = this;
       text = "";
@@ -545,8 +545,8 @@ namespace cli_menu {
       };
 
       // singular
-      if (inputs.size() == 1 || (
-        inputs.size() == 2 && DashTest::isSingle(inputs.back())
+      if (directInputs.size() == 1 || (
+        directInputs.size() == 2 && DashTest::isSingle(directInputs.back())
       )) {
         strArr[1] = "a ";
         strArr[3] = " is";
@@ -568,12 +568,12 @@ namespace cli_menu {
   }
 
   mt::USI Command::tryToSkipWithSelection(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom,
     mt::CR_STR additionalMessage
   ) {
-    if (!printDirectInputsError(inputs, "select")) {
+    if (!printDirectInputsError(directInputs, "select")) {
 
       if (required) {
         Message::printNeatDialogError(
@@ -589,13 +589,13 @@ namespace cli_menu {
           parCom->selecting = true;
 
           return parCom->dialog(
-            inputs, paramData, lastCom
+            directInputs, paramData, lastCom
           );
         }
 
         // parent
         selecting = true;
-        return dialog(inputs, paramData, lastCom);
+        return dialog(directInputs, paramData, lastCom);
       }
     }
 
@@ -703,18 +703,18 @@ namespace cli_menu {
 
   mt::USI Command::questionTo(
     Command *target,
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (target) return target->question(
-      inputs, paramData, lastCom
+      directInputs, paramData, lastCom
     );
     return FLAG::COMPLETED;
   }
 
   mt::USI Command::dialog(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -730,7 +730,7 @@ namespace cli_menu {
       if (Control::backTest(controlStr)) {
 
         const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
-          inputs, paramData, lastCom
+          directInputs, paramData, lastCom
         );
 
         if (isItPossibleToGoBackFlag != FLAG::ERROR) {
@@ -744,7 +744,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
           );
         }
         // directly completed
@@ -768,13 +768,13 @@ namespace cli_menu {
         // pointing to neighbor
         if (next) {
           return static_cast<Cm*>(next)->dialog(
-            inputs, paramData, lastCom
+            directInputs, paramData, lastCom
           );
         }
         // redirected to first child
         else if (isParent()) {
           return static_cast<Cm*>(children.front())->dialog(
-            inputs, paramData, lastCom
+            directInputs, paramData, lastCom
           );
         }
         else printNullptrNextError();
@@ -806,7 +806,7 @@ namespace cli_menu {
         }
 
         if (found) {
-          return found->dialog(inputs, paramData, lastCom);
+          return found->dialog(directInputs, paramData, lastCom);
         }
         else if (isUltimate()) {
           Message::printNeatDialogError("input not found");
@@ -829,18 +829,18 @@ namespace cli_menu {
 
   mt::USI Command::dialogTo(
     Command *target,
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     if (target) return target->dialog(
-      inputs, paramData, lastCom
+      directInputs, paramData, lastCom
     );
     return FLAG::COMPLETED;
   }
 
   mt::USI Command::askNeighbor(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -849,15 +849,15 @@ namespace cli_menu {
     }
 
     if (next != circularCheckpoint) return matchTo(
-      static_cast<Cm*>(next), inputs, paramData, lastCom
+      static_cast<Cm*>(next), directInputs, paramData, lastCom
     );
 
     std::string inputLevelName = "input";
 
-    if (DashTest::isSingle(inputs.back())) {
+    if (DashTest::isSingle(directInputs.back())) {
       inputLevelName = "toggle";
     }
-    else if (DashTest::isDouble(inputs.back())) {
+    else if (DashTest::isDouble(directInputs.back())) {
       inputLevelName = "parameter";
     }
 
@@ -867,10 +867,10 @@ namespace cli_menu {
 
     // reset values
     circularCheckpoint = nullptr;
-    inputs = {};
+    directInputs = {};
 
     if (isMatchNeedDialog(false)) return dialogTo(
-      static_cast<Cm*>(parent), inputs, paramData, lastCom
+      static_cast<Cm*>(parent), directInputs, paramData, lastCom
     );
 
     return FLAG::FAILED;

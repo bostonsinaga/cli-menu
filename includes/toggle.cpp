@@ -89,22 +89,22 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::match(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     std::string copyName, copyInput;
 
-    if (inputs.size() > 0) {
-      const int i = inputs.size() - 1;
+    if (directInputs.size() > 0) {
+      const int i = directInputs.size() - 1;
 
       Command::copyMatchStrings(
         copyName, copyInput,
-        name, inputs[i]
+        name, directInputs[i]
       );
 
       if (copyName == DashTest::cleanDouble(copyInput)) {
-        inputs.pop_back();
+        directInputs.pop_back();
         *lastCom = this;
 
         if (isParent()) {
@@ -112,16 +112,16 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
           );
         }
         // toddler
         else {
           // actually there is no need for argument
-          if (inputs.size() > 0) {
+          if (directInputs.size() > 0) {
 
             int boolFlag = Control::booleanTest(
-              mt_uti::StrTools::getStringToLowercase(inputs[i-1])
+              mt_uti::StrTools::getStringToLowercase(directInputs[i-1])
             );
 
             // between 1 or 2 is true
@@ -132,18 +132,18 @@ namespace cli_menu {
           }
 
           return matchTo(
-            getUnusedNeighbor(this), inputs, paramData, lastCom
+            getUnusedNeighbor(this), directInputs, paramData, lastCom
           );
         }
       }
 
       // point to neighbor if input not matched
-      return askNeighbor(inputs, paramData, lastCom);
+      return askNeighbor(directInputs, paramData, lastCom);
     }
-    // 'inputs' completion
+    // 'directInputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent), inputs, paramData, lastCom
+        static_cast<Cm*>(parent), directInputs, paramData, lastCom
       );
     }
     // invoke callback
@@ -156,7 +156,7 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::question(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
@@ -186,13 +186,13 @@ namespace cli_menu {
 
         // toddler
         return questionTo(
-          getUnusedNeighbor(this), inputs, paramData, lastCom
+          getUnusedNeighbor(this), directInputs, paramData, lastCom
         );
       }
       else if (Control::backTest(buffer)) {
 
         const mt::USI flag = isItPossibleToGoBack(
-          inputs, paramData, lastCom
+          directInputs, paramData, lastCom
         );
 
         if (flag != FLAG::ERROR) return flag;
@@ -204,7 +204,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), inputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
           );
         }
         // need condition
@@ -234,13 +234,13 @@ namespace cli_menu {
           // pointing to neighbor
           if (notDependence) {
             if (next) return dialogTo(
-              static_cast<Cm*>(next), inputs, paramData, lastCom
+              static_cast<Cm*>(next), directInputs, paramData, lastCom
             );
             else printNullptrNextError();
           }
           // supporter
           else return questionTo(
-            getUnusedNeighbor(this), inputs, paramData, lastCom
+            getUnusedNeighbor(this), directInputs, paramData, lastCom
           );
         }
         // required items are not complete
@@ -250,7 +250,7 @@ namespace cli_menu {
 
         // only available for toddlers
         const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
-          inputs, paramData, lastCom,
+          directInputs, paramData, lastCom,
           "condition is given"
         );
 
@@ -267,13 +267,13 @@ namespace cli_menu {
   }
 
   mt::USI Toggle::dialog(
-    mt::VEC_STR &inputs,
+    mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom
   ) {
     // only for toddlers
     if (parent && !selecting && isToddler()) {
-      return question(inputs, paramData, lastCom);
+      return question(directInputs, paramData, lastCom);
     }
 
     // inverted in 'tryToSkipWithSelection' method
@@ -281,7 +281,7 @@ namespace cli_menu {
 
     // no need to set condition exclusively on parent
     setData(paramData, true);
-    return Command::dialog(inputs, paramData, lastCom);
+    return Command::dialog(directInputs, paramData, lastCom);
   }
 }
 
