@@ -276,7 +276,7 @@ namespace cli_menu {
       return question(inputs, paramData, lastCom);
     }
 
-    // this may set to true in 'printDirectInputsQueueError' method
+    // inverted in 'tryToSkipWithSelection' method
     selecting = false;
 
     // no need to set condition exclusively on parent

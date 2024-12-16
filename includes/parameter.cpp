@@ -460,7 +460,7 @@ namespace cli_menu {
       return question(inputs, paramData, lastCom);
     }
 
-    // this was set to true after 'printDirectInputsQueueError' call
+    // inverted in 'tryToSkipWithSelection' method
     selecting = false;
 
     // no need to set argument exclusively
