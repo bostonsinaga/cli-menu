@@ -852,17 +852,22 @@ namespace cli_menu {
       static_cast<Cm*>(next), directInputs, paramData, lastCom
     );
 
-    std::string inputLevelName = "input";
+    std::string inputLevelName = "input",
+      inputName = DashTest::cleanSingle(directInputs.back());
 
-    if (DashTest::isSingle(directInputs.back())) {
-      inputLevelName = "toggle";
-    }
-    else if (DashTest::isDouble(directInputs.back())) {
+    if (!inputName.empty()) {
       inputLevelName = "parameter";
+    }
+    else {
+      inputName = DashTest::cleanDouble(directInputs.back());
+
+      if (!inputName.empty()) {
+        inputLevelName = "toggle";
+      }
     }
 
     Message::printNeatDialogError(
-      "unknown " + inputLevelName + " named '" + name + "'", 1
+      "unknown " + inputLevelName + " named '" + inputName + "'", 1
     );
 
     // reset values
