@@ -6,13 +6,12 @@
 namespace cli_menu {
 
   class Toggle : public Command {
-  private:
+  protected:
     void setData(
       ParamData &paramData,
       mt::CR_BOL condition
     ) override;
 
-  protected:
     mt::USI match(
       mt::VEC_STR &directInputs,
       ParamData &paramData,
