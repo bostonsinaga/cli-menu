@@ -33,7 +33,7 @@ namespace cli_menu {
     CR_SP_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
-    name_in, description_in, true, nullptr,
+    name_in, description_in, false, nullptr,
     callback_in, propagatingCallback_in
   ) {
     author = author_in;
@@ -48,7 +48,7 @@ namespace cli_menu {
     CR_SP_PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
-    name_in, description_in, true, nullptr,
+    name_in, description_in, false, nullptr,
     callback_in, propagatingCallback_in
   ) {
     author = author_in;
@@ -61,7 +61,7 @@ namespace cli_menu {
     mt::CR_STR author_in,
     CR_VERSION version_in
   ) : Toggle(
-    name_in, description_in, true, nullptr
+    name_in, description_in, false, nullptr
   ) {
     author = author_in;
     version = version_in;
@@ -168,6 +168,8 @@ namespace cli_menu {
     else if (Command::usingUppercaseName) {
       changeTreeNamesToUppercase();
     }
+
+    setData(paramData, true);
 
     //_________|
     // Process |
