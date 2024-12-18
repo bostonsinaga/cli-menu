@@ -340,10 +340,6 @@ namespace cli_menu {
     bool isParent() { return isGroup() || isUltimate(); }
     bool isToddler() { return isIndependence() || isDependence(); }
 
-    bool isRequiredContainerEmpty() {
-      return !used && !ultimate && isRequired();
-    }
-
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",
       FullNameProfile fullNameProfile = Command::defaultFullNameProfile,
