@@ -666,45 +666,6 @@ namespace cli_menu {
     );
   }
 
-  void Command::printDialogStatus(
-    mt::CR_BOL usingAbbreviations,
-    mt::CR_BOL withBrackets,
-    mt::CR_BOL forcedToDependenceVersion
-  ) {
-    static Command *curCom = nullptr;
-    static std::string text = "";
-
-    if (curCom != this) {
-      curCom = this;
-
-      text = getDialogStatusString(
-        usingAbbreviations,
-        withBrackets,
-        forcedToDependenceVersion
-      );
-    }
-
-    // the 'text' is reusable within the same instance
-    std::cout << text;
-  }
-
-  std::string Command::getHelpDialogStatusString() {
-    return Color::getString("THIS: ", Color::GREEN)
-      + getDialogStatusString(false, false, true) + "\n";
-  }
-
-  void Command::printHelpDialogStatus() {
-    static Command *curCom = nullptr;
-    static std::string text = "";
-
-    if (curCom != this) {
-      curCom = this;
-      text = getHelpDialogStatusString();
-    }
-
-    std::cout << text;
-  }
-
   std::string Command::getFillingStatusString(
     mt::CR_BOL usingAbbreviations
   ) {
@@ -1079,7 +1040,7 @@ namespace cli_menu {
     );
 
     // dialog status in brackets
-    printDialogStatus(true, true);
+    std::cout << getDialogStatusString(true, true);
 
     // once at toddler level of 'Toggle'
     if (getInheritanceFlag() == TOGGLE && isToddler()) {
@@ -1126,7 +1087,8 @@ namespace cli_menu {
 
       // current dialog status
       if (!summarized) {
-        text = getHelpDialogStatusString();
+        text = Color::getString("THIS: ", Color::GREEN)
+          + getDialogStatusString(false, false, true) + "\n";
       }
       else text = "";
 
@@ -1181,8 +1143,7 @@ namespace cli_menu {
       printChildrenNamesDescriptions(false);
     }
     else {
-      printHelpDialogStatus();
-      std::cout << description;
+      std::cout << getDialogStatusString(false, false, true) << description;
       Message::printBoundaryLine(1, 2);
     }
   }
