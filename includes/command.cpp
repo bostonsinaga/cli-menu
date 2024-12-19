@@ -181,7 +181,7 @@ namespace cli_menu {
     }
 
     if (isVerbose) {
-      if (!children.empty()) levelName += " ";
+      if (isParent()) levelName += " ";
 
       if (getInheritanceFlag() == PARAMETER) {
         levelName += "parameter";
@@ -193,9 +193,7 @@ namespace cli_menu {
   }
 
   std::string Command::getChildrenLevelName(mt::CR_BOL onlyRequired) {
-
-    // parent only
-    if (!children.empty()) {
+    if (isParent()) {
 
       static const int initAmount = 3;
       Command *loopCom;
@@ -780,7 +778,7 @@ namespace cli_menu {
         printHelp();
       }
       else if (Control::listTest(controlStr)) {
-        printChildrenNamesDescriptions(true);
+        printList();
       }
       else if (Control::nextTest(controlStr)) {
         // pointing to neighbor
@@ -830,10 +828,8 @@ namespace cli_menu {
           Message::printNeatDialogError("input not found");
         }
         // toddler
-        else if (children.empty()) {
-          Message::printNeatDialogError(
-            "this " + getLevelName() + " does not have any items"
-          );
+        else if (isToddler()) {
+          printNoItems();
         }
         // group
         else Message::printNeatDialogError(
@@ -1086,9 +1082,7 @@ namespace cli_menu {
     printDialogStatus(true, true);
 
     // once at toddler level of 'Toggle'
-    if (getInheritanceFlag() == TOGGLE &&
-      isToddler()
-    ) {
+    if (getInheritanceFlag() == TOGGLE && isToddler()) {
       static bool isInit = true;
 
       if (isInit && isDependence()) {
@@ -1159,6 +1153,19 @@ namespace cli_menu {
     if (endWithBoundaryLine) {
       Message::printBoundaryLine(0, 2);
     }
+  }
+
+  void Command::printNoItems() {
+    Message::printNeatDialogError(
+      "this " + getLevelName(isDependence()) + " does not have any items"
+    );
+  }
+
+  void Command::printList() {
+    if (isParent()) {
+      printChildrenNamesDescriptions(true);
+    }
+    else printNoItems();
   }
 
   void Command::printHelp() {
