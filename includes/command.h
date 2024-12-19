@@ -102,6 +102,12 @@ namespace cli_menu {
       mt::CR_BOL connected
     );
 
+    // prioritize the rest of direct directInputs
+    bool isDirectInputsError(
+      mt::VEC_STR &directInputs,
+      mt::CR_STR controlName
+    );
+
     static bool isTemporaryLetterCaseChange();
     static void onFreeChangeInputLetterCase(std::string &strIn);
 
@@ -157,12 +163,12 @@ namespace cli_menu {
       mt::CR_BOL endWithSeparator = false
     );
 
-    std::string getLevelName();
+    std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
 
     // error message selectors for controls
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
-    void printRequiredNextError();
+    bool doesUltimateAllowSkip();
     void printNullptrNextError();
     void printOrphanError();
 
@@ -245,12 +251,6 @@ namespace cli_menu {
 
     // 'directInputs' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
-
-    // prioritize the rest of direct directInputs
-    bool printDirectInputsError(
-      mt::VEC_STR &directInputs,
-      mt::CR_STR controlName
-    );
 
     // reusable selection control handler
     mt::USI tryToSkipWithSelection(
