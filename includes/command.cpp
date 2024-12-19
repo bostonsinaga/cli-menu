@@ -164,7 +164,7 @@ namespace cli_menu {
       + (endWithSeparator ? separator : "");
   }
 
-  std::string Command::getLevelName() {
+  std::string Command::getLevelName(mt::CR_BOL isVerbose) {
     std::string levelName;
 
     if (!parent) {
@@ -176,7 +176,18 @@ namespace cli_menu {
     else if (isUltimate()) {
       levelName = "command";
     }
-    else levelName = "input";
+    else if (!isVerbose) {
+      levelName = "input";
+    }
+
+    if (isVerbose) {
+      if (!children.empty()) levelName += " ";
+
+      if (getInheritanceFlag() == PARAMETER) {
+        levelName += "parameter";
+      }
+      else levelName += "toggle";
+    }
 
     return levelName;
   }
@@ -257,7 +268,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     if (parent) {
-      if (!printDirectInputsError(directInputs, "go back")) {
+      if (!isDirectInputsError(directInputs, "go back")) {
         used = false;
         required = true;
 
@@ -313,17 +324,24 @@ namespace cli_menu {
       }
     }
 
-    // toddler
+    // container
     return true;
   }
 
   // called in 'question' when 'requiredItems' contains
-  void Command::printRequiredNextError() {
-    // for any level
-    Message::printNeatDialogError(
-      "cannot skip this " + getLevelName() + " with empty "
-      + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
-    );
+  bool Command::doesUltimateAllowSkip() {
+    if (isDependence() && required && !used) {
+
+      Message::printNeatDialogError(
+        "cannot skip this " + getLevelName(true) + " with empty "
+        + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
+      );
+
+      return false;
+    }
+
+    // container
+    return true;
   }
 
   // for single toddler
@@ -528,7 +546,7 @@ namespace cli_menu {
   // DIALOG |
   //________|
 
-  bool Command::printDirectInputsError(
+  bool Command::isDirectInputsError(
     mt::VEC_STR &directInputs,
     mt::CR_STR controlName
   ) {
@@ -573,7 +591,7 @@ namespace cli_menu {
     Command **lastCom,
     mt::CR_STR additionalMessage
   ) {
-    if (!printDirectInputsError(directInputs, "select")) {
+    if (!isDirectInputsError(directInputs, "select")) {
 
       if (required) {
         Message::printNeatDialogError(
