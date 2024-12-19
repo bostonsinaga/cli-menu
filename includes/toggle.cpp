@@ -184,9 +184,17 @@ namespace cli_menu {
           Control::revealBoolean(boolFlag)
         );
 
-        // toddler
-        return questionTo(
+        // inside ultimate only
+        if (isDependence()) return questionTo(
           getUnusedNeighbor(this), directInputs, paramData, lastCom
+        );
+        // dead end
+        else if (isIndependence()) {
+          return FLAG::COMPLETED;
+        }
+        // back to this dialog
+        return Command::dialog(
+          directInputs, paramData, lastCom
         );
       }
       else if (Control::backTest(buffer)) {
@@ -279,7 +287,8 @@ namespace cli_menu {
     selecting = false;
 
     // no need to set condition exclusively on parent
-    setData(paramData, true);
+    if (!used) setData(paramData, true);
+
     return Command::dialog(directInputs, paramData, lastCom);
   }
 }
