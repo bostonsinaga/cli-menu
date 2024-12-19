@@ -337,8 +337,8 @@ namespace cli_menu {
     bool isOptional() { return !required; }
     bool isContainer() { return !ultimate || isUltimate(); }
     bool isUsed() { return used; }
-    bool isParent() { return isGroup() || isUltimate(); }
-    bool isToddler() { return isIndependence() || isDependence(); }
+    bool isParent() { return !children.empty(); }
+    bool isToddler() { return children.empty(); }
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",
@@ -354,6 +354,8 @@ namespace cli_menu {
       mt::CR_BOL endWithBoundaryLine = true
     );
 
+    void printNoItems();
+    void printList();
     virtual void printHelp();
     virtual void printError();
   };
