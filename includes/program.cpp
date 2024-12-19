@@ -189,23 +189,23 @@ namespace cli_menu {
         case FLAG::COMPLETED: {
           // check if has any callback
           if (!runTo(lastCom, paramData)) {
-            Message::printNamed(
+            Message::printNeatNamed(
               Message::STATUS::ERROR,
-              "No callback.",
+              "no callback",
               lastCom->getName()
             );
           }
           // succeeded after main callback
-          else Message::printNamed(
+          else Message::printNeatNamed(
             Message::STATUS::SUCCEED,
-            "Output file written to 'foo.kml'.",
+            "output file written to 'foo.kml'",
             name
           );
         break;}
         case FLAG::CANCELED: {
-          Message::printNamed(
+          Message::printNeatNamed(
             Message::STATUS::CANCELED,
-            "Input discarded.",
+            "program terminated",
             name
           );
         break;}
@@ -229,18 +229,18 @@ namespace cli_menu {
         break;}
         // error
         default: {
-          Message::printNamed(
+          Message::printNeatNamed(
             Message::STATUS::ERROR,
-            "There should be an error handler.",
+            "there should be an error handler",
             name
           );
         }
       }
     }
     // no children
-    else Message::printNamed(
+    else Message::printNeatNamed(
       Message::STATUS::ERROR,
-      "No groups/commands available.",
+      "no groups/commands available",
       name
     );
 
