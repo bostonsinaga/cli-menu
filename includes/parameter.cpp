@@ -377,7 +377,7 @@ namespace cli_menu {
       }
       else if (Control::enterTest(controlStr)) {
         // need argument
-        if (isRequiredContainerEmpty()) {
+        if (!used && required) {
           Message::printDialogError(
             "this " + getLevelName() + needsArgStr
           );
@@ -405,22 +405,19 @@ namespace cli_menu {
         printChildrenNamesDescriptions(true);
       }
       else if (Control::nextTest(controlStr)) {
-        // proceed to next question
-        if (isOptional() || (isRequired() && used)) {
+
+        // try to jump to the next question
+        if (doesUltimateAllowSkip()) {
           *lastCom = chooseLastCommand();
 
           // question in the middle, back to match
           if (!directInputs.empty()) {
             return middleMatch(directInputs, paramData, lastCom);
           }
-          // parent
+          // container
           else if (notDependence) {
-            // back to selection
-            if (isParent()) {
-              return dialog(directInputs, paramData, lastCom);
-            }
             // pointing to neighbor
-            else if (next) return dialogTo(
+            if (next) return dialogTo(
               static_cast<Cm*>(next), directInputs, paramData, lastCom
             );
             else printNullptrNextError();
@@ -430,8 +427,6 @@ namespace cli_menu {
             getUnusedNeighbor(this), directInputs, paramData, lastCom
           );
         }
-        // required items are not complete
-        else printRequiredNextError();
       }
       else if (Control::selectTest(controlStr)) {
 

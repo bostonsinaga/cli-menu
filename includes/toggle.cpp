@@ -208,7 +208,7 @@ namespace cli_menu {
           );
         }
         // need condition
-        else if (isRequiredContainerEmpty()) {
+        else if (!used && required) {
           Message::printDialogError(
             "this " + getLevelName() + " needs a condition"
           );
@@ -227,8 +227,9 @@ namespace cli_menu {
         printChildrenNamesDescriptions(true);
       }
       else if (Control::nextTest(buffer)) {
-        // proceed to next question
-        if (isOptional() || (isRequired() && used)) {
+
+        // try to jump to the next question
+        if (doesUltimateAllowSkip()) {
           *lastCom = ultimate;
 
           // pointing to neighbor
@@ -243,8 +244,6 @@ namespace cli_menu {
             getUnusedNeighbor(this), directInputs, paramData, lastCom
           );
         }
-        // required items are not complete
-        else printRequiredNextError();
       }
       else if (Control::selectTest(buffer)) {
 
