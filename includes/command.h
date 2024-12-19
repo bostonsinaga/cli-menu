@@ -73,15 +73,6 @@ namespace cli_menu {
       mt::CR_BOL forcedToDependenceVersion = false
     );
 
-    void printDialogStatus(
-      mt::CR_BOL usingAbbreviations,
-      mt::CR_BOL withBrackets,
-      mt::CR_BOL forcedToDependenceVersion = false
-    );
-
-    std::string getHelpDialogStatusString();
-    void printHelpDialogStatus();
-
     virtual std::string getFillingStatusString(
       mt::CR_BOL usingAbbreviations
     );
