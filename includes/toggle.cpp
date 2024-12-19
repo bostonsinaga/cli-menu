@@ -224,7 +224,7 @@ namespace cli_menu {
         printHelp();
       }
       else if (Control::listTest(buffer)) {
-        printChildrenNamesDescriptions(true);
+        printList();
       }
       else if (Control::nextTest(buffer)) {
 

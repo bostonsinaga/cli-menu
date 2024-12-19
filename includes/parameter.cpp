@@ -402,7 +402,7 @@ namespace cli_menu {
         printHelp();
       }
       else if (Control::listTest(controlStr)) {
-        printChildrenNamesDescriptions(true);
+        printList();
       }
       else if (Control::nextTest(controlStr)) {
 
