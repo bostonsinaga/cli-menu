@@ -265,14 +265,7 @@ namespace cli_menu {
         used = false;
         required = true;
 
-        // program
-        if (!parent->getParent()) {
-          return static_cast<Cm*>(parent)->dialog(
-            directInputs, paramData, lastCom
-          );
-        }
-
-        return static_cast<Cm*>(parent)->question(
+        return static_cast<Cm*>(parent)->dialog(
           directInputs, paramData, lastCom
         );
       }
