@@ -61,27 +61,29 @@ namespace cli_menu {
   }
 
   std::string Toggle::getFullName(
-    CR_FullNameProfile fullNameProfile
+    mt::CR_BOL useDash,
+    mt::CR_BOL useInputType,
+    mt::CR_BOL useLevelName,
+    CR_CLR nameColor
   ) {
     std::string nameStr, text;
 
     // choose name
-    if (fullNameProfile.useDash) {
+    if (useDash) {
       nameStr = getDashedName();
     }
     else nameStr = name;
 
     // set 'nameStr' color
     nameStr = Color::getString(
-      nameStr, fullNameProfile.nameColor
+      nameStr, nameColor
     );
 
-    /** Final assignments */
-
+    // final assignments
     text = nameStr;
 
     // add level name
-    if (fullNameProfile.useLevelName) {
+    if (useLevelName) {
       text += getLevelLabel();
     }
 

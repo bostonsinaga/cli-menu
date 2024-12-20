@@ -64,7 +64,10 @@ namespace cli_menu {
     std::string getDashedName() override;
 
     std::string getFullName(
-      CR_FullNameProfile fullNameProfile = Command::defaultFullNameProfile
+      mt::CR_BOL useDash = true,
+      mt::CR_BOL useInputType = true,
+      mt::CR_BOL useLevelName = true,
+      CR_CLR nameColor = Color()
     ) override;
 
     static void useCaseSensitiveName(mt::CR_BOL isIt);

@@ -219,28 +219,30 @@ namespace cli_menu {
   }
 
   std::string Parameter::getFullName(
-    CR_FullNameProfile fullNameProfile
+    mt::CR_BOL useDash,
+    mt::CR_BOL useInputType,
+    mt::CR_BOL useLevelName,
+    CR_CLR nameColor
   ) {
     std::string nameStr, inputTypeStr, text;
 
     // choose name
-    if (fullNameProfile.useDash) {
+    if (useDash) {
       nameStr = getDashedName();
     }
     else nameStr = name;
 
     // set 'nameStr' color
     nameStr = Color::getString(
-      nameStr, fullNameProfile.nameColor
+      nameStr, nameColor
     );
 
     // add input argumentType
-    if (fullNameProfile.useInputType) {
+    if (useInputType) {
       inputTypeStr = "<" + getStringifiedArgumentType() + ">";
     }
 
-    /** Final assignments */
-
+    // final assignments
     text += nameStr + Color::getString(
       inputTypeStr,
       Command::usingDashesBoundaryLine ?
@@ -248,7 +250,7 @@ namespace cli_menu {
     );
 
     // add level name
-    if (fullNameProfile.useLevelName) {
+    if (useLevelName) {
       text += getLevelLabel();
     }
 
