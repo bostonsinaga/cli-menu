@@ -219,7 +219,7 @@ namespace cli_menu {
         }
         // need condition
         else if (!used && required) {
-          Message::printDialogError(
+          Message::printNeatDialogError(
             "this " + getLevelName() + " needs a condition"
           );
         }

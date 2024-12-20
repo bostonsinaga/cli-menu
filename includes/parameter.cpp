@@ -380,7 +380,7 @@ namespace cli_menu {
       else if (Control::enterTest(controlStr)) {
         // need argument
         if (!used && required) {
-          Message::printDialogError(
+          Message::printNeatDialogError(
             "this " + getLevelName() + needsArgStr
           );
         }
