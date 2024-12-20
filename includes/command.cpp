@@ -10,10 +10,6 @@ namespace cli_menu {
 
   Command *Command::circularCheckpoint = nullptr;
 
-  const Command::FullNameProfile
-    Command::defaultFullNameProfile = {true, true, true},
-    Command::helpFullNameProfile = {false, true, true, Color::WHITE};
-
   bool Command::usingCaseSensitiveName = true,
     Command::usingLowercaseName = false,
     Command::usingUppercaseName = false,
@@ -153,14 +149,13 @@ namespace cli_menu {
   // the 'ultimate' confirmed to exist when this invoked
   std::string Command::getFullNameWithUltimate(
     mt::CR_STR separator,
-    CR_FullNameProfile fullNameProfile,
     mt::CR_BOL startWithSeparator,
     mt::CR_BOL endWithSeparator
   ) {
     return (startWithSeparator ? separator : "")
       + Color::getString(
         ultimate->name, getLevelLabelColor()
-      ) + separator + getFullName(fullNameProfile)
+      ) + separator + getFullName()
       + (endWithSeparator ? separator : "");
   }
 
@@ -921,8 +916,6 @@ namespace cli_menu {
 
   std::string Command::getInlineRootNames(
     mt::CR_STR separator,
-    FullNameProfile fullNameProfile,
-    int listFormat,
     mt::CR_BOL startWithSeparator,
     mt::CR_BOL endWithSeparator
   ) {
@@ -931,16 +924,10 @@ namespace cli_menu {
 
     // looping up to root
     do {
-      text = root->getFullName(fullNameProfile) + separator + text;
+      text = root->getFullName() + separator + text;
       root = static_cast<Cm*>(root->parent);
-
-      if (listFormat == INLINE_NAMES_LAST) {
-        fullNameProfile.useInputType = false;
-        fullNameProfile.useLevelName = false;
-        listFormat = INLINE_NAMES_NORMAL;
-      }
     }
-    while (root && listFormat != INLINE_NAMES_SELF);
+    while (root);
 
     if (startWithSeparator) {
       text = separator + text;
@@ -1098,8 +1085,8 @@ namespace cli_menu {
         loopCom = static_cast<Cm*>(children[i]);
         if (i > 0) text += "\n";
 
-        text += loopCom->getInlineRootNames(
-          "", helpFullNameProfile, INLINE_NAMES_SELF, false
+        text += loopCom->getFullName(
+          false, true, true, Color::WHITE
         ) + ":" + loopCom->getDialogStatusString(true, true, true);
 
         // for list control
