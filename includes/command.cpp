@@ -595,7 +595,7 @@ namespace cli_menu {
       }
       // the 'selecting' will be an opposite in overridden 'dialog' method
       else {
-        if (isToddler()) {
+        if (isDependence()) {
           Command *parCom = static_cast<Cm*>(parent);
           parCom->selecting = true;
 
@@ -606,7 +606,7 @@ namespace cli_menu {
 
         // parent
         selecting = true;
-        return dialog(directInputs, paramData, lastCom);
+        return Command::dialog(directInputs, paramData, lastCom);
       }
     }
 
