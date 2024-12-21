@@ -20,6 +20,8 @@ namespace cli_menu {
     { ".select",   ":s" }
   };
 
+  mt::USI Control::sharedFlag = -1;
+
   int Control::test(mt::CR_STR str) {
     bool prevSpaced = false;
     std::string input;
@@ -27,7 +29,7 @@ namespace cli_menu {
     // force return when 'abc123 space abc123' is detected
     for (mt::CR_CH ch : str) {
       if (!mt_uti::StrTools::isWhitespace(ch)) {
-        if (prevSpaced && !input.empty()) break;
+        if (prevSpaced && !input.empty()) return -1;
         input += ch;
       }
       else prevSpaced = true;
@@ -36,51 +38,55 @@ namespace cli_menu {
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < Control::count; j++) {
-        if (input == NAMES[j][i]) return j+1;
+
+        if (input == NAMES[j][i]) {
+          sharedFlag = j;
+          return j;
+        }
       }
     }
 
-    return 0;
+    return -1;
   }
 
   bool Control::backTest(mt::CR_STR str) {
-    return Control::test(str) == BACK + 1;
+    return Control::test(str) == BACK;
   }
 
   bool Control::cancelTest(mt::CR_STR str) {
-    return Control::test(str) == CANCEL + 1;
+    return Control::test(str) == CANCEL;
   }
 
   bool Control::copyTest(mt::CR_STR str) {
-    return Control::test(str) == COPY + 1;
+    return Control::test(str) == COPY;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return Control::test(str) == ENTER + 1;
+    return Control::test(str) == ENTER;
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return Control::test(str) == HELP + 1;
+    return Control::test(str) == HELP;
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return Control::test(str) == LIST + 1;
+    return Control::test(str) == LIST;
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return Control::test(str) == MODIFY + 1;
+    return Control::test(str) == MODIFY;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return Control::test(str) == NEXT + 1;
+    return Control::test(str) == NEXT;
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return Control::test(str) == PREVIOUS + 1;
+    return Control::test(str) == PREVIOUS;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return Control::test(str) == SELECT + 1;
+    return Control::test(str) == SELECT;
   }
 
   int Control::booleanTest(mt::CR_STR str) {
