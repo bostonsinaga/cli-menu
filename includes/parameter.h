@@ -7,8 +7,6 @@ namespace cli_menu {
 
   class Parameter : public Command {
   private:
-    using LINKED_LIST = mt_ds::linked_list::Node;
-
     bool accumulating = false,
       argumentType = false;
 
