@@ -7,6 +7,12 @@ namespace cli_menu {
 
   class Control {
   private:
+    static mt::USI sharedFlag;
+    static const int count = 10;
+    static const std::string NAMES[count][2];
+    static int test(mt::CR_STR str);
+
+  public:
     enum {
       BACK = 0, CANCEL = 1,
       COPY = 2, ENTER = 3,
@@ -15,11 +21,6 @@ namespace cli_menu {
       PREVIOUS = 8, SELECT = 9
     };
 
-    static const int count = 10;
-    static const std::string NAMES[count][2];
-    static int test(mt::CR_STR str);
-
-  public:
     static bool backTest(mt::CR_STR str);
     static bool cancelTest(mt::CR_STR str);
     static bool copyTest(mt::CR_STR str);
@@ -37,6 +38,10 @@ namespace cli_menu {
 
     static void printParameterHelp();
     static void printToggleHelp();
+
+    static const mt::USI getSharedFlag() {
+      return sharedFlag;
+    }
   };
 }
 
