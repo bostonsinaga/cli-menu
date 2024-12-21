@@ -163,7 +163,8 @@ namespace cli_menu {
     std::string levelName;
 
     if (!parent) {
-      levelName = "program";
+      if (isParent()) levelName = "program";
+      else levelName = "input";
     }
     else if (isGroup()) {
       levelName = "group";
@@ -207,8 +208,8 @@ namespace cli_menu {
         if (!onlyRequired ||
           (onlyRequired && loopCom->required)
         ) {
-          if (loopCom->isGroup()) indexes[0]++;
-          else if (loopCom->isUltimate()) indexes[1]++;
+          if (loopCom->isUltimate()) indexes[0]++;
+          else if (loopCom->isGroup()) indexes[1]++;
           else indexes[2]++;
         }
       }
@@ -314,24 +315,8 @@ namespace cli_menu {
     return true;
   }
 
-  // called in 'question' when 'requiredItems' contains
-  bool Command::doesUltimateAllowSkip() {
-    if (isDependence() && required && !used) {
-
-      Message::printNeatDialogError(
-        "cannot skip this " + getLevelName(true) + " with empty "
-        + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
-      );
-
-      return false;
-    }
-
-    // container
-    return true;
-  }
-
-  // for single toddler
-  void Command::printNullptrNextError() {
+  // for an only child
+  void Command::printNullptrNeighborError() {
     if (parent) {
       Command* parCom = static_cast<Cm*>(parent);
 
@@ -341,13 +326,9 @@ namespace cli_menu {
         + parCom->getChildrenLevelName(false)
       );
     }
-    else printOrphanError();
-  }
-
-  // for program or orphan (rarely used)
-  void Command::printOrphanError() {
-    Message::printNeatDialogError(
-      "this input has no connections"
+    // program or orphan
+    else Message::printNeatDialogError(
+      "this " + getLevelName(true) + " has no connections"
     );
   }
 
@@ -571,7 +552,62 @@ namespace cli_menu {
     return true;
   }
 
-  mt::USI Command::tryToSkipWithSelection(
+  mt::USI Command::pointToNeighbor(
+    mt::CR_BOL toNext,
+    mt::VEC_STR &directInputs,
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    LINKED_LIST *neighbor = toNext ? next : previous;
+
+    if (neighbor) {
+      return static_cast<Cm*>(neighbor)->dialog(
+        directInputs, paramData, lastCom
+      );
+    }
+
+    printNullptrNeighborError();
+    return FLAG::ERROR;
+  }
+
+  mt::USI Command::tryToSkip(
+    mt::CR_BOL toNext,
+    mt::VEC_STR &directInputs,
+    ParamData &paramData,
+    Command **lastCom
+  ) {
+    // not allowed inside ultimate
+    if (isDependence() && required && !used) {
+
+      Message::printNeatDialogError(
+        "cannot skip this " + getLevelName(true) + " with empty "
+        + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
+      );
+    }
+    // question in the middle check
+    else if (!isDirectInputsError(directInputs, "skip")) {
+      *lastCom = ultimate;
+
+      // container
+      if (isContainer()) {
+        LINKED_LIST *neighbor = toNext ? next : previous;
+
+        if (neighbor) return dialogTo(
+          static_cast<Cm*>(neighbor), directInputs, paramData, lastCom
+        );
+
+        printNullptrNeighborError();
+      }
+      // dependence
+      else return questionTo(
+        getUnusedNeighbor(this),directInputs, paramData, lastCom
+      );
+    }
+
+    return FLAG::ERROR;
+  }
+
+  mt::USI Command::tryToSelect(
     mt::VEC_STR &directInputs,
     ParamData &paramData,
     Command **lastCom,
@@ -729,20 +765,18 @@ namespace cli_menu {
       else if (Control::listTest(controlStr)) {
         printList();
       }
-      else if (Control::nextTest(controlStr)) {
-        // pointing to neighbor
-        if (next) {
-          return static_cast<Cm*>(next)->dialog(
-            directInputs, paramData, lastCom
-          );
+      else if (
+        Control::nextTest(controlStr) ||
+        Control::previousTest(controlStr)
+      ) {
+        const mt::USI pointToNeighborFlag = pointToNeighbor(
+          Control::getSharedFlag() == Control::NEXT,
+          directInputs, paramData, lastCom
+        );
+
+        if (pointToNeighborFlag != FLAG::ERROR) {
+          return pointToNeighborFlag;
         }
-        // redirected to first child
-        else if (isParent()) {
-          return static_cast<Cm*>(children.front())->dialog(
-            directInputs, paramData, lastCom
-          );
-        }
-        else printNullptrNextError();
       }
       else if (Control::selectTest(controlStr)) {
         Message::printNeatDialogError(
@@ -763,7 +797,7 @@ namespace cli_menu {
           if (ultimate) usedParent = ultimate;
           else if (parent) usedParent = parent;
           else {
-            printOrphanError();
+            printNullptrNeighborError();
             continue;
           }
 
@@ -917,7 +951,12 @@ namespace cli_menu {
 
     // looping up to root
     do {
-      text = root->getFullName() + separator + text;
+      const bool isFirst = this == root;
+
+      text = root->getFullName(
+        true, isFirst, isFirst
+      ) + separator + text;
+
       root = static_cast<Cm*>(root->parent);
     }
     while (root);
