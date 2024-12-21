@@ -163,12 +163,11 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    const bool notDependence = !isDependence();
 
     // question display on non-supporters
-    if (notDependence) questionedGroup = true;
+    if (isContainer()) questionedGroup = true;
 
-    printAfterBoundaryLine(notDependence ?
+    printAfterBoundaryLine(isContainer() ?
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
@@ -236,35 +235,29 @@ namespace cli_menu {
       else if (Control::listTest(buffer)) {
         printList();
       }
-      else if (Control::nextTest(buffer)) {
+      else if (
+        Control::nextTest(buffer) ||
+        Control::previousTest(buffer)
+      ) {
+        const mt::USI tryToSkipFlag = tryToSkip(
+          Control::getSharedFlag() == Control::NEXT,
+          directInputs, paramData, lastCom
+        );
 
-        // try to jump to the next question
-        if (doesUltimateAllowSkip()) {
-          *lastCom = ultimate;
-
-          // pointing to neighbor
-          if (notDependence) {
-            if (next) return dialogTo(
-              static_cast<Cm*>(next), directInputs, paramData, lastCom
-            );
-            else printNullptrNextError();
-          }
-          // supporter
-          else return questionTo(
-            getUnusedNeighbor(this), directInputs, paramData, lastCom
-          );
+        if (tryToSkipFlag != FLAG::ERROR) {
+          return tryToSkipFlag;
         }
       }
       else if (Control::selectTest(buffer)) {
 
         // only available for toddlers
-        const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
+        const mt::USI tryToSelectFlag = tryToSelect(
           directInputs, paramData, lastCom,
           "condition is given"
         );
 
-        if (tryToSkipWithSelectionFlag != FLAG::ERROR) {
-          return tryToSkipWithSelectionFlag;
+        if (tryToSelectFlag != FLAG::ERROR) {
+          return tryToSelectFlag;
         }
       }
       else Message::printNeatDialogError(
@@ -285,7 +278,7 @@ namespace cli_menu {
       return question(directInputs, paramData, lastCom);
     }
 
-    // inverted in 'tryToSkipWithSelection' method
+    // inverted in 'tryToSelect' method
     selecting = false;
 
     // no need to set condition exclusively on parent

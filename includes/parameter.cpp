@@ -150,14 +150,12 @@ namespace cli_menu {
   ) {
     // only capture the last reversed 'directInputs'
     if (directInputs.size() > 0) {
-
-      bool found = false,
-        notDependence = isIndependence();
+      bool found = false;
 
       std::string copyInput;
       LINKED_LIST *continuation;
 
-      if (notDependence) continuation = nullptr;
+      if (isIndependence()) continuation = nullptr;
       else continuation = getContinuation();
 
       if (continuation) {
@@ -184,7 +182,7 @@ namespace cli_menu {
       setData(paramData, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 
-      if (notDependence) return FLAG::COMPLETED;
+      if (isIndependence()) return FLAG::COMPLETED;
       return FLAG::PASSED;
     }
 
@@ -350,13 +348,12 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    const bool notDependence = !isDependence();
     resetArgument(paramData);
 
     // question display on non-dependences
-    if (notDependence) questionedGroup = true;
+    if (isContainer()) questionedGroup = true;
 
-    printAfterBoundaryLine(notDependence ?
+    printAfterBoundaryLine(isContainer() ?
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
@@ -406,39 +403,28 @@ namespace cli_menu {
       else if (Control::listTest(controlStr)) {
         printList();
       }
-      else if (Control::nextTest(controlStr)) {
+      else if (
+        Control::nextTest(controlStr) ||
+        Control::previousTest(controlStr)
+      ) {
+        const mt::USI tryToSkipFlag = tryToSkip(
+          Control::getSharedFlag() == Control::NEXT,
+          directInputs, paramData, lastCom
+        );
 
-        // try to jump to the next question
-        if (doesUltimateAllowSkip()) {
-          *lastCom = chooseLastCommand();
-
-          // question in the middle, back to match
-          if (!directInputs.empty()) {
-            return middleMatch(directInputs, paramData, lastCom);
-          }
-          // container
-          else if (notDependence) {
-            // pointing to neighbor
-            if (next) return dialogTo(
-              static_cast<Cm*>(next), directInputs, paramData, lastCom
-            );
-            else printNullptrNextError();
-          }
-          // dependence
-          else return questionTo(
-            getUnusedNeighbor(this), directInputs, paramData, lastCom
-          );
+        if (tryToSkipFlag != FLAG::ERROR) {
+          return tryToSkipFlag;
         }
       }
       else if (Control::selectTest(controlStr)) {
 
-        const mt::USI tryToSkipWithSelectionFlag = tryToSkipWithSelection(
+        const mt::USI tryToSelectFlag = tryToSelect(
           directInputs, paramData, lastCom,
           "arguments are given"
         );
 
-        if (tryToSkipWithSelectionFlag != FLAG::ERROR) {
-          return tryToSkipWithSelectionFlag;
+        if (tryToSelectFlag != FLAG::ERROR) {
+          return tryToSelectFlag;
         }
       }
       // value input
@@ -457,7 +443,7 @@ namespace cli_menu {
       return question(directInputs, paramData, lastCom);
     }
 
-    // inverted in 'tryToSkipWithSelection' method
+    // inverted in 'tryToSelect' method
     selecting = false;
 
     // no need to set argument exclusively
