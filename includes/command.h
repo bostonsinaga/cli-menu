@@ -10,6 +10,7 @@ namespace cli_menu {
    */
   class Command : public mt_ds::tree::Node {
   protected:
+    using LINKED_LIST = mt_ds::linked_list::Node;
     using TREE = mt_ds::tree::Node;
 
     typedef mt_ds::tree::VEC_NODE VEC_TREE;
@@ -80,6 +81,13 @@ namespace cli_menu {
       mt::CR_STR controlName
     );
 
+    mt::USI pointToNeighbor(
+      mt::CR_BOL toNext,
+      mt::VEC_STR &directInputs,
+      ParamData &paramData,
+      Command **lastCom
+    );
+
     static bool isTemporaryLetterCaseChange();
     static void onFreeChangeInputLetterCase(std::string &strIn);
 
@@ -136,12 +144,8 @@ namespace cli_menu {
 
     std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
-
-    // error message selectors for controls
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
-    bool doesUltimateAllowSkip();
-    void printNullptrNextError();
-    void printOrphanError();
+    void printNullptrNeighborError();
 
     mt::USI isItPossibleToGoBack(
       mt::VEC_STR &directInputs,
@@ -223,8 +227,14 @@ namespace cli_menu {
     // 'directInputs' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    // reusable selection control handler
-    mt::USI tryToSkipWithSelection(
+    mt::USI tryToSkip(
+      mt::CR_BOL toNext,
+      mt::VEC_STR &directInputs,
+      ParamData &paramData,
+      Command **lastCom
+    );
+
+    mt::USI tryToSelect(
       mt::VEC_STR &directInputs,
       ParamData &paramData,
       Command **lastCom,
