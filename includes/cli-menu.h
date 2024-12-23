@@ -1,16 +1,6 @@
 #ifndef __CLI_MENU_H__
 #define __CLI_MENU_H__
 
-#include "base.h"
-#include "color.h"
-#include "message.h"
-#include "command.h"
-#include "parameter.h"
-#include "toggle.h"
-#include "program.h"
-
-namespace cm = cli_menu;
-
 /**
  * These 3 parameters have the same size.
  * The index represents the input sequence.
@@ -86,5 +76,19 @@ namespace cm = cli_menu;
 #ifndef CLI_MENU_PLAIN_CALLBACK
 #define CLI_MENU_PLAIN_CALLBACK(FUNCTION) std::make_shared<cli_menu::PLAIN_CALLBACK>(FUNCTION)
 #endif
+
+/** INCLUDES */
+
+#include "base.h"
+#include "color.h"
+#include "message.h"
+#include "debug.h"
+#include "control.h"
+#include "command.h"
+#include "parameter.h"
+#include "toggle.h"
+#include "program.h"
+
+namespace cm = cli_menu;
 
 #endif // __CLI_MENU_H__
