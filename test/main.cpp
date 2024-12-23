@@ -8,24 +8,9 @@ void programFun() {
 CM_FUNCTION(dialogFun) {
   std::cout << "\nDialog is called..\n";
 
-  std::cout << "\nTEXTS: ";
-  for (mt::CR_STR v : TEXTS) {
-    std::cout << v << ',';
-  }
-
-  std::cout << "\nNUMBERS: ";
-  for (mt::CR_VEC_DBL v1 : NUMBERS) {
-    std::cout << "[";
-    for (mt::CR_DBL v2 : v1) {
-      std::cout << v2 << ',';
-    }
-    std::cout << "]";
-  }
-
-  std::cout << "\nCONDITIONS: ";
-  for (mt::CR_BOL v : CONDITIONS) {
-    std::cout << v << ',';
-  }
+  cm::debug::printParamDataArray(
+    "dialog", TEXTS, NUMBERS, CONDITIONS
+  );
 }
 
 CM_FUNCTION(fooFun) {
