@@ -15,7 +15,7 @@ namespace debug {
     std::cout << "\nTEXTS      : ";
 
     for (int i = 0; i < TEXTS.size(); i++) {
-      std::cout << TEXTS[i];
+      std::cout << '"' << TEXTS[i] << '"';
       if (i < TEXTS.size() - 1) std::cout << ", ";
     }
 
