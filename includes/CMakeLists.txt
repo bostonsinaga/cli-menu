@@ -2,6 +2,7 @@ set (SOURCES
   base.h
   color.h
   message.h
+  debug.h
   control.h
   command.h
   parameter.h
