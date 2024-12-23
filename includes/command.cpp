@@ -319,16 +319,11 @@ namespace cli_menu {
   void Command::printNullptrNeighborError() {
     if (parent) {
       Command* parCom = static_cast<Cm*>(parent);
-
-      Message::printNeatDialogError(
-        "the '" + parCom->name + "' "
-        + parCom->getLevelName() + " has only one "
-        + parCom->getChildrenLevelName(false)
-      );
     }
-    // program or orphan
-    else Message::printNeatDialogError(
-      "this " + getLevelName(true) + " has no connections"
+
+    Message::printNeatDialogError(
+      "this " + getLevelName(true) + " has no "
+      + (parent || children.size() ? "neighbors" : "connections")
     );
   }
 
