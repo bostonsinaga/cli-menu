@@ -4,43 +4,51 @@
 #include "message.h"
 
 namespace cli_menu {
-namespace debug {
 
-  void printParamDataArray(mt::CR_STR name, CLI_MENU_FUNPAR) {
+  class Debug {
+  private:
+    template <typename T>
+    static void printList(
+      mt::CR_STR title,
+      mt::VEC2<T> vec2d
+    ) {
+      std::cout << title;
 
-    Message::printBoundaryLine(1, 1);
-    std::cout << "'" << name << "' ParamData:";
-    Message::printBoundaryLine(1, 0);
+      for (int i = 0; i < vec2d.size(); i++) {
+        std::cout << "\n  [";
 
-    std::cout << "\nTEXTS      : ";
+        for (int j = 0; j < vec2d[i].size(); j++) {
 
-    for (int i = 0; i < TEXTS.size(); i++) {
-      std::cout << '"' << TEXTS[i] << '"';
-      if (i < TEXTS.size() - 1) std::cout << ", ";
-    }
+          if (j > 0) std::cout << "   ";
+          std::cout << vec2d[i][j];
 
-    std::cout << "\nNUMBERS    : ";
+          if (vec2d[i].size() > 1) {
+            if (j < vec2d[i].size() - 1) {
+              std::cout << ",\n";
+            }
+          }
+        }
 
-    for (mt::CR_VEC_DBL numVec : NUMBERS) {
-      std::cout << "[";
-
-      for (int i = 0; i < numVec.size(); i++) {
-        std::cout << numVec[i];
-        if (i < numVec.size() - 1) std::cout << ", ";
+        std::cout << ']' << (i < vec2d.size() - 1 ? ',' : '\0');
       }
 
-      std::cout << "]";
+      std::cout << std::endl;
     }
 
-    std::cout << "\nCONDITIONS : ";
+  public:
+    static void printParamDataArray(mt::CR_STR name, CLI_MENU_FUNPAR) {
 
-    for (int i = 0; i < CONDITIONS.size(); i++) {
-      std::cout << CONDITIONS[i];
-      if (i < CONDITIONS.size() - 1) std::cout << ", ";
+      Message::printBoundaryLine(1, 1);
+      std::cout << "'" << name << "' ParamData (" << TEXTS.size() << "):";
+      Message::printBoundaryLine(1, 0);
+
+      Debug::printList<std::string>("\nTEXTS: ", TEXTS);
+      Debug::printList<mt::LD>("\nNUMBERS: ", NUMBERS);
+      Debug::printList<bool>("\nCONDITIONS: ", CONDITIONS);
+
+      Message::printBoundaryLine(0, 1);
     }
-
-    Message::printBoundaryLine(1, 1);
-  }
-}}
+  };
+}
 
 #endif // __CLI_MENU__DEBUG_H__
