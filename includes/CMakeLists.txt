@@ -2,8 +2,8 @@ set (SOURCES
   base.h
   color.h
   message.h
-  debug.h
   control.h
+  param-data.h
   command.h
   parameter.h
   toggle.h
