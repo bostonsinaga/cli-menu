@@ -30,11 +30,12 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_STR author_in,
     CR_VERSION version_in,
-    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL accumulating_in,
+    CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
     name_in, description_in, false, nullptr,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in, propagatingCallback_in
   ) {
     author = author_in;
     version = version_in;
@@ -45,11 +46,12 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_STR author_in,
     CR_VERSION version_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL accumulating_in,
+    PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
     name_in, description_in, false, nullptr,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in, propagatingCallback_in
   ) {
     author = author_in;
     version = version_in;
@@ -59,9 +61,10 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_STR author_in,
-    CR_VERSION version_in
+    CR_VERSION version_in,
+    mt::CR_BOL accumulating_in
   ) : Toggle(
-    name_in, description_in, false, nullptr
+    name_in, description_in, false, nullptr, accumulating_in
   ) {
     author = author_in;
     version = version_in;

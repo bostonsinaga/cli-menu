@@ -38,7 +38,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_STR author_in,
       CR_VERSION version_in,
-      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL accumulating_in,
+      CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -47,7 +48,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_STR author_in,
       CR_VERSION version_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL accumulating_in,
+      PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -55,7 +57,8 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_STR author_in,
-      CR_VERSION version_in
+      CR_VERSION version_in,
+      mt::CR_BOL accumulating_in
     );
 
     std::string getAuthor() { return author; }
