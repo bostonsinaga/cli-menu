@@ -254,8 +254,8 @@ namespace cli_menu {
     static char ch;
     static std::string boundaryLine;
 
-    SET_NO_NEGATIVE<int>(startNewlinesCount);
-    SET_NO_NEGATIVE<int>(endNewlinesCount);
+    startNewlinesCount *= startNewlinesCount >= 0;
+    endNewlinesCount *= endNewlinesCount >= 0;
 
     if (count > 0 && (ct != count || ch != character)) {
       ct = count;
@@ -273,7 +273,7 @@ namespace cli_menu {
     mt::CR_STR reason,
     int endNewlinesCount
   ) {
-    SET_NO_NEGATIVE<int>(endNewlinesCount);
+    endNewlinesCount *= endNewlinesCount >= 0;
 
     printString(
       "\n> " + reason + std::string(endNewlinesCount, '\n'),
@@ -285,7 +285,7 @@ namespace cli_menu {
     mt::CR_STR reason,
     int endNewlinesCount
   ) {
-    SET_NO_NEGATIVE<int>(endNewlinesCount);
+    endNewlinesCount *= endNewlinesCount >= 0;
 
     int i, j;
     std::string text = reason + std::string(endNewlinesCount, '\n');
