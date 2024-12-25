@@ -1,31 +1,28 @@
 #include <iostream>
 #include "cli-menu.h"
 
-void programFun() {
+void programFun(cm::ParamData &paramData) {
   std::cout << "\nProgram is called..\n";
 }
 
-CM_FUNCTION(dialogFun) {
+void dialogFun(cm::ParamData &paramData) {
   std::cout << "\nDialog is called..\n";
-
-  cm::debug::printParamDataArray(
-    "dialog", TEXTS, NUMBERS, CONDITIONS
-  );
+  paramData.printVector("dialog");
 }
 
-CM_FUNCTION(fooFun) {
+void fooFun(cm::ParamData &paramData) {
   std::cout << "\nFoo is called..\n";
 }
 
-CM_FUNCTION(sentenceFun) {
+void sentenceFun(cm::ParamData &paramData) {
   std::cout << "\nSentence is called..\n";
 }
 
-CM_FUNCTION(wordFun) {
+void wordFun(cm::ParamData &paramData) {
   std::cout << "\nWrite word..\n";
 }
 
-CM_FUNCTION(tidyFun) {
+void tidyFun(cm::ParamData &paramData) {
   std::cout << "\nTidy up..\n";
 }
 
@@ -36,7 +33,8 @@ int main(int argc, char *argv[]) {
     "Test 'cli-menu' library",
     "Boston Sinaga",
     cm::Version(1, 0, 0),
-    CM_PLAIN_CALLBACK(programFun)
+    false,
+    programFun
   );
 
   cm::Parameter *dialog = new cm::Parameter(
@@ -46,7 +44,7 @@ int main(int argc, char *argv[]) {
     test,
     cm::Parameter::NUMBER,
     false,
-    CM_CALLBACK(dialogFun)
+    dialogFun
   );
 
   cm::Parameter *foo = new cm::Parameter(
@@ -56,14 +54,15 @@ int main(int argc, char *argv[]) {
     dialog,
     cm::Parameter::TEXT,
     false,
-    CM_CALLBACK(fooFun)
+    fooFun
   );
 
   cm::Toggle *go = new cm::Toggle(
     "go",
     "go description",
     true,
-    dialog
+    dialog,
+    false
   );
 
   cm::Parameter *run = new cm::Parameter(
@@ -79,7 +78,8 @@ int main(int argc, char *argv[]) {
     "stop",
     "stop description",
     true,
-    go
+    go,
+    false
   );
 
   cm::Parameter *sentence = new cm::Parameter(
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     dialog,
     cm::Parameter::TEXT,
     false,
-    CM_CALLBACK(sentenceFun)
+    sentenceFun
   );
 
   cm::Parameter *word = new cm::Parameter(
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     sentence,
     cm::Parameter::TEXT,
     false,
-    CM_CALLBACK(wordFun)
+    wordFun
   );
 
   cm::Toggle *tidy = new cm::Toggle(
@@ -107,7 +107,8 @@ int main(int argc, char *argv[]) {
     "tidy description",
     false,
     sentence,
-    CM_CALLBACK(tidyFun)
+    false,
+    tidyFun
   );
 
   cm::Toggle *clean = new cm::Toggle(
@@ -115,7 +116,8 @@ int main(int argc, char *argv[]) {
     "clean description",
     true,
     sentence,
-    CM_CALLBACK(tidyFun)
+    false,
+    tidyFun
   );
 
   sentence->setAsUltimate();
