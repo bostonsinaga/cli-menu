@@ -7,10 +7,14 @@ namespace cli_menu {
 
   class Toggle : public Command {
   protected:
+    mt::VEC2_BOL conditions;
+
     void setData(
       ParamData &paramData,
       mt::CR_BOL condition
     ) override;
+
+    void resetArgument(ParamData &paramData);
 
     mt::USI match(
       mt::VEC_STR &directInputs,
@@ -39,7 +43,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      CR_SP_CALLBACK callback_in,
+      mt::CR_BOL accumulating_in,
+      CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -48,7 +53,8 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
+      mt::CR_BOL accumulating_in,
+      PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -56,7 +62,8 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
-      Command *parent_in
+      Command *parent_in,
+      mt::CR_BOL accumulating_in
     );
 
     mt::USI getInheritanceFlag() override { return TOGGLE; }

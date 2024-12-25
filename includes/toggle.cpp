@@ -10,12 +10,14 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    CR_SP_CALLBACK callback_in,
+    mt::CR_BOL accumulating_in,
+    CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in,
+    propagatingCallback_in
   ) {}
 
   Toggle::Toggle(
@@ -23,23 +25,26 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    mt::CR_BOL accumulating_in,
+    PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in,
+    propagatingCallback_in
   ) {}
 
   Toggle::Toggle(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
-    Command *parent_in
-  ):
-  Command(
+    Command *parent_in,
+    mt::CR_BOL accumulating_in
+  ) : Command(
     name_in, description_in,
-    required_in, parent_in
+    required_in, parent_in,
+    accumulating_in
   ) {}
 
   void Toggle::setData(
@@ -47,13 +52,19 @@ namespace cli_menu {
     mt::CR_BOL condition
   ) {
     if (!used) {
-      paramData.conditions.push_back(condition);
-      paramData.texts.push_back("");
+      paramData.conditions.push_back({condition});
+      paramData.texts.push_back({});
       paramData.numbers.push_back({});
       paramDataIndex = paramData.conditions.size() - 1;
       updateRequiredUsed(false);
     }
-    else paramData.conditions[paramDataIndex] = condition;
+    else paramData.conditions[paramDataIndex].push_back(condition);
+  }
+
+  void Toggle::resetArgument(ParamData &paramData) {
+    if (used && !accumulating) {
+      paramData.conditions[paramDataIndex] = {};
+    }
   }
 
   std::string Toggle::getDashedName() {
@@ -106,8 +117,10 @@ namespace cli_menu {
       );
 
       if (copyName == DashTest::cleanDouble(copyInput)) {
+
         directInputs.pop_back();
         *lastCom = this;
+        resetArgument(paramData);
 
         if (isParent()) {
           setData(paramData, true);
@@ -163,6 +176,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
+    resetArgument(paramData);
 
     // question display on non-supporters
     if (isContainer()) questionedGroup = true;
