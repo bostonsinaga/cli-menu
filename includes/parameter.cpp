@@ -105,12 +105,28 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::resetArgument(ResultInputs &resultInputs) {
-    if (used && !accumulating) {
-      if (argumentType == TEXT) {
-        resultInputs.texts[paramDataIndex] = {};
+  void Parameter::resetInput(
+    ResultInputs &resultInputs,
+    mt::CR_BOL discarded
+  ) {
+    if (used) {
+      if (discarded) {
+
+        if (argumentType == TEXT) {
+          resultInputs.texts.pop_back();
+        }
+        else resultInputs.numbers.pop_back();
+
+        paramDataIndex = -1;
+        used = false;
+        required = true;
       }
-      else resultInputs.numbers[paramDataIndex] = {};
+      else if (!accumulating) {
+        if (argumentType == TEXT) {
+          resultInputs.texts[paramDataIndex] = {};
+        }
+        else resultInputs.numbers[paramDataIndex] = {};
+      }
     }
   }
 
@@ -179,7 +195,7 @@ namespace cli_menu {
         }
       }
 
-      resetArgument(resultInputs);
+      resetInput(resultInputs, false);
       setData(resultInputs, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 
@@ -349,7 +365,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    resetArgument(resultInputs);
+    resetInput(resultInputs, false);
 
     // question display on non-dependences
     if (isContainer()) questionedGroup = true;

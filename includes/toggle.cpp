@@ -61,9 +61,20 @@ namespace cli_menu {
     else resultInputs.conditions[paramDataIndex].push_back(condition);
   }
 
-  void Toggle::resetArgument(ResultInputs &resultInputs) {
-    if (used && !accumulating) {
-      resultInputs.conditions[paramDataIndex] = {};
+  void Toggle::resetInput(
+    ResultInputs &resultInputs,
+    mt::CR_BOL discarded
+  ) {
+    if (used) {
+      if (discarded) {
+        resultInputs.conditions.pop_back();
+        paramDataIndex = -1;
+        used = false;
+        required = true;
+      }
+      else if (!accumulating) {
+        resultInputs.conditions[paramDataIndex] = {};
+      }
     }
   }
 
@@ -120,7 +131,7 @@ namespace cli_menu {
 
         directInputs.pop_back();
         *lastCom = this;
-        resetArgument(resultInputs);
+        resetInput(resultInputs, false);
 
         if (isParent()) {
           setData(resultInputs, true);
@@ -176,7 +187,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    resetArgument(resultInputs);
+    resetInput(resultInputs, false);
 
     // question display on non-supporters
     if (isContainer()) questionedGroup = true;
