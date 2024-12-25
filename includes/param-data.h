@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__PARAM_DATA_H__
 #define __CLI_MENU__PARAM_DATA_H__
 
+#include <memory>
 #include "message.h"
 
 namespace cli_menu {
