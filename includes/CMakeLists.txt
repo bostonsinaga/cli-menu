@@ -1,5 +1,5 @@
 set (SOURCES
-  base.h
+  dash-test.h
   color.h
   message.h
   control.h
@@ -10,7 +10,6 @@ set (SOURCES
   program.h
   cli-menu.h
 
-  base.cpp
   color.cpp
   message.cpp
   control.cpp
