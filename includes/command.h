@@ -21,8 +21,8 @@ namespace cli_menu {
 
   private:
     bool propagatingCallback = true;
-    SP_CALLBACK callback = nullptr;
-    SP_PLAIN_CALLBACK plainCallback = nullptr;
+    CALLBACK callback;
+    PLAIN_CALLBACK plainCallback;
     VEC_TREE requiredItems;
 
     static Command *circularCheckpoint;
@@ -267,7 +267,7 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       Command *parent_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_CALLBACK callback_in,
+      CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -277,7 +277,7 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       Command *parent_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
+      PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -305,8 +305,14 @@ namespace cli_menu {
       CR_CLR nameColor = Color()
     ) { return name; }
 
-    void setCallback(CR_SP_CALLBACK callback_in);
-    void setCallback(CR_SP_PLAIN_CALLBACK callback_in);
+    void setCallback(CALLBACK callback_in) {
+      callback = callback_in;
+    }
+
+    void setCallback(PLAIN_CALLBACK callback_in) {
+      plainCallback = callback_in;
+    }
+
     void setAsUltimate();
     void resignFromUltimate();
     void setRequired(mt::CR_BOL isIt) { required = isIt; }

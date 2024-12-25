@@ -30,7 +30,7 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_CALLBACK callback_in,
+    CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
@@ -47,7 +47,7 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
@@ -406,16 +406,6 @@ namespace cli_menu {
     }
   }
 
-  void Command::setCallback(CR_SP_CALLBACK callback_in) {
-    callback.reset();
-    callback = callback_in;
-  }
-
-  void Command::setCallback(CR_SP_PLAIN_CALLBACK callback_in) {
-    plainCallback.reset();
-    plainCallback = callback_in;
-  }
-
   void Command::setAsUltimate() {
     VEC_TREE united;
 
@@ -449,17 +439,11 @@ namespace cli_menu {
     bool called = false;
 
     if (callback) {
-
-      (*callback)(
-        paramData.texts,
-        paramData.numbers,
-        paramData.conditions
-      );
-
+      callback(paramData);
       called = true;
     }
     else if (plainCallback) {
-      (*plainCallback)();
+      plainCallback();
       called = true;
     }
 
@@ -532,7 +516,7 @@ namespace cli_menu {
 
       // singular
       if (directInputs.size() == 1 || (
-        directInputs.size() == 2 && dash_test::isSingle(directInputs.back())
+        directInputs.size() == 2 && DashTest::isSingle(directInputs.back())
       )) {
         strArr[1] = "a ";
         strArr[3] = " is";
@@ -851,13 +835,13 @@ namespace cli_menu {
     );
 
     std::string inputLevelName = "input",
-      inputName = dash_test::cleanSingle(directInputs.back());
+      inputName = DashTest::cleanSingle(directInputs.back());
 
     if (!inputName.empty()) {
       inputLevelName = "parameter";
     }
     else {
-      inputName = dash_test::cleanDouble(directInputs.back());
+      inputName = DashTest::cleanDouble(directInputs.back());
 
       if (!inputName.empty()) {
         inputLevelName = "toggle";
