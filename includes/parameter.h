@@ -16,7 +16,10 @@ namespace cli_menu {
       mt::CR_STR argument
     ) override;
 
-    void resetArgument(ResultInputs &resultInputs);
+    void resetInput(
+      ResultInputs &resultInputs,
+      mt::CR_BOL discarded
+    ) override;
 
     static bool checkArgument(
       LINKED_LIST *node,

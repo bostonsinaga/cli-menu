@@ -14,7 +14,10 @@ namespace cli_menu {
       mt::CR_BOL condition
     ) override;
 
-    void resetArgument(ResultInputs &resultInputs);
+    void resetInput(
+      ResultInputs &resultInputs,
+      mt::CR_BOL discarded
+    ) override;
 
     mt::USI match(
       mt::VEC_STR &directInputs,
