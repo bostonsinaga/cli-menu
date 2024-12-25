@@ -14,15 +14,15 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_CALLBACK callback_in,
+    CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command::Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in,
+    propagatingCallback_in
   ) {
     argumentType = argumentType_in;
-    accumulating = accumulating_in;
   }
 
   Parameter::Parameter(
@@ -32,15 +32,15 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
-    CR_SP_PLAIN_CALLBACK callback_in,
+    PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command::Command(
     name_in, description_in,
     required_in, parent_in,
-    callback_in, propagatingCallback_in
+    accumulating_in, callback_in,
+    propagatingCallback_in
   ) {
     argumentType = argumentType_in;
-    accumulating = accumulating_in;
   }
 
   Parameter::Parameter(
@@ -52,10 +52,10 @@ namespace cli_menu {
     mt::CR_BOL accumulating_in
   ) : Command::Command(
     name_in, description_in,
-    required_in, parent_in
+    required_in, parent_in,
+    accumulating_in
   ) {
     argumentType = argumentType_in;
-    accumulating = accumulating_in;
   }
 
   void Parameter::setData(
@@ -76,30 +76,31 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        paramData.texts.push_back(argument);
+        paramData.texts.push_back({argument});
         paramData.numbers.push_back({});
       }
-      // space or newline is a separator
       else {
-        paramData.texts.push_back("");
+        paramData.texts.push_back({});
+
+        // whitespace is separator
         paramData.numbers.push_back(
-          mt_uti::Scanner<double>::parseNumbers(argument)
+          mt_uti::Scanner<mt::LD>::parseNumbers(argument)
         );
       }
 
-      paramData.conditions.push_back(false);
+      paramData.conditions.push_back({});
       paramDataIndex = paramData.texts.size() - 1;
       updateRequiredUsed(false);
     }
-    // accumulated to get multiline input
+    // accumulated
     else {
       if (argumentType == TEXT) {
-        paramData.texts[paramDataIndex] += argument;
+        paramData.texts[paramDataIndex].push_back(argument);
       }
-      // space or newline is a separator
-      else mt_uti::VecTools<double>::concat(
+      // whitespace is separator
+      else mt_uti::VecTools<mt::LD>::concat(
         paramData.numbers[paramDataIndex],
-        mt_uti::Scanner<double>::parseNumbers(argument)
+        mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
   }
@@ -107,7 +108,7 @@ namespace cli_menu {
   void Parameter::resetArgument(ParamData &paramData) {
     if (used && !accumulating) {
       if (argumentType == TEXT) {
-        paramData.texts[paramDataIndex] = "";
+        paramData.texts[paramDataIndex] = {};
       }
       else paramData.numbers[paramDataIndex] = {};
     }
@@ -235,12 +236,12 @@ namespace cli_menu {
       nameStr, nameColor
     );
 
-    // add input argumentType
+    // add input 'argumentType'
     if (useInputType) {
       inputTypeStr = "<" + getStringifiedArgumentType() + ">";
     }
 
-    // final assignments
+    // final assignment
     text += nameStr + Color::getString(
       inputTypeStr,
       Command::usingDashesBoundaryLine ?

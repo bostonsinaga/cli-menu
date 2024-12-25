@@ -6,10 +6,9 @@
 namespace cli_menu {
 
   class Parameter : public Command {
-  private:
-    bool accumulating = false,
-      argumentType = false;
-
+  protected:
+    mt::VEC_STR arguments;
+    bool argumentType = false;
     static const std::string needsArgStr;
 
     void setData(
@@ -48,7 +47,6 @@ namespace cli_menu {
       mt::CR_BOL needUnused = false
     );
 
-  protected:
     std::string getFillingStatusString(
       mt::CR_BOL usingAbbreviations
     ) override;
@@ -83,7 +81,7 @@ namespace cli_menu {
       Command *parent_in,
       mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_CALLBACK callback_in,
+      CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -94,7 +92,7 @@ namespace cli_menu {
       Command *parent_in,
       mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in,
-      CR_SP_PLAIN_CALLBACK callback_in,
+      PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -107,7 +105,7 @@ namespace cli_menu {
       mt::CR_BOL accumulating_in
     );
 
-    bool getArgumentType() { return argumentType; }
+    bool getArgumentType() const { return argumentType; }
     std::string getStringifiedArgumentType();
     std::string getDashedName() override;
 
