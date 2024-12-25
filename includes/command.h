@@ -1,7 +1,9 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
+#include "dash-test.h"
 #include "control.h"
+#include "param-data.h"
 
 namespace cli_menu {
   /**
@@ -106,7 +108,8 @@ namespace cli_menu {
     std::string description;
     int paramDataIndex = -1;
 
-    bool questionedGroup = false,
+    bool accumulating = false,
+      questionedGroup = false,
       required = false,
       selecting = false,
       used = false;
@@ -263,6 +266,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
+      mt::CR_BOL accumulating_in,
       CR_SP_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
@@ -272,6 +276,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
+      mt::CR_BOL accumulating_in,
       CR_SP_PLAIN_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
@@ -280,7 +285,8 @@ namespace cli_menu {
       mt::CR_STR name_in,
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
-      Command *parent_in
+      Command *parent_in,
+      mt::CR_BOL accumulating_in
     );
 
     void addChild(
@@ -313,16 +319,16 @@ namespace cli_menu {
      * Cannot change 'children' if this a dependence.
      */
 
-    bool isUltimate() { return this == ultimate; }
-    bool isGroup() { return !(ultimate || children.empty()); }
-    bool isDependence() { return parent && parent == ultimate; }
-    bool isIndependence() { return !ultimate && children.empty(); }
-    bool isRequired() { return required; }
-    bool isOptional() { return !required; }
-    bool isContainer() { return !ultimate || isUltimate(); }
-    bool isUsed() { return used; }
-    bool isParent() { return !children.empty(); }
-    bool isToddler() { return children.empty(); }
+    bool isUltimate() const { return this == ultimate; }
+    bool isGroup() const { return !(ultimate || children.empty()); }
+    bool isDependence() const { return parent && parent == ultimate; }
+    bool isIndependence() const { return !ultimate && children.empty(); }
+    bool isRequired() const { return required; }
+    bool isOptional() const { return !required; }
+    bool isContainer() const { return !ultimate || isUltimate(); }
+    bool isUsed() const { return used; }
+    bool isParent() const { return !children.empty(); }
+    bool isToddler() const { return children.empty(); }
 
     std::string getInlineRootNames(
       mt::CR_STR separator = " ",
