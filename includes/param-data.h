@@ -8,6 +8,14 @@ namespace cli_menu {
   class ParamData;
   typedef const ParamData& CR_PD;
 
+  // callback formats
+  typedef std::function<void(CR_PD)> CALLBACK;
+  typedef std::function<void()> PLAIN_CALLBACK;
+  typedef std::shared_ptr<CALLBACK> SP_CALLBACK;
+  typedef std::shared_ptr<PLAIN_CALLBACK> SP_PLAIN_CALLBACK;
+  typedef const SP_CALLBACK& CR_SP_CALLBACK;
+  typedef const SP_PLAIN_CALLBACK& CR_SP_PLAIN_CALLBACK;
+
   class ParamData {
   private:
     template <typename T>
