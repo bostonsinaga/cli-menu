@@ -71,6 +71,17 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
+  void Command::resetInput(
+    ResultInputs &resultInputs,
+    mt::CR_BOL discarded
+  ) {
+    if (discarded) {
+      paramDataIndex = -1;
+      used = false;
+      required = true;
+    }
+  }
+
   void Command::setChildren(
     CR_VEC_TREE newChildren,
     mt::CR_BOL needEmpty,
@@ -269,8 +280,8 @@ namespace cli_menu {
   ) {
     if (parent) {
       if (!isDirectInputsError(directInputs, "go back")) {
-        used = false;
-        required = true;
+
+        resetInput(resultInputs, true);
 
         return static_cast<Cm*>(parent)->dialog(
           directInputs, resultInputs, lastCom
@@ -577,16 +588,24 @@ namespace cli_menu {
       if (isContainer()) {
         LINKED_LIST *neighbor = toNext ? next : previous;
 
-        if (neighbor) return dialogTo(
-          static_cast<Cm*>(neighbor), directInputs, resultInputs, lastCom
-        );
+        if (neighbor) {
+          resetInput(resultInputs, true);
+
+          return dialogTo(
+            static_cast<Cm*>(neighbor), directInputs, resultInputs, lastCom
+          );
+        }
 
         printNullptrNeighborError();
       }
       // dependence
-      else return questionTo(
-        getUnusedNeighbor(this),directInputs, resultInputs, lastCom
-      );
+      else {
+        resetInput(resultInputs, true);
+
+        return questionTo(
+          getUnusedNeighbor(this), directInputs, resultInputs, lastCom
+        );
+      }
     }
 
     return FLAG::ERROR;
