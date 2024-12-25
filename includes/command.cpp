@@ -29,12 +29,14 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
+    mt::CR_BOL accumulating_in,
     CR_SP_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
     callback = callback_in;
     required = required_in;
+    accumulating = accumulating_in;
     propagatingCallback = propagatingCallback_in;
     setParent(parent_in);
   }
@@ -44,12 +46,14 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
+    mt::CR_BOL accumulating_in,
     CR_SP_PLAIN_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
     plainCallback = callback_in;
     required = required_in;
+    accumulating = accumulating_in;
     propagatingCallback = propagatingCallback_in;
     setParent(parent_in);
   }
@@ -58,10 +62,12 @@ namespace cli_menu {
     mt::CR_STR name_in,
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
-    Command *parent_in
+    Command *parent_in,
+    mt::CR_BOL accumulating_in
   ) : TREE(name_in) {
     description = description_in;
     required = required_in;
+    accumulating = accumulating_in;
     setParent(parent_in);
   }
 
@@ -526,7 +532,7 @@ namespace cli_menu {
 
       // singular
       if (directInputs.size() == 1 || (
-        directInputs.size() == 2 && DashTest::isSingle(directInputs.back())
+        directInputs.size() == 2 && dash_test::isSingle(directInputs.back())
       )) {
         strArr[1] = "a ";
         strArr[3] = " is";
@@ -845,13 +851,13 @@ namespace cli_menu {
     );
 
     std::string inputLevelName = "input",
-      inputName = DashTest::cleanSingle(directInputs.back());
+      inputName = dash_test::cleanSingle(directInputs.back());
 
     if (!inputName.empty()) {
       inputLevelName = "parameter";
     }
     else {
-      inputName = DashTest::cleanDouble(directInputs.back());
+      inputName = dash_test::cleanDouble(directInputs.back());
 
       if (!inputName.empty()) {
         inputLevelName = "toggle";
