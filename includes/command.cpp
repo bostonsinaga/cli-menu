@@ -71,17 +71,6 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
-  void Command::resetInput(
-    ResultInputs &resultInputs,
-    mt::CR_BOL discarded
-  ) {
-    if (discarded) {
-      paramDataIndex = -1;
-      used = false;
-      required = true;
-    }
-  }
-
   void Command::setChildren(
     CR_VEC_TREE newChildren,
     mt::CR_BOL needEmpty,

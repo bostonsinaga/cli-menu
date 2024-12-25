@@ -130,7 +130,7 @@ namespace cli_menu {
     virtual void resetInput(
       ResultInputs &resultInputs,
       mt::CR_BOL discarded
-    );
+    ) {}
 
     bool runTo(
       Command *target,
