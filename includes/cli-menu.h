@@ -5,7 +5,7 @@
 #include "color.h"
 #include "message.h"
 #include "control.h"
-#include "param-data.h"
+#include "result-inputs.h"
 #include "command.h"
 #include "parameter.h"
 #include "toggle.h"

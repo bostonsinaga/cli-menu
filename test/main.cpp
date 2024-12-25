@@ -1,28 +1,28 @@
 #include <iostream>
 #include "cli-menu.h"
 
-void programFun(cm::ParamData &paramData) {
+void programFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nProgram is called..\n";
 }
 
-void dialogFun(cm::ParamData &paramData) {
+void dialogFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nDialog is called..\n";
-  paramData.printVector("dialog");
+  resultInputs.printVector("dialog");
 }
 
-void fooFun(cm::ParamData &paramData) {
+void fooFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nFoo is called..\n";
 }
 
-void sentenceFun(cm::ParamData &paramData) {
+void sentenceFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nSentence is called..\n";
 }
 
-void wordFun(cm::ParamData &paramData) {
+void wordFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nWrite word..\n";
 }
 
-void tidyFun(cm::ParamData &paramData) {
+void tidyFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nTidy up..\n";
 }
 

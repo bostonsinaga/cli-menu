@@ -12,11 +12,11 @@ namespace cli_menu {
     static const std::string needsArgStr;
 
     void setData(
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       mt::CR_STR argument
     ) override;
 
-    void resetArgument(ParamData &paramData);
+    void resetArgument(ResultInputs &resultInputs);
 
     static bool checkArgument(
       LINKED_LIST *node,
@@ -30,19 +30,19 @@ namespace cli_menu {
 
     mt::USI popBackSet(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     mt::USI notPopBackSet(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     mt::USI middleMatch(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom,
       mt::CR_BOL needUnused = false
     );
@@ -53,20 +53,20 @@ namespace cli_menu {
 
     mt::USI match(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 
     // always called after ultimate (open question)
     mt::USI question(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 
     mt::USI dialog(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 

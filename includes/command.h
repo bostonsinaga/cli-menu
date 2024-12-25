@@ -3,7 +3,7 @@
 
 #include "dash-test.h"
 #include "control.h"
-#include "param-data.h"
+#include "result-inputs.h"
 
 namespace cli_menu {
   /**
@@ -33,12 +33,12 @@ namespace cli_menu {
     static const std::string disguiseNames[disguiseCount][2];
 
     virtual void setData(
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       mt::CR_STR argument
     ) {}
 
     virtual void setData(
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       mt::CR_BOL condition
     ) {}
 
@@ -49,7 +49,7 @@ namespace cli_menu {
     ) override;
 
     TREE* dismantle(mt::CR_INT index) override;
-    bool run(ParamData &paramData);
+    bool run(ResultInputs &resultInputs);
 
     std::string getDialogStatusString(
       mt::CR_BOL usingAbbreviations,
@@ -86,7 +86,7 @@ namespace cli_menu {
     mt::USI pointToNeighbor(
       mt::CR_BOL toNext,
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
@@ -129,7 +129,7 @@ namespace cli_menu {
 
     bool runTo(
       Command *target,
-      ParamData &paramData
+      ResultInputs &resultInputs
     );
 
     mt::UI getRequiredCount();
@@ -152,7 +152,7 @@ namespace cli_menu {
 
     mt::USI isItPossibleToGoBack(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
@@ -183,47 +183,47 @@ namespace cli_menu {
 
     virtual mt::USI match(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) { return FLAG::FAILED; }
 
     mt::USI matchTo(
       Command *target,
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     virtual mt::USI question(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) { return FLAG::FAILED; }
 
     mt::USI questionTo(
       Command *target,
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     virtual mt::USI dialog(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     mt::USI dialogTo(
       Command *target,
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     // point to neighbor if input not matched
     mt::USI askNeighbor(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
@@ -233,13 +233,13 @@ namespace cli_menu {
     mt::USI tryToSkip(
       mt::CR_BOL toNext,
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     );
 
     mt::USI tryToSelect(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom,
       mt::CR_STR additionalMessage
     );

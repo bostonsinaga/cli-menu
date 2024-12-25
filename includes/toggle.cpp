@@ -48,22 +48,22 @@ namespace cli_menu {
   ) {}
 
   void Toggle::setData(
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     mt::CR_BOL condition
   ) {
     if (!used) {
-      paramData.conditions.push_back({condition});
-      paramData.texts.push_back({});
-      paramData.numbers.push_back({});
-      paramDataIndex = paramData.conditions.size() - 1;
+      resultInputs.conditions.push_back({condition});
+      resultInputs.texts.push_back({});
+      resultInputs.numbers.push_back({});
+      paramDataIndex = resultInputs.conditions.size() - 1;
       updateRequiredUsed(false);
     }
-    else paramData.conditions[paramDataIndex].push_back(condition);
+    else resultInputs.conditions[paramDataIndex].push_back(condition);
   }
 
-  void Toggle::resetArgument(ParamData &paramData) {
+  void Toggle::resetArgument(ResultInputs &resultInputs) {
     if (used && !accumulating) {
-      paramData.conditions[paramDataIndex] = {};
+      resultInputs.conditions[paramDataIndex] = {};
     }
   }
 
@@ -103,7 +103,7 @@ namespace cli_menu {
 
   mt::USI Toggle::match(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     std::string copyName, copyInput;
@@ -120,14 +120,14 @@ namespace cli_menu {
 
         directInputs.pop_back();
         *lastCom = this;
-        resetArgument(paramData);
+        resetArgument(resultInputs);
 
         if (isParent()) {
-          setData(paramData, true);
+          setData(resultInputs, true);
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
           );
         }
         // toddler
@@ -141,24 +141,24 @@ namespace cli_menu {
 
             // between 1 or 2 is true
             if (boolFlag) {
-              setData(paramData, Control::revealBoolean(boolFlag));
+              setData(resultInputs, Control::revealBoolean(boolFlag));
             }
-            else setData(paramData, true);
+            else setData(resultInputs, true);
           }
 
           return matchTo(
-            getUnusedNeighbor(this), directInputs, paramData, lastCom
+            getUnusedNeighbor(this), directInputs, resultInputs, lastCom
           );
         }
       }
 
       // point to neighbor if input not matched
-      return askNeighbor(directInputs, paramData, lastCom);
+      return askNeighbor(directInputs, resultInputs, lastCom);
     }
     // 'directInputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent), directInputs, paramData, lastCom
+        static_cast<Cm*>(parent), directInputs, resultInputs, lastCom
       );
     }
     // invoke callback
@@ -172,11 +172,11 @@ namespace cli_menu {
 
   mt::USI Toggle::question(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     std::string buffer;
-    resetArgument(paramData);
+    resetArgument(resultInputs);
 
     // question display on non-supporters
     if (isContainer()) questionedGroup = true;
@@ -195,13 +195,13 @@ namespace cli_menu {
         *lastCom = chooseLastCommand();
 
         setData(
-          paramData,
+          resultInputs,
           Control::revealBoolean(boolFlag)
         );
 
         // inside ultimate only
         if (isDependence()) return questionTo(
-          getUnusedNeighbor(this), directInputs, paramData, lastCom
+          getUnusedNeighbor(this), directInputs, resultInputs, lastCom
         );
         // dead end
         else if (isIndependence()) {
@@ -209,13 +209,13 @@ namespace cli_menu {
         }
         // back to this dialog
         return Command::dialog(
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
       }
       else if (Control::backTest(buffer)) {
 
         const mt::USI flag = isItPossibleToGoBack(
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
 
         if (flag != FLAG::ERROR) return flag;
@@ -227,7 +227,7 @@ namespace cli_menu {
         // pointing to first child
         if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
           );
         }
         // need condition
@@ -239,7 +239,7 @@ namespace cli_menu {
         // directly completed
         else if (doesUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
-          setData(paramData, false);
+          setData(resultInputs, false);
           return FLAG::COMPLETED;
         }
       }
@@ -255,7 +255,7 @@ namespace cli_menu {
       ) {
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
 
         if (tryToSkipFlag != FLAG::ERROR) {
@@ -266,7 +266,7 @@ namespace cli_menu {
 
         // only available for toddlers
         const mt::USI tryToSelectFlag = tryToSelect(
-          directInputs, paramData, lastCom,
+          directInputs, resultInputs, lastCom,
           "condition is given"
         );
 
@@ -284,21 +284,21 @@ namespace cli_menu {
 
   mt::USI Toggle::dialog(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     // only for toddlers
     if (parent && !selecting && isToddler()) {
-      return question(directInputs, paramData, lastCom);
+      return question(directInputs, resultInputs, lastCom);
     }
 
     // inverted in 'tryToSelect' method
     selecting = false;
 
     // no need to set condition exclusively on parent
-    if (!used) setData(paramData, true);
+    if (!used) setData(resultInputs, true);
 
-    return Command::dialog(directInputs, paramData, lastCom);
+    return Command::dialog(directInputs, resultInputs, lastCom);
   }
 }
 

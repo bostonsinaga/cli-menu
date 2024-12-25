@@ -10,28 +10,28 @@ namespace cli_menu {
     mt::VEC2_BOL conditions;
 
     void setData(
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       mt::CR_BOL condition
     ) override;
 
-    void resetArgument(ParamData &paramData);
+    void resetArgument(ResultInputs &resultInputs);
 
     mt::USI match(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 
     // always called after ultimate (closed question)
     mt::USI question(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 
     mt::USI dialog(
       mt::VEC_STR &directInputs,
-      ParamData &paramData,
+      ResultInputs &resultInputs,
       Command **lastCom
     ) override;
 

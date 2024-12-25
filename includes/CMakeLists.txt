@@ -3,7 +3,7 @@ set (SOURCES
   color.h
   message.h
   control.h
-  param-data.h
+  result-inputs.h
   command.h
   parameter.h
   toggle.h

@@ -165,7 +165,7 @@ namespace cli_menu {
     //______|
 
     mt::VEC_STR directInputs;
-    ParamData paramData;
+    ResultInputs resultInputs;
     Command::dialogued = completingDialog;
 
     /**
@@ -186,7 +186,7 @@ namespace cli_menu {
       changeTreeNamesToUppercase();
     }
 
-    setData(paramData, true);
+    setData(resultInputs, true);
 
     //_________|
     // Process |
@@ -199,13 +199,13 @@ namespace cli_menu {
 
       flag = matchTo(
         static_cast<Cm*>(children.front()),
-        directInputs, paramData, &lastCom
+        directInputs, resultInputs, &lastCom
       );
 
       switch (flag) {
         case FLAG::COMPLETED: {
           // check if has any callback
-          if (!runTo(lastCom, paramData)) {
+          if (!runTo(lastCom, resultInputs)) {
             Message::printNeatNamed(
               Message::STATUS::ERROR,
               "no callback",
@@ -229,7 +229,7 @@ namespace cli_menu {
         case FLAG::FAILED: {
           // program
           if (lastCom == this) {
-            if (!runTo(lastCom, paramData)) {
+            if (!runTo(lastCom, resultInputs)) {
               printError();
             }
           }
@@ -239,7 +239,7 @@ namespace cli_menu {
           }
           // group
           else if (!(lastCom->isUltimate() ||
-            runTo(lastCom, paramData)
+            runTo(lastCom, resultInputs)
           ) || lastCom->isUltimate()) {
             lastCom->printError();
           }

@@ -59,7 +59,7 @@ namespace cli_menu {
   }
 
   void Parameter::setData(
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     mt::CR_STR argument
   ) {
     bool isEmpty = true;
@@ -76,41 +76,41 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        paramData.texts.push_back({argument});
-        paramData.numbers.push_back({});
+        resultInputs.texts.push_back({argument});
+        resultInputs.numbers.push_back({});
       }
       else {
-        paramData.texts.push_back({});
+        resultInputs.texts.push_back({});
 
         // whitespace is separator
-        paramData.numbers.push_back(
+        resultInputs.numbers.push_back(
           mt_uti::Scanner<mt::LD>::parseNumbers(argument)
         );
       }
 
-      paramData.conditions.push_back({});
-      paramDataIndex = paramData.texts.size() - 1;
+      resultInputs.conditions.push_back({});
+      paramDataIndex = resultInputs.texts.size() - 1;
       updateRequiredUsed(false);
     }
     // accumulated
     else {
       if (argumentType == TEXT) {
-        paramData.texts[paramDataIndex].push_back(argument);
+        resultInputs.texts[paramDataIndex].push_back(argument);
       }
       // whitespace is separator
       else mt_uti::VecTools<mt::LD>::concat(
-        paramData.numbers[paramDataIndex],
+        resultInputs.numbers[paramDataIndex],
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
   }
 
-  void Parameter::resetArgument(ParamData &paramData) {
+  void Parameter::resetArgument(ResultInputs &resultInputs) {
     if (used && !accumulating) {
       if (argumentType == TEXT) {
-        paramData.texts[paramDataIndex] = {};
+        resultInputs.texts[paramDataIndex] = {};
       }
-      else paramData.numbers[paramDataIndex] = {};
+      else resultInputs.numbers[paramDataIndex] = {};
     }
   }
 
@@ -146,7 +146,7 @@ namespace cli_menu {
 
   mt::USI Parameter::popBackSet(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     // only capture the last reversed 'directInputs'
@@ -175,12 +175,12 @@ namespace cli_menu {
             "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
-          return question(directInputs, paramData, lastCom);
+          return question(directInputs, resultInputs, lastCom);
         }
       }
 
-      resetArgument(paramData);
-      setData(paramData, directInputs[directInputs.size() - 1]);
+      resetArgument(resultInputs);
+      setData(resultInputs, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 
       if (isIndependence()) return FLAG::COMPLETED;
@@ -192,7 +192,7 @@ namespace cli_menu {
 
   mt::USI Parameter::notPopBackSet(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     // has no argument
@@ -202,7 +202,7 @@ namespace cli_menu {
         "the last " + getLevelName() + needsArgStr, 1
       );
 
-      return question(directInputs, paramData, lastCom);
+      return question(directInputs, resultInputs, lastCom);
     }
     // no dialog
     return FLAG::FAILED;
@@ -277,7 +277,7 @@ namespace cli_menu {
 
   mt::USI Parameter::match(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     if (directInputs.size() > 0) {
@@ -293,7 +293,7 @@ namespace cli_menu {
         *lastCom = this;
 
         const mt::USI flag = popBackSet(
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
 
         // 'directInputs' may be empty
@@ -301,7 +301,7 @@ namespace cli_menu {
 
           // redirected to first child or unused neighbor
           return middleMatch(
-            directInputs, paramData, lastCom, true
+            directInputs, resultInputs, lastCom, true
           );
         }
         else if (flag != FLAG::ERROR) {
@@ -309,16 +309,16 @@ namespace cli_menu {
         }
 
         // 'directInputs' is empty, could invoke 'question'
-        return notPopBackSet(directInputs, paramData, lastCom);
+        return notPopBackSet(directInputs, resultInputs, lastCom);
       }
 
       // point to neighbor if input not matched
-      return askNeighbor(directInputs, paramData, lastCom);
+      return askNeighbor(directInputs, resultInputs, lastCom);
     }
     // 'directInputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent), directInputs, paramData, lastCom
+        static_cast<Cm*>(parent), directInputs, resultInputs, lastCom
       );
     }
     // invoke callback
@@ -333,23 +333,23 @@ namespace cli_menu {
   // match continues after question in the middle
   mt::USI Parameter::middleMatch(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom,
     mt::CR_BOL needUnused
   ) {
     return matchTo(
       static_cast<Cm*>(getContinuation(needUnused)),
-      directInputs, paramData, lastCom
+      directInputs, resultInputs, lastCom
     );
   }
 
   mt::USI Parameter::question(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     std::string buffer;
-    resetArgument(paramData);
+    resetArgument(resultInputs);
 
     // question display on non-dependences
     if (isContainer()) questionedGroup = true;
@@ -367,7 +367,7 @@ namespace cli_menu {
       if (Control::backTest(controlStr)) {
 
         const mt::USI flag = isItPossibleToGoBack(
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
 
         if (flag != FLAG::ERROR) return flag;
@@ -384,12 +384,12 @@ namespace cli_menu {
         }
         // question in the middle, back to match
         else if (!directInputs.empty()) {
-          return middleMatch(directInputs, paramData, lastCom);
+          return middleMatch(directInputs, resultInputs, lastCom);
         }
         // pointing to first child
         else if (isParent()) {
           return dialogTo(
-            static_cast<Cm*>(children.front()), directInputs, paramData, lastCom
+            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
           );
         }
         // directly completed
@@ -410,7 +410,7 @@ namespace cli_menu {
       ) {
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
-          directInputs, paramData, lastCom
+          directInputs, resultInputs, lastCom
         );
 
         if (tryToSkipFlag != FLAG::ERROR) {
@@ -420,7 +420,7 @@ namespace cli_menu {
       else if (Control::selectTest(controlStr)) {
 
         const mt::USI tryToSelectFlag = tryToSelect(
-          directInputs, paramData, lastCom,
+          directInputs, resultInputs, lastCom,
           "arguments are given"
         );
 
@@ -429,7 +429,7 @@ namespace cli_menu {
         }
       }
       // value input
-      else setData(paramData, buffer);
+      else setData(resultInputs, buffer);
     }
 
     return FLAG::CANCELED;
@@ -437,11 +437,11 @@ namespace cli_menu {
 
   mt::USI Parameter::dialog(
     mt::VEC_STR &directInputs,
-    ParamData &paramData,
+    ResultInputs &resultInputs,
     Command **lastCom
   ) {
     if ((!used && !selecting && isParent()) || isToddler()) {
-      return question(directInputs, paramData, lastCom);
+      return question(directInputs, resultInputs, lastCom);
     }
 
     // inverted in 'tryToSelect' method
@@ -449,7 +449,7 @@ namespace cli_menu {
 
     // no need to set argument exclusively
     return Command::dialog(
-      directInputs, paramData, lastCom
+      directInputs, resultInputs, lastCom
     );
   }
 }
