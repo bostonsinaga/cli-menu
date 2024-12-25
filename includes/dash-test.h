@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__DASH_TEST_H__
 #define __CLI_MENU__DASH_TEST_H__
 
-#include <memory>
 #include "mini-tools.h"
 
 namespace cli_menu {
