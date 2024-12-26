@@ -11,48 +11,47 @@ namespace cli_menu {
 
   class ResultInputs {
   private:
-    template <typename T>
-    static void printList(
-      mt::CR_STR title,
-      mt::CR_VEC2<T> vec2d
-    ) {
-      std::cout << title;
-
-      for (int i = 0; i < vec2d.size(); i++) {
-        std::cout << "\n  [";
-
-        for (int j = 0; j < vec2d[i].size(); j++) {
-
-          if (j > 0) std::cout << "   ";
-          std::cout << vec2d[i][j];
-
-          if (vec2d[i].size() > 1) {
-            if (j < vec2d[i].size() - 1) {
-              std::cout << ",\n";
-            }
-          }
-        }
-
-        std::cout << ']' << (i < vec2d.size() - 1 ? ',' : '\0');
-      }
-
-      std::cout << std::endl;
-    }
-
-  public:
+    mt::VEC_STR names;
     mt::VEC2_STR texts;
     mt::VEC2_LD numbers;
     mt::VEC2_BOL conditions;
 
+  public:
     void printVector(mt::CR_STR name) {
 
       Message::printBoundaryLine(1, 1);
       std::cout << "'" << name << "' ResultInputs (" << ResultInputs::texts.size() << "):";
       Message::printBoundaryLine(1, 0);
 
-      ResultInputs::printList<std::string>("\nTEXTS: ", texts);
-      ResultInputs::printList<mt::LD>("\nNUMBERS: ", numbers);
-      ResultInputs::printList<bool>("\nCONDITIONS: ", conditions);
+      static const std::string titles[3] = {
+        "TEXTS", "NUMBERS", "CONDITIONS"
+      };
+
+      for (int i = 0; i < 3; i++) {
+        std::cout << "\n" << titles[i] << ": ";
+
+        for (int j = 0; j < names.size(); j++) {
+          std::cout << "\n  " << names[j] << ": [";
+
+          for (int k = 0; k < texts[j].size(); k++) {
+            if (k > 0) std::cout << "   ";
+
+            std::cout << (i == 0 ? texts[j][k] :
+              (i == 1 ? numbers[j][k] : conditions[j][k])
+            );
+
+            if (texts[j].size() > 1) {
+              if (k < texts[j].size() - 1) {
+                std::cout << ",\n";
+              }
+            }
+          }
+
+          std::cout << ']' << (j < names.size() - 1 ? ',' : '\0');
+        }
+
+        std::cout << std::endl;
+      }
 
       Message::printBoundaryLine(0, 1);
     }
