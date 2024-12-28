@@ -7,7 +7,7 @@ void programFun(cm::ResultInputs &resultInputs) {
 
 void dialogFun(cm::ResultInputs &resultInputs) {
   std::cout << "\nDialog is called..\n";
-  resultInputs.printVector("dialog");
+  resultInputs.printVector();
 }
 
 void fooFun(cm::ResultInputs &resultInputs) {
