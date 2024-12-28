@@ -16,45 +16,64 @@ namespace cli_menu {
     mt::VEC2_LD numbers;
     mt::VEC2_BOL conditions;
 
-  public:
-    void printVector(mt::CR_STR name) {
+    template <typename T>
+    static void printList(
+      mt::CR_VEC<T> vec,
+      mt::CR_INT mostCharsCount
+    ) {
+      for (int i = 0; i < vec.size(); i++) {
 
-      Message::printBoundaryLine(1, 1);
-      std::cout << "'" << name << "' ResultInputs (" << ResultInputs::texts.size() << "):";
-      Message::printBoundaryLine(1, 0);
-
-      static const std::string titles[3] = {
-        "TEXTS", "NUMBERS", "CONDITIONS"
-      };
-
-      for (int i = 0; i < 3; i++) {
-        std::cout << "\n" << titles[i] << ": ";
-
-        for (int j = 0; j < names.size(); j++) {
-          std::cout << "\n  " << names[j] << ": [";
-
-          for (int k = 0; k < texts[j].size(); k++) {
-            if (k > 0) std::cout << "   ";
-
-            std::cout << (i == 0 ? texts[j][k] :
-              (i == 1 ? numbers[j][k] : conditions[j][k])
-            );
-
-            if (texts[j].size() > 1) {
-              if (k < texts[j].size() - 1) {
-                std::cout << ",\n";
-              }
-            }
-          }
-
-          std::cout << ']' << (j < names.size() - 1 ? ',' : '\0');
+        if (i > 0) {
+          std::cout << std::string(mostCharsCount + 6, ' ');
         }
 
-        std::cout << std::endl;
-      }
+        std::cout << vec[i];
 
-      Message::printBoundaryLine(0, 1);
+        if (vec.size() > 1 && i < vec.size() - 1) {
+          std::cout << ",\n";
+        }
+      }
     }
+
+  public:
+    static std::string title;
+
+    void printVector();
+    void rename(mt::CR_INT i, mt::CR_STR name);
+
+    void addName(mt::CR_STR name);
+    void addTexts(mt::CR_STR name, mt::CR_VEC_STR vec);
+    void addNumbers(mt::CR_STR name, mt::CR_VEC_LD vec);
+    void addConditions(mt::CR_STR name, mt::CR_VEC_BOL vec);
+
+    void clearText(mt::CR_INT index);
+    void clearNumber(mt::CR_INT index);
+    void clearCondition(mt::CR_INT index);
+
+    void pushText(mt::CR_INT index, mt::CR_STR value);
+    void pushNumber(mt::CR_INT index, mt::CR_LD value);
+    void pushCondition(mt::CR_INT index, mt::CR_BOL value);
+
+    void pushTexts(mt::CR_INT i, mt::CR_VEC_STR vec);
+    void pushNumbers(mt::CR_INT i, mt::CR_VEC_LD vec);
+    void pushConditions(mt::CR_INT i, mt::CR_VEC_BOL vec);
+
+    void cutName(mt::CR_INT i);
+    void cutText(mt::CR_INT i, mt::CR_INT j);
+    void cutNumbers(mt::CR_INT i, mt::CR_INT j);
+    void cutCondition(mt::CR_INT i, mt::CR_INT j);
+
+    void popName();
+    void popText(mt::CR_INT i);
+    void popNumbers(mt::CR_INT i);
+    void popCondition(mt::CR_INT i);
+
+    std::string getName(mt::CR_INT i);
+    std::string getText(mt::CR_INT i, mt::CR_INT j);
+    mt::LD getNumber(mt::CR_INT i, mt::CR_INT j);
+    bool getCondition(mt::CR_INT i, mt::CR_INT j);
+
+    int getLastIndex() { return names.size() - 1; }
   };
 
   // callback formats
