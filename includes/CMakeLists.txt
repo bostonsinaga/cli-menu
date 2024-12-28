@@ -13,6 +13,7 @@ set (SOURCES
   color.cpp
   message.cpp
   control.cpp
+  result-inputs.cpp
   command.cpp
   parameter.cpp
   toggle.cpp
