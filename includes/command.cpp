@@ -437,6 +437,7 @@ namespace cli_menu {
 
   bool Command::run(ResultInputs &resultInputs) {
     bool called = false;
+    ResultInputs::title = name;
 
     if (callback) {
       callback(resultInputs);
@@ -722,6 +723,7 @@ namespace cli_menu {
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
 
       if (Control::backTest(controlStr)) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -762,6 +764,8 @@ namespace cli_menu {
         Control::nextTest(controlStr) ||
         Control::previousTest(controlStr)
       ) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
+
         const mt::USI pointToNeighborFlag = pointToNeighbor(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom
