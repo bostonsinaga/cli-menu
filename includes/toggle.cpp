@@ -52,13 +52,11 @@ namespace cli_menu {
     mt::CR_BOL condition
   ) {
     if (!used) {
-      resultInputs.conditions.push_back({condition});
-      resultInputs.texts.push_back({});
-      resultInputs.numbers.push_back({});
-      paramDataIndex = resultInputs.conditions.size() - 1;
+      resultInputs.addConditions(name, {condition});
+      paramDataIndex = resultInputs.getLastIndex();
       updateRequiredUsed(false);
     }
-    else resultInputs.conditions[paramDataIndex].push_back(condition);
+    else resultInputs.pushCondition(paramDataIndex, condition);
   }
 
   void Toggle::resetInput(
@@ -67,13 +65,13 @@ namespace cli_menu {
   ) {
     if (used) {
       if (discarded) {
-        resultInputs.conditions.pop_back();
+        resultInputs.popName();
         paramDataIndex = -1;
         used = false;
         required = true;
       }
       else if (!accumulating) {
-        resultInputs.conditions[paramDataIndex] = {};
+        resultInputs.clearCondition(paramDataIndex);
       }
     }
   }
@@ -224,6 +222,7 @@ namespace cli_menu {
         );
       }
       else if (Control::backTest(buffer)) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI flag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -264,6 +263,8 @@ namespace cli_menu {
         Control::nextTest(buffer) ||
         Control::previousTest(buffer)
       ) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
+
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom

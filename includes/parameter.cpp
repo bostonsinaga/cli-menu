@@ -76,30 +76,24 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        resultInputs.texts.push_back({argument});
-        resultInputs.numbers.push_back({});
+        resultInputs.addTexts(name, {argument});
       }
-      else {
-        resultInputs.texts.push_back({});
+      // whitespace is separator
+      else resultInputs.addNumbers(
+        name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
+      );
 
-        // whitespace is separator
-        resultInputs.numbers.push_back(
-          mt_uti::Scanner<mt::LD>::parseNumbers(argument)
-        );
-      }
-
-      resultInputs.conditions.push_back({});
-      paramDataIndex = resultInputs.texts.size() - 1;
+      paramDataIndex = resultInputs.getLastIndex();
       updateRequiredUsed(false);
     }
     // accumulated
     else {
       if (argumentType == TEXT) {
-        resultInputs.texts[paramDataIndex].push_back(argument);
+        resultInputs.pushText(paramDataIndex, argument);
       }
       // whitespace is separator
-      else mt_uti::VecTools<mt::LD>::concat(
-        resultInputs.numbers[paramDataIndex],
+      else resultInputs.pushNumbers(
+        paramDataIndex,
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
@@ -111,21 +105,16 @@ namespace cli_menu {
   ) {
     if (used) {
       if (discarded) {
-
-        if (argumentType == TEXT) {
-          resultInputs.texts.pop_back();
-        }
-        else resultInputs.numbers.pop_back();
-
+        resultInputs.popName();
         paramDataIndex = -1;
         used = false;
         required = true;
       }
       else if (!accumulating) {
         if (argumentType == TEXT) {
-          resultInputs.texts[paramDataIndex] = {};
+          resultInputs.clearText(paramDataIndex);
         }
-        else resultInputs.numbers[paramDataIndex] = {};
+        else resultInputs.clearNumber(paramDataIndex);
       }
     }
   }
@@ -381,6 +370,7 @@ namespace cli_menu {
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
       if (Control::backTest(controlStr)) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI flag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -424,6 +414,8 @@ namespace cli_menu {
         Control::nextTest(controlStr) ||
         Control::previousTest(controlStr)
       ) {
+        // resultInputs.printVector(); //---------------------------------------------------------------------
+
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom
