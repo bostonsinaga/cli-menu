@@ -64,6 +64,7 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
+      conditions = resultInputs.getConditions(resultInputsIndex);
       Command::resetInput(resultInputs, discarded);
 
       if (!(discarded || accumulating)) {
