@@ -61,10 +61,9 @@ namespace cli_menu {
       mt::CR_BOL usingAbbreviations
     );
 
-    void updateRequiredItems(
-      Command *command,
-      mt::CR_BOL adding
-    );
+    void updateRequiredItems(Command *command);
+    void addRequiredItems(Command *command);
+    void reduceRequiredItems(Command *command);
 
     void collapseUltimateItems(
       Command *newUltimate,
@@ -141,7 +140,9 @@ namespace cli_menu {
     Color getLevelLabelColor();
     std::string getLevelLabel();
     Command *getUnusedNeighbor(Command *start);
-    void updateRequiredUsed(mt::CR_BOL adding);
+
+    void useRequired();
+    void unuseRequired();
 
     // format: 'separator + ultimate + separator + this + separator'
     std::string getFullNameWithUltimate(

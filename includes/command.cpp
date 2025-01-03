@@ -78,7 +78,7 @@ namespace cli_menu {
     if (discarded) {
       resultInputs.popName();
       resultInputsIndex = -1;
-      updateRequiredUsed(true);
+      unuseRequired();
     }
   }
 
@@ -96,7 +96,7 @@ namespace cli_menu {
 
       for (TREE *node : newChildren) {
         relateToDependence(node, true);
-        updateRequiredItems(static_cast<Cm*>(node), true);
+        updateRequiredItems(static_cast<Cm*>(node));
       }
     }
   }
@@ -108,7 +108,7 @@ namespace cli_menu {
     if (isContainer()) {
       TREE::addChild(node, reconnected);
       relateToDependence(node, true);
-      updateRequiredItems(static_cast<Cm*>(node), true);
+      updateRequiredItems(static_cast<Cm*>(node));
     }
   }
 
@@ -117,7 +117,7 @@ namespace cli_menu {
     if (isParent()) {
       TREE *node = TREE::dismantle(index);
       relateToDependence(node, false);
-      updateRequiredItems(static_cast<Cm*>(node), false);
+      updateRequiredItems(static_cast<Cm*>(node));
       return node;
     }
     return nullptr;
@@ -129,7 +129,7 @@ namespace cli_menu {
 
       for (TREE *node : released) {
         relateToDependence(node, false);
-        updateRequiredItems(static_cast<Cm*>(node), false);
+        updateRequiredItems(static_cast<Cm*>(node));
       }
 
       return released;
@@ -350,35 +350,48 @@ namespace cli_menu {
     );
   }
 
-  void Command::updateRequiredItems(
-    Command *command,
-    mt::CR_BOL adding
-  ) {
+  void Command::updateRequiredItems(Command *command) {
     if (command->required) {
-      int reqIdx = mt_uti::VecTools<TREE*>::getIndex(
-        requiredItems, command
-      );
+      addRequiredItems(command);
+    }
+    else reduceRequiredItems(command);
+  }
 
-      // 'reqIdx' as duplication guard
-      if (adding && reqIdx == -1) {
-        requiredItems.push_back(command);
-      }
-      // 'reqIdx' always positive
-      else if (!adding && !requiredItems.empty()) {
-        command->required = false;
-
-        mt_uti::VecTools<TREE*>::cutSingle(
-          requiredItems, reqIdx
-        );
-      }
+  void Command::addRequiredItems(Command *command) {
+    if (!command->required) {
+      command->required = true;
+      requiredItems.push_back(command);
     }
   }
 
-  void Command::updateRequiredUsed(mt::CR_BOL adding) {
-    used = !adding;
+  void Command::reduceRequiredItems(Command *command) {
+    if (command->required) {
 
-    if (parent) static_cast<Cm*>(parent)
-      ->updateRequiredItems(this, adding);
+      command->required = false;
+      requiredItems.push_back(command);
+
+      mt_uti::VecTools<TREE*>::cutSingle(
+        requiredItems, mt_uti::VecTools<TREE*>::getIndex(
+          requiredItems, command
+        )
+      );
+    }
+  }
+
+  void Command::useRequired() {
+    used = true;
+
+    if (parent) {
+      static_cast<Cm*>(parent)->addRequiredItems(this);
+    }
+  }
+
+  void Command::unuseRequired() {
+    used = false;
+
+    if (parent) {
+      static_cast<Cm*>(parent)->reduceRequiredItems(this);
+    }
   }
 
   void Command::collapseUltimateItems(
@@ -388,7 +401,7 @@ namespace cli_menu {
     VEC_TREE released = children;
     mt_uti::VecTools<TREE*>::concat(united, released);
 
-    // avoid calling 'updateRequiredItems'
+    // avoid calling add or reduce '..RequiredItems'
     ultimate = newUltimate;
     children = {};
 
@@ -427,7 +440,7 @@ namespace cli_menu {
         united[i]->connect(united[i+1]);
       }
 
-      updateRequiredItems(static_cast<Cm*>(united[i]), true);
+      updateRequiredItems(static_cast<Cm*>(united[i]));
       united[i]->setParent(this, false);
     }
   }
