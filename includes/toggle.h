@@ -7,7 +7,7 @@ namespace cli_menu {
 
   class Toggle : public Command {
   protected:
-    mt::VEC2_BOL conditions;
+    mt::VEC_BOL conditions;
 
     void setData(
       ResultInputs &resultInputs,
