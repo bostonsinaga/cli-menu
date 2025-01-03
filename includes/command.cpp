@@ -71,6 +71,18 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
+  void Command::resetInput(
+    ResultInputs &resultInputs,
+    mt::CR_BOL discarded
+  ) {
+    if (discarded) {
+      resultInputs.popName();
+      paramDataIndex = -1;
+      used = false;
+      required = true;
+    }
+  }
+
   void Command::setChildren(
     CR_VEC_TREE newChildren,
     mt::CR_BOL needEmpty,
@@ -723,7 +735,6 @@ namespace cli_menu {
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
 
       if (Control::backTest(controlStr)) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -764,8 +775,6 @@ namespace cli_menu {
         Control::nextTest(controlStr) ||
         Control::previousTest(controlStr)
       ) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
-
         const mt::USI pointToNeighborFlag = pointToNeighbor(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom
