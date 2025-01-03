@@ -84,7 +84,7 @@ namespace cli_menu {
       );
 
       resultInputsIndex = resultInputs.getLastIndex();
-      updateRequiredUsed(false);
+      useRequired();
     }
     // accumulated
     else {

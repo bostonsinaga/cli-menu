@@ -54,7 +54,7 @@ namespace cli_menu {
     if (!used) {
       resultInputs.addConditions(name, {condition});
       resultInputsIndex = resultInputs.getLastIndex();
-      updateRequiredUsed(false);
+      useRequired();
     }
     else resultInputs.pushCondition(resultInputsIndex, condition);
   }
