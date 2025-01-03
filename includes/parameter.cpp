@@ -104,13 +104,10 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
-      if (discarded) {
-        resultInputs.popName();
-        paramDataIndex = -1;
-        used = false;
-        required = true;
-      }
-      else if (!accumulating) {
+      Command::resetInput(resultInputs, discarded);
+
+      if (!(discarded || accumulating)) {
+
         if (argumentType == TEXT) {
           resultInputs.clearText(paramDataIndex);
         }
@@ -370,7 +367,6 @@ namespace cli_menu {
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
       if (Control::backTest(controlStr)) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI flag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -414,8 +410,6 @@ namespace cli_menu {
         Control::nextTest(controlStr) ||
         Control::previousTest(controlStr)
       ) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
-
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom

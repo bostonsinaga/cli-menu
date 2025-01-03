@@ -64,13 +64,9 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
-      if (discarded) {
-        resultInputs.popName();
-        paramDataIndex = -1;
-        used = false;
-        required = true;
-      }
-      else if (!accumulating) {
+      Command::resetInput(resultInputs, discarded);
+
+      if (!(discarded || accumulating)) {
         resultInputs.clearCondition(paramDataIndex);
       }
     }
@@ -222,7 +218,6 @@ namespace cli_menu {
         );
       }
       else if (Control::backTest(buffer)) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
 
         const mt::USI flag = isItPossibleToGoBack(
           directInputs, resultInputs, lastCom
@@ -263,8 +258,6 @@ namespace cli_menu {
         Control::nextTest(buffer) ||
         Control::previousTest(buffer)
       ) {
-        // resultInputs.printVector(); //---------------------------------------------------------------------
-
         const mt::USI tryToSkipFlag = tryToSkip(
           Control::getSharedFlag() == Control::NEXT,
           directInputs, resultInputs, lastCom
