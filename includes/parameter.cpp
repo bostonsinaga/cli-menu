@@ -104,15 +104,19 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
-      Command::resetInput(resultInputs, discarded);
-
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
+          texts = resultInputs.getTexts(resultInputsIndex);
           resultInputs.clearText(resultInputsIndex);
         }
-        else resultInputs.clearNumber(resultInputsIndex);
+        else {
+          numbers = resultInputs.getNumbers(resultInputsIndex);
+          resultInputs.clearNumber(resultInputsIndex);
+        }
       }
+
+      Command::resetInput(resultInputs, discarded);
     }
   }
 
