@@ -77,7 +77,7 @@ namespace cli_menu {
   ) {
     if (discarded) {
       resultInputs.popName();
-      paramDataIndex = -1;
+      resultInputsIndex = -1;
       used = false;
       required = true;
     }

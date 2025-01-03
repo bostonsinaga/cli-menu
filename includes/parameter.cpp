@@ -83,17 +83,17 @@ namespace cli_menu {
         name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
 
-      paramDataIndex = resultInputs.getLastIndex();
+      resultInputsIndex = resultInputs.getLastIndex();
       updateRequiredUsed(false);
     }
     // accumulated
     else {
       if (argumentType == TEXT) {
-        resultInputs.pushText(paramDataIndex, argument);
+        resultInputs.pushText(resultInputsIndex, argument);
       }
       // whitespace is separator
       else resultInputs.pushNumbers(
-        paramDataIndex,
+        resultInputsIndex,
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
@@ -109,9 +109,9 @@ namespace cli_menu {
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
-          resultInputs.clearText(paramDataIndex);
+          resultInputs.clearText(resultInputsIndex);
         }
-        else resultInputs.clearNumber(paramDataIndex);
+        else resultInputs.clearNumber(resultInputsIndex);
       }
     }
   }

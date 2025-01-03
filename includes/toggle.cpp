@@ -53,10 +53,10 @@ namespace cli_menu {
   ) {
     if (!used) {
       resultInputs.addConditions(name, {condition});
-      paramDataIndex = resultInputs.getLastIndex();
+      resultInputsIndex = resultInputs.getLastIndex();
       updateRequiredUsed(false);
     }
-    else resultInputs.pushCondition(paramDataIndex, condition);
+    else resultInputs.pushCondition(resultInputsIndex, condition);
   }
 
   void Toggle::resetInput(
@@ -67,7 +67,7 @@ namespace cli_menu {
       Command::resetInput(resultInputs, discarded);
 
       if (!(discarded || accumulating)) {
-        resultInputs.clearCondition(paramDataIndex);
+        resultInputs.clearCondition(resultInputsIndex);
       }
     }
   }

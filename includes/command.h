@@ -106,7 +106,7 @@ namespace cli_menu {
   protected:
     Command *ultimate = nullptr;
     std::string description;
-    int paramDataIndex = -1;
+    int resultInputsIndex = -1;
 
     bool accumulating = false,
       questionedGroup = false,
