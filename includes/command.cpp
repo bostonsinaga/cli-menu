@@ -612,13 +612,9 @@ namespace cli_menu {
         printNullptrNeighborError();
       }
       // dependence
-      else {
-        resetInput(resultInputs, true);
-
-        return questionTo(
-          getUnusedNeighbor(this), directInputs, resultInputs, lastCom
-        );
-      }
+      else return questionTo(
+        getUnusedNeighbor(this), directInputs, resultInputs, lastCom
+      );
     }
 
     return FLAG::ERROR;
