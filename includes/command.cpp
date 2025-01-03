@@ -78,8 +78,7 @@ namespace cli_menu {
     if (discarded) {
       resultInputs.popName();
       resultInputsIndex = -1;
-      used = false;
-      required = true;
+      updateRequiredUsed(true);
     }
   }
 
@@ -376,13 +375,10 @@ namespace cli_menu {
   }
 
   void Command::updateRequiredUsed(mt::CR_BOL adding) {
-    if (!used) {
-      used = true;
+    used = !adding;
 
-      if (parent) {
-        static_cast<Cm*>(parent)->updateRequiredItems(this, adding);
-      }
-    }
+    if (parent) static_cast<Cm*>(parent)
+      ->updateRequiredItems(this, adding);
   }
 
   void Command::collapseUltimateItems(
@@ -559,6 +555,8 @@ namespace cli_menu {
     LINKED_LIST *neighbor = toNext ? next : previous;
 
     if (neighbor) {
+      resetInput(resultInputs, true);
+
       return static_cast<Cm*>(neighbor)->dialog(
         directInputs, resultInputs, lastCom
       );
