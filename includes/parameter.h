@@ -7,7 +7,8 @@ namespace cli_menu {
 
   class Parameter : public Command {
   protected:
-    mt::VEC_STR arguments;
+    mt::VEC_STR texts;
+    mt::VEC_LD numbers;
     bool argumentType = false;
     static const std::string needsArgStr;
 
