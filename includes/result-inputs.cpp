@@ -224,6 +224,18 @@ namespace cli_menu {
 
     return false;
   }
+
+  mt::VEC_STR ResultInputs::getTexts(mt::CR_INT i) {
+    return mt_uti::VecTools<mt::VEC_STR>::getAt(texts, i, {});
+  }
+
+  mt::VEC_LD ResultInputs::getNumbers(mt::CR_INT i) {
+    return mt_uti::VecTools<mt::VEC_LD>::getAt(numbers, i, {});
+  }
+
+  mt::VEC_BOL ResultInputs::getConditions(mt::CR_INT i) {
+    return mt_uti::VecTools<mt::VEC_BOL>::getAt(conditions, i, {});
+  }
 }
 
 #endif // __CLI_MENU__RESULT_INPUTS_CPP__

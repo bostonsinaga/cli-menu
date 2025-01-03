@@ -73,6 +73,10 @@ namespace cli_menu {
     mt::LD getNumber(mt::CR_INT i, mt::CR_INT j);
     bool getCondition(mt::CR_INT i, mt::CR_INT j);
 
+    mt::VEC_STR getTexts(mt::CR_INT i);
+    mt::VEC_LD getNumbers(mt::CR_INT i);
+    mt::VEC_BOL getConditions(mt::CR_INT i);
+
     int getSize() { return names.size(); }
     int getLastIndex() { return names.size() - 1; }
   };
