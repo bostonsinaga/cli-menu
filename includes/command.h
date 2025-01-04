@@ -32,15 +32,7 @@ namespace cli_menu {
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
 
-    virtual void setData(
-      ResultInputs &resultInputs,
-      mt::CR_STR argument
-    ) {}
-
-    virtual void setData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL condition
-    ) {}
+    virtual void setDefaultData(ResultInputs &resultInputs) {}
 
     void setChildren(
       CR_VEC_TREE newChildren,
