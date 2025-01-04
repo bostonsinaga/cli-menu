@@ -382,7 +382,7 @@ namespace cli_menu {
     used = true;
 
     if (parent) {
-      static_cast<Cm*>(parent)->addRequiredItems(this);
+      static_cast<Cm*>(parent)->reduceRequiredItems(this);
     }
   }
 
@@ -390,7 +390,7 @@ namespace cli_menu {
     used = false;
 
     if (parent) {
-      static_cast<Cm*>(parent)->reduceRequiredItems(this);
+      static_cast<Cm*>(parent)->addRequiredItems(this);
     }
   }
 
@@ -764,11 +764,7 @@ namespace cli_menu {
         // directly completed
         else if (doesUltimateAllowEnter()) {
           *lastCom = chooseLastCommand();
-
-          if (getInheritanceFlag() == TOGGLE) {
-            setData(resultInputs, false);
-          }
-
+          setDefaultData(resultInputs);
           return FLAG::COMPLETED;
         }
       }
