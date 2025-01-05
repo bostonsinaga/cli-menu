@@ -58,6 +58,17 @@ namespace cli_menu {
     argumentType = argumentType_in;
   }
 
+  void Parameter::initDefaultData(
+    ResultInputs &resultInputs
+  ) {
+    if (argumentType == TEXT) {
+      resultInputs.addTexts(name, {defaultText});
+    }
+    else resultInputs.addNumbers(name, {defaultNumber});
+
+    useResultInputsIndex(resultInputs);
+  }
+
   void Parameter::setData(
     ResultInputs &resultInputs,
     mt::CR_STR argument
@@ -83,8 +94,7 @@ namespace cli_menu {
         name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
 
-      resultInputsIndex = resultInputs.getLastIndex();
-      useRequired();
+      useResultInputsIndex(resultInputs);
     }
     // accumulated
     else {
@@ -355,7 +365,6 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    resetInput(resultInputs, false);
 
     // question display on non-dependences
     if (isContainer()) questionedGroup = true;
@@ -446,8 +455,24 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    if ((!used && !selecting && isParent()) || isToddler()) {
-      return question(directInputs, resultInputs, lastCom);
+    const bool noArguments = (argumentType == TEXT && texts.empty()) ||
+      (argumentType == NUMBER && numbers.empty());
+
+    const bool needQuestion = (!used && !selecting && isParent()) || isToddler();
+
+    if (noArguments) {
+      if (needQuestion) return question(
+        directInputs, resultInputs, lastCom
+      );
+    }
+    // remember the past
+    else {
+      if (argumentType == TEXT) {
+        resultInputs.addTexts(name, texts);
+      }
+      else resultInputs.addNumbers(name, numbers);
+
+      useResultInputsIndex(resultInputs);
     }
 
     // inverted in 'tryToSelect' method
