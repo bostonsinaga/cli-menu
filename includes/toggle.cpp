@@ -63,13 +63,13 @@ namespace cli_menu {
     else resultInputs.pushCondition(resultInputsIndex, condition);
   }
 
-  void Toggle::resetInput(
+  void Toggle::resetData(
     ResultInputs &resultInputs,
     mt::CR_BOL discarded
   ) {
     if (used) {
       conditions = resultInputs.getConditions(resultInputsIndex);
-      Command::resetInput(resultInputs, discarded);
+      Command::resetData(resultInputs, discarded);
 
       if (!(discarded || accumulating)) {
         resultInputs.clearCondition(resultInputsIndex);
@@ -130,7 +130,7 @@ namespace cli_menu {
 
         directInputs.pop_back();
         *lastCom = this;
-        resetInput(resultInputs, false);
+        resetData(resultInputs, false);
 
         if (isParent()) {
           setData(resultInputs, true);

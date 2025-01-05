@@ -71,7 +71,7 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
-  void Command::resetInput(
+  void Command::resetData(
     ResultInputs &resultInputs,
     mt::CR_BOL discarded
   ) {
@@ -281,7 +281,7 @@ namespace cli_menu {
     if (parent) {
       if (!isDirectInputsError(directInputs, "go back")) {
 
-        resetInput(resultInputs, true);
+        resetData(resultInputs, true);
 
         return static_cast<Cm*>(parent)->dialog(
           directInputs, resultInputs, lastCom
@@ -582,7 +582,7 @@ namespace cli_menu {
     LINKED_LIST *neighbor = toNext ? next : previous;
 
     if (neighbor) {
-      resetInput(resultInputs, true);
+      resetData(resultInputs, true);
 
       return static_cast<Cm*>(neighbor)->dialog(
         directInputs, resultInputs, lastCom
@@ -616,7 +616,7 @@ namespace cli_menu {
         LINKED_LIST *neighbor = toNext ? next : previous;
 
         if (neighbor) {
-          resetInput(resultInputs, true);
+          resetData(resultInputs, true);
 
           return dialogTo(
             static_cast<Cm*>(neighbor), directInputs, resultInputs, lastCom

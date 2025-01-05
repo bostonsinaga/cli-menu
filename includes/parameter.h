@@ -25,7 +25,7 @@ namespace cli_menu {
       mt::CR_STR argument
     );
 
-    void resetInput(
+    void resetData(
       ResultInputs &resultInputs,
       mt::CR_BOL discarded
     ) override;

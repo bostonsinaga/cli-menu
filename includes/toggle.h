@@ -26,7 +26,7 @@ namespace cli_menu {
       mt::CR_BOL condition
     );
 
-    void resetInput(
+    void resetData(
       ResultInputs &resultInputs,
       mt::CR_BOL discarded
     ) override;

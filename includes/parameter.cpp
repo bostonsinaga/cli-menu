@@ -109,7 +109,7 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::resetInput(
+  void Parameter::resetData(
     ResultInputs &resultInputs,
     mt::CR_BOL discarded
   ) {
@@ -126,7 +126,7 @@ namespace cli_menu {
         }
       }
 
-      Command::resetInput(resultInputs, discarded);
+      Command::resetData(resultInputs, discarded);
     }
   }
 
@@ -195,7 +195,7 @@ namespace cli_menu {
         }
       }
 
-      resetInput(resultInputs, false);
+      resetData(resultInputs, false);
       setData(resultInputs, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 

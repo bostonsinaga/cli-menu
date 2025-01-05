@@ -121,7 +121,7 @@ namespace cli_menu {
       usingDashesBoundaryLine,
       dialogued;
 
-    virtual void resetInput(
+    virtual void resetData(
       ResultInputs &resultInputs,
       mt::CR_BOL discarded
     );
