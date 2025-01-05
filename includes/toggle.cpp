@@ -47,15 +47,19 @@ namespace cli_menu {
     accumulating_in
   ) {}
 
+  void Toggle::initData(
+    ResultInputs &resultInputs,
+    mt::CR_VEC_BOL data
+  ) {
+    resultInputs.addConditions(name, data);
+    useResultInputsIndex(resultInputs);
+  }
+
   void Toggle::setData(
     ResultInputs &resultInputs,
     mt::CR_BOL condition
   ) {
-    if (!used) {
-      resultInputs.addConditions(name, {condition});
-      resultInputsIndex = resultInputs.getLastIndex();
-      useRequired();
-    }
+    if (!used) initData(resultInputs, {condition});
     else resultInputs.pushCondition(resultInputsIndex, condition);
   }
 
@@ -182,7 +186,6 @@ namespace cli_menu {
     Command **lastCom
   ) {
     std::string buffer;
-    resetInput(resultInputs, false);
 
     // question display on non-supporters
     if (isContainer()) questionedGroup = true;
@@ -293,10 +296,15 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    // only for toddlers
-    if (parent && !selecting && isToddler()) {
-      return question(directInputs, resultInputs, lastCom);
+    const bool onlyForToddlers = (!used && !selecting && isParent()) || isToddler();
+
+    if (conditions.empty()) {
+      if (onlyForToddlers) {
+        return question(directInputs, resultInputs, lastCom);
+      }
     }
+    // remember the past
+    else initData(resultInputs, conditions);
 
     // inverted in 'tryToSelect' method
     selecting = false;
