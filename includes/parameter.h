@@ -9,13 +9,21 @@ namespace cli_menu {
   protected:
     mt::VEC_STR texts;
     mt::VEC_LD numbers;
+
+    std::string defaultText = "";
+    long double defaultNumber = 0;
+
     bool argumentType = false;
     static const std::string needsArgStr;
+
+    void initDefaultData(
+      ResultInputs &resultInputs
+    ) override;
 
     void setData(
       ResultInputs &resultInputs,
       mt::CR_STR argument
-    ) override;
+    );
 
     void resetInput(
       ResultInputs &resultInputs,
