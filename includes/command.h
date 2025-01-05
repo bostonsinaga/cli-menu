@@ -32,7 +32,9 @@ namespace cli_menu {
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
 
-    virtual void setDefaultData(ResultInputs &resultInputs) {}
+    virtual void initDefaultData(
+      ResultInputs &resultInputs
+    ) {}
 
     void setChildren(
       CR_VEC_TREE newChildren,
@@ -53,9 +55,10 @@ namespace cli_menu {
       mt::CR_BOL usingAbbreviations
     );
 
-    void updateRequiredItems(Command *command);
     void addRequiredItems(Command *command);
     void reduceRequiredItems(Command *command);
+    void registerRequiredItems(Command *command);
+    void revokeRequiredItems(Command *command);
 
     void collapseUltimateItems(
       Command *newUltimate,
@@ -135,6 +138,7 @@ namespace cli_menu {
 
     void useRequired();
     void unuseRequired();
+    void useResultInputsIndex(ResultInputs &resultInputs);
 
     // format: 'separator + ultimate + separator + this + separator'
     std::string getFullNameWithUltimate(
