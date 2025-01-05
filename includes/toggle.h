@@ -8,11 +8,23 @@ namespace cli_menu {
   class Toggle : public Command {
   protected:
     mt::VEC_BOL conditions;
+    bool defaultCondition = false;
+
+    void initData(
+      ResultInputs &resultInputs,
+      mt::CR_VEC_BOL data
+    );
+
+    void initDefaultData(
+      ResultInputs &resultInputs
+    ) override {
+      initData(resultInputs, {defaultCondition});
+    }
 
     void setData(
       ResultInputs &resultInputs,
       mt::CR_BOL condition
-    ) override;
+    );
 
     void resetInput(
       ResultInputs &resultInputs,
