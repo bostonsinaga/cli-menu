@@ -68,9 +68,13 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
+      // backup vector member
       conditions = resultInputs.getConditions(resultInputsIndex);
+
+      // pop vector
       Command::resetData(resultInputs, discarded);
 
+      // clean vector member
       if (!(discarded || accumulating)) {
         resultInputs.clearCondition(resultInputsIndex);
       }
