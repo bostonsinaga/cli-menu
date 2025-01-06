@@ -8,22 +8,27 @@ namespace cli_menu {
   class Control {
   private:
     static mt::USI sharedFlag;
-    static const int count = 10;
+    static bool modeOn;
+    static const int count = 11;
     static const std::string NAMES[count][2];
-    static int test(mt::CR_STR str);
+
+    static mt::SI whitespacesCheck(mt::CR_STR str);
+    static bool checkOut(mt::CR_STR str, mt::CR_SI flag);
 
   public:
     enum {
-      BACK = 0, CANCEL = 1,
-      COPY = 2, ENTER = 3,
-      HELP = 4, LIST = 5,
-      MODIFY = 6, NEXT = 7,
-      PREVIOUS = 8, SELECT = 9
+      _CONTROL_MODE = 0,
+      BACK = 1, CANCEL = 2,
+      CLIPBOARD = 3, ENTER = 4,
+      HELP = 5, LIST = 6,
+      MODIFY = 7, NEXT = 8,
+      PREVIOUS = 9, SELECT = 10
     };
 
+    static bool intoMode(mt::CR_STR str);
     static bool backTest(mt::CR_STR str);
     static bool cancelTest(mt::CR_STR str);
-    static bool copyTest(mt::CR_STR str);
+    static bool clipboardTest(mt::CR_STR str);
     static bool enterTest(mt::CR_STR str);
     static bool helpTest(mt::CR_STR str);
     static bool listTest(mt::CR_STR str);
@@ -39,9 +44,8 @@ namespace cli_menu {
     static void printParameterHelp();
     static void printToggleHelp();
 
-    static const mt::USI getSharedFlag() {
-      return sharedFlag;
-    }
+    static const mt::USI getSharedFlag() { return sharedFlag; }
+    static const bool onMode() { return modeOn; }
   };
 }
 

@@ -8,21 +8,23 @@ namespace cli_menu {
    * All tests argument are expected to be lowercase.
    */
   const std::string Control::NAMES[Control::count][2] = {
-    { ".back",     ":b" },
-    { ".cancel",   ":x" },
-    { ".copy",     ":c" },
-    { ".enter",    ":e" },
-    { ".help",     ":h" }, 
-    { ".list",     ":l" },
-    { ".modify",   ":m" },
-    { ".next",     ":n" },
-    { ".previous", ":p" },
-    { ".select",   ":s" }
+    { "$",         "$" },
+    { "back",      "b" },
+    { "cancel",    "x" },
+    { "clipboard", "c" },
+    { "enter",     "e" },
+    { "help",      "h" }, 
+    { "list",      "l" },
+    { "modify",    "m" },
+    { "next",      "n" },
+    { "previous",  "p" },
+    { "select",    "s" }
   };
 
   mt::USI Control::sharedFlag = -1;
+  bool Control::modeOn = false;
 
-  int Control::test(mt::CR_STR str) {
+  mt::SI Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
     std::string input;
 
@@ -49,44 +51,66 @@ namespace cli_menu {
     return -1;
   }
 
+  bool Control::intoMode(mt::CR_STR str) {
+
+    if (whitespacesCheck(str) == _CONTROL_MODE) {
+      std::cout << Color::start(Color::MAGENTA);
+      modeOn = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  bool Control::checkOut(mt::CR_STR str, mt::CR_SI flag) {
+
+    if (whitespacesCheck(str) == flag) {
+      std::cout << Color::end();
+      modeOn = false;
+      return true;
+    }
+
+    return false;
+  }
+
   bool Control::backTest(mt::CR_STR str) {
-    return Control::test(str) == BACK;
+    return checkOut(str, BACK);
   }
 
   bool Control::cancelTest(mt::CR_STR str) {
-    return Control::test(str) == CANCEL;
+    return checkOut(str, CANCEL);
   }
 
-  bool Control::copyTest(mt::CR_STR str) {
-    return Control::test(str) == COPY;
+  bool Control::clipboardTest(mt::CR_STR str) {
+    return checkOut(str, CLIPBOARD);
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return Control::test(str) == ENTER;
+    return checkOut(str, ENTER);
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return Control::test(str) == HELP;
+    return checkOut(str, HELP);
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return Control::test(str) == LIST;
+    return checkOut(str, LIST);
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return Control::test(str) == MODIFY;
+    return checkOut(str, MODIFY);
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return Control::test(str) == NEXT;
+    return checkOut(str, NEXT);
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return Control::test(str) == PREVIOUS;
+    return checkOut(str, PREVIOUS);
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return Control::test(str) == SELECT;
+    return checkOut(str, SELECT);
   }
 
   int Control::booleanTest(mt::CR_STR str) {
