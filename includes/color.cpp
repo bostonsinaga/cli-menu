@@ -44,10 +44,26 @@ namespace cli_menu {
     Color::italic = "\x1b[3m",
     Color::underline = "\x1b[4m";
 
+  Color::Color(
+    mt::CR_INT r_in,
+    mt::CR_INT g_in,
+    mt::CR_INT b_in
+  ) {
+    empty = false;
+
+    if (r_in < 0) r = 0;
+    else r = r_in;
+
+    if (g_in < 0) g = 0;
+    else g = g_in;
+
+    if (b_in < 0) b = 0;
+    else b = b_in;
+  }
+
   std::string Color::correctNewlines(
     std::string &text,
-    mt::CR_STR styleEscapeCode,
-    mt::CR_STR colorEscapeCode,
+    mt::CR_STR escapeCode,
     mt::CR_INT forwardSpaceBoundaryIndex,
     mt::CR_INT reverseSpaceBoundaryIndex
   ) {
@@ -119,11 +135,8 @@ namespace cli_menu {
         text[i+2] == '0' &&
         text[i+3] == 'm'
       ) {
-        text = text.substr(0, i+4) + styleEscapeCode
-          + colorEscapeCode + text.substr(i+4);
-
-        i += 3 + styleEscapeCode.length()
-          + colorEscapeCode.length();
+        text = text.substr(0, i+4) + escapeCode + text.substr(i+4);
+        i += 3 + escapeCode.length();
       }
     }
 
@@ -135,15 +148,95 @@ namespace cli_menu {
     if (!fractions.empty()) {
       for (int i = fractions.size() - 1; i >= 0; i--) {
         text = fractions[i] + antidote + "\n"
-          + colorEscapeCode + styleEscapeCode + text;
+          + escapeCode + text;
       }
     }
 
-    return newlines[0]
-      + styleEscapeCode + colorEscapeCode
-      + text + antidote
-      + newlines[1];
+    return newlines[0] + escapeCode
+      + text + antidote + newlines[1];
   }
+
+  /** COLORS */
+
+  std::string Color::getEscapeCode(
+    mt::CR_STR styleEscapeCode,
+    CR_CLR foreground,
+    mt::CR_BOL mEnd
+  ) {
+    std::string code = styleEscapeCode;
+
+    if (!foreground.empty) {
+      code += "\x1B[38;2;"
+        + std::to_string(foreground.r) + ";"
+        + std::to_string(foreground.g) + ";" 
+        + std::to_string(foreground.b);
+
+      if (mEnd) code += "m";
+    }
+
+    return code;
+  }
+
+  std::string Color::getEscapeCode(
+    mt::CR_STR styleEscapeCode,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::string code = getEscapeCode(
+      styleEscapeCode, foreground, false
+    );
+
+    if (!background.empty) {
+      code += ";48;2;"
+        + std::to_string(background.r) + ";"
+        + std::to_string(background.g) + ";" 
+        + std::to_string(background.b) + "m";
+    }
+    else code += "m";
+
+    return code;
+  }
+
+  std::string Color::start(
+    CR_CLR foreground
+  ) {
+    return getEscapeCode("", foreground, true);
+  }
+
+  std::string Color::start(
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    return getEscapeCode("", foreground, background);
+  }
+
+  std::string Color::startItalic(
+    CR_CLR foreground
+  ) {
+    return getEscapeCode(italic, foreground, true);
+  }
+
+  std::string Color::startItalic(
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    return getEscapeCode(italic, foreground, background);
+  }
+
+  std::string Color::startUnderline(
+    CR_CLR foreground
+  ) {
+    return getEscapeCode(underline, foreground, true);
+  }
+
+  std::string Color::startUnderline(
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    return getEscapeCode(underline, foreground, background);
+  }
+
+  /** STRINGS */
 
   std::string Color::getString(
     std::string &text,
@@ -154,11 +247,7 @@ namespace cli_menu {
   ) {
     return correctNewlines(
       text,
-      styleEscapeCode,
-      foreground.empty ? "" : "\x1B[38;2;"
-        + std::to_string(foreground.r) + ";"
-        + std::to_string(foreground.g) + ";" 
-        + std::to_string(foreground.b) + "m",
+      getEscapeCode(styleEscapeCode, foreground, true),
       forwardSpaceBoundaryIndex,
       reverseSpaceBoundaryIndex
     );
@@ -174,15 +263,7 @@ namespace cli_menu {
   ) {
     return correctNewlines(
       text,
-      styleEscapeCode,
-      foreground.empty ? "" : "\x1B[38;2;"
-        + std::to_string(foreground.r) + ";"
-        + std::to_string(foreground.g) + ";" 
-        + std::to_string(foreground.b) +
-          (background.empty ? "m" : ";48;2;"
-            + std::to_string(background.r) + ";"
-            + std::to_string(background.g) + ";" 
-            + std::to_string(background.b) + "m"),
+      getEscapeCode(styleEscapeCode, foreground, background),
       forwardSpaceBoundaryIndex,
       reverseSpaceBoundaryIndex
     );
@@ -221,7 +302,7 @@ namespace cli_menu {
     mt::CR_INT reverseSpaceBoundaryIndex
   ) {
     return correctNewlines(
-      text, italic, "",
+      text, italic,
       forwardSpaceBoundaryIndex,
       reverseSpaceBoundaryIndex
     );
@@ -260,7 +341,7 @@ namespace cli_menu {
     mt::CR_INT reverseSpaceBoundaryIndex
   ) {
     return correctNewlines(
-      text, underline, "",
+      text, underline,
       forwardSpaceBoundaryIndex,
       reverseSpaceBoundaryIndex
     );
@@ -292,6 +373,8 @@ namespace cli_menu {
       reverseSpaceBoundaryIndex
     );
   }
+
+  /** UTILS */
 
   bool Color::areEqual(CR_CLR color_1, CR_CLR color_2) {
     if (&color_1 == &color_2 || (

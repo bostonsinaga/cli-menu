@@ -18,10 +18,21 @@ namespace cli_menu {
 
     static std::string correctNewlines(
       std::string &text,
-      mt::CR_STR styleEscapeCode,
-      mt::CR_STR colorEscapeCode,
+      mt::CR_STR escapeCode,
       mt::CR_INT forwardSpaceBoundaryIndex = -1,
       mt::CR_INT reverseSpaceBoundaryIndex = -1
+    );
+
+    static std::string getEscapeCode(
+      mt::CR_STR styleEscapeCode,
+      CR_CLR foreground,
+      mt::CR_BOL mEnd
+    );
+
+    static std::string getEscapeCode(
+      mt::CR_STR styleEscapeCode,
+      CR_CLR foreground,
+      CR_CLR background
     );
 
     static std::string getString(
@@ -56,22 +67,38 @@ namespace cli_menu {
       mt::CR_INT r_in = 0,
       mt::CR_INT g_in = 0,
       mt::CR_INT b_in = 0
-    ) {
-      empty = false;
+    );
 
-      if (r_in < 0) r = 0;
-      else r = r_in;
+    const bool isEmpty() const { return empty; }
 
-      if (g_in < 0) g = 0;
-      else g = g_in;
+    static std::string start(
+      CR_CLR foreground
+    );
 
-      if (b_in < 0) b = 0;
-      else b = b_in;
-    }
+    static std::string start(
+      CR_CLR foreground,
+      CR_CLR background
+    );
 
-    const bool isEmpty() const {
-      return empty;
-    }
+    static std::string startItalic(
+      CR_CLR foreground
+    );
+
+    static std::string startItalic(
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static std::string startUnderline(
+      CR_CLR foreground
+    );
+
+    static std::string startUnderline(
+      CR_CLR foreground,
+      CR_CLR background
+    );
+
+    static std::string end() { return antidote; }
 
     static std::string getString(
       std::string text,
