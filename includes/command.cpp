@@ -755,56 +755,60 @@ namespace cli_menu {
       // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
 
-      if (Control::backTest(controlStr)) {
+      // dollar character test
+      if (Control::intoMode(controlStr) || Control::onMode()) {
 
-        const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
-          directInputs, resultInputs, lastCom
-        );
+        if (Control::backTest(controlStr)) {
 
-        if (isItPossibleToGoBackFlag != FLAG::ERROR) {
-          return isItPossibleToGoBackFlag;
+          const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
+            directInputs, resultInputs, lastCom
+          );
+
+          if (isItPossibleToGoBackFlag != FLAG::ERROR) {
+            return isItPossibleToGoBackFlag;
+          }
         }
-      }
-      else if (Control::cancelTest(controlStr)) {
-        break; // returns 'FLAG::CANCELED' below
-      }
-      else if (Control::enterTest(controlStr)) {
-        // pointing to first child
-        if (isParent()) {
-          return dialogTo(
-            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+        else if (Control::cancelTest(controlStr)) {
+          break; // returns 'FLAG::CANCELED' below
+        }
+        else if (Control::enterTest(controlStr)) {
+          // pointing to first child
+          if (isParent()) {
+            return dialogTo(
+              static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+            );
+          }
+          // directly completed
+          else if (doesUltimateAllowEnter()) {
+            *lastCom = chooseLastCommand();
+            initDefaultData(resultInputs);
+            return FLAG::COMPLETED;
+          }
+        }
+        else if (Control::helpTest(controlStr)) {
+          printHelp();
+        }
+        else if (Control::listTest(controlStr)) {
+          printList();
+        }
+        else if (
+          Control::nextTest(controlStr) ||
+          Control::previousTest(controlStr)
+        ) {
+          const mt::USI pointToNeighborFlag = pointToNeighbor(
+            Control::getSharedFlag() == Control::NEXT,
+            directInputs, resultInputs, lastCom
+          );
+
+          if (pointToNeighborFlag != FLAG::ERROR) {
+            return pointToNeighborFlag;
+          }
+        }
+        else if (Control::selectTest(controlStr)) {
+          Message::printNeatDialogError(
+            "already in selection mode"
           );
         }
-        // directly completed
-        else if (doesUltimateAllowEnter()) {
-          *lastCom = chooseLastCommand();
-          initDefaultData(resultInputs);
-          return FLAG::COMPLETED;
-        }
-      }
-      else if (Control::helpTest(controlStr)) {
-        printHelp();
-      }
-      else if (Control::listTest(controlStr)) {
-        printList();
-      }
-      else if (
-        Control::nextTest(controlStr) ||
-        Control::previousTest(controlStr)
-      ) {
-        const mt::USI pointToNeighborFlag = pointToNeighbor(
-          Control::getSharedFlag() == Control::NEXT,
-          directInputs, resultInputs, lastCom
-        );
-
-        if (pointToNeighborFlag != FLAG::ERROR) {
-          return pointToNeighborFlag;
-        }
-      }
-      else if (Control::selectTest(controlStr)) {
-        Message::printNeatDialogError(
-          "already in selection mode"
-        );
       }
       // find developer defined command
       else {

@@ -225,66 +225,70 @@ namespace cli_menu {
           directInputs, resultInputs, lastCom
         );
       }
-      else if (Control::backTest(buffer)) {
+      // dollar character test
+      else if (Control::intoMode(buffer) || Control::onMode()) {
 
-        const mt::USI flag = isItPossibleToGoBack(
-          directInputs, resultInputs, lastCom
-        );
+        if (Control::backTest(buffer)) {
 
-        if (flag != FLAG::ERROR) return flag;
-      }
-      else if (Control::cancelTest(buffer)) {
-        break; // returns 'FLAG::CANCELED' below
-      }
-      else if (Control::enterTest(buffer)) {
-        // pointing to first child
-        if (isParent()) {
-          return dialogTo(
-            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+          const mt::USI flag = isItPossibleToGoBack(
+            directInputs, resultInputs, lastCom
           );
+
+          if (flag != FLAG::ERROR) return flag;
         }
-        // need condition
-        else if (!used && required) {
-          Message::printNeatDialogError(
-            "this " + getLevelName() + " needs a condition"
+        else if (Control::cancelTest(buffer)) {
+          break; // returns 'FLAG::CANCELED' below
+        }
+        else if (Control::enterTest(buffer)) {
+          // pointing to first child
+          if (isParent()) {
+            return dialogTo(
+              static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+            );
+          }
+          // need condition
+          else if (!used && required) {
+            Message::printNeatDialogError(
+              "this " + getLevelName() + " needs a condition"
+            );
+          }
+          // directly completed
+          else if (doesUltimateAllowEnter()) {
+            *lastCom = chooseLastCommand();
+            setData(resultInputs, false);
+            return FLAG::COMPLETED;
+          }
+        }
+        else if (Control::helpTest(buffer)) {
+          printHelp();
+        }
+        else if (Control::listTest(buffer)) {
+          printList();
+        }
+        else if (
+          Control::nextTest(buffer) ||
+          Control::previousTest(buffer)
+        ) {
+          const mt::USI tryToSkipFlag = tryToSkip(
+            Control::getSharedFlag() == Control::NEXT,
+            directInputs, resultInputs, lastCom
           );
-        }
-        // directly completed
-        else if (doesUltimateAllowEnter()) {
-          *lastCom = chooseLastCommand();
-          setData(resultInputs, false);
-          return FLAG::COMPLETED;
-        }
-      }
-      else if (Control::helpTest(buffer)) {
-        printHelp();
-      }
-      else if (Control::listTest(buffer)) {
-        printList();
-      }
-      else if (
-        Control::nextTest(buffer) ||
-        Control::previousTest(buffer)
-      ) {
-        const mt::USI tryToSkipFlag = tryToSkip(
-          Control::getSharedFlag() == Control::NEXT,
-          directInputs, resultInputs, lastCom
-        );
 
-        if (tryToSkipFlag != FLAG::ERROR) {
-          return tryToSkipFlag;
+          if (tryToSkipFlag != FLAG::ERROR) {
+            return tryToSkipFlag;
+          }
         }
-      }
-      else if (Control::selectTest(buffer)) {
+        else if (Control::selectTest(buffer)) {
 
-        // only available for toddlers
-        const mt::USI tryToSelectFlag = tryToSelect(
-          directInputs, resultInputs, lastCom,
-          "condition is given"
-        );
+          // only available for toddlers
+          const mt::USI tryToSelectFlag = tryToSelect(
+            directInputs, resultInputs, lastCom,
+            "condition is given"
+          );
 
-        if (tryToSelectFlag != FLAG::ERROR) {
-          return tryToSelectFlag;
+          if (tryToSelectFlag != FLAG::ERROR) {
+            return tryToSelectFlag;
+          }
         }
       }
       else Message::printNeatDialogError(

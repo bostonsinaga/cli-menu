@@ -384,68 +384,72 @@ namespace cli_menu {
       // copy to secure original input
       std::string controlStr = mt_uti::StrTools::getStringToLowercase(buffer);
 
-      if (Control::backTest(controlStr)) {
+      // dollar character test
+      if (Control::intoMode(controlStr) || Control::onMode()) {
 
-        const mt::USI flag = isItPossibleToGoBack(
-          directInputs, resultInputs, lastCom
-        );
+        if (Control::backTest(controlStr)) {
 
-        if (flag != FLAG::ERROR) return flag;
-      }
-      else if (Control::cancelTest(controlStr)) {
-        break; // returns 'FLAG::CANCELED' below
-      }
-      else if (Control::enterTest(controlStr)) {
-        // need argument
-        if (!used && required) {
-          Message::printNeatDialogError(
-            "this " + getLevelName() + needsArgStr
+          const mt::USI flag = isItPossibleToGoBack(
+            directInputs, resultInputs, lastCom
           );
+
+          if (flag != FLAG::ERROR) return flag;
         }
-        // question in the middle, back to match
-        else if (!directInputs.empty()) {
-          return middleMatch(directInputs, resultInputs, lastCom);
+        else if (Control::cancelTest(controlStr)) {
+          break; // returns 'FLAG::CANCELED' below
         }
-        // pointing to first child
-        else if (isParent()) {
-          return dialogTo(
-            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+        else if (Control::enterTest(controlStr)) {
+          // need argument
+          if (!used && required) {
+            Message::printNeatDialogError(
+              "this " + getLevelName() + needsArgStr
+            );
+          }
+          // question in the middle, back to match
+          else if (!directInputs.empty()) {
+            return middleMatch(directInputs, resultInputs, lastCom);
+          }
+          // pointing to first child
+          else if (isParent()) {
+            return dialogTo(
+              static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+            );
+          }
+          // directly completed
+          else if (doesUltimateAllowEnter()) {
+            *lastCom = chooseLastCommand();
+            return FLAG::COMPLETED;
+          }
+        }
+        else if (Control::helpTest(controlStr)) {
+          printHelp();
+        }
+        else if (Control::listTest(controlStr)) {
+          printList();
+        }
+        else if (
+          Control::nextTest(controlStr) ||
+          Control::previousTest(controlStr)
+        ) {
+          const mt::USI tryToSkipFlag = tryToSkip(
+            Control::getSharedFlag() == Control::NEXT,
+            directInputs, resultInputs, lastCom
           );
-        }
-        // directly completed
-        else if (doesUltimateAllowEnter()) {
-          *lastCom = chooseLastCommand();
-          return FLAG::COMPLETED;
-        }
-      }
-      else if (Control::helpTest(controlStr)) {
-        printHelp();
-      }
-      else if (Control::listTest(controlStr)) {
-        printList();
-      }
-      else if (
-        Control::nextTest(controlStr) ||
-        Control::previousTest(controlStr)
-      ) {
-        const mt::USI tryToSkipFlag = tryToSkip(
-          Control::getSharedFlag() == Control::NEXT,
-          directInputs, resultInputs, lastCom
-        );
 
-        if (tryToSkipFlag != FLAG::ERROR) {
-          return tryToSkipFlag;
+          if (tryToSkipFlag != FLAG::ERROR) {
+            return tryToSkipFlag;
+          }
         }
-      }
-      else if (Control::selectTest(controlStr)) {
+        else if (Control::selectTest(controlStr)) {
 
-        const mt::USI tryToSelectFlag = tryToSelect(
-          directInputs, resultInputs, lastCom,
-          "arguments are given"
-        );
+          const mt::USI tryToSelectFlag = tryToSelect(
+            directInputs, resultInputs, lastCom,
+            "arguments are given"
+          );
 
-        if (tryToSelectFlag != FLAG::ERROR) {
-          return tryToSelectFlag;
+          if (tryToSelectFlag != FLAG::ERROR) {
+            return tryToSelectFlag;
+          }
         }
       }
       // value input
