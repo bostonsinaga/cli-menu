@@ -7,7 +7,7 @@ namespace cli_menu {
   /**
    * All tests argument are expected to be lowercase.
    */
-  const std::string Control::NAMES[Control::count][2] = {
+  const std::string Control::NAMES[COUNT][2] = {
     { "$",         "$" },
     { "back",      "b" },
     { "cancel",    "x" },
@@ -39,7 +39,7 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < Control::count; j++) {
+      for (int j = 0; j < COUNT; j++) {
 
         if (input == NAMES[j][i]) {
           sharedFlag = j;
@@ -54,7 +54,7 @@ namespace cli_menu {
   bool Control::intoMode(mt::CR_STR str) {
 
     if (whitespacesCheck(str) == _CONTROL_MODE) {
-      std::cout << Color::start(Color::MAGENTA);
+      std::cout << Color::start(Color::CYAN);
       modeOn = true;
       return true;
     }
@@ -133,26 +133,38 @@ namespace cli_menu {
   }
 
   void Control::printParameterHelp() {
+
     static int maxLengths[] = {0, 0};
     static std::string text = "";
 
     if (!(maxLengths[0] || maxLengths[1])) {
       bool even;
+      int j;
 
-      for (int i = 0; i < Control::count; i++) {
+      for (int i = 0; i < COUNT - 1; i++) {
+        j = i+1;
         even = !(i % 2);
 
-        if (Control::NAMES[i][0].length() > maxLengths[even]) {
-          maxLengths[even] = Control::NAMES[i][0].length();
+        if (NAMES[j][0].length() > maxLengths[even]) {
+          maxLengths[even] = NAMES[j][0].length();
         }
       }
 
-      for (int i = 0; i < Control::count; i++) {
-        even = !(i % 2);
+      for (int i = 0; i < COUNT - 1; i++) {
 
-        text += (even ? "  " : " ") + Control::NAMES[i][0] + std::string(
-          maxLengths[even] - Control::NAMES[i][0].length(), ' '
-        ) + " = " + Control::NAMES[i][1] + (even ? "," : "\n");
+        j = i+1;
+        even = !(i % 2);
+        text += even ? "  " : " ";
+
+        text += NAMES[j][0] + std::string(
+          maxLengths[even] - NAMES[j][0].length(), ' '
+        );
+
+        text += " = " + NAMES[j][1];
+
+        if (j < COUNT - 1) {
+          text += even ? "," : ",\n";
+        }
       }
     }
 
