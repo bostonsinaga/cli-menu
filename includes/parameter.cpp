@@ -114,19 +114,24 @@ namespace cli_menu {
     mt::CR_BOL discarded
   ) {
     if (used) {
+
+      // backup vector member
+      if (argumentType == TEXT) {
+        texts = resultInputs.getTexts(resultInputsIndex);
+      }
+      else numbers = resultInputs.getNumbers(resultInputsIndex);
+
+      // pop vector
+      Command::resetData(resultInputs, discarded);
+
+      // clean vector member
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
-          texts = resultInputs.getTexts(resultInputsIndex);
           resultInputs.clearText(resultInputsIndex);
         }
-        else {
-          numbers = resultInputs.getNumbers(resultInputsIndex);
-          resultInputs.clearNumber(resultInputsIndex);
-        }
+        else resultInputs.clearNumber(resultInputsIndex);
       }
-
-      Command::resetData(resultInputs, discarded);
     }
   }
 
