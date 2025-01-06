@@ -9,8 +9,8 @@ namespace cli_menu {
   private:
     static mt::USI sharedFlag;
     static bool modeOn;
-    static const int count = 11;
-    static const std::string NAMES[count][2];
+    static const int COUNT = 11;
+    static const std::string NAMES[COUNT][2];
 
     static mt::SI whitespacesCheck(mt::CR_STR str);
     static bool checkOut(mt::CR_STR str, mt::CR_SI flag);
