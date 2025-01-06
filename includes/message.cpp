@@ -56,7 +56,7 @@ namespace cli_menu {
         return Color::getString("SUCCEED. ", Color::GREEN);
       }
       case STATUS::CANCELED: {
-        return Color::getString("CANCELED. ", Color::BLUE);
+        return Color::getString("CANCELED. ", Color::ORANGE);
       }
     }
     return "";
