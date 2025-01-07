@@ -299,9 +299,9 @@ namespace cli_menu {
 
   void Message::setDialogInput(
     std::string &buffer,
-    mt::CR_CH ch
+    mt::CR_STR listPointStyle
   ) {
-    std::cout << ch << ' ';
+    std::cout << listPointStyle << ' ';
     std::getline(std::cin, buffer);
   }
 }
