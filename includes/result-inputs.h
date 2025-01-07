@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__RESULT_INPUTS_H__
 #define __CLI_MENU__RESULT_INPUTS_H__
 
-#include <memory>
 #include "message.h"
 
 namespace cli_menu {
