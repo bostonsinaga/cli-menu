@@ -46,6 +46,7 @@ namespace cli_menu {
 
     static const mt::USI getSharedFlag() { return sharedFlag; }
     static const bool onMode() { return modeOn; }
+    static void printError(mt::CR_STR listPointStyle = ">");
   };
 }
 
