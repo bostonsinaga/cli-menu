@@ -809,6 +809,7 @@ namespace cli_menu {
             "already in selection mode"
           );
         }
+        else Control::printError();
       }
       // find developer defined command
       else {

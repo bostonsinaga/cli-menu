@@ -290,6 +290,7 @@ namespace cli_menu {
             return tryToSelectFlag;
           }
         }
+        else Control::printError();
       }
       else Message::printNeatDialogError(
         "only accept boolean values"
