@@ -304,10 +304,10 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    const bool onlyForToddlers = (!used && !selecting && isParent()) || isToddler();
+    const bool needQuestion = parent && !selecting && isToddler();
 
     if (conditions.empty()) {
-      if (onlyForToddlers) {
+      if (needQuestion) {
         return question(directInputs, resultInputs, lastCom);
       }
     }
