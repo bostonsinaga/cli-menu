@@ -165,6 +165,7 @@ namespace cli_menu {
         if (j < COUNT - 1) {
           text += even ? "," : ",\n";
         }
+        else text += "\n";
       }
     }
 
