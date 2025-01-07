@@ -1092,7 +1092,7 @@ namespace cli_menu {
     if (getInheritanceFlag() == TOGGLE && isToddler()) {
       static bool isInit = true;
 
-      if (isInit && isDependence()) {
+      if (isInit && isToddler()) {
         isInit = false;
         Control::printToggleHelp();
       }
