@@ -53,9 +53,10 @@ namespace cli_menu {
 
   bool Control::intoMode(mt::CR_STR str) {
 
+    // the 'modeOn' is set in 'printError' method
     if (whitespacesCheck(str) == _CONTROL_MODE) {
+
       std::cout << Color::start(Color::CYAN);
-      modeOn = true;
       return true;
     }
 
@@ -176,6 +177,23 @@ namespace cli_menu {
     Message::printItalicString(
       "  yes = y, no = n, or boolean\n"
     );
+  }
+
+  void Control::printError(mt::CR_STR listPointStyle) {
+    if (modeOn) {
+      Message::printItalicString(
+        listPointStyle + " unknown controller\n",
+        Color::GRAY
+      );
+
+      std::cout << Color::start(Color::CYAN);
+    }
+    /**
+     * Set here not in 'intoMode' method to avoid
+     * error message at the beginning. Because this method
+     * always the first invoked after 'intoMode' condition.
+     */
+    else modeOn = true;
   }
 }
 
