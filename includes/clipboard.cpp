@@ -1,50 +1,55 @@
+#ifndef __CLI_MENU__CLIPBOARD_CPP__
+#define __CLI_MENU__CLIPBOARD_CPP__
+
 #include <windows.h>
-#include <iostream>
+#include "clipboard.h"
 
-int main() {
-  /** Open the Clipboard */
+namespace cli_menu {
 
-  // only fot string copy
-  if (!OpenClipboard(nullptr)) {
-    std::cerr << "Failed to open clipboard" << std::endl;
-    return 1;
+  Clipboard::Clipboard(
+    mt::CR_STR errorMessage_in
+  ) {
+    rule = [](uchar_ptr text)->bool { return true; };
+    errorMessage = errorMessage_in;
   }
 
-  /** Get Clipboard Data */
+  Clipboard::Clipboard(
+    rule_clbk rule_in,
+    mt::CR_STR errorMessage_in
+  ) {
+    rule = rule_in;
+    errorMessage = errorMessage_in;
+  }
 
-  HANDLE hData = GetClipboardData(CF_TEXT);
+  // only for string copy
+  void Clipboard::paste() {
 
-  if (hData == nullptr) {
-    std::cerr << "Failed to get clipboard data" << std::endl;
+    if (!OpenClipboard(nullptr)) {
+      std::cerr << "\n__Failed to open clipboard" << std::endl;
+      return;
+    }
+
+    HANDLE hData = GetClipboardData(CF_TEXT);
+
+    if (hData == nullptr) {
+      std::cerr << "\n__Failed to get clipboard data" << std::endl;
+      CloseClipboard();
+      return;
+    }
+
+    uchar_ptr pszText = static_cast<uchar_ptr>(GlobalLock(hData));
+
+    if (pszText == nullptr) {
+      std::cerr << "\n__Failed to lock clipboard data" << std::endl;
+    }
+    else GlobalUnlock(hData);
+
     CloseClipboard();
-    return 1;
+
+    if (!(rule(pszText) || errorMessage.empty())) {
+      Message::printDialogError(errorMessage);
+    }
   }
-
-  /** Lock the Clipboard Data */
-
-  char* pszText = static_cast<char*>(GlobalLock(hData));
-
-  if (pszText == nullptr) {
-    std::cerr << "Failed to lock clipboard data" << std::endl;
-    CloseClipboard();
-    return 1;
-  }
-
-  /** Use the Clipboard Data */
-
-  // std::cout << "Clipboard data: " << pszText << std::endl;
-  GlobalUnlock(hData);
-
-  /** Close the Clipboard */
-
-  CloseClipboard();
-
-  // print 'pszText' length (super fast)
-  std::cout
-    << "\n\x1B[38;2;63;255;63mSTRING LENGTH = "
-    << strlen(pszText)
-    << "\x1B[0m\n";
-
-  return 0;
 }
 
+#endif // __CLI_MENU__CLIPBOARD_CPP__

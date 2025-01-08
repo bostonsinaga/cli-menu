@@ -6,8 +6,24 @@
 namespace cli_menu {
 
   class Clipboard {
-  public:
+  private:
+    typedef unsigned char* uchar_ptr;
+    typedef std::function<bool(uchar_ptr)> rule_clbk;
 
+    std::string errorMessage;
+    rule_clbk rule;
+
+  public:
+    Clipboard(
+      mt::CR_STR errorMessage_in = ""
+    );
+
+    Clipboard(
+      rule_clbk rule_in,
+      mt::CR_STR errorMessage_in = ""
+    );
+
+    void paste();
   };
 }
 
