@@ -6,10 +6,16 @@
 
 namespace cli_menu {
 
-  Clipboard::Clipboard(
-    mt::CR_STR errorMessage_in
-  ) {
-    rule = [](mt::CR_STR text)->bool { return true; };
+  Clipboard::Clipboard() {
+    rule = Clipboard::defaultRule;
+  }
+
+  Clipboard::Clipboard(rule_clbk rule_in) {
+    rule = rule_in;
+  }
+
+  Clipboard::Clipboard(mt::CR_STR errorMessage_in) {
+    rule = Clipboard::defaultRule;
     errorMessage = errorMessage_in;
   }
 
@@ -19,6 +25,10 @@ namespace cli_menu {
   ) {
     rule = rule_in;
     errorMessage = errorMessage_in;
+  }
+
+  bool Clipboard::defaultRule(mt::CR_STR text) {
+    return true;
   }
 
   std::string Clipboard::paste() {
@@ -54,9 +64,17 @@ namespace cli_menu {
     CloseClipboard();
 
     // print error message
-    if (!(rule(text) || errorMessage.empty())) {
-      Message::printDialogError(errorMessage);
+    if (!rule(text)) {
+      if (errorMessage.empty()) {
+        Message::printNeatDialogError(
+          "invalid clipboard content"
+        );
+      }
+      else Message::printNeatDialogError(errorMessage);
     }
+    else Message::printString(
+      "> pasted from clipboard\n", Color::MINT
+    );
 
     // the product
     return text;
