@@ -4,6 +4,7 @@
 #include "dash-test.h"
 #include "color.h"
 #include "message.h"
+#include "clipboard.h"
 #include "control.h"
 #include "result-inputs.h"
 #include "command.h"
