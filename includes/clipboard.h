@@ -7,8 +7,7 @@ namespace cli_menu {
 
   class Clipboard {
   private:
-    typedef unsigned char* uchar_ptr;
-    typedef std::function<bool(uchar_ptr)> rule_clbk;
+    typedef std::function<bool(mt::CR_STR)> rule_clbk;
 
     std::string errorMessage;
     rule_clbk rule;
@@ -23,7 +22,8 @@ namespace cli_menu {
       mt::CR_STR errorMessage_in = ""
     );
 
-    void paste();
+    // only for string copy
+    std::string paste();
   };
 }
 

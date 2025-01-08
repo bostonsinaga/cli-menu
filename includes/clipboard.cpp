@@ -9,7 +9,7 @@ namespace cli_menu {
   Clipboard::Clipboard(
     mt::CR_STR errorMessage_in
   ) {
-    rule = [](uchar_ptr text)->bool { return true; };
+    rule = [](mt::CR_STR text)->bool { return true; };
     errorMessage = errorMessage_in;
   }
 
@@ -21,34 +21,45 @@ namespace cli_menu {
     errorMessage = errorMessage_in;
   }
 
-  // only for string copy
-  void Clipboard::paste() {
+  std::string Clipboard::paste() {
 
+    // activate clipboard
     if (!OpenClipboard(nullptr)) {
       std::cerr << "\n__Failed to open clipboard" << std::endl;
-      return;
+      return "";
     }
+
+    /** Get clipboard data */
 
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (hData == nullptr) {
       std::cerr << "\n__Failed to get clipboard data" << std::endl;
       CloseClipboard();
-      return;
+      return "";
     }
 
-    uchar_ptr pszText = static_cast<uchar_ptr>(GlobalLock(hData));
+    /** Convert it to string */
+
+    char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (pszText == nullptr) {
       std::cerr << "\n__Failed to lock clipboard data" << std::endl;
     }
     else GlobalUnlock(hData);
 
+    std::string text(pszText);
+
+    // done with clipboard
     CloseClipboard();
 
-    if (!(rule(pszText) || errorMessage.empty())) {
+    // print error message
+    if (!(rule(text) || errorMessage.empty())) {
       Message::printDialogError(errorMessage);
     }
+
+    // the product
+    return text;
   }
 }
 
