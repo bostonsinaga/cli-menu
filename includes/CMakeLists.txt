@@ -2,6 +2,7 @@ set (SOURCES
   dash-test.h
   color.h
   message.h
+  clipboard.h
   control.h
   result-inputs.h
   command.h
@@ -12,6 +13,7 @@ set (SOURCES
 
   color.cpp
   message.cpp
+  clipboard.cpp
   control.cpp
   result-inputs.cpp
   command.cpp
