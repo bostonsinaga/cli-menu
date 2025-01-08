@@ -207,21 +207,21 @@ namespace cli_menu {
           // check if has any callback
           if (!runTo(lastCom, resultInputs)) {
             Message::printNeatNamed(
-              Message::STATUS::ERROR,
+              Message::MSGFG_ERROR,
               "no callback",
               lastCom->getName()
             );
           }
           // succeeded after main callback
           else Message::printNeatNamed(
-            Message::STATUS::SUCCEED,
+            Message::MSGFG_SUCCEED,
             "output file written to 'foo.kml'",
             name
           );
         break;}
         case FLAG::CANCELED: {
           Message::printNeatNamed(
-            Message::STATUS::CANCELED,
+            Message::MSGFG_CANCELED,
             "program terminated",
             name
           );
@@ -247,7 +247,7 @@ namespace cli_menu {
         // error
         default: {
           Message::printNeatNamed(
-            Message::STATUS::ERROR,
+            Message::MSGFG_ERROR,
             "there should be an error handler",
             name
           );
@@ -256,7 +256,7 @@ namespace cli_menu {
     }
     // no children
     else Message::printNeatNamed(
-      Message::STATUS::ERROR,
+      Message::MSGFG_ERROR,
       "no groups/commands available",
       name
     );

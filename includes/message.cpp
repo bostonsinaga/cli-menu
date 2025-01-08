@@ -43,19 +43,19 @@ namespace cli_menu {
 
   std::string Message::getColoredTag(mt::CR_INT flag) {
     switch (flag) {
-      case STATUS::HINT: {
+      case MSGFG_HINT: {
         return Color::getString("HINT. ", Color::SKY_BLUE);
       }
-      case STATUS::WARNING: {
+      case MSGFG_WARNING: {
         return Color::getString("WARNING. ", Color::YELLOW);
       }
-      case STATUS::ERROR: {
+      case MSGFG_ERROR: {
         return Color::getString("ERROR. ", Color::RED);
       }
-      case STATUS::SUCCEED: {
+      case MSGFG_SUCCEED: {
         return Color::getString("SUCCEED. ", Color::GREEN);
       }
-      case STATUS::CANCELED: {
+      case MSGFG_CANCELED: {
         return Color::getString("CANCELED. ", Color::ORANGE);
       }
     }

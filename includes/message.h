@@ -14,8 +14,9 @@ namespace cli_menu {
     );
 
   public:
-    enum STATUS {
-      HINT, WARNING, ERROR, SUCCEED, CANCELED
+    enum {
+      MSGFG_HINT, MSGFG_WARNING, MSGFG_ERROR,
+      MSGFG_SUCCEED, MSGFG_CANCELED
     };
 
     static std::string getColoredTag(mt::CR_INT flag);
