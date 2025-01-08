@@ -2,6 +2,7 @@
 #define __CLI_MENU__COMMAND_H__
 
 #include "dash-test.h"
+#include "clipboard.h"
 #include "control.h"
 #include "result-inputs.h"
 
@@ -23,11 +24,12 @@ namespace cli_menu {
     bool propagatingCallback = true;
     CALLBACK callback;
     PLAIN_CALLBACK plainCallback;
+
+    Clipboard customClipboard;
+    static Clipboard defaultClipboard;
+
     VEC_TREE requiredItems;
-
     static Command *circularCheckpoint;
-    static const std::string directInputsErrorString;
-
     static const int disguiseCount = 1;
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];

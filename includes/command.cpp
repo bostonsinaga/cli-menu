@@ -8,6 +8,7 @@ namespace cli_menu {
   // CONSTRUCTORS |
   //______________|
 
+  Clipboard Command::defaultClipboard = Clipboard();
   Command *Command::circularCheckpoint = nullptr;
 
   bool Command::usingCaseSensitiveName = true,
@@ -1215,7 +1216,7 @@ namespace cli_menu {
       command->disguised = true;
 
       Message::printNamed(
-        Message::STATUS::WARNING,
+        Message::MSGFG_WARNING,
         "Cannot add a '" + disguiseNames[detected][0] + "' (name: '" +
         command->name + "'). To keep proceeding, it is now considered as '"
         + disguiseNames[detected][1] + "'.",
