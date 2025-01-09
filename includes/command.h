@@ -24,11 +24,8 @@ namespace cli_menu {
     bool propagatingCallback = true;
     CALLBACK callback;
     PLAIN_CALLBACK plainCallback;
-
-    Clipboard customClipboard;
-    static Clipboard defaultClipboard;
-
     VEC_TREE requiredItems;
+
     static Command *circularCheckpoint;
     static const int disguiseCount = 1;
     static const mt::USI disguiseFlags[disguiseCount];
@@ -101,6 +98,7 @@ namespace cli_menu {
 
   protected:
     Command *ultimate = nullptr;
+    Clipboard clipboard;
     std::string description;
     int resultInputsIndex = -1;
 
