@@ -237,7 +237,10 @@ namespace cli_menu {
           if (flag != FLAG::ERROR) return flag;
         }
         else if (Control::cancelTest(buffer)) {
-          break; // returns 'FLAG::CANCELED' below
+          break; // go to 'FLAG::CANCELED' return
+        }
+        else if (Control::clipboardTest(buffer)) {
+          printClipboardError();
         }
         else if (Control::enterTest(buffer)) {
           // pointing to first child

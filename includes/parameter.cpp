@@ -396,7 +396,10 @@ namespace cli_menu {
           if (flag != FLAG::ERROR) return flag;
         }
         else if (Control::cancelTest(controlStr)) {
-          break; // returns 'FLAG::CANCELED' below
+          break; // go to 'FLAG::CANCELED' return
+        }
+        else if (Control::clipboardTest(controlStr)) {
+          setData(resultInputs, clipboard.paste());
         }
         else if (Control::enterTest(controlStr)) {
           // need argument
