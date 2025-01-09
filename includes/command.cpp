@@ -8,7 +8,6 @@ namespace cli_menu {
   // CONSTRUCTORS |
   //______________|
 
-  Clipboard Command::defaultClipboard = Clipboard();
   Command *Command::circularCheckpoint = nullptr;
 
   bool Command::usingCaseSensitiveName = true,
@@ -770,7 +769,10 @@ namespace cli_menu {
           }
         }
         else if (Control::cancelTest(controlStr)) {
-          break; // returns 'FLAG::CANCELED' below
+          break; // go to 'FLAG::CANCELED' return
+        }
+        else if (Control::clipboardTest(controlStr)) {
+          printClipboardError();
         }
         else if (Control::enterTest(controlStr)) {
           // pointing to first child
@@ -1198,6 +1200,12 @@ namespace cli_menu {
 
   void Command::printError() {
     std::cout << "Command Error..";
+  }
+
+  void Command::printClipboardError() {
+    Message::printNeatDialogError(
+      "hidden text pasting is only available for parameters"
+    );
   }
 
   void Command::checkDisguise(

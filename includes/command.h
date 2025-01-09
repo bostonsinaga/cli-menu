@@ -246,6 +246,9 @@ namespace cli_menu {
       mt::CR_STR additionalMessage
     );
 
+    // clipboard only for parameter
+    void printClipboardError();
+
     /**
      * Prints '-' signs horizontally before names list or
      * names list with prominent background color.
