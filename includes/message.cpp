@@ -5,6 +5,8 @@
 
 namespace cli_menu {
 
+  std::string Message::listPointStyle = ">";
+
   void Message::editToCapitalFirstPeriodEnd(
     std::string &text,
     int &forwardSpaceBoundaryIndex,
@@ -41,24 +43,43 @@ namespace cli_menu {
     }
   }
 
-  std::string Message::getColoredTag(mt::CR_INT flag) {
+  std::string Message::getColoredTag(
+    mt::CR_USI flag,
+    mt::CR_STR text
+  ) {
     switch (flag) {
       case MSGFG_HINT: {
-        return Color::getString("HINT. ", Color::SKY_BLUE);
+        return Color::getString(
+          text.empty() ? "HINT. " : text,
+          Color::SKY_BLUE
+        );
       }
       case MSGFG_WARNING: {
-        return Color::getString("WARNING. ", Color::YELLOW);
+        return Color::getString(
+          text.empty() ? "WARNING. " : text,
+          Color::YELLOW
+        );
       }
       case MSGFG_ERROR: {
-        return Color::getString("ERROR. ", Color::RED);
+        return Color::getString(
+          text.empty() ? "ERROR. " : text,
+          Color::RED
+        );
       }
       case MSGFG_SUCCEED: {
-        return Color::getString("SUCCEED. ", Color::GREEN);
+        return Color::getString(
+          text.empty() ? "SUCCEED. " : text,
+          Color::GREEN
+        );
       }
       case MSGFG_CANCELED: {
-        return Color::getString("CANCELED. ", Color::ORANGE);
+        return Color::getString(
+          text.empty() ? "CANCELED. " : text,
+          Color::ORANGE
+        );
       }
     }
+
     return "";
   }
 
@@ -215,7 +236,7 @@ namespace cli_menu {
   }
 
   void Message::printNamed(
-    mt::CR_INT flag,
+    mt::CR_USI flag,
     mt::CR_STR text,
     mt::CR_STR name,
     mt::CR_BOL toUppercase
@@ -223,7 +244,7 @@ namespace cli_menu {
     if (text.length() > 0) {
       std::cout << std::endl;
 
-      if (name != "") {
+      if (!name.empty()) {
         std::cout << (toUppercase ?
           mt_uti::StrTools::getStringToUppercase(name) : name
         ) << ": ";
@@ -234,7 +255,7 @@ namespace cli_menu {
   }
 
   void Message::printNeatNamed(
-    mt::CR_INT flag,
+    mt::CR_USI flag,
     std::string text,
     mt::CR_STR name,
     mt::CR_BOL toUppercase
@@ -269,38 +290,29 @@ namespace cli_menu {
       << std::string(endNewlinesCount, '\n');
   }
 
-  void Message::printDialogError(
+  void Message::printDialog(
+    mt::CR_USI flag,
     mt::CR_STR reason,
     int endNewlinesCount
   ) {
     endNewlinesCount *= endNewlinesCount >= 0;
 
-    printString(
-      "\n> " + reason + std::string(endNewlinesCount, '\n'),
-      Color::RED
-    );
+    std::cout
+      << getColoredTag(flag, getListPointStyle() + reason)
+      << std::string(endNewlinesCount, '\n');
   }
 
-  void Message::printNeatDialogError(
-    mt::CR_STR reason,
-    int endNewlinesCount
+  void Message::printNeatDialog(
+    mt::CR_USI flag,
+    std::string reason,
+    mt::CR_INT endNewlinesCount
   ) {
-    endNewlinesCount *= endNewlinesCount >= 0;
-
     int i, j;
-    std::string text = reason + std::string(endNewlinesCount, '\n');
-
-    editToCapitalFirstPeriodEnd(text, i, j);
-
-    std::cout << Color::getString(
-      "\n> " + text, Color::RED, -1, j
-    );
+    editToCapitalFirstPeriodEnd(reason, i, j);
+    printDialog(flag, reason, endNewlinesCount);
   }
 
-  void Message::setDialogInput(
-    std::string &buffer,
-    mt::CR_STR listPointStyle
-  ) {
+  void Message::setDialogInput(std::string &buffer) {
     std::cout << listPointStyle << ' ';
     std::getline(std::cin, buffer);
   }

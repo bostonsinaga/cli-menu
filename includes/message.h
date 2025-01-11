@@ -7,11 +7,23 @@ namespace cli_menu {
 
   class Message {
   private:
+    static std::string listPointStyle;
+
     static void editToCapitalFirstPeriodEnd(
       std::string &text,
       int &forwardSpaceBoundaryIndex,
       int &reverseSpaceBoundaryIndex
     );
+
+    // the 'text' can replace the tag
+    static std::string getColoredTag(
+      mt::CR_USI flag,
+      mt::CR_STR text = ""
+    );
+
+    static std::string getListPointStyle() {
+      return "\n" + listPointStyle + " ";
+    }
 
   public:
     enum {
@@ -19,7 +31,9 @@ namespace cli_menu {
       MSGFG_SUCCEED, MSGFG_CANCELED
     };
 
-    static std::string getColoredTag(mt::CR_INT flag);
+    static void setListPointStyle(mt::CR_STR style) {
+      listPointStyle = style;
+    }
 
     static void printItalicString(mt::CR_STR text);
     static void printNeatItalicString(std::string text);
@@ -94,14 +108,14 @@ namespace cli_menu {
     );
 
     static void printNamed(
-      mt::CR_INT flag,
+      mt::CR_USI flag,
       mt::CR_STR text,
       mt::CR_STR name = "",
       mt::CR_BOL toUppercase = true
     );
 
     static void printNeatNamed(
-      mt::CR_INT flag,
+      mt::CR_USI flag,
       std::string text,
       mt::CR_STR name = "",
       mt::CR_BOL toUppercase = true
@@ -114,21 +128,20 @@ namespace cli_menu {
       mt::CR_CH character = '-'
     );
 
-    static void printDialogError(
+    static void printDialog(
+      mt::CR_USI flag,
       mt::CR_STR reason,
       int endNewlinesCount = 2
     );
 
-    static void printNeatDialogError(
-      mt::CR_STR reason,
-      int endNewlinesCount = 2
+    static void printNeatDialog(
+      mt::CR_USI flag,
+      std::string reason,
+      mt::CR_INT endNewlinesCount = 2
     );
 
     // decorated input interface
-    static void setDialogInput(
-      std::string &buffer,
-      mt::CR_STR listPointStyle = ">"
-    );
+    static void setDialogInput(std::string &buffer);
   };
 }
 
