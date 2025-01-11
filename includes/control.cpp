@@ -56,7 +56,7 @@ namespace cli_menu {
     // the 'modeOn' is set in 'printError' method
     if (whitespacesCheck(str) == _CONTROL_MODE) {
 
-      std::cout << Color::start(Color::CYAN);
+      std::cout << Color::start(Color::MAGENTA);
       return true;
     }
 
