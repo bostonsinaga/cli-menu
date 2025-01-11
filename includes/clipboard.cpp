@@ -66,14 +66,19 @@ namespace cli_menu {
     // print error message
     if (!rule(text)) {
       if (errorMessage.empty()) {
-        Message::printNeatDialogError(
+        Message::printNeatDialog(
+          Message::MSGFG_ERROR,
           "invalid clipboard content"
         );
       }
-      else Message::printNeatDialogError(errorMessage);
+      else Message::printNeatDialog(
+        Message::MSGFG_ERROR,
+        errorMessage
+      );
     }
-    else Message::printString(
-      "> pasted from clipboard\n", Color::MINT
+    else Message::printNeatDialog(
+      Message::MSGFG_HINT,
+      "pasted from clipboard"
     );
 
     // the product

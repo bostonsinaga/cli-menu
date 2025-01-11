@@ -192,7 +192,8 @@ namespace cli_menu {
         // question in the middle
         if (found && required) {
 
-          Message::printNeatDialogError(
+          Message::printNeatDialog(
+            Message::MSGFG_ERROR,
             "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
@@ -219,7 +220,8 @@ namespace cli_menu {
     // has no argument
     if (Command::dialogued) {
 
-      Message::printNeatDialogError(
+      Message::printNeatDialog(
+        Message::MSGFG_ERROR,
         "the last " + getLevelName() + needsArgStr, 1
       );
 
@@ -404,7 +406,8 @@ namespace cli_menu {
         else if (Control::enterTest(controlStr)) {
           // need argument
           if (!used && required) {
-            Message::printNeatDialogError(
+            Message::printNeatDialog(
+              Message::MSGFG_ERROR,
               "this " + getLevelName() + needsArgStr
             );
           }

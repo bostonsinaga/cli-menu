@@ -251,7 +251,8 @@ namespace cli_menu {
           }
           // need condition
           else if (!used && required) {
-            Message::printNeatDialogError(
+            Message::printNeatDialog(
+              Message::MSGFG_ERROR,
               "this " + getLevelName() + " needs a condition"
             );
           }
@@ -295,7 +296,8 @@ namespace cli_menu {
         }
         else Control::printError();
       }
-      else Message::printNeatDialogError(
+      else Message::printNeatDialog(
+        Message::MSGFG_ERROR,
         "only accept boolean values"
       );
     }

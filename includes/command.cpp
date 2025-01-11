@@ -288,7 +288,8 @@ namespace cli_menu {
         );
       }
     }
-    else Message::printDialogError(
+    else Message::printDialog(
+      Message::MSGFG_ERROR,
       "You are now at the root level. No more groups upward."
     );
 
@@ -314,7 +315,8 @@ namespace cli_menu {
           isThis = oneLeft == this,
           isOneLeftNotThis = !isThis && isOneLeft;
 
-        Message::printNeatDialogError(
+        Message::printNeatDialog(
+          Message::MSGFG_ERROR,
           "unable to process before "
           + std::string( isOneLeftNotThis ? "a " : "" )
           + std::string( isThis ? "this " : "required " )
@@ -338,7 +340,8 @@ namespace cli_menu {
       Command* parCom = static_cast<Cm*>(parent);
     }
 
-    Message::printNeatDialogError(
+    Message::printNeatDialog(
+      Message::MSGFG_ERROR,
       "this " + getLevelName(true) + " has no "
       + (parent || children.size() ? "neighbors" : "connections")
     );
@@ -569,7 +572,7 @@ namespace cli_menu {
       text = "unable to " + controlName + text;
     }
 
-    Message::printNeatDialogError(text);
+    Message::printNeatDialog(Message::MSGFG_ERROR, text);
     return true;
   }
 
@@ -602,7 +605,8 @@ namespace cli_menu {
     // not allowed inside ultimate
     if (isDependence() && required && !used) {
 
-      Message::printNeatDialogError(
+      Message::printNeatDialog(
+        Message::MSGFG_ERROR,
         "cannot skip this " + getLevelName(true) + " with empty "
         + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
       );
@@ -643,7 +647,8 @@ namespace cli_menu {
     if (!isDirectInputsError(directInputs, "select")) {
 
       if (required) {
-        Message::printNeatDialogError(
+        Message::printNeatDialog(
+          Message::MSGFG_ERROR,
           "unable to select before " + additionalMessage
         );
 
@@ -808,8 +813,8 @@ namespace cli_menu {
           }
         }
         else if (Control::selectTest(controlStr)) {
-          Message::printNeatDialogError(
-            "already in selection mode"
+          Message::printNeatDialog(
+            Message::MSGFG_ERROR, "already in selection mode"
           );
         }
         else Control::printError();
@@ -836,17 +841,22 @@ namespace cli_menu {
         }
 
         if (found) {
-          return found->dialog(directInputs, resultInputs, lastCom);
+          return found->dialog(
+            directInputs, resultInputs, lastCom
+          );
         }
         else if (isUltimate()) {
-          Message::printNeatDialogError("input not found");
+          Message::printNeatDialog(
+            Message::MSGFG_ERROR, "input not found"
+          );
         }
         // toddler
         else if (isToddler()) {
           printNoItems();
         }
         // group
-        else Message::printNeatDialogError(
+        else Message::printNeatDialog(
+          Message::MSGFG_ERROR,
           getChildrenLevelName(false) + " not found"
         );
       }
@@ -894,7 +904,8 @@ namespace cli_menu {
       }
     }
 
-    Message::printNeatDialogError(
+    Message::printNeatDialog(
+      Message::MSGFG_ERROR,
       "unknown " + inputLevelName + " named '" + inputName + "'", 1
     );
 
@@ -939,12 +950,14 @@ namespace cli_menu {
             + std::string(isOneLeft ? "s": "")
             + " to be used.";
 
-          if (reqCt > 1) Message::printDialogError(
+          if (reqCt > 1) Message::printDialog(
+            Message::MSGFG_ERROR,
             firstErrStr + parCom->getChildrenLevelName(true)
             + lastErrStr, 1
           );
           // one incomplete
-          else Message::printDialogError(
+          else Message::printDialog(
+            Message::MSGFG_ERROR,
             firstErrStr + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
             + lastErrStr, 1
@@ -958,7 +971,9 @@ namespace cli_menu {
               isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
             );
 
-          Message::printDialogError(errStr, 1);
+          Message::printDialog(
+            Message::MSGFG_ERROR, errStr, 1
+          );
         }
       }
 
@@ -1168,7 +1183,8 @@ namespace cli_menu {
   }
 
   void Command::printNoItems() {
-    Message::printNeatDialogError(
+    Message::printNeatDialog(
+      Message::MSGFG_ERROR,
       "this " + getLevelName(isDependence()) + " does not have any items"
     );
   }
@@ -1203,7 +1219,8 @@ namespace cli_menu {
   }
 
   void Command::printClipboardError() {
-    Message::printNeatDialogError(
+    Message::printNeatDialog(
+      Message::MSGFG_ERROR,
       "hidden text pasting is only available for parameters"
     );
   }
