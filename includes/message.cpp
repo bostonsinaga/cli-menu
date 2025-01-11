@@ -5,6 +5,8 @@
 
 namespace cli_menu {
 
+  char Message::boundaryCharacter = '-';
+  int Message::boundaryCharactersAmount = 45;
   std::string Message::listPointStyle = ">";
 
   void Message::editToCapitalFirstPeriodEnd(
@@ -267,9 +269,7 @@ namespace cli_menu {
 
   void Message::printBoundaryLine(
     int startNewlinesCount,
-    int endNewlinesCount,
-    mt::CR_INT count,
-    mt::CR_CH character
+    int endNewlinesCount
   ) {
     static int ct = 0;
     static char ch;
@@ -278,9 +278,11 @@ namespace cli_menu {
     startNewlinesCount *= startNewlinesCount >= 0;
     endNewlinesCount *= endNewlinesCount >= 0;
 
-    if (count > 0 && (ct != count || ch != character)) {
-      ct = count;
-      ch = character;
+    if (boundaryCharactersAmount > 0 &&
+      (ct != boundaryCharactersAmount || ch != boundaryCharacter)
+    ) {
+      ct = boundaryCharactersAmount;
+      ch = boundaryCharacter;
       boundaryLine = std::string(ct, ch);
     }
 

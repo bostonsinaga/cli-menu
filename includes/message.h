@@ -7,6 +7,8 @@ namespace cli_menu {
 
   class Message {
   private:
+    static char boundaryCharacter;
+    static int boundaryCharactersAmount;
     static std::string listPointStyle;
 
     static void editToCapitalFirstPeriodEnd(
@@ -30,6 +32,14 @@ namespace cli_menu {
       MSGFG_HINT, MSGFG_WARNING, MSGFG_ERROR,
       MSGFG_SUCCEED, MSGFG_CANCELED
     };
+
+    static void setBoundaryCharacter(mt::CR_CH character) {
+      boundaryCharacter = character;
+    }
+
+    static void setBoundaryCharactersAmount(mt::CR_INT amount) {
+      boundaryCharactersAmount = amount;
+    }
 
     static void setListPointStyle(mt::CR_STR style) {
       listPointStyle = style;
@@ -123,9 +133,7 @@ namespace cli_menu {
 
     static void printBoundaryLine(
       int startNewlinesCount,
-      int endNewlinesCount,
-      mt::CR_INT count = 45,
-      mt::CR_CH character = '-'
+      int endNewlinesCount
     );
 
     static void printDialog(
