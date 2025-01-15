@@ -326,14 +326,13 @@ namespace cli_menu {
     Command *getUltimate() { return ultimate; }
 
     /**
-     * NOTE :
+     * Note:
      * Cannot change 'children' if this a dependence.
      */
 
     bool isUltimate() const { return this == ultimate; }
     bool isGroup() const { return !(ultimate || children.empty()); }
-    bool isDependence() const { return parent && parent == ultimate; }
-    bool isIndependence() const { return !ultimate && children.empty(); }
+    bool isSupporter() const { return parent && parent == ultimate; }
     bool isRequired() const { return required; }
     bool isOptional() const { return !required; }
     bool isContainer() const { return !ultimate || isUltimate(); }
