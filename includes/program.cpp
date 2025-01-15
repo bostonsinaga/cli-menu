@@ -234,7 +234,7 @@ namespace cli_menu {
             }
           }
           // dependence
-          else if (lastCom->isDependence()) {
+          else if (lastCom->isSupporter()) {
             lastCom->getUltimate()->printError();
           }
           // group

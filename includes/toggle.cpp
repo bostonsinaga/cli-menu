@@ -213,11 +213,11 @@ namespace cli_menu {
         );
 
         // inside ultimate only
-        if (isDependence()) return questionTo(
+        if (isSupporter()) return questionTo(
           getUnusedNeighbor(this), directInputs, resultInputs, lastCom
         );
         // dead end
-        else if (isIndependence()) {
+        else if (isToddler()) {
           return FLAG::COMPLETED;
         }
         // back to this dialog

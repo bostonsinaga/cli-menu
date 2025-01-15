@@ -177,7 +177,7 @@ namespace cli_menu {
       std::string copyInput;
       LINKED_LIST *continuation;
 
-      if (isIndependence()) continuation = nullptr;
+      if (isToddler()) continuation = nullptr;
       else continuation = getContinuation();
 
       if (continuation) {
@@ -205,7 +205,7 @@ namespace cli_menu {
       setData(resultInputs, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 
-      if (isIndependence()) return FLAG::COMPLETED;
+      if (isToddler()) return FLAG::COMPLETED;
       return FLAG::PASSED;
     }
 
