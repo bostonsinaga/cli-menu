@@ -143,7 +143,7 @@ namespace cli_menu {
   //__________|
 
   mt::UI Command::getRequiredCount() {
-    if (isDependence()) {
+    if (isSupporter()) {
       return ultimate->requiredItems.size();
     }
     return requiredItems.size();
@@ -457,7 +457,6 @@ namespace cli_menu {
         united[i]->connect(united[i+1]);
       }
 
-      addRequiredItems(static_cast<Cm*>(united[i]));
       united[i]->setParent(this, false);
     }
   }
@@ -603,7 +602,7 @@ namespace cli_menu {
     Command **lastCom
   ) {
     // not allowed inside ultimate
-    if (isDependence() && required && !used) {
+    if (isSupporter() && required && !used) {
 
       Message::printNeatDialog(
         Message::MSGFG_ERROR,
@@ -656,7 +655,7 @@ namespace cli_menu {
       }
       // the 'selecting' will be an opposite in overridden 'dialog' method
       else {
-        if (isDependence()) {
+        if (isSupporter()) {
           Command *parCom = static_cast<Cm*>(parent);
           parCom->selecting = true;
 
@@ -684,7 +683,7 @@ namespace cli_menu {
     Color fontColor;
 
     // independence or parent
-    if (!(isDependence() || questionedGroup || forcedToDependenceVersion)) {
+    if (!(isSupporter() || questionedGroup || forcedToDependenceVersion)) {
       status += usingAbbreviations ? "sel" : "selection";
       fontColor = Color::MAGENTA;
     }
@@ -1185,7 +1184,7 @@ namespace cli_menu {
   void Command::printNoItems() {
     Message::printNeatDialog(
       Message::MSGFG_ERROR,
-      "this " + getLevelName(isDependence()) + " does not have any items"
+      "this " + getLevelName(isSupporter()) + " does not have any items"
     );
   }
 
