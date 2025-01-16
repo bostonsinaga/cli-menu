@@ -7,10 +7,6 @@ namespace cli_menu {
 
   class Message {
   private:
-    static char boundaryCharacter;
-    static int boundaryCharactersAmount;
-    static std::string listPointStyle;
-
     static void editToCapitalFirstPeriodEnd(
       std::string &text,
       int &forwardSpaceBoundaryIndex,
@@ -33,17 +29,12 @@ namespace cli_menu {
       MSGFG_SUCCEED, MSGFG_CANCELED
     };
 
-    static void setBoundaryCharacter(mt::CR_CH character) {
-      boundaryCharacter = character;
-    }
+    // 2 after beginning + 4 around colon + 3 before end
+    static const int frameSpacesCount = 9;
 
-    static void setBoundaryCharactersAmount(mt::CR_INT amount) {
-      boundaryCharactersAmount = amount;
-    }
-
-    static void setListPointStyle(mt::CR_STR style) {
-      listPointStyle = style;
-    }
+    static char boundaryCharacter;
+    static int boundaryCharactersAmount;
+    static std::string listPointStyle;
 
     static void printItalicString(mt::CR_STR text);
     static void printNeatItalicString(std::string text);
