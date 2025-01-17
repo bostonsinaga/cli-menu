@@ -25,8 +25,8 @@ namespace cli_menu {
 
   public:
     enum {
-      MSGFG_HINT, MSGFG_WARNING, MSGFG_ERROR,
-      MSGFG_SUCCEED, MSGFG_CANCELED
+      HINT_FLAG, WARNING_FLAG, ERROR_FLAG,
+      SUCCEED_FLAG, CANCELED_FLAG
     };
 
     // 2 after beginning + 4 around colon + 3 before end

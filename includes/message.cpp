@@ -50,31 +50,31 @@ namespace cli_menu {
     mt::CR_STR text
   ) {
     switch (flag) {
-      case MSGFG_HINT: {
+      case HINT_FLAG: {
         return Color::getString(
           text.empty() ? "HINT. " : text,
           Color::SKY_BLUE
         );
       }
-      case MSGFG_WARNING: {
+      case WARNING_FLAG: {
         return Color::getString(
           text.empty() ? "WARNING. " : text,
           Color::YELLOW
         );
       }
-      case MSGFG_ERROR: {
+      case ERROR_FLAG: {
         return Color::getString(
           text.empty() ? "ERROR. " : text,
           Color::RED
         );
       }
-      case MSGFG_SUCCEED: {
+      case SUCCEED_FLAG: {
         return Color::getString(
           text.empty() ? "SUCCEED. " : text,
           Color::GREEN
         );
       }
-      case MSGFG_CANCELED: {
+      case CANCELED_FLAG: {
         return Color::getString(
           text.empty() ? "CANCELED. " : text,
           Color::ORANGE
