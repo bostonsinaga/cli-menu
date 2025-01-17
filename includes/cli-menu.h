@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU_H__
 #define __CLI_MENU_H__
 
-#include "dash-test.h"
+#include "base.h"
 #include "color.h"
 #include "message.h"
 #include "clipboard.h"

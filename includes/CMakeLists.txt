@@ -1,5 +1,5 @@
 set (SOURCES
-  dash-test.h
+  base.h
   color.h
   message.h
   clipboard.h
