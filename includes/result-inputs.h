@@ -15,6 +15,11 @@ namespace cli_menu {
     mt::VEC2_LD numbers;
     mt::VEC2_BOL conditions;
 
+    static mt::VEC_STR cutLongText(
+      mt::CR_VEC_STR textVec,
+      mt::CR_INT mostCharsCount
+    );
+
     template <typename T>
     static void printList(
       mt::CR_VEC<T> vec,

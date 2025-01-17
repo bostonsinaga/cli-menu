@@ -8,6 +8,42 @@ namespace cli_menu {
 
   std::string ResultInputs::title = "";
 
+  mt::VEC_STR ResultInputs::cutLongText(
+    mt::CR_VEC_STR textVec,
+    mt::CR_INT mostCharsCount
+  ) {
+    mt::VEC_STR retTextVec;
+
+    const int maxLength = (
+      Message::boundaryCharactersAmount
+      - mostCharsCount - Message::frameSpacesCount
+    );
+
+    for (std::string text : textVec) {
+
+      int excludedIndex = maxLength;
+      const size_t newlineIndex = text.find('\n');
+
+      if (newlineIndex != std::string::npos) {
+        excludedIndex = newlineIndex - 1;
+
+        if (excludedIndex > maxLength) {
+          excludedIndex = maxLength;
+        }
+      }
+      else if (text.length() <= maxLength) {
+        retTextVec.push_back(text);
+        continue;
+      }
+
+      retTextVec.push_back(
+        text.substr(0, excludedIndex) + ".."
+      );
+    }
+
+    return retTextVec;
+  }
+
   void ResultInputs::printVector() {
     Message::printBoundaryLine(1, 1);
 
@@ -43,12 +79,18 @@ namespace cli_menu {
           << " : [";
 
         if (i == 0) {
-          ResultInputs::printList<std::string>(texts[j], mostCharsCount);
+          ResultInputs::printList<std::string>(
+            cutLongText(texts[j], mostCharsCount), mostCharsCount
+          );
         }
         else if (i == 1) {
-          ResultInputs::printList<mt::LD>(numbers[j], mostCharsCount);
+          ResultInputs::printList<mt::LD>(
+            numbers[j], mostCharsCount
+          );
         }
-        else ResultInputs::printList<bool>(conditions[j], mostCharsCount);
+        else ResultInputs::printList<bool>(
+          conditions[j], mostCharsCount
+        );
 
         std::cout << ']' << (j < names.size() - 1 ? ',' : '\0');
       }
