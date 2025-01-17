@@ -86,7 +86,7 @@ namespace cli_menu {
   };
 
   // callback formats
-  typedef std::function<void(ResultInputs&)> CALLBACK;
+  typedef std::function<void(ResultInputs&)> RESULT_CALLBACK;
   typedef std::function<void()> PLAIN_CALLBACK;
 }
 
