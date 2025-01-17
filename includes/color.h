@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COLOR_H__
 #define __CLI_MENU__COLOR_H__
 
-#include "mini-tools.h"
+#include "base.h"
 
 namespace cli_menu {
 
