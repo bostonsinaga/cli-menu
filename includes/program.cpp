@@ -31,7 +31,7 @@ namespace cli_menu {
     mt::CR_STR author_in,
     CR_VERSION version_in,
     mt::CR_BOL accumulating_in,
-    CALLBACK callback_in,
+    RESULT_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
     name_in, description_in, false, nullptr,
@@ -203,30 +203,30 @@ namespace cli_menu {
       );
 
       switch (flag) {
-        case FLAG::COMPLETED: {
+        case COMPLETED_FLAG: {
           // check if has any callback
           if (!runTo(lastCom, resultInputs)) {
             Message::printNeatNamed(
-              Message::MSGFG_ERROR,
+              Message::ERROR_FLAG,
               "no callback",
               lastCom->getName()
             );
           }
           // succeeded after main callback
           else Message::printNeatNamed(
-            Message::MSGFG_SUCCEED,
+            Message::SUCCEED_FLAG,
             "output file written to 'foo.kml'",
             name
           );
         break;}
-        case FLAG::CANCELED: {
+        case CANCELED_FLAG: {
           Message::printNeatNamed(
-            Message::MSGFG_CANCELED,
+            Message::CANCELED_FLAG,
             "program terminated",
             name
           );
         break;}
-        case FLAG::FAILED: {
+        case FAILED_FLAG: {
           // program
           if (lastCom == this) {
             if (!runTo(lastCom, resultInputs)) {
@@ -247,7 +247,7 @@ namespace cli_menu {
         // error
         default: {
           Message::printNeatNamed(
-            Message::MSGFG_ERROR,
+            Message::ERROR_FLAG,
             "there should be an error handler",
             name
           );
@@ -256,7 +256,7 @@ namespace cli_menu {
     }
     // no children
     else Message::printNeatNamed(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "no groups/commands available",
       name
     );

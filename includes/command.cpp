@@ -30,7 +30,7 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    CALLBACK callback_in,
+    RESULT_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
@@ -289,11 +289,11 @@ namespace cli_menu {
       }
     }
     else Message::printDialog(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "You are now at the root level. No more groups upward."
     );
 
-    return FLAG::ERROR;
+    return ERROR_FLAG;
   }
 
   // for dependences
@@ -316,7 +316,7 @@ namespace cli_menu {
           isOneLeftNotThis = !isThis && isOneLeft;
 
         Message::printNeatDialog(
-          Message::MSGFG_ERROR,
+          Message::ERROR_FLAG,
           "unable to process before "
           + std::string( isOneLeftNotThis ? "a " : "" )
           + std::string( isThis ? "this " : "required " )
@@ -341,7 +341,7 @@ namespace cli_menu {
     }
 
     Message::printNeatDialog(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "this " + getLevelName(true) + " has no "
       + (parent || children.size() ? "neighbors" : "connections")
     );
@@ -524,12 +524,12 @@ namespace cli_menu {
     if (target) {
       return target->match(directInputs, resultInputs, lastCom);
     }
-    else if (isParent()) return FLAG::FAILED;
+    else if (isParent()) return FAILED_FLAG;
 
     // toddler pointing to its parent
     *lastCom = chooseLastCommand(true);
 
-    return FLAG::COMPLETED;
+    return COMPLETED_FLAG;
   }
 
   //________|
@@ -571,7 +571,7 @@ namespace cli_menu {
       text = "unable to " + controlName + text;
     }
 
-    Message::printNeatDialog(Message::MSGFG_ERROR, text);
+    Message::printNeatDialog(Message::ERROR_FLAG, text);
     return true;
   }
 
@@ -592,7 +592,7 @@ namespace cli_menu {
     }
 
     printNullptrNeighborError();
-    return FLAG::ERROR;
+    return ERROR_FLAG;
   }
 
   mt::USI Command::tryToSkip(
@@ -605,7 +605,7 @@ namespace cli_menu {
     if (isSupporter() && required && !used) {
 
       Message::printNeatDialog(
-        Message::MSGFG_ERROR,
+        Message::ERROR_FLAG,
         "cannot skip this " + getLevelName(true) + " with empty "
         + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
       );
@@ -634,7 +634,7 @@ namespace cli_menu {
       );
     }
 
-    return FLAG::ERROR;
+    return ERROR_FLAG;
   }
 
   mt::USI Command::tryToSelect(
@@ -647,11 +647,11 @@ namespace cli_menu {
 
       if (required) {
         Message::printNeatDialog(
-          Message::MSGFG_ERROR,
+          Message::ERROR_FLAG,
           "unable to select before " + additionalMessage
         );
 
-        return FLAG::ERROR;
+        return ERROR_FLAG;
       }
       // the 'selecting' will be an opposite in overridden 'dialog' method
       else {
@@ -670,7 +670,7 @@ namespace cli_menu {
       }
     }
 
-    return FLAG::ERROR;
+    return ERROR_FLAG;
   }
 
   // has a newline at the end
@@ -742,7 +742,7 @@ namespace cli_menu {
     if (target) return target->question(
       directInputs, resultInputs, lastCom
     );
-    return FLAG::COMPLETED;
+    return COMPLETED_FLAG;
   }
 
   mt::USI Command::dialog(
@@ -768,12 +768,12 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (isItPossibleToGoBackFlag != FLAG::ERROR) {
+          if (isItPossibleToGoBackFlag != ERROR_FLAG) {
             return isItPossibleToGoBackFlag;
           }
         }
         else if (Control::cancelTest(controlStr)) {
-          break; // go to 'FLAG::CANCELED' return
+          break; // go to 'CANCELED_FLAG' return
         }
         else if (Control::clipboardTest(controlStr)) {
           printClipboardError();
@@ -789,7 +789,7 @@ namespace cli_menu {
           else if (doesUltimateAllowEnter()) {
             *lastCom = chooseLastCommand();
             initDefaultData(resultInputs);
-            return FLAG::COMPLETED;
+            return COMPLETED_FLAG;
           }
         }
         else if (Control::helpTest(controlStr)) {
@@ -807,13 +807,13 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (pointToNeighborFlag != FLAG::ERROR) {
+          if (pointToNeighborFlag != ERROR_FLAG) {
             return pointToNeighborFlag;
           }
         }
         else if (Control::selectTest(controlStr)) {
           Message::printNeatDialog(
-            Message::MSGFG_ERROR, "already in selection mode"
+            Message::ERROR_FLAG, "already in selection mode"
           );
         }
         else Control::printError();
@@ -846,7 +846,7 @@ namespace cli_menu {
         }
         else if (isUltimate()) {
           Message::printNeatDialog(
-            Message::MSGFG_ERROR, "input not found"
+            Message::ERROR_FLAG, "input not found"
           );
         }
         // toddler
@@ -855,13 +855,13 @@ namespace cli_menu {
         }
         // group
         else Message::printNeatDialog(
-          Message::MSGFG_ERROR,
+          Message::ERROR_FLAG,
           getChildrenLevelName(false) + " not found"
         );
       }
     }
 
-    return FLAG::CANCELED;
+    return CANCELED_FLAG;
   }
 
   mt::USI Command::dialogTo(
@@ -873,7 +873,7 @@ namespace cli_menu {
     if (target) return target->dialog(
       directInputs, resultInputs, lastCom
     );
-    return FLAG::COMPLETED;
+    return COMPLETED_FLAG;
   }
 
   mt::USI Command::askNeighbor(
@@ -904,7 +904,7 @@ namespace cli_menu {
     }
 
     Message::printNeatDialog(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "unknown " + inputLevelName + " named '" + inputName + "'", 1
     );
 
@@ -916,7 +916,7 @@ namespace cli_menu {
       static_cast<Cm*>(parent), directInputs, resultInputs, lastCom
     );
 
-    return FLAG::FAILED;
+    return FAILED_FLAG;
   }
 
   /**
@@ -950,13 +950,13 @@ namespace cli_menu {
             + " to be used.";
 
           if (reqCt > 1) Message::printDialog(
-            Message::MSGFG_ERROR,
+            Message::ERROR_FLAG,
             firstErrStr + parCom->getChildrenLevelName(true)
             + lastErrStr, 1
           );
           // one incomplete
           else Message::printDialog(
-            Message::MSGFG_ERROR,
+            Message::ERROR_FLAG,
             firstErrStr + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
             + lastErrStr, 1
@@ -971,7 +971,7 @@ namespace cli_menu {
             );
 
           Message::printDialog(
-            Message::MSGFG_ERROR, errStr, 1
+            Message::ERROR_FLAG, errStr, 1
           );
         }
       }
@@ -1183,7 +1183,7 @@ namespace cli_menu {
 
   void Command::printNoItems() {
     Message::printNeatDialog(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "this " + getLevelName(isSupporter()) + " does not have any items"
     );
   }
@@ -1219,7 +1219,7 @@ namespace cli_menu {
 
   void Command::printClipboardError() {
     Message::printNeatDialog(
-      Message::MSGFG_ERROR,
+      Message::ERROR_FLAG,
       "hidden text pasting is only available for parameters"
     );
   }
@@ -1240,7 +1240,7 @@ namespace cli_menu {
       command->disguised = true;
 
       Message::printNamed(
-        Message::MSGFG_WARNING,
+        Message::WARNING_FLAG,
         "Cannot add a '" + disguiseNames[detected][0] + "' (name: '" +
         command->name + "'). To keep proceeding, it is now considered as '"
         + disguiseNames[detected][1] + "'.",

@@ -11,7 +11,7 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    CALLBACK callback_in,
+    RESULT_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command(
     name_in, description_in,
@@ -178,10 +178,10 @@ namespace cli_menu {
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
       *lastCom = ultimate;
-      return FLAG::COMPLETED;
+      return COMPLETED_FLAG;
     }
     // print error of incompleteness
-    return FLAG::FAILED;
+    return FAILED_FLAG;
   }
 
   mt::USI Toggle::question(
@@ -218,7 +218,7 @@ namespace cli_menu {
         );
         // dead end
         else if (isToddler()) {
-          return FLAG::COMPLETED;
+          return COMPLETED_FLAG;
         }
         // back to this dialog
         return Command::dialog(
@@ -234,10 +234,10 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (flag != FLAG::ERROR) return flag;
+          if (flag != ERROR_FLAG) return flag;
         }
         else if (Control::cancelTest(buffer)) {
-          break; // go to 'FLAG::CANCELED' return
+          break; // go to 'CANCELED_FLAG' return
         }
         else if (Control::clipboardTest(buffer)) {
           printClipboardError();
@@ -252,7 +252,7 @@ namespace cli_menu {
           // need condition
           else if (!used && required) {
             Message::printNeatDialog(
-              Message::MSGFG_ERROR,
+              Message::ERROR_FLAG,
               "this " + getLevelName() + " needs a condition"
             );
           }
@@ -260,7 +260,7 @@ namespace cli_menu {
           else if (doesUltimateAllowEnter()) {
             *lastCom = chooseLastCommand();
             setData(resultInputs, false);
-            return FLAG::COMPLETED;
+            return COMPLETED_FLAG;
           }
         }
         else if (Control::helpTest(buffer)) {
@@ -278,7 +278,7 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (tryToSkipFlag != FLAG::ERROR) {
+          if (tryToSkipFlag != ERROR_FLAG) {
             return tryToSkipFlag;
           }
         }
@@ -290,19 +290,19 @@ namespace cli_menu {
             "condition is given"
           );
 
-          if (tryToSelectFlag != FLAG::ERROR) {
+          if (tryToSelectFlag != ERROR_FLAG) {
             return tryToSelectFlag;
           }
         }
         else Control::printError();
       }
       else Message::printNeatDialog(
-        Message::MSGFG_ERROR,
+        Message::ERROR_FLAG,
         "only accept boolean values"
       );
     }
 
-    return FLAG::CANCELED;
+    return CANCELED_FLAG;
   }
 
   mt::USI Toggle::dialog(

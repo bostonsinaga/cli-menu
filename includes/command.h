@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__COMMAND_H__
 #define __CLI_MENU__COMMAND_H__
 
-#include "dash-test.h"
 #include "clipboard.h"
 #include "control.h"
 #include "result-inputs.h"
@@ -22,7 +21,7 @@ namespace cli_menu {
 
   private:
     bool propagatingCallback = true;
-    CALLBACK callback;
+    RESULT_CALLBACK callback;
     PLAIN_CALLBACK plainCallback;
     VEC_TREE requiredItems;
 
@@ -187,7 +186,7 @@ namespace cli_menu {
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
-    ) { return FLAG::FAILED; }
+    ) { return FAILED_FLAG; }
 
     mt::USI matchTo(
       Command *target,
@@ -200,7 +199,7 @@ namespace cli_menu {
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
-    ) { return FLAG::FAILED; }
+    ) { return FAILED_FLAG; }
 
     mt::USI questionTo(
       Command *target,
@@ -256,12 +255,12 @@ namespace cli_menu {
     void printAfterBoundaryLine(std::string comName);
 
   public:
-    enum FLAG {
-      CANCELED,  // original
-      COMPLETED, // original
-      ERROR,     // pseudo
-      FAILED,    // original
-      PASSED     // pseudo
+    enum {
+      CANCELED_FLAG,  // original
+      COMPLETED_FLAG, // original
+      ERROR_FLAG,     // pseudo
+      FAILED_FLAG,    // original
+      PASSED_FLAG     // pseudo
     };
 
     Command() {}
@@ -272,7 +271,7 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       Command *parent_in,
       mt::CR_BOL accumulating_in,
-      CALLBACK callback_in,
+      RESULT_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -310,7 +309,7 @@ namespace cli_menu {
       CR_CLR nameColor = Color()
     ) { return name; }
 
-    void setCallback(CALLBACK callback_in) {
+    void setCallback(RESULT_CALLBACK callback_in) {
       callback = callback_in;
     }
 

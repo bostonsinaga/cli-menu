@@ -59,7 +59,7 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       Command *parent_in,
       mt::CR_BOL accumulating_in,
-      CALLBACK callback_in,
+      RESULT_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 

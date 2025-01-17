@@ -14,7 +14,7 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
-    CALLBACK callback_in,
+    RESULT_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command::Command(
     name_in, description_in,
@@ -193,7 +193,7 @@ namespace cli_menu {
         if (found && required) {
 
           Message::printNeatDialog(
-            Message::MSGFG_ERROR,
+            Message::ERROR_FLAG,
             "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
@@ -205,11 +205,11 @@ namespace cli_menu {
       setData(resultInputs, directInputs[directInputs.size() - 1]);
       directInputs.pop_back();
 
-      if (isToddler()) return FLAG::COMPLETED;
-      return FLAG::PASSED;
+      if (isToddler()) return COMPLETED_FLAG;
+      return PASSED_FLAG;
     }
 
-    return FLAG::ERROR;
+    return ERROR_FLAG;
   }
 
   mt::USI Parameter::notPopBackSet(
@@ -221,14 +221,14 @@ namespace cli_menu {
     if (Command::dialogued) {
 
       Message::printNeatDialog(
-        Message::MSGFG_ERROR,
+        Message::ERROR_FLAG,
         "the last " + getLevelName() + needsArgStr, 1
       );
 
       return question(directInputs, resultInputs, lastCom);
     }
     // no dialog
-    return FLAG::FAILED;
+    return FAILED_FLAG;
   }
 
   std::string Parameter::getStringifiedArgumentType() {
@@ -320,14 +320,14 @@ namespace cli_menu {
         );
 
         // 'directInputs' may be empty
-        if (flag == FLAG::PASSED) {
+        if (flag == PASSED_FLAG) {
 
           // redirected to first child or unused neighbor
           return middleMatch(
             directInputs, resultInputs, lastCom, true
           );
         }
-        else if (flag != FLAG::ERROR) {
+        else if (flag != ERROR_FLAG) {
           return flag;
         }
 
@@ -347,10 +347,10 @@ namespace cli_menu {
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
       *lastCom = ultimate;
-      return FLAG::COMPLETED;
+      return COMPLETED_FLAG;
     }
     // print error of incompleteness
-    return FLAG::FAILED;
+    return FAILED_FLAG;
   }
 
   // match continues after question in the middle
@@ -395,10 +395,10 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (flag != FLAG::ERROR) return flag;
+          if (flag != ERROR_FLAG) return flag;
         }
         else if (Control::cancelTest(controlStr)) {
-          break; // go to 'FLAG::CANCELED' return
+          break; // go to 'CANCELED_FLAG' return
         }
         else if (Control::clipboardTest(controlStr)) {
           setData(resultInputs, clipboard.paste());
@@ -407,7 +407,7 @@ namespace cli_menu {
           // need argument
           if (!used && required) {
             Message::printNeatDialog(
-              Message::MSGFG_ERROR,
+              Message::ERROR_FLAG,
               "this " + getLevelName() + needsArgStr
             );
           }
@@ -424,7 +424,7 @@ namespace cli_menu {
           // directly completed
           else if (doesUltimateAllowEnter()) {
             *lastCom = chooseLastCommand();
-            return FLAG::COMPLETED;
+            return COMPLETED_FLAG;
           }
         }
         else if (Control::helpTest(controlStr)) {
@@ -442,7 +442,7 @@ namespace cli_menu {
             directInputs, resultInputs, lastCom
           );
 
-          if (tryToSkipFlag != FLAG::ERROR) {
+          if (tryToSkipFlag != ERROR_FLAG) {
             return tryToSkipFlag;
           }
         }
@@ -453,7 +453,7 @@ namespace cli_menu {
             "arguments are given"
           );
 
-          if (tryToSelectFlag != FLAG::ERROR) {
+          if (tryToSelectFlag != ERROR_FLAG) {
             return tryToSelectFlag;
           }
         }
@@ -463,7 +463,7 @@ namespace cli_menu {
       else setData(resultInputs, buffer);
     }
 
-    return FLAG::CANCELED;
+    return CANCELED_FLAG;
   }
 
   mt::USI Parameter::dialog(

@@ -39,7 +39,7 @@ namespace cli_menu {
       mt::CR_STR author_in,
       CR_VERSION version_in,
       mt::CR_BOL accumulating_in,
-      CALLBACK callback_in,
+      RESULT_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
