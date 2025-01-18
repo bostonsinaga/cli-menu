@@ -1,9 +1,16 @@
-#ifndef __CLI_MENU__DASH_TEST_H__
-#define __CLI_MENU__DASH_TEST_H__
+#ifndef __CLI_MENU__BASE_H__
+#define __CLI_MENU__BASE_H__
 
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include "mini-tools.h"
 
 namespace cli_menu {
+
+  inline std::atomic<bool> RUNNING(true);
+  inline std::condition_variable CON_VAR;
+  inline std::mutex CON_VAR_MUTEX;
 
   class DashTest {
   public:
@@ -37,4 +44,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__DASH_TEST_H__
+#endif // __CLI_MENU__BASE_H__
