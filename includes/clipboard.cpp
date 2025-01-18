@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__CLIPBOARD_CPP__
 #define __CLI_MENU__CLIPBOARD_CPP__
 
+#include <windows.h>
 #include "clipboard.h"
 
 namespace cli_menu {
