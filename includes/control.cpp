@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__CONTROL_CPP__
 #define __CLI_MENU__CONTROL_CPP__
 
+#include <csignal>
+#include <windows.h>
 #include "control.h"
 
 namespace cli_menu {
@@ -131,6 +133,37 @@ namespace cli_menu {
   bool Control::revealBoolean(mt::CR_INT testedFlag) {
     if (testedFlag > 1) return true;
     return false;
+  }
+
+  void Control::handleCtrlC(int signal) {
+    if (signal == SIGINT) {
+      RUNNING = false;
+      CON_VAR.notify_all();
+    }
+  }
+
+  void Control::handleKeypress() {
+    std::unique_lock<std::mutex> lock(CON_VAR_MUTEX);
+
+    while (RUNNING) {
+      CON_VAR.wait_for(
+        lock,
+        std::chrono::milliseconds(100),
+        [] { return !RUNNING; }
+      );
+
+      if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) &&
+        (GetAsyncKeyState(VK_MENU) & 0x8000)
+      ) {
+        for (char ch = 'A'; ch <= 'Z'; ++ch) {
+
+          if (GetAsyncKeyState(ch) & 0x8000) {
+            std::cout << "Ctrl + Alt + " << ch << " pressed!" << std::endl;
+            break;
+          }
+        }
+      }
+    }
   }
 
   void Control::printParameterHelp() {

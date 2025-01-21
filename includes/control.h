@@ -41,6 +41,10 @@ namespace cli_menu {
     static int booleanTest(mt::CR_STR str);
     static bool revealBoolean(mt::CR_INT testedFlag);
 
+    // listen to shortcuts
+    static void handleCtrlC(int signal);
+    static void handleKeypress();
+
     static void printParameterHelp();
     static void printToggleHelp();
 
