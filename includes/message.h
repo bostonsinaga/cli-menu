@@ -19,10 +19,6 @@ namespace cli_menu {
       mt::CR_STR text = ""
     );
 
-    static std::string getListPointStyle() {
-      return "\n" + listPointStyle + " ";
-    }
-
   public:
     enum {
       HINT_FLAG, WARNING_FLAG, ERROR_FLAG,
@@ -141,6 +137,10 @@ namespace cli_menu {
 
     // decorated input interface
     static void setDialogInput(std::string &buffer);
+
+    static void printListPointStyle() {
+      std::cout << listPointStyle << ' ';
+    }
   };
 }
 

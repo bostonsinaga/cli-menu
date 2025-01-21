@@ -300,7 +300,7 @@ namespace cli_menu {
     endNewlinesCount *= endNewlinesCount >= 0;
 
     std::cout
-      << getColoredTag(flag, getListPointStyle() + reason)
+      << getColoredTag(flag, "\n" + listPointStyle + " " + reason)
       << std::string(endNewlinesCount, '\n');
   }
 
