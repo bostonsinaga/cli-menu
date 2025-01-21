@@ -5,9 +5,6 @@
 
 namespace cli_menu {
 
-  // inheritance flags
-  enum { COMMAND, PROGRAM, PARAMETER, TOGGLE };
-
   class ResultInputs {
   private:
     mt::VEC_STR names;
