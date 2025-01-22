@@ -657,7 +657,6 @@ namespace cli_menu {
       else {
         if (isSupporter()) {
           Command *parCom = static_cast<Cm*>(parent);
-          parCom->selecting = true;
 
           return parCom->dialog(
             directInputs, resultInputs, lastCom
@@ -665,8 +664,9 @@ namespace cli_menu {
         }
 
         // parent
-        selecting = true;
-        return Command::dialog(directInputs, resultInputs, lastCom);
+        return Command::dialog(
+          directInputs, resultInputs, lastCom
+        );
       }
     }
 
@@ -745,123 +745,190 @@ namespace cli_menu {
     return COMPLETED_FLAG;
   }
 
+  void Command::stopThreadsLoop() {
+    RUNNING = false;
+    CON_VAR.notify_all();
+  }
+
+  mt::USI Command::conversation(
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    std::string testStr;
+    mt::USI flag;
+    printAfterBoundaryLine(getInlineRootNames());
+
+    while (RUNNING) {
+      Message::printListPointStyle();
+
+      if (std::cin >> testStr) {
+
+        // copy to secure original input
+        std::string controlStr = mt_uti::StrTools::getStringToLowercase(testStr);
+
+        // dollar character test
+        if (Control::intoMode(controlStr) || Control::onMode()) {
+
+          flag = answerControl(
+            controlStr, directInputs,
+            resultInputs, lastCom
+          );
+        }
+        else {
+          onFreeChangeInputLetterCase(testStr);
+
+          flag = answerSpecial(
+            testStr, directInputs,
+            resultInputs, lastCom
+          );
+        }
+
+        if (flag != PASSED_FLAG) return flag;
+        else if (!RUNNING) break;
+      }
+      else {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      }
+    }
+
+    return CANCELED_FLAG;
+  }
+
+  mt::USI Command::answerControl(
+    mt::CR_STR controlStr,
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    if (Control::backTest(controlStr)) {
+
+      const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
+        directInputs, resultInputs, lastCom
+      );
+
+      if (isItPossibleToGoBackFlag != ERROR_FLAG) {
+        return isItPossibleToGoBackFlag;
+      }
+    }
+    else if (Control::cancelTest(controlStr)) {
+      Command::stopThreadsLoop();
+    }
+    else if (Control::clipboardTest(controlStr)) {
+      printClipboardError();
+    }
+    else if (Control::enterTest(controlStr)) {
+      // pointing to first child
+      if (isParent()) {
+        return dialogTo(
+          static_cast<Cm*>(children.front()),
+          directInputs, resultInputs, lastCom
+        );
+      }
+      // directly completed
+      else if (doesUltimateAllowEnter()) {
+        *lastCom = chooseLastCommand();
+        initDefaultData(resultInputs);
+        return COMPLETED_FLAG;
+      }
+    }
+    else if (Control::helpTest(controlStr)) {
+      printHelp();
+    }
+    else if (Control::listTest(controlStr)) {
+      printList();
+    }
+    else if (
+      Control::nextTest(controlStr) ||
+      Control::previousTest(controlStr)
+    ) {
+      const mt::USI pointToNeighborFlag = pointToNeighbor(
+        Control::getSharedFlag() == Control::NEXT,
+        directInputs, resultInputs, lastCom
+      );
+
+      if (pointToNeighborFlag != ERROR_FLAG) {
+        return pointToNeighborFlag;
+      }
+    }
+    else if (Control::selectTest(controlStr)) {
+      Message::printNeatDialog(
+        Message::ERROR_FLAG, "already in selection mode"
+      );
+    }
+    else Control::printError();
+
+    if (!RUNNING) return CANCELED_FLAG;
+    return PASSED_FLAG;
+  }
+
+  // find developer defined command
+  mt::USI Command::answerSpecial(
+    mt::CR_STR testStr,
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    Command *found;
+    bool isContinue = false;
+
+    if (isParent()) {
+      found = static_cast<Cm*>(getChild(testStr));
+    }
+    else {
+      TREE *usedParent;
+
+      if (ultimate) usedParent = ultimate;
+      else if (parent) usedParent = parent;
+      else {
+        printNullptrNeighborError();
+        isContinue = true;
+      }
+
+      if (!isContinue) {
+        found = static_cast<Cm*>(usedParent->getChild(testStr));
+      }
+    }
+
+    if (!isContinue) {
+      if (found) {
+        return found->dialog(
+          directInputs, resultInputs, lastCom
+        );
+      }
+      else if (isUltimate()) {
+        Message::printNeatDialog(
+          Message::ERROR_FLAG, "input not found"
+        );
+      }
+      // toddler
+      else if (isToddler()) {
+        printNoItems();
+      }
+      // group
+      else Message::printNeatDialog(
+        Message::ERROR_FLAG,
+        getChildrenLevelName(false) + " not found"
+      );
+
+      return CANCELED_FLAG;
+    }
+
+    return PASSED_FLAG;
+  }
+
   mt::USI Command::dialog(
     mt::VEC_STR &directInputs,
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    std::string nameTest;
-    printAfterBoundaryLine(getInlineRootNames());
+    // inverted in derived method
+    selecting = true;
 
-    while (true) {
-      Message::setDialogInput(nameTest);
-
-      // copy to secure original input
-      std::string controlStr = mt_uti::StrTools::getStringToLowercase(nameTest);
-
-      // dollar character test
-      if (Control::intoMode(controlStr) || Control::onMode()) {
-
-        if (Control::backTest(controlStr)) {
-
-          const mt::USI isItPossibleToGoBackFlag = isItPossibleToGoBack(
-            directInputs, resultInputs, lastCom
-          );
-
-          if (isItPossibleToGoBackFlag != ERROR_FLAG) {
-            return isItPossibleToGoBackFlag;
-          }
-        }
-        else if (Control::cancelTest(controlStr)) {
-          break; // go to 'CANCELED_FLAG' return
-        }
-        else if (Control::clipboardTest(controlStr)) {
-          printClipboardError();
-        }
-        else if (Control::enterTest(controlStr)) {
-          // pointing to first child
-          if (isParent()) {
-            return dialogTo(
-              static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
-            );
-          }
-          // directly completed
-          else if (doesUltimateAllowEnter()) {
-            *lastCom = chooseLastCommand();
-            initDefaultData(resultInputs);
-            return COMPLETED_FLAG;
-          }
-        }
-        else if (Control::helpTest(controlStr)) {
-          printHelp();
-        }
-        else if (Control::listTest(controlStr)) {
-          printList();
-        }
-        else if (
-          Control::nextTest(controlStr) ||
-          Control::previousTest(controlStr)
-        ) {
-          const mt::USI pointToNeighborFlag = pointToNeighbor(
-            Control::getSharedFlag() == Control::NEXT,
-            directInputs, resultInputs, lastCom
-          );
-
-          if (pointToNeighborFlag != ERROR_FLAG) {
-            return pointToNeighborFlag;
-          }
-        }
-        else if (Control::selectTest(controlStr)) {
-          Message::printNeatDialog(
-            Message::ERROR_FLAG, "already in selection mode"
-          );
-        }
-        else Control::printError();
-      }
-      // find developer defined command
-      else {
-        Command *found;
-        Command::onFreeChangeInputLetterCase(nameTest);
-
-        if (isParent()) {
-          found = static_cast<Cm*>(getChild(nameTest));
-        }
-        else {
-          TREE *usedParent;
-
-          if (ultimate) usedParent = ultimate;
-          else if (parent) usedParent = parent;
-          else {
-            printNullptrNeighborError();
-            continue;
-          }
-
-          found = static_cast<Cm*>(usedParent->getChild(nameTest));
-        }
-
-        if (found) {
-          return found->dialog(
-            directInputs, resultInputs, lastCom
-          );
-        }
-        else if (isUltimate()) {
-          Message::printNeatDialog(
-            Message::ERROR_FLAG, "input not found"
-          );
-        }
-        // toddler
-        else if (isToddler()) {
-          printNoItems();
-        }
-        // group
-        else Message::printNeatDialog(
-          Message::ERROR_FLAG,
-          getChildrenLevelName(false) + " not found"
-        );
-      }
-    }
-
-    return CANCELED_FLAG;
+    return conversation(
+      directInputs, resultInputs, lastCom
+    );
   }
 
   mt::USI Command::dialogTo(
@@ -913,7 +980,8 @@ namespace cli_menu {
     directInputs = {};
 
     if (isMatchNeedDialog(false)) return dialogTo(
-      static_cast<Cm*>(parent), directInputs, resultInputs, lastCom
+      static_cast<Cm*>(parent),
+      directInputs, resultInputs, lastCom
     );
 
     return FAILED_FLAG;
@@ -976,6 +1044,7 @@ namespace cli_menu {
         }
       }
 
+      matching = false;
       return true;
     }
 
@@ -1029,7 +1098,10 @@ namespace cli_menu {
   }
 
   void Command::onFreeChangeInputLetterCase(std::string &strIn) {
-    if (!Command::usingCaseSensitiveName) {
+
+    if ((matching || selecting) &&
+      !Command::usingCaseSensitiveName
+    ) {
       if (Command::usingLowercaseName) {
         mt_uti::StrTools::changeStringToLowercase(strIn);
       }
@@ -1037,11 +1109,8 @@ namespace cli_menu {
     }
   }
 
-  void Command::copyMatchName(
-    std::string &hookName,
-    mt::CR_STR oriName
-  ) {
-    hookName = oriName;
+  void Command::copyMatchName(std::string &hookName) {
+    hookName = name;
 
     if (Command::isTemporaryLetterCaseChange()) {
       mt_uti::StrTools::changeStringToUppercase(hookName);
@@ -1053,14 +1122,15 @@ namespace cli_menu {
     mt::CR_STR oriInput
   ) {
     hookInput = oriInput;
-    Command::onFreeChangeInputLetterCase(hookInput);
+    onFreeChangeInputLetterCase(hookInput);
   }
 
   void Command::copyMatchStrings(
-    std::string &hookName, std::string &hookInput,
-    mt::CR_STR oriName, mt::CR_STR oriInput
+    std::string &hookName,
+    std::string &hookInput,
+    mt::CR_STR oriInput
   ) {
-    copyMatchName(hookName, oriName);
+    copyMatchName(hookName);
     copyMatchInput(hookInput, oriInput);
   }
 

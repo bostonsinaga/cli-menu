@@ -83,7 +83,7 @@ namespace cli_menu {
     );
 
     static bool isTemporaryLetterCaseChange();
-    static void onFreeChangeInputLetterCase(std::string &strIn);
+    void onFreeChangeInputLetterCase(std::string &strIn);
 
     /**
      * A condition setter for 'disguised' where the derived class
@@ -102,6 +102,7 @@ namespace cli_menu {
     int resultInputsIndex = -1;
 
     bool accumulating = false,
+      matching = true,
       questionedGroup = false,
       required = false,
       selecting = false,
@@ -161,26 +162,9 @@ namespace cli_menu {
       mt::CR_BOL onlyParent = false
     );
 
-    // secure original name
-    static void copyMatchName(
-      std::string &hookName,
-      mt::CR_STR oriName
-    );
-
-    // secure original input
-    static void copyMatchInput(
-      std::string &hookInput,
-      mt::CR_STR oriInput
-    );
-
-    // secure original strings
-    static void copyMatchStrings(
-      std::string &hookName, std::string &hookInput,
-      mt::CR_STR oriName, mt::CR_STR oriInput
-    );
-
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
+    static void stopThreadsLoop();
 
     virtual mt::USI match(
       mt::VEC_STR &directInputs,
@@ -203,6 +187,26 @@ namespace cli_menu {
 
     mt::USI questionTo(
       Command *target,
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    );
+
+    mt::USI conversation(
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    );
+
+    virtual mt::USI answerControl(
+      mt::CR_STR controlStr,
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    );
+
+    virtual mt::USI answerSpecial(
+      mt::CR_STR testStr,
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
@@ -308,6 +312,22 @@ namespace cli_menu {
       mt::CR_BOL useLevelName = true,
       CR_CLR nameColor = Color()
     ) { return name; }
+
+    // secure original name
+    void copyMatchName(std::string &hookName);
+
+    // secure original input
+    void copyMatchInput(
+      std::string &hookInput,
+      mt::CR_STR oriInput
+    );
+
+    // secure original strings
+    void copyMatchStrings(
+      std::string &hookName,
+      std::string &hookInput,
+      mt::CR_STR oriInput
+    );
 
     void setCallback(RESULT_CALLBACK callback_in) {
       callback = callback_in;
