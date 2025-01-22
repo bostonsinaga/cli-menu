@@ -733,18 +733,6 @@ namespace cli_menu {
     );
   }
 
-  mt::USI Command::questionTo(
-    Command *target,
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
-    if (target) return target->question(
-      directInputs, resultInputs, lastCom
-    );
-    return COMPLETED_FLAG;
-  }
-
   void Command::stopThreadsLoop() {
     RUNNING = false;
     CON_VAR.notify_all();
@@ -916,6 +904,18 @@ namespace cli_menu {
     }
 
     return PASSED_FLAG;
+  }
+
+  mt::USI Command::questionTo(
+    Command *target,
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    if (target) return target->question(
+      directInputs, resultInputs, lastCom
+    );
+    return COMPLETED_FLAG;
   }
 
   mt::USI Command::dialog(
