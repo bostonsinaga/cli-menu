@@ -804,9 +804,6 @@ namespace cli_menu {
         return isItPossibleToGoBackFlag;
       }
     }
-    else if (Control::cancelTest(controlStr)) {
-      Command::stopThreadsLoop();
-    }
     else if (Control::clipboardTest(controlStr)) {
       printClipboardError();
     }
@@ -843,6 +840,9 @@ namespace cli_menu {
       if (pointToNeighborFlag != ERROR_FLAG) {
         return pointToNeighborFlag;
       }
+    }
+    else if (Control::quitTest(controlStr)) {
+      Command::stopThreadsLoop();
     }
     else if (Control::selectTest(controlStr)) {
       Message::printNeatDialog(
