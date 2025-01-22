@@ -120,14 +120,12 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    std::string copyName, copyInput;
+    if (directInputs.size()) {
+      std::string copyName, copyInput;
 
-    if (directInputs.size() > 0) {
-      const int i = directInputs.size() - 1;
-
-      Command::copyMatchStrings(
-        copyName, copyInput,
-        name, directInputs[i]
+      // copy to secure original strings
+      copyMatchStrings(
+        copyName, copyInput, directInputs.back()
       );
 
       if (copyName == DashTest::cleanDouble(copyInput)) {
@@ -141,7 +139,8 @@ namespace cli_menu {
 
           // redirected to first child
           return matchTo(
-            static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+            static_cast<Cm*>(children.front()),
+            directInputs, resultInputs, lastCom
           );
         }
         // toddler
@@ -150,7 +149,9 @@ namespace cli_menu {
           if (directInputs.size() > 0) {
 
             int boolFlag = Control::booleanTest(
-              mt_uti::StrTools::getStringToLowercase(directInputs[i-1])
+              mt_uti::StrTools::getStringToLowercase(
+                *(directInputs.end() - 2)
+              )
             );
 
             // between 1 or 2 is true
@@ -161,7 +162,8 @@ namespace cli_menu {
           }
 
           return matchTo(
-            getUnusedNeighbor(this), directInputs, resultInputs, lastCom
+            getUnusedNeighbor(this),
+            directInputs, resultInputs, lastCom
           );
         }
       }
@@ -198,7 +200,7 @@ namespace cli_menu {
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
-    while (true) {
+    while (RUNNING) {
       Message::setDialogInput(buffer);
       mt_uti::StrTools::changeStringToLowercase(buffer);
       int boolFlag = Control::booleanTest(buffer);
@@ -320,7 +322,7 @@ namespace cli_menu {
     // remember the past
     else initData(resultInputs, conditions);
 
-    // inverted in 'tryToSelect' method
+    // inverted in base method
     selecting = false;
 
     // no need to set condition exclusively on parent
