@@ -179,19 +179,6 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    virtual mt::USI question(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) { return FAILED_FLAG; }
-
-    mt::USI questionTo(
-      Command *target,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
     mt::USI conversation(
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
@@ -207,6 +194,19 @@ namespace cli_menu {
 
     virtual mt::USI answerSpecial(
       mt::CR_STR testStr,
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    );
+
+    virtual mt::USI question(
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    ) { return FAILED_FLAG; }
+
+    mt::USI questionTo(
+      Command *target,
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
