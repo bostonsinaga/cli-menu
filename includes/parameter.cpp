@@ -142,10 +142,7 @@ namespace cli_menu {
     bool &found
   ) {
     std::string copyName;
-
-    Command::copyMatchName(
-      copyName, static_cast<Parameter*>(node)->name
-    );
+    static_cast<Cm*>(node)->copyMatchName(copyName);
 
     if (copyName == DashTest::cleanSingle(copyInput) ||
       copyName == DashTest::cleanDouble(copyInput)
@@ -181,9 +178,7 @@ namespace cli_menu {
       else continuation = getContinuation();
 
       if (continuation) {
-        Command::copyMatchInput(
-          copyInput, directInputs[directInputs.size() - 1]
-        );
+        copyMatchInput(copyInput, directInputs.back());
 
         continuation->iterate<mt::CR_STR, bool&>(
           Parameter::checkArgument, copyInput, found
@@ -191,6 +186,7 @@ namespace cli_menu {
 
         // question in the middle
         if (found && required) {
+          matching = false;
 
           Message::printNeatDialog(
             Message::ERROR_FLAG,
@@ -202,7 +198,7 @@ namespace cli_menu {
       }
 
       resetData(resultInputs, false);
-      setData(resultInputs, directInputs[directInputs.size() - 1]);
+      setData(resultInputs, directInputs.back());
       directInputs.pop_back();
 
       if (isToddler()) return COMPLETED_FLAG;
@@ -219,6 +215,7 @@ namespace cli_menu {
   ) {
     // has no argument
     if (Command::dialogued) {
+      matching = false;
 
       Message::printNeatDialog(
         Message::ERROR_FLAG,
@@ -303,12 +300,12 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    if (directInputs.size() > 0) {
+    if (directInputs.size()) {
       std::string copyName, copyInput;
 
       // copy to secure original strings
-      Command::copyMatchStrings(
-        copyName, copyInput, name, directInputs[directInputs.size() - 1]
+      copyMatchStrings(
+        copyName, copyInput, directInputs.back()
       );
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
@@ -360,6 +357,8 @@ namespace cli_menu {
     Command **lastCom,
     mt::CR_BOL needUnused
   ) {
+    matching = true;
+
     return matchTo(
       static_cast<Cm*>(getContinuation(needUnused)),
       directInputs, resultInputs, lastCom
@@ -380,7 +379,7 @@ namespace cli_menu {
       getInlineRootNames() : getFullNameWithUltimate()
     );
 
-    while (true) {
+    while (RUNNING) {
       Message::setDialogInput(buffer);
 
       // copy to secure original input
@@ -491,7 +490,7 @@ namespace cli_menu {
       useResultInputsIndex(resultInputs);
     }
 
-    // inverted in 'tryToSelect' method
+    // inverted in base method
     selecting = false;
 
     // no need to set argument exclusively
