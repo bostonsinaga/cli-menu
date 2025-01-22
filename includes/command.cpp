@@ -743,17 +743,21 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    std::string testStr;
+    std::string cinStr;
     mt::USI flag;
-    printAfterBoundaryLine(getInlineRootNames());
+
+    printAfterBoundaryLine(selecting || isContainer() ?
+      getInlineRootNames() : // base or derived
+      getFullNameWithUltimate() // derived
+    );
 
     while (RUNNING) {
       Message::printListPointStyle();
 
-      if (std::cin >> testStr) {
+      if (std::cin >> cinStr) {
 
         // copy to secure original input
-        std::string controlStr = mt_uti::StrTools::getStringToLowercase(testStr);
+        std::string controlStr = mt_uti::StrTools::getStringToLowercase(cinStr);
 
         // dollar character test
         if (Control::intoMode(controlStr) || Control::onMode()) {
@@ -764,10 +768,10 @@ namespace cli_menu {
           );
         }
         else {
-          onFreeChangeInputLetterCase(testStr);
+          onFreeChangeInputLetterCase(cinStr);
 
           flag = answerSpecial(
-            testStr, directInputs,
+            cinStr, directInputs,
             resultInputs, lastCom
           );
         }
@@ -853,7 +857,7 @@ namespace cli_menu {
 
   // find developer defined command
   mt::USI Command::answerSpecial(
-    mt::CR_STR testStr,
+    mt::CR_STR cinStr,
     mt::VEC_STR &directInputs,
     ResultInputs &resultInputs,
     Command **lastCom
@@ -862,7 +866,7 @@ namespace cli_menu {
     bool isContinue = false;
 
     if (isParent()) {
-      found = static_cast<Cm*>(getChild(testStr));
+      found = static_cast<Cm*>(getChild(cinStr));
     }
     else {
       TREE *usedParent;
@@ -875,7 +879,7 @@ namespace cli_menu {
       }
 
       if (!isContinue) {
-        found = static_cast<Cm*>(usedParent->getChild(testStr));
+        found = static_cast<Cm*>(usedParent->getChild(cinStr));
       }
     }
 
