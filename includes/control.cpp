@@ -26,7 +26,7 @@ namespace cli_menu {
   mt::USI Control::sharedFlag = -1;
   bool Control::modeOn = false;
 
-  static rename(
+  void Control::rename(
     _CONTROL_FLAG flag,
     mt::CR_STR name,
     mt::CR_STR abbreviation

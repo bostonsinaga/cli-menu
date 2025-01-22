@@ -25,7 +25,7 @@ namespace cli_menu {
       QUIT = 9, SELECT = 10
     };
 
-    static rename(
+    static void rename(
       _CONTROL_FLAG flag,
       mt::CR_STR name,
       mt::CR_STR abbreviation
