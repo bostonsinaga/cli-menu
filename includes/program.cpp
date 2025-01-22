@@ -1,6 +1,9 @@
 #ifndef __CLI_MENU__PROGRAM_CPP__
 #define __CLI_MENU__PROGRAM_CPP__
 
+#include <csignal>
+#include <future>
+#include <thread>
 #include "program.h"
 
 namespace cli_menu {
@@ -160,6 +163,10 @@ namespace cli_menu {
       return;
     }
 
+    // listen to shortcuts
+    std::signal(SIGINT, Control::handleCtrlC);
+    std::thread keyThread(Control::handleKeypress);
+
     //______|
     // Init |
     //______|
@@ -261,7 +268,9 @@ namespace cli_menu {
       name
     );
 
-    remove(); // runtime end
+    // end of runtime
+    remove();
+    keyThread.join();
   }
 }
 
