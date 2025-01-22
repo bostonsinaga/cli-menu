@@ -9,25 +9,31 @@ namespace cli_menu {
   private:
     static mt::USI sharedFlag;
     static bool modeOn;
-    static const int COUNT = 11;
-    static const std::string NAMES[COUNT][2];
+    static const int TOTAL = 11;
+    static std::string NAMES[TOTAL][2];
 
     static mt::SI whitespacesCheck(mt::CR_STR str);
     static bool checkOut(mt::CR_STR str, mt::CR_SI flag);
 
   public:
-    enum {
+    enum _CONTROL_FLAG {
       _CONTROL_MODE = 0,
-      BACK = 1, CANCEL = 2,
-      CLIPBOARD = 3, ENTER = 4,
-      HELP = 5, LIST = 6,
-      MODIFY = 7, NEXT = 8,
-      PREVIOUS = 9, SELECT = 10
+      BACK = 1, CLIPBOARD = 2,
+      ENTER = 3, HELP = 4,
+      LIST = 5, MODIFY = 6,
+      NEXT = 7, PREVIOUS = 8,
+      QUIT = 9, SELECT = 10
     };
+
+    static rename(
+      _CONTROL_FLAG flag,
+      mt::CR_STR name,
+      mt::CR_STR abbreviation
+    );
 
     static bool intoMode(mt::CR_STR str);
     static bool backTest(mt::CR_STR str);
-    static bool cancelTest(mt::CR_STR str);
+    static bool quitTest(mt::CR_STR str);
     static bool clipboardTest(mt::CR_STR str);
     static bool enterTest(mt::CR_STR str);
     static bool helpTest(mt::CR_STR str);

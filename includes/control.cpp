@@ -7,12 +7,11 @@
 
 namespace cli_menu {
   /**
-   * All tests argument are expected to be lowercase.
+   * The test argument is expected to be lowercase.
    */
-  const std::string Control::NAMES[COUNT][2] = {
+  std::string Control::NAMES[TOTAL][2] = {
     { "$",         "$" },
     { "back",      "b" },
-    { "cancel",    "x" },
     { "clipboard", "c" },
     { "enter",     "e" },
     { "help",      "h" }, 
@@ -20,11 +19,21 @@ namespace cli_menu {
     { "modify",    "m" },
     { "next",      "n" },
     { "previous",  "p" },
+    { "quit",      "q" },
     { "select",    "s" }
   };
 
   mt::USI Control::sharedFlag = -1;
   bool Control::modeOn = false;
+
+  static rename(
+    _CONTROL_FLAG flag,
+    mt::CR_STR name,
+    mt::CR_STR abbreviation
+  ) {
+    NAMES[flag][0] = name;
+    NAMES[flag][1] = abbreviation;
+  }
 
   mt::SI Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
@@ -41,7 +50,7 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < COUNT; j++) {
+      for (int j = 0; j < TOTAL; j++) {
 
         if (input == NAMES[j][i]) {
           sharedFlag = j;
@@ -80,10 +89,6 @@ namespace cli_menu {
     return checkOut(str, BACK);
   }
 
-  bool Control::cancelTest(mt::CR_STR str) {
-    return checkOut(str, CANCEL);
-  }
-
   bool Control::clipboardTest(mt::CR_STR str) {
     return checkOut(str, CLIPBOARD);
   }
@@ -110,6 +115,10 @@ namespace cli_menu {
 
   bool Control::previousTest(mt::CR_STR str) {
     return checkOut(str, PREVIOUS);
+  }
+
+  bool Control::quitTest(mt::CR_STR str) {
+    return checkOut(str, QUIT);
   }
 
   bool Control::selectTest(mt::CR_STR str) {
@@ -175,7 +184,7 @@ namespace cli_menu {
       bool even;
       int j;
 
-      for (int i = 0; i < COUNT - 1; i++) {
+      for (int i = 0; i < TOTAL - 1; i++) {
         j = i+1;
         even = !(i % 2);
 
@@ -184,7 +193,7 @@ namespace cli_menu {
         }
       }
 
-      for (int i = 0; i < COUNT - 1; i++) {
+      for (int i = 0; i < TOTAL - 1; i++) {
 
         j = i+1;
         even = !(i % 2);
@@ -196,7 +205,7 @@ namespace cli_menu {
 
         text += " = " + NAMES[j][1];
 
-        if (j < COUNT - 1) {
+        if (j < TOTAL - 1) {
           text += even ? "," : ",\n";
         }
         else text += "\n";
