@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   class Toggle : public Command {
-  protected:
+  private:
     mt::VEC_BOL conditions;
     bool defaultCondition = false;
 
@@ -20,11 +20,6 @@ namespace cli_menu {
     ) override {
       initData(resultInputs, {defaultCondition});
     }
-
-    void setData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL condition
-    );
 
     void resetData(
       ResultInputs &resultInputs,
@@ -49,6 +44,12 @@ namespace cli_menu {
       ResultInputs &resultInputs,
       Command **lastCom
     ) override;
+
+  protected:
+    void setData(
+      ResultInputs &resultInputs,
+      mt::CR_BOL condition
+    );
 
   public:
     Toggle(): Command() {}

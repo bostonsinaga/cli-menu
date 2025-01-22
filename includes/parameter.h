@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   class Parameter : public Command {
-  protected:
+  private:
     mt::VEC_STR texts;
     mt::VEC_LD numbers;
 
@@ -19,11 +19,6 @@ namespace cli_menu {
     void initDefaultData(
       ResultInputs &resultInputs
     ) override;
-
-    void setData(
-      ResultInputs &resultInputs,
-      mt::CR_STR argument
-    );
 
     void resetData(
       ResultInputs &resultInputs,
@@ -81,6 +76,12 @@ namespace cli_menu {
       ResultInputs &resultInputs,
       Command **lastCom
     ) override;
+
+  protected:
+    void setData(
+      ResultInputs &resultInputs,
+      mt::CR_STR argument
+    );
 
   public:
     enum {TEXT, NUMBER};
