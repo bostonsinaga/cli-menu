@@ -193,7 +193,7 @@ namespace cli_menu {
     );
 
     virtual mt::USI answerSpecial(
-      mt::CR_STR testStr,
+      mt::CR_STR cinStr,
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
