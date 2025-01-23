@@ -95,7 +95,7 @@ namespace cli_menu {
       );
 
       for (TREE *node : newChildren) {
-        relateToDependence(node, true);
+        relateToSupporter(node, true);
         addRequiredItems(static_cast<Cm*>(node));
       }
     }
@@ -107,7 +107,7 @@ namespace cli_menu {
   ) {
     if (isContainer()) {
       TREE::addChild(node, reconnected);
-      relateToDependence(node, true);
+      relateToSupporter(node, true);
       addRequiredItems(static_cast<Cm*>(node));
     }
   }
@@ -116,7 +116,7 @@ namespace cli_menu {
   Command::TREE *Command::dismantle(mt::CR_INT index) {
     if (isParent()) {
       TREE *node = TREE::dismantle(index);
-      relateToDependence(node, false);
+      relateToSupporter(node, false);
       reduceRequiredItems(static_cast<Cm*>(node));
       return node;
     }
@@ -128,7 +128,7 @@ namespace cli_menu {
       VEC_TREE released = TREE::releaseChildren();
 
       for (TREE *node : released) {
-        relateToDependence(node, false);
+        relateToSupporter(node, false);
         reduceRequiredItems(static_cast<Cm*>(node));
       }
 
@@ -296,7 +296,7 @@ namespace cli_menu {
     return ERROR_FLAG;
   }
 
-  // for dependences
+  // for supporters
   bool Command::doesUltimateAllowEnter(mt::CR_BOL fromChild) {
 
     if (ultimate) {
@@ -435,7 +435,7 @@ namespace cli_menu {
     }
   }
 
-  void Command::relateToDependence(
+  void Command::relateToSupporter(
     TREE *node,
     mt::CR_BOL connected
   ) {
@@ -628,7 +628,7 @@ namespace cli_menu {
 
         printNullptrNeighborError();
       }
-      // dependence
+      // supporter
       else return questionTo(
         getUnusedNeighbor(this), directInputs, resultInputs, lastCom
       );
@@ -677,17 +677,17 @@ namespace cli_menu {
   std::string Command::getDialogStatusString(
     mt::CR_BOL usingAbbreviations,
     mt::CR_BOL withBrackets,
-    mt::CR_BOL forcedToDependenceVersion
+    mt::CR_BOL forcedToSupporterVersion
   ) {
     std::string status = withBrackets ? " (" : "";
     Color fontColor;
 
-    // independence or parent
-    if (!(isSupporter() || questionedGroup || forcedToDependenceVersion)) {
+    // dialog
+    if (!(isSupporter() || questionedGroup || forcedToSupporterVersion)) {
       status += usingAbbreviations ? "sel" : "selection";
       fontColor = Color::MAGENTA;
     }
-    // dependence
+    // question
     else {
       // first
       if (getInheritanceFlag() == PARAMETER) {
@@ -712,7 +712,7 @@ namespace cli_menu {
       status += getFillingStatusString(usingAbbreviations);
       fontColor = Color::VIOLET;
 
-      // group returns to call 'dialog' method after 'question'
+      // inverted in 'question' method
       questionedGroup = false;
     }
 
@@ -746,11 +746,6 @@ namespace cli_menu {
     std::string cinStr;
     mt::USI flag;
 
-    printAfterBoundaryLine(selecting || isContainer() ?
-      getInlineRootNames() : // base or derived
-      getFullNameWithUltimate() // derived
-    );
-
     while (RUNNING) {
       Message::printListPointStyle();
 
@@ -776,8 +771,8 @@ namespace cli_menu {
           );
         }
 
-        if (flag != PASSED_FLAG) return flag;
-        else if (!RUNNING) break;
+        if (!RUNNING) break;
+        else if (flag != PASSED_FLAG) return flag;
       }
       else {
         std::cin.clear();
@@ -851,7 +846,6 @@ namespace cli_menu {
     }
     else Control::printError();
 
-    if (!RUNNING) return CANCELED_FLAG;
     return PASSED_FLAG;
   }
 
@@ -903,8 +897,6 @@ namespace cli_menu {
         Message::ERROR_FLAG,
         getChildrenLevelName(false) + " not found"
       );
-
-      return CANCELED_FLAG;
     }
 
     return PASSED_FLAG;
@@ -927,6 +919,8 @@ namespace cli_menu {
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
+    printAfterBoundaryLine(getInlineRootNames());
+
     // inverted in derived method
     selecting = true;
 
@@ -1034,7 +1028,7 @@ namespace cli_menu {
             + lastErrStr, 1
           );
         }
-        // ultimate or dependence
+        // ultimate or supporter
         else {
           const std::string errStr = "The '" + parCom->name
             + "' command has " + std::string(isOneLeft ? "a " : "")
@@ -1201,6 +1195,16 @@ namespace cli_menu {
 
     // always have a newline
     std::cout << std::endl;
+  }
+
+  void Command::printQuestionBoundaryLine() {
+
+    printAfterBoundaryLine(isContainer() ?
+      getInlineRootNames() : getFullNameWithUltimate()
+    );
+
+    // question display on non-supporters
+    if (isContainer()) questionedGroup = true;
   }
 
   void Command::printChildrenNamesDescriptions(

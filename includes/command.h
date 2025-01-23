@@ -46,7 +46,7 @@ namespace cli_menu {
     std::string getDialogStatusString(
       mt::CR_BOL usingAbbreviations,
       mt::CR_BOL withBrackets,
-      mt::CR_BOL forcedToDependenceVersion = false
+      mt::CR_BOL forcedToSupporterVersion = false
     );
 
     virtual std::string getFillingStatusString(
@@ -64,7 +64,7 @@ namespace cli_menu {
     );
 
     // this only invoked by 'ultimate'
-    void relateToDependence(
+    void relateToSupporter(
       TREE *node,
       mt::CR_BOL connected
     );
@@ -257,6 +257,7 @@ namespace cli_menu {
      * names list with prominent background color.
      */
     void printAfterBoundaryLine(std::string comName);
+    void printQuestionBoundaryLine();
 
   public:
     enum {
@@ -346,7 +347,7 @@ namespace cli_menu {
 
     /**
      * Note:
-     * Cannot change 'children' if this a dependence.
+     * Cannot modify 'children' if this a supporter.
      */
 
     bool isUltimate() const { return this == ultimate; }
