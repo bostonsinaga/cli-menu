@@ -754,7 +754,7 @@ namespace cli_menu {
         // copy to secure original input
         std::string controlStr = mt_uti::StrTools::getStringToLowercase(cinStr);
 
-        // dollar character test
+        // '_CONTROL_MODE' string test
         if (Control::intoMode(controlStr) || Control::onMode()) {
 
           flag = answerControl(
@@ -900,6 +900,18 @@ namespace cli_menu {
     }
 
     return PASSED_FLAG;
+  }
+
+  mt::USI Command::question(
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    printQuestionBoundaryLine();
+
+    return conversation(
+      directInputs, resultInputs, lastCom
+    );
   }
 
   mt::USI Command::questionTo(
@@ -1199,12 +1211,13 @@ namespace cli_menu {
 
   void Command::printQuestionBoundaryLine() {
 
-    printAfterBoundaryLine(isContainer() ?
-      getInlineRootNames() : getFullNameWithUltimate()
-    );
-
     // question display on non-supporters
-    if (isContainer()) questionedGroup = true;
+    if (isContainer()) {
+
+      printAfterBoundaryLine(getInlineRootNames());
+      questionedGroup = true;
+    }
+    else printAfterBoundaryLine(getFullNameWithUltimate());
   }
 
   void Command::printChildrenNamesDescriptions(
