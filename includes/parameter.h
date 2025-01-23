@@ -47,13 +47,6 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    mt::USI middleMatch(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom,
-      mt::CR_BOL needUnused = false
-    );
-
     std::string getFillingStatusString(
       mt::CR_BOL usingAbbreviations
     ) override;
@@ -64,8 +57,22 @@ namespace cli_menu {
       Command **lastCom
     ) override;
 
-    // always called after ultimate (open question)
-    mt::USI question(
+    mt::USI middleMatch(
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom,
+      mt::CR_BOL needUnused = false
+    );
+
+    mt::USI answerControl(
+      mt::CR_STR controlStr,
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    ) override;
+
+    mt::USI answerSpecial(
+      mt::CR_STR cinStr,
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom

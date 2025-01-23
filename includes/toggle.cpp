@@ -186,125 +186,119 @@ namespace cli_menu {
     return FAILED_FLAG;
   }
 
-  mt::USI Toggle::question(
+  mt::USI Toggle::answerControl(
+    mt::CR_STR controlStr,
     mt::VEC_STR &directInputs,
     ResultInputs &resultInputs,
     Command **lastCom
   ) {
-    std::string buffer;
+    if (Control::backTest(controlStr)) {
 
-    // question display on non-supporters
-    if (isContainer()) questionedGroup = true;
+      const mt::USI flag = isItPossibleToGoBack(
+        directInputs, resultInputs, lastCom
+      );
 
-    printAfterBoundaryLine(isContainer() ?
-      getInlineRootNames() : getFullNameWithUltimate()
-    );
-
-    while (RUNNING) {
-      Message::setDialogInput(buffer);
-      mt_uti::StrTools::changeStringToLowercase(buffer);
-      int boolFlag = Control::booleanTest(buffer);
-
-      // value input
-      if (boolFlag) {
+      if (flag != ERROR_FLAG) return flag;
+    }
+    else if (Control::clipboardTest(controlStr)) {
+      printClipboardError();
+    }
+    else if (Control::enterTest(controlStr)) {
+      // pointing to first child
+      if (isParent()) {
+        return dialogTo(
+          static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
+        );
+      }
+      // need condition
+      else if (!used && required) {
+        Message::printNeatDialog(
+          Message::ERROR_FLAG,
+          "this " + getLevelName() + " needs a condition"
+        );
+      }
+      // directly completed
+      else if (doesUltimateAllowEnter()) {
         *lastCom = chooseLastCommand();
-
-        setData(
-          resultInputs,
-          Control::revealBoolean(boolFlag)
-        );
-
-        // inside ultimate only
-        if (isSupporter()) return questionTo(
-          getUnusedNeighbor(this), directInputs, resultInputs, lastCom
-        );
-        // dead end
-        else if (isToddler()) {
-          return COMPLETED_FLAG;
-        }
-        // back to this dialog
-        return Command::dialog(
-          directInputs, resultInputs, lastCom
-        );
+        setData(resultInputs, false);
+        return COMPLETED_FLAG;
       }
-      // dollar character test
-      else if (Control::intoMode(buffer) || Control::onMode()) {
+    }
+    else if (Control::helpTest(controlStr)) {
+      printHelp();
+    }
+    else if (Control::listTest(controlStr)) {
+      printList();
+    }
+    else if (
+      Control::nextTest(controlStr) ||
+      Control::previousTest(controlStr)
+    ) {
+      const mt::USI tryToSkipFlag = tryToSkip(
+        Control::getSharedFlag() == Control::NEXT,
+        directInputs, resultInputs, lastCom
+      );
 
-        if (Control::backTest(buffer)) {
-
-          const mt::USI flag = isItPossibleToGoBack(
-            directInputs, resultInputs, lastCom
-          );
-
-          if (flag != ERROR_FLAG) return flag;
-        }
-        else if (Control::cancelTest(buffer)) {
-          break; // go to 'CANCELED_FLAG' return
-        }
-        else if (Control::clipboardTest(buffer)) {
-          printClipboardError();
-        }
-        else if (Control::enterTest(buffer)) {
-          // pointing to first child
-          if (isParent()) {
-            return dialogTo(
-              static_cast<Cm*>(children.front()), directInputs, resultInputs, lastCom
-            );
-          }
-          // need condition
-          else if (!used && required) {
-            Message::printNeatDialog(
-              Message::ERROR_FLAG,
-              "this " + getLevelName() + " needs a condition"
-            );
-          }
-          // directly completed
-          else if (doesUltimateAllowEnter()) {
-            *lastCom = chooseLastCommand();
-            setData(resultInputs, false);
-            return COMPLETED_FLAG;
-          }
-        }
-        else if (Control::helpTest(buffer)) {
-          printHelp();
-        }
-        else if (Control::listTest(buffer)) {
-          printList();
-        }
-        else if (
-          Control::nextTest(buffer) ||
-          Control::previousTest(buffer)
-        ) {
-          const mt::USI tryToSkipFlag = tryToSkip(
-            Control::getSharedFlag() == Control::NEXT,
-            directInputs, resultInputs, lastCom
-          );
-
-          if (tryToSkipFlag != ERROR_FLAG) {
-            return tryToSkipFlag;
-          }
-        }
-        else if (Control::selectTest(buffer)) {
-
-          // only available for toddlers
-          const mt::USI tryToSelectFlag = tryToSelect(
-            directInputs, resultInputs, lastCom,
-            "condition is given"
-          );
-
-          if (tryToSelectFlag != ERROR_FLAG) {
-            return tryToSelectFlag;
-          }
-        }
-        else Control::printError();
+      if (tryToSkipFlag != ERROR_FLAG) {
+        return tryToSkipFlag;
       }
-      else Message::printNeatDialog(
-        Message::ERROR_FLAG,
-        "only accept boolean values"
+    }
+    else if (Control::quitTest(controlStr)) {
+      Command::stopThreadsLoop();
+    }
+    else if (Control::selectTest(controlStr)) {
+
+      // only available for toddlers
+      const mt::USI tryToSelectFlag = tryToSelect(
+        directInputs, resultInputs, lastCom,
+        "condition is given"
+      );
+
+      if (tryToSelectFlag != ERROR_FLAG) {
+        return tryToSelectFlag;
+      }
+    }
+    else Control::printError();
+
+    return PASSED_FLAG;
+  }
+
+  mt::USI Toggle::answerSpecial(
+    mt::CR_STR cinStr,
+    mt::VEC_STR &directInputs,
+    ResultInputs &resultInputs,
+    Command **lastCom
+  ) {
+    int boolFlag = Control::booleanTest(cinStr);
+
+    // condition input
+    if (boolFlag) {
+      *lastCom = chooseLastCommand();
+
+      setData(
+        resultInputs,
+        Control::revealBoolean(boolFlag)
+      );
+
+      // inside ultimate only
+      if (isSupporter()) return questionTo(
+        getUnusedNeighbor(this), directInputs, resultInputs, lastCom
+      );
+      // dead end
+      else if (isToddler()) {
+        return COMPLETED_FLAG;
+      }
+      // back to this dialog
+      return Command::dialog(
+        directInputs, resultInputs, lastCom
       );
     }
+    else Message::printNeatDialog(
+      Message::ERROR_FLAG,
+      "only accept boolean values"
+    );
 
-    return CANCELED_FLAG;
+    return PASSED_FLAG;
   }
 
   mt::USI Toggle::dialog(

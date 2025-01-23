@@ -32,8 +32,15 @@ namespace cli_menu {
       Command **lastCom
     ) override;
 
-    // always called after ultimate (closed question)
-    mt::USI question(
+    mt::USI answerControl(
+      mt::CR_STR controlStr,
+      mt::VEC_STR &directInputs,
+      ResultInputs &resultInputs,
+      Command **lastCom
+    ) override;
+
+    mt::USI answerSpecial(
+      mt::CR_STR cinStr,
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
