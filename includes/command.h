@@ -199,11 +199,12 @@ namespace cli_menu {
       Command **lastCom
     );
 
-    virtual mt::USI question(
+    // callable in all levels
+    mt::USI question(
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
       Command **lastCom
-    ) { return FAILED_FLAG; }
+    );
 
     mt::USI questionTo(
       Command *target,
@@ -212,6 +213,7 @@ namespace cli_menu {
       Command **lastCom
     );
 
+    // only called in containers
     virtual mt::USI dialog(
       mt::VEC_STR &directInputs,
       ResultInputs &resultInputs,
