@@ -12,6 +12,7 @@ namespace cli_menu {
     static const int TOTAL = 11;
     static std::string NAMES[TOTAL][2];
 
+    static void colorize();
     static mt::SI whitespacesCheck(mt::CR_STR str);
     static bool checkOut(mt::CR_STR str, mt::CR_SI flag);
 

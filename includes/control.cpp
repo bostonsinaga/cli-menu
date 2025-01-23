@@ -35,6 +35,10 @@ namespace cli_menu {
     NAMES[flag][1] = abbreviation;
   }
 
+  void Control::colorize() {
+    std::cout << Color::start(Color::MAGENTA);
+  }
+
   mt::SI Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
     std::string input;
@@ -67,7 +71,7 @@ namespace cli_menu {
     // the 'modeOn' is set in 'printError' method
     if (whitespacesCheck(str) == _CONTROL_MODE) {
 
-      std::cout << Color::start(Color::MAGENTA);
+      colorize();
       return true;
     }
 
@@ -228,7 +232,7 @@ namespace cli_menu {
         Color::GRAY
       );
 
-      std::cout << Color::start(Color::CYAN);
+      colorize();
     }
     /**
      * Set here not in 'intoMode' method to avoid
