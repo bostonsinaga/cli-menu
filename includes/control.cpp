@@ -148,13 +148,6 @@ namespace cli_menu {
     return false;
   }
 
-  void Control::handleCtrlC(int signal) {
-    if (signal == SIGINT) {
-      RUNNING = false;
-      CON_VAR.notify_all();
-    }
-  }
-
   void Control::handleKeypress() {
     std::unique_lock<std::mutex> lock(CON_VAR_MUTEX);
 
