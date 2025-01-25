@@ -774,6 +774,7 @@ namespace cli_menu {
         if (!RUNNING) break;
         else if (flag != PASSED_FLAG) return flag;
       }
+      // prevent infinite loop when pressing 'ctrl+c' 
       else {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
