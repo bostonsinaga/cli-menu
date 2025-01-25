@@ -164,7 +164,6 @@ namespace cli_menu {
     }
 
     // listen to shortcuts
-    std::signal(SIGINT, Control::handleCtrlC);
     std::thread keyThread(Control::handleKeypress);
 
     //______|
