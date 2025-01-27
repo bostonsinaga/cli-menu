@@ -3,7 +3,7 @@
 
 #include "clipboard.h"
 #include "control.h"
-#include "result-INPUTS.h"
+#include "result-inputs.h"
 
 namespace cli_menu {
   /**
@@ -148,7 +148,6 @@ namespace cli_menu {
 
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
-    static void stopThreadsLoop();
 
     virtual mt::USI match() {
       return FAILED_FLAG;
