@@ -10,53 +10,19 @@ namespace cli_menu {
     mt::VEC_BOL conditions;
     bool defaultCondition = false;
 
-    void initData(
-      ResultInputs &resultInputs,
-      mt::CR_VEC_BOL data
-    );
-
-    void initDefaultData(
-      ResultInputs &resultInputs
-    ) override {
-      initData(resultInputs, {defaultCondition});
+    void initDefaultData() override {
+      initData({defaultCondition});
     }
 
-    void resetData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL discarded
-    ) override;
-
-    mt::USI match(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI answerControl(
-      mt::CR_STR controlStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI answerSpecial(
-      mt::CR_STR cinStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI dialog(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
+    void initData(mt::CR_VEC_BOL data);
+    void resetData(mt::CR_BOL discarded) override;
+    mt::USI match() override;
+    mt::USI answerControl(mt::CR_STR controlStr) override;
+    mt::USI answerSpecial(mt::CR_STR cinStr) override;
+    mt::USI dialog() override;
 
   protected:
-    void setData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL condition
-    );
+    void setData(mt::CR_BOL condition);
 
   public:
     Toggle(): Command() {}

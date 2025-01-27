@@ -16,14 +16,8 @@ namespace cli_menu {
     bool argumentType = false;
     static const std::string needsArgStr;
 
-    void initDefaultData(
-      ResultInputs &resultInputs
-    ) override;
-
-    void resetData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL discarded
-    ) override;
+    void initDefaultData() override;
+    void resetData(mt::CR_BOL discarded) override;
 
     static bool checkArgument(
       LINKED_LIST *node,
@@ -35,60 +29,21 @@ namespace cli_menu {
       mt::CR_BOL needUnused = false
     );
 
-    mt::USI popBackSet(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    mt::USI notPopBackSet(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    mt::USI popBackSet();
+    mt::USI notPopBackSet();
 
     std::string getFillingStatusString(
       mt::CR_BOL usingAbbreviations
     ) override;
 
-    mt::USI match(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI middleMatch(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom,
-      mt::CR_BOL needUnused = false
-    );
-
-    mt::USI answerControl(
-      mt::CR_STR controlStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI answerSpecial(
-      mt::CR_STR cinStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
-
-    mt::USI dialog(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) override;
+    mt::USI match() override;
+    mt::USI middleMatch(mt::CR_BOL needUnused = false);
+    mt::USI answerControl(mt::CR_STR controlStr) override;
+    mt::USI answerSpecial(mt::CR_STR cinStr) override;
+    mt::USI dialog() override;
 
   protected:
-    void setData(
-      ResultInputs &resultInputs,
-      mt::CR_STR argument
-    );
+    void setData(mt::CR_STR argument);
 
   public:
     enum {TEXT, NUMBER};

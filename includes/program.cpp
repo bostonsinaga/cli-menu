@@ -170,8 +170,10 @@ namespace cli_menu {
     // Init |
     //______|
 
-    mt::VEC_STR directInputs;
-    ResultInputs resultInputs;
+    /**
+     * Assigned to true will open
+     * the dialog after the match.
+     */
     Command::dialogued = completingDialog;
 
     /**
@@ -179,11 +181,11 @@ namespace cli_menu {
      * to compare with program name e.g. "./bin/program.exe".
      */
     for (int i = 1; i < argc; i++) {
-      directInputs.push_back(argv[i]);
+      INPUTS.direct.push_back(argv[i]);
     }
 
     // will get 'pop_back' in 'Command::match'
-    std::reverse(directInputs.begin(), directInputs.end());
+    std::reverse(INPUTS.direct.begin(), INPUTS.direct.end());
 
     if (Command::usingLowercaseName) {
       changeTreeNamesToLowercase();
@@ -192,30 +194,26 @@ namespace cli_menu {
       changeTreeNamesToUppercase();
     }
 
-    setData(resultInputs, true);
+    setData(true);
 
-    //_________|
-    // Process |
-    //_________|
-
-    Command *lastCom = this;
-    mt::USI flag;
+    //_____________________|
+    // Chain to Completion |
+    //_____________________|
 
     if (children.size() > 0) {
 
-      flag = matchTo(
-        static_cast<Cm*>(children.front()),
-        directInputs, resultInputs, &lastCom
+      mt::USI flag = matchTo(
+        static_cast<Cm*>(children.front())
       );
 
       switch (flag) {
         case COMPLETED_FLAG: {
           // check if has any callback
-          if (!runTo(lastCom, resultInputs)) {
+          if (!executeTo(Command::lastCom)) {
             Message::printNeatNamed(
               Message::ERROR_FLAG,
               "no callback",
-              lastCom->getName()
+              Command::lastCom->getName()
             );
           }
           // succeeded after main callback
@@ -234,20 +232,19 @@ namespace cli_menu {
         break;}
         case FAILED_FLAG: {
           // program
-          if (lastCom == this) {
-            if (!runTo(lastCom, resultInputs)) {
-              printError();
-            }
+          if (Command::lastCom == this) {
+            if (!executeTo(Command::lastCom)) printError();
           }
           // dependence
-          else if (lastCom->isSupporter()) {
-            lastCom->getUltimate()->printError();
+          else if (Command::lastCom->isSupporter()) {
+            Command::lastCom->getUltimate()->printError();
           }
           // group
-          else if (!(lastCom->isUltimate() ||
-            runTo(lastCom, resultInputs)
-          ) || lastCom->isUltimate()) {
-            lastCom->printError();
+          else if (
+            !(Command::lastCom->isUltimate() || executeTo(Command::lastCom)) ||
+            Command::lastCom->isUltimate()
+          ) {
+            Command::lastCom->printError();
           }
         break;}
         // error

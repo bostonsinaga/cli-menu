@@ -58,21 +58,17 @@ namespace cli_menu {
     argumentType = argumentType_in;
   }
 
-  void Parameter::initDefaultData(
-    ResultInputs &resultInputs
-  ) {
-    if (argumentType == TEXT) {
-      resultInputs.addTexts(name, {defaultText});
-    }
-    else resultInputs.addNumbers(name, {defaultNumber});
+  void Parameter::initDefaultData() {
 
-    useResultInputsIndex(resultInputs);
+    if (argumentType == TEXT) {
+      INPUTS.result.addTexts(name, {defaultText});
+    }
+    else INPUTS.result.addNumbers(name, {defaultNumber});
+
+    useResultInputsIndex();
   }
 
-  void Parameter::setData(
-    ResultInputs &resultInputs,
-    mt::CR_STR argument
-  ) {
+  void Parameter::setData(mt::CR_STR argument) {
     bool isEmpty = true;
 
     // ignore empty argument
@@ -87,50 +83,47 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        resultInputs.addTexts(name, {argument});
+        INPUTS.result.addTexts(name, {argument});
       }
       // whitespace is separator
-      else resultInputs.addNumbers(
+      else INPUTS.result.addNumbers(
         name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
 
-      useResultInputsIndex(resultInputs);
+      useResultInputsIndex();
     }
     // accumulated
     else {
       if (argumentType == TEXT) {
-        resultInputs.pushText(resultInputsIndex, argument);
+        INPUTS.result.pushText(INPUTS.index, argument);
       }
       // whitespace is separator
-      else resultInputs.pushNumbers(
-        resultInputsIndex,
+      else INPUTS.result.pushNumbers(
+        INPUTS.index,
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
   }
 
-  void Parameter::resetData(
-    ResultInputs &resultInputs,
-    mt::CR_BOL discarded
-  ) {
+  void Parameter::resetData(mt::CR_BOL discarded) {
     if (used) {
 
       // backup vector member
       if (argumentType == TEXT) {
-        texts = resultInputs.getTexts(resultInputsIndex);
+        texts = INPUTS.result.getTexts(INPUTS.index);
       }
-      else numbers = resultInputs.getNumbers(resultInputsIndex);
+      else numbers = INPUTS.result.getNumbers(INPUTS.index);
 
       // pop vector
-      Command::resetData(resultInputs, discarded);
+      Command::resetData(discarded);
 
       // clean vector member
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
-          resultInputs.clearText(resultInputsIndex);
+          INPUTS.result.clearText(INPUTS.index);
         }
-        else resultInputs.clearNumber(resultInputsIndex);
+        else INPUTS.result.clearNumber(INPUTS.index);
       }
     }
   }
@@ -162,13 +155,10 @@ namespace cli_menu {
     return next;
   }
 
-  mt::USI Parameter::popBackSet(
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
-    // only capture the last reversed 'directInputs'
-    if (directInputs.size() > 0) {
+  mt::USI Parameter::popBackSet() {
+
+    // only capture the last reversed 'INPUTS.direct'
+    if (INPUTS.direct.size() > 0) {
       bool found = false;
 
       std::string copyInput;
@@ -178,7 +168,7 @@ namespace cli_menu {
       else continuation = getContinuation();
 
       if (continuation) {
-        copyMatchInput(copyInput, directInputs.back());
+        copyMatchInput(copyInput, INPUTS.direct.back());
 
         continuation->iterate<mt::CR_STR, bool&>(
           Parameter::checkArgument, copyInput, found
@@ -193,13 +183,13 @@ namespace cli_menu {
             "the '" + name + "' " + getLevelName() + needsArgStr, 1
           );
 
-          return question(directInputs, resultInputs, lastCom);
+          return question();
         }
       }
 
-      resetData(resultInputs, false);
-      setData(resultInputs, directInputs.back());
-      directInputs.pop_back();
+      resetData(false);
+      setData(INPUTS.direct.back());
+      INPUTS.direct.pop_back();
 
       if (isToddler()) return COMPLETED_FLAG;
       return PASSED_FLAG;
@@ -208,11 +198,8 @@ namespace cli_menu {
     return ERROR_FLAG;
   }
 
-  mt::USI Parameter::notPopBackSet(
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
+  mt::USI Parameter::notPopBackSet() {
+
     // has no argument
     if (Command::dialogued) {
       matching = false;
@@ -222,7 +209,7 @@ namespace cli_menu {
         "the last " + getLevelName() + needsArgStr, 1
       );
 
-      return question(directInputs, resultInputs, lastCom);
+      return question();
     }
     // no dialog
     return FAILED_FLAG;
@@ -295,55 +282,48 @@ namespace cli_menu {
     return Color::getString(usedStr, Color::MAGENTA);
   }
 
-  mt::USI Parameter::match(
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
-    if (directInputs.size()) {
+  mt::USI Parameter::match() {
+
+    if (INPUTS.direct.size()) {
       std::string copyName, copyInput;
 
       // copy to secure original strings
       copyMatchStrings(
-        copyName, copyInput, directInputs.back()
+        copyName, copyInput, INPUTS.direct.back()
       );
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
-        directInputs.pop_back();
-        *lastCom = this;
+        INPUTS.direct.pop_back();
+        Command::lastCom = this;
 
-        const mt::USI flag = popBackSet(
-          directInputs, resultInputs, lastCom
-        );
+        const mt::USI flag = popBackSet();
 
-        // 'directInputs' may be empty
+        // 'INPUTS.direct' may be empty
         if (flag == PASSED_FLAG) {
 
           // redirected to first child or unused neighbor
-          return middleMatch(
-            directInputs, resultInputs, lastCom, true
-          );
+          return middleMatch(true);
         }
         else if (flag != ERROR_FLAG) {
           return flag;
         }
 
-        // 'directInputs' is empty, could invoke 'question'
-        return notPopBackSet(directInputs, resultInputs, lastCom);
+        // 'INPUTS.direct' is empty, could invoke 'question'
+        return notPopBackSet();
       }
 
       // point to neighbor if input not matched
-      return askNeighbor(directInputs, resultInputs, lastCom);
+      return askNeighbor();
     }
-    // 'directInputs' completion
+    // 'INPUTS.direct' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
-        static_cast<Cm*>(parent), directInputs, resultInputs, lastCom
+        static_cast<Cm*>(parent)
       );
     }
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
-      *lastCom = ultimate;
+      Command::lastCom = ultimate;
       return COMPLETED_FLAG;
     }
     // print error of incompleteness
@@ -351,36 +331,25 @@ namespace cli_menu {
   }
 
   // match continues after question in the middle
-  mt::USI Parameter::middleMatch(
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom,
-    mt::CR_BOL needUnused
-  ) {
+  mt::USI Parameter::middleMatch(mt::CR_BOL needUnused) {
     matching = true;
 
     return matchTo(
-      static_cast<Cm*>(getContinuation(needUnused)),
-      directInputs, resultInputs, lastCom
+      static_cast<Cm*>(getContinuation(needUnused))
     );
   }
 
-  mt::USI Parameter::answerControl(
-    mt::CR_STR controlStr,
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
+  mt::USI Parameter::answerControl(mt::CR_STR controlStr) {
+
     if (Control::backTest(controlStr)) {
+      const mt::USI flag = tryToGoBack();
 
-      const mt::USI flag = isItPossibleToGoBack(
-        directInputs, resultInputs, lastCom
-      );
-
-      if (flag != ERROR_FLAG) return flag;
+      if (flag != ERROR_FLAG) {
+        return flag;
+      }
     }
     else if (Control::clipboardTest(controlStr)) {
-      setData(resultInputs, clipboard.paste());
+      setData(clipboard.paste());
     }
     else if (Control::enterTest(controlStr)) {
       // need argument
@@ -391,21 +360,18 @@ namespace cli_menu {
         );
       }
       // question in the middle, back to match
-      else if (!directInputs.empty()) {
-        return middleMatch(
-          directInputs, resultInputs, lastCom
-        );
+      else if (!INPUTS.direct.empty()) {
+        return middleMatch();
       }
       // pointing to first child
       else if (isParent()) {
         return dialogTo(
-          static_cast<Cm*>(children.front()),
-          directInputs, resultInputs, lastCom
+          static_cast<Cm*>(children.front())
         );
       }
       // directly completed
       else if (doesUltimateAllowEnter()) {
-        *lastCom = chooseLastCommand();
+        Command::lastCom = chooseLastCommand();
         return COMPLETED_FLAG;
       }
     }
@@ -420,8 +386,7 @@ namespace cli_menu {
       Control::previousTest(controlStr)
     ) {
       const mt::USI tryToSkipFlag = tryToSkip(
-        Control::getSharedFlag() == Control::NEXT,
-        directInputs, resultInputs, lastCom
+        Control::getSharedFlag() == Control::NEXT
       );
 
       if (tryToSkipFlag != ERROR_FLAG) {
@@ -434,7 +399,6 @@ namespace cli_menu {
     else if (Control::selectTest(controlStr)) {
 
       const mt::USI tryToSelectFlag = tryToSelect(
-        directInputs, resultInputs, lastCom,
         "arguments are given"
       );
 
@@ -448,48 +412,36 @@ namespace cli_menu {
   }
 
   // argument input
-  mt::USI Parameter::answerSpecial(
-    mt::CR_STR cinStr,
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
-    setData(resultInputs, cinStr);
+  mt::USI Parameter::answerSpecial(mt::CR_STR cinStr) {
+    setData(cinStr);
     return PASSED_FLAG;
   }
 
-  mt::USI Parameter::dialog(
-    mt::VEC_STR &directInputs,
-    ResultInputs &resultInputs,
-    Command **lastCom
-  ) {
+  mt::USI Parameter::dialog() {
+
     const bool noArguments = (argumentType == TEXT && texts.empty()) ||
       (argumentType == NUMBER && numbers.empty());
 
     const bool needQuestion = (!used && !selecting && isParent()) || isToddler();
 
     if (noArguments) {
-      if (needQuestion) return question(
-        directInputs, resultInputs, lastCom
-      );
+      if (needQuestion) return question();
     }
     // remember the past
     else {
       if (argumentType == TEXT) {
-        resultInputs.addTexts(name, texts);
+        INPUTS.result.addTexts(name, texts);
       }
-      else resultInputs.addNumbers(name, numbers);
+      else INPUTS.result.addNumbers(name, numbers);
 
-      useResultInputsIndex(resultInputs);
+      useResultInputsIndex();
     }
 
     // inverted in base method
     selecting = false;
 
     // no need to set argument exclusively
-    return Command::dialog(
-      directInputs, resultInputs, lastCom
-    );
+    return Command::dialog();
   }
 }
 

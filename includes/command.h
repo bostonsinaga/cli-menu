@@ -3,7 +3,7 @@
 
 #include "clipboard.h"
 #include "control.h"
-#include "result-inputs.h"
+#include "result-INPUTS.h"
 
 namespace cli_menu {
   /**
@@ -30,9 +30,7 @@ namespace cli_menu {
     static const mt::USI disguiseFlags[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
 
-    virtual void initDefaultData(
-      ResultInputs &resultInputs
-    ) {}
+    virtual void initDefaultData() {}
 
     void setChildren(
       CR_VEC_TREE newChildren,
@@ -41,7 +39,7 @@ namespace cli_menu {
     ) override;
 
     TREE* dismantle(mt::CR_INT index) override;
-    bool run(ResultInputs &resultInputs);
+    bool execute();
 
     std::string getDialogStatusString(
       mt::CR_BOL usingAbbreviations,
@@ -70,18 +68,9 @@ namespace cli_menu {
     );
 
     // prioritize the rest of direct directInputs
-    bool isDirectInputsError(
-      mt::VEC_STR &directInputs,
-      mt::CR_STR controlName
-    );
+    bool isDirectInputsError(mt::CR_STR controlName);
 
-    mt::USI pointToNeighbor(
-      mt::CR_BOL toNext,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
+    mt::USI pointToNeighbor(mt::CR_BOL toNext);
     static bool isTemporaryLetterCaseChange();
     void onFreeChangeInputLetterCase(std::string &strIn);
 
@@ -99,7 +88,6 @@ namespace cli_menu {
     Command *ultimate = nullptr;
     Clipboard clipboard;
     std::string description;
-    int resultInputsIndex = -1;
 
     bool accumulating = false,
       matching = true,
@@ -121,15 +109,16 @@ namespace cli_menu {
       usingDashesBoundaryLine,
       dialogued;
 
-    virtual void resetData(
-      ResultInputs &resultInputs,
-      mt::CR_BOL discarded
-    );
+    static Command *lastCom;
 
-    bool runTo(
-      Command *target,
-      ResultInputs &resultInputs
-    );
+    static struct Inputs {
+      mt::VEC_STR direct;
+      ResultInputs result;
+      int index = -1;
+    } INPUTS;
+
+    virtual void resetData(mt::CR_BOL discarded);
+    bool executeTo(Command *target);
 
     mt::UI getRequiredCount();
     Color getLevelLabelColor();
@@ -138,7 +127,7 @@ namespace cli_menu {
 
     void useRequired();
     void unuseRequired();
-    void useResultInputsIndex(ResultInputs &resultInputs);
+    void useResultInputsIndex();
 
     // format: 'separator + ultimate + separator + this + separator'
     std::string getFullNameWithUltimate(
@@ -151,12 +140,7 @@ namespace cli_menu {
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printNullptrNeighborError();
-
-    mt::USI isItPossibleToGoBack(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    mt::USI tryToGoBack();
 
     Command *chooseLastCommand(
       mt::CR_BOL onlyParent = false
@@ -166,90 +150,31 @@ namespace cli_menu {
     void changeTreeNamesToUppercase();
     static void stopThreadsLoop();
 
-    virtual mt::USI match(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    ) { return FAILED_FLAG; }
+    virtual mt::USI match() {
+      return FAILED_FLAG;
+    }
 
-    mt::USI matchTo(
-      Command *target,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    mt::USI conversation(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    virtual mt::USI answerControl(
-      mt::CR_STR controlStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    virtual mt::USI answerSpecial(
-      mt::CR_STR cinStr,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    mt::USI matchTo(Command *target);
+    mt::USI conversation();
+    virtual mt::USI answerControl(mt::CR_STR controlStr);
+    virtual mt::USI answerSpecial(mt::CR_STR cinStr);
 
     // callable in all levels
-    mt::USI question(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    mt::USI questionTo(
-      Command *target,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    mt::USI question();
+    mt::USI questionTo(Command *target);
 
     // only called in containers
-    virtual mt::USI dialog(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    mt::USI dialogTo(
-      Command *target,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    virtual mt::USI dialog();
+    mt::USI dialogTo(Command *target);
 
     // point to neighbor if input not matched
-    mt::USI askNeighbor(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
+    mt::USI askNeighbor();
 
-    // 'directInputs' is empty and has 'requiredItems'
+    // 'INPUTS.direct' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    mt::USI tryToSkip(
-      mt::CR_BOL toNext,
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom
-    );
-
-    mt::USI tryToSelect(
-      mt::VEC_STR &directInputs,
-      ResultInputs &resultInputs,
-      Command **lastCom,
-      mt::CR_STR additionalMessage
-    );
+    mt::USI tryToSkip(mt::CR_BOL toNext);
+    mt::USI tryToSelect(mt::CR_STR additionalMessage);
 
     // clipboard only for parameter
     void printClipboardError();
