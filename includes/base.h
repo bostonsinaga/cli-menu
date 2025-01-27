@@ -1,17 +1,9 @@
 #ifndef __CLI_MENU__BASE_H__
 #define __CLI_MENU__BASE_H__
 
-#include <atomic>
-#include <condition_variable>
-#include <mutex>
 #include "mini-tools.h"
 
 namespace cli_menu {
-
-  // multi threads
-  inline std::atomic<bool> RUNNING(true);
-  inline std::condition_variable CON_VAR;
-  inline std::mutex CON_VAR_MUTEX;
 
   // inheritance flags
   enum { COMMAND, PROGRAM, PARAMETER, TOGGLE };
