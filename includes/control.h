@@ -8,31 +8,28 @@ namespace cli_menu {
   class Control {
   private:
     static mt::USI sharedFlag;
-    static bool modeOn;
-    static const int TOTAL = 11;
-    static std::string NAMES[TOTAL][2];
+    static const int TOTAL = 10;
 
-    static void colorize();
+    static std::string
+      NAMES[TOTAL][2], modeSymbol;
+
     static mt::SI whitespacesCheck(mt::CR_STR str);
-    static bool checkOut(mt::CR_STR str, mt::CR_SI flag);
 
   public:
-    enum _CONTROL_FLAG {
-      _CONTROL_MODE = 0,
-      BACK = 1, CLIPBOARD = 2,
-      ENTER = 3, HELP = 4,
-      LIST = 5, MODIFY = 6,
-      NEXT = 7, PREVIOUS = 8,
-      QUIT = 9, SELECT = 10
+    enum CONTROL_FLAG {
+      BACK = 0, CLIPBOARD = 1,
+      ENTER = 2, HELP = 3,
+      LIST = 4, MODIFY = 5,
+      NEXT = 6, PREVIOUS = 7,
+      QUIT = 8, SELECT = 9
     };
 
     static void rename(
-      _CONTROL_FLAG flag,
+      CONTROL_FLAG flag,
       mt::CR_STR name,
       mt::CR_STR abbreviation
     );
 
-    static bool intoMode(mt::CR_STR str);
     static bool backTest(mt::CR_STR str);
     static bool quitTest(mt::CR_STR str);
     static bool clipboardTest(mt::CR_STR str);
@@ -48,15 +45,11 @@ namespace cli_menu {
     static int booleanTest(mt::CR_STR str);
     static bool revealBoolean(mt::CR_INT testedFlag);
 
-    // listen to shortcuts
-    static void handleKeypress();
-
     static void printParameterHelp();
     static void printToggleHelp();
 
     static const mt::USI getSharedFlag() { return sharedFlag; }
-    static const bool onMode() { return modeOn; }
-    static void printError(mt::CR_STR listPointStyle = ">");
+    static void printError();
   };
 }
 

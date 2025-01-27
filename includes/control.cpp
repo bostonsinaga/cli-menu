@@ -1,8 +1,6 @@
 #ifndef __CLI_MENU__CONTROL_CPP__
 #define __CLI_MENU__CONTROL_CPP__
 
-#include <csignal>
-#include <windows.h>
 #include "control.h"
 
 namespace cli_menu {
@@ -10,11 +8,10 @@ namespace cli_menu {
    * The test argument is expected to be lowercase.
    */
   std::string Control::NAMES[TOTAL][2] = {
-    { "$",         "$" },
     { "back",      "b" },
     { "clipboard", "c" },
     { "enter",     "e" },
-    { "help",      "h" }, 
+    { "help",      "h" },
     { "list",      "l" },
     { "modify",    "m" },
     { "next",      "n" },
@@ -23,20 +20,16 @@ namespace cli_menu {
     { "select",    "s" }
   };
 
+  std::string Control::modeSymbol = ":";
   mt::USI Control::sharedFlag = -1;
-  bool Control::modeOn = false;
 
   void Control::rename(
-    _CONTROL_FLAG flag,
+    CONTROL_FLAG flag,
     mt::CR_STR name,
     mt::CR_STR abbreviation
   ) {
     NAMES[flag][0] = name;
     NAMES[flag][1] = abbreviation;
-  }
-
-  void Control::colorize() {
-    std::cout << Color::start(Color::MAGENTA);
   }
 
   mt::SI Control::whitespacesCheck(mt::CR_STR str) {
@@ -56,7 +49,7 @@ namespace cli_menu {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < TOTAL; j++) {
 
-        if (input == NAMES[j][i]) {
+        if (input == modeSymbol + NAMES[j][i]) {
           sharedFlag = j;
           return j;
         }
@@ -66,67 +59,44 @@ namespace cli_menu {
     return -1;
   }
 
-  bool Control::intoMode(mt::CR_STR str) {
-
-    // the 'modeOn' is set in 'printError' method
-    if (whitespacesCheck(str) == _CONTROL_MODE) {
-
-      colorize();
-      return true;
-    }
-
-    return false;
-  }
-
-  bool Control::checkOut(mt::CR_STR str, mt::CR_SI flag) {
-
-    if (whitespacesCheck(str) == flag) {
-      std::cout << Color::end();
-      modeOn = false;
-      return true;
-    }
-
-    return false;
-  }
-
   bool Control::backTest(mt::CR_STR str) {
-    return checkOut(str, BACK);
+    return whitespacesCheck(str) == BACK;
   }
 
   bool Control::clipboardTest(mt::CR_STR str) {
-    return checkOut(str, CLIPBOARD);
+    return whitespacesCheck(str) == CLIPBOARD;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return checkOut(str, ENTER);
+    return whitespacesCheck(str) == ENTER;
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return checkOut(str, HELP);
+    return whitespacesCheck(str) == HELP;
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return checkOut(str, LIST);
+    return whitespacesCheck(str) == LIST;
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return checkOut(str, MODIFY);
+    return whitespacesCheck(str) == MODIFY;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return checkOut(str, NEXT);
+    return whitespacesCheck(str) == NEXT;
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return checkOut(str, PREVIOUS);
+    return whitespacesCheck(str) == PREVIOUS;
   }
 
   bool Control::quitTest(mt::CR_STR str) {
-    return checkOut(str, QUIT);
+    return whitespacesCheck(str) == QUIT;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return checkOut(str, SELECT);
+    return whitespacesCheck(str) == SELECT;
   }
 
   int Control::booleanTest(mt::CR_STR str) {
@@ -146,30 +116,6 @@ namespace cli_menu {
   bool Control::revealBoolean(mt::CR_INT testedFlag) {
     if (testedFlag > 1) return true;
     return false;
-  }
-
-  void Control::handleKeypress() {
-    std::unique_lock<std::mutex> lock(CON_VAR_MUTEX);
-
-    while (RUNNING) {
-      CON_VAR.wait_for(
-        lock,
-        std::chrono::milliseconds(100),
-        [] { return !RUNNING; }
-      );
-
-      if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) &&
-        (GetAsyncKeyState(VK_MENU) & 0x8000)
-      ) {
-        for (char ch = 'A'; ch <= 'Z'; ++ch) {
-
-          if (GetAsyncKeyState(ch) & 0x8000) {
-            std::cout << "Ctrl + Alt + " << ch << " pressed!" << std::endl;
-            break;
-          }
-        }
-      }
-    }
   }
 
   void Control::printParameterHelp() {
@@ -218,21 +164,11 @@ namespace cli_menu {
     );
   }
 
-  void Control::printError(mt::CR_STR listPointStyle) {
-    if (modeOn) {
-      Message::printItalicString(
-        listPointStyle + " unknown controller\n",
-        Color::GRAY
-      );
-
-      colorize();
-    }
-    /**
-     * Set here not in 'intoMode' method to avoid
-     * error message at the beginning. Because this method
-     * always the first invoked after 'intoMode' condition.
-     */
-    else modeOn = true;
+  void Control::printError() {
+    Message::printItalicString(
+      Message::listPointStyle + " unknown controller\n",
+      Color::GRAY
+    );
   }
 }
 
