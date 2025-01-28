@@ -154,13 +154,22 @@ namespace cli_menu {
     }
 
     mt::USI matchTo(Command *target);
-    mt::USI conversation();
-    virtual mt::USI answerControl(mt::CR_STR controlStr);
+    mt::USI conversation(mt::CR_BOL dialogOn);
+
+    mt::USI answerControl(
+      mt::CR_STR controlStr,
+      mt::CR_BOL dialogOn
+    );
+
     virtual mt::USI answerSpecial(mt::CR_STR bufferStr);
 
     // callable in all levels
     mt::USI question();
     mt::USI questionTo(Command *target);
+
+    virtual mt::USI questionEnterTest() {
+      return PASSED_FLAG;
+    }
 
     // only called in containers
     virtual mt::USI dialog();
@@ -175,8 +184,8 @@ namespace cli_menu {
     mt::USI tryToSkip(mt::CR_BOL toNext);
     mt::USI tryToSelect(mt::CR_STR additionalMessage);
 
-    // clipboard only for parameter
-    void printClipboardError();
+    // hidden paste only available for parameters
+    virtual void clipboardAction();
 
     /**
      * Prints '-' signs horizontally before names list or
@@ -255,6 +264,10 @@ namespace cli_menu {
       std::string &hookInput,
       mt::CR_STR oriInput
     );
+
+    void setClipboard(const Clipboard &newClipboard) {
+      clipboard = newClipboard;
+    }
 
     void setCallback(RESULT_CALLBACK callback_in) {
       callback = callback_in;
