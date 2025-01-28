@@ -696,16 +696,11 @@ namespace cli_menu {
     );
   }
 
-  void Command::stopThreadsLoop() {
-    RUNNING = false;
-    CON_VAR.notify_all();
-  }
-
   mt::USI Command::conversation() {
     std::string cinStr;
     mt::USI flag;
 
-    while (RUNNING) {
+    while (true) {
       Message::printListPointStyle();
 
       // wait until the 'enter' key is pressed
@@ -714,17 +709,17 @@ namespace cli_menu {
         // copy to secure original input
         std::string controlStr = mt_uti::StrTools::getStringToLowercase(cinStr);
 
-        // '_CONTROL_MODE' string test
-        if (Control::intoMode(controlStr) || Control::onMode()) {
-          flag = answerControl(controlStr);
-        }
-        else {
+        // controller detection
+        flag = answerControl(controlStr);
+
+        // special handling
+        if (flag == PASSED_FLAG) {
           onFreeChangeInputLetterCase(cinStr);
           flag = answerSpecial(cinStr);
         }
 
-        if (!RUNNING) break;
-        else if (flag != PASSED_FLAG) return flag;
+        // chain call ends
+        if (flag != PASSED_FLAG) return flag;
       }
       // prevent infinite loop when pressing 'ctrl+c' 
       else {
@@ -783,7 +778,7 @@ namespace cli_menu {
       }
     }
     else if (Control::quitTest(controlStr)) {
-      Command::stopThreadsLoop();
+      return CANCELED_FLAG;
     }
     else if (Control::selectTest(controlStr)) {
       Message::printNeatDialog(
