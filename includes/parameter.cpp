@@ -5,8 +5,6 @@
 
 namespace cli_menu {
 
-  const std::string Parameter::needsArgStr = " needs an argument";
-
   Parameter::Parameter(
     mt::CR_STR name_in,
     mt::CR_STR description_in,
@@ -180,7 +178,7 @@ namespace cli_menu {
 
           Message::printNeatDialog(
             Message::ERROR_FLAG,
-            "the '" + name + "' " + getLevelName() + needsArgStr, 1
+            "the '" + name + "' " + getLevelName() + " needs arguments", 1
           );
 
           return question();
@@ -206,7 +204,7 @@ namespace cli_menu {
 
       Message::printNeatDialog(
         Message::ERROR_FLAG,
-        "the last " + getLevelName() + needsArgStr, 1
+        "the last " + getLevelName() + " needs arguments", 1
       );
 
       return question();
@@ -339,80 +337,19 @@ namespace cli_menu {
     );
   }
 
-  mt::USI Parameter::answerControl(mt::CR_STR controlStr) {
-
-    if (Control::backTest(controlStr)) {
-      const mt::USI flag = tryToGoBack();
-
-      if (flag != ERROR_FLAG) {
-        return flag;
-      }
-    }
-    else if (Control::clipboardTest(controlStr)) {
-      setData(clipboard.paste());
-    }
-    else if (Control::enterTest(controlStr)) {
-      // need argument
-      if (!used && required) {
-        Message::printNeatDialog(
-          Message::ERROR_FLAG,
-          "this " + getLevelName() + needsArgStr
-        );
-      }
-      // question in the middle, back to match
-      else if (!INPUTS.direct.empty()) {
-        return middleMatch();
-      }
-      // pointing to first child
-      else if (isParent()) {
-        return dialogTo(
-          static_cast<Cm*>(children.front())
-        );
-      }
-      // directly completed
-      else if (doesUltimateAllowEnter()) {
-        Command::lastCom = chooseLastCommand();
-        return COMPLETED_FLAG;
-      }
-    }
-    else if (Control::helpTest(controlStr)) {
-      printHelp();
-    }
-    else if (Control::listTest(controlStr)) {
-      printList();
-    }
-    else if (
-      Control::nextTest(controlStr) ||
-      Control::previousTest(controlStr)
-    ) {
-      const mt::USI tryToSkipFlag = tryToSkip(
-        Control::getSharedFlag() == Control::NEXT
-      );
-
-      if (tryToSkipFlag != ERROR_FLAG) {
-        return tryToSkipFlag;
-      }
-    }
-    else if (Control::quitTest(controlStr)) {
-      return CANCELED_FLAG;
-    }
-    else if (Control::selectTest(controlStr)) {
-
-      const mt::USI tryToSelectFlag = tryToSelect(
-        "arguments are given"
-      );
-
-      if (tryToSelectFlag != ERROR_FLAG) {
-        return tryToSelectFlag;
-      }
-    }
-
-    return PASSED_FLAG;
-  }
-
   // argument input
   mt::USI Parameter::answerSpecial(mt::CR_STR bufferStr) {
     setData(bufferStr);
+    return PASSED_FLAG;
+  }
+
+  mt::USI Parameter::questionEnterTest() {
+
+    // question in the middle, back to match
+    if (!INPUTS.direct.empty()) {
+      return middleMatch();
+    }
+
     return PASSED_FLAG;
   }
 
