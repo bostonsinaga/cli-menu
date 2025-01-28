@@ -16,8 +16,8 @@ namespace cli_menu {
 
     void initData(mt::CR_VEC_BOL data);
     void resetData(mt::CR_BOL discarded) override;
+
     mt::USI match() override;
-    mt::USI answerControl(mt::CR_STR controlStr) override;
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI dialog() override;
 
