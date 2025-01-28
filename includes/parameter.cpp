@@ -406,14 +406,13 @@ namespace cli_menu {
         return tryToSelectFlag;
       }
     }
-    else Control::printError();
 
     return PASSED_FLAG;
   }
 
   // argument input
-  mt::USI Parameter::answerSpecial(mt::CR_STR cinStr) {
-    setData(cinStr);
+  mt::USI Parameter::answerSpecial(mt::CR_STR bufferStr) {
+    setData(bufferStr);
     return PASSED_FLAG;
   }
 

@@ -241,14 +241,13 @@ namespace cli_menu {
         return tryToSelectFlag;
       }
     }
-    else Control::printError();
 
     return PASSED_FLAG;
   }
 
-  mt::USI Toggle::answerSpecial(mt::CR_STR cinStr) {
+  mt::USI Toggle::answerSpecial(mt::CR_STR bufferStr) {
 
-    int boolFlag = Control::booleanTest(cinStr);
+    int boolFlag = Control::booleanTest(bufferStr);
 
     // condition input
     if (boolFlag) {
@@ -269,7 +268,7 @@ namespace cli_menu {
     }
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
-      "only accept boolean values"
+      "only accept boolean values and controllers"
     );
 
     return PASSED_FLAG;
