@@ -9,15 +9,16 @@ namespace cli_menu {
   private:
     mt::VEC_STR texts;
     mt::VEC_LD numbers;
-
+    bool argumentType = false;
     std::string defaultText = "";
     long double defaultNumber = 0;
 
-    bool argumentType = false;
-    static const std::string needsArgStr;
-
     void initDefaultData() override;
     void resetData(mt::CR_BOL discarded) override;
+
+    void clipboardAction() override {
+      setData(clipboard.paste());
+    }
 
     static bool checkArgument(
       LINKED_LIST *node,
@@ -38,8 +39,8 @@ namespace cli_menu {
 
     mt::USI match() override;
     mt::USI middleMatch(mt::CR_BOL needUnused = false);
-    mt::USI answerControl(mt::CR_STR controlStr) override;
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
+    mt::USI questionEnterTest() override;
     mt::USI dialog() override;
 
   protected:
