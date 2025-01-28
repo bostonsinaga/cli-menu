@@ -17,7 +17,9 @@ namespace cli_menu {
     { "next",      "n" },
     { "previous",  "p" },
     { "quit",      "q" },
-    { "select",    "s" }
+    { "reset",     "r" },
+    { "select",    "s" },
+    { "view",      "v" }
   };
 
   std::string Control::modeSymbol = ":";
@@ -95,8 +97,16 @@ namespace cli_menu {
     return whitespacesCheck(str) == QUIT;
   }
 
+  bool Control::resetTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == RESET;
+  }
+
   bool Control::selectTest(mt::CR_STR str) {
     return whitespacesCheck(str) == SELECT;
+  }
+
+  bool Control::viewTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == VIEW;
   }
 
   int Control::booleanTest(mt::CR_STR str) {
@@ -142,11 +152,11 @@ namespace cli_menu {
         even = !(i % 2);
         text += even ? "  " : " ";
 
-        text += NAMES[j][0] + std::string(
+        text += modeSymbol + NAMES[j][0] + std::string(
           maxLengths[even] - NAMES[j][0].length(), ' '
         );
 
-        text += " = " + NAMES[j][1];
+        text += " = " + modeSymbol + NAMES[j][1];
 
         if (j < TOTAL - 1) {
           text += even ? "," : ",\n";

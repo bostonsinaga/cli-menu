@@ -8,7 +8,7 @@ namespace cli_menu {
   class Control {
   private:
     static mt::USI sharedFlag;
-    static const int TOTAL = 10;
+    static const int TOTAL = 12;
 
     static std::string
       NAMES[TOTAL][2], modeSymbol;
@@ -21,7 +21,8 @@ namespace cli_menu {
       ENTER = 2, HELP = 3,
       LIST = 4, MODIFY = 5,
       NEXT = 6, PREVIOUS = 7,
-      QUIT = 8, SELECT = 9
+      QUIT = 8, RESET = 9,
+      SELECT = 10, VIEW = 11
     };
 
     static void rename(
@@ -39,7 +40,9 @@ namespace cli_menu {
     static bool modifyTest(mt::CR_STR str);
     static bool nextTest(mt::CR_STR str);
     static bool previousTest(mt::CR_STR str);
+    static bool resetTest(mt::CR_STR str);
     static bool selectTest(mt::CR_STR str);
+    static bool viewTest(mt::CR_STR str);
 
     // returns 0 (other), 1 (false), 2 (true)
     static int booleanTest(mt::CR_STR str);
