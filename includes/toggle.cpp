@@ -228,7 +228,7 @@ namespace cli_menu {
       }
     }
     else if (Control::quitTest(controlStr)) {
-      Command::stopThreadsLoop();
+      return CANCELED_FLAG;
     }
     else if (Control::selectTest(controlStr)) {
 
