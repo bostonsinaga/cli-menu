@@ -181,8 +181,8 @@ namespace cli_menu {
     mt::USI tryToSkip(mt::CR_BOL toNext);
     mt::USI tryToSelect(mt::CR_STR additionalMessage);
 
-    // hidden paste only available for parameters
     virtual void clipboardAction();
+    virtual void viewAction() {}
 
     /**
      * Prints '-' signs horizontally before names list or

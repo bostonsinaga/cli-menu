@@ -847,8 +847,8 @@ namespace cli_menu {
       }
     }
     else if (Control::viewTest(controlStr)) {
-      resultInputs.printVector(resultInputsIndex);
-      return CANCELED_FLAG;
+      viewAction();
+      return ERROR_FLAG;
     }
 
     return PASSED_FLAG;

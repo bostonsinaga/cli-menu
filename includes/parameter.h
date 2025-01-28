@@ -15,6 +15,7 @@ namespace cli_menu {
 
     void initDefaultData() override;
     void resetData(mt::CR_BOL discarded) override;
+    void viewAction() override;
 
     void clipboardAction() override {
       setData(clipboard.paste());

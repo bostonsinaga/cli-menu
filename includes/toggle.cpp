@@ -205,8 +205,14 @@ namespace cli_menu {
     return PASSED_FLAG;
   }
 
-  mt::USI Toggle::dialog() {
+  void Toggle::viewAction() {
+    resultInputs.printAt(
+      ResultInputs::RESULT_CONDITION,
+      resultInputsIndex
+    );
+  }
 
+  mt::USI Toggle::dialog() {
     const bool needQuestion = parent && !selecting && isToddler();
 
     if (conditions.empty()) {

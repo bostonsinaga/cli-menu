@@ -353,6 +353,14 @@ namespace cli_menu {
     return PASSED_FLAG;
   }
 
+  void Parameter::viewAction() {
+    resultInputs.printAt(
+      argumentType == TEXT ?
+      ResultInputs::RESULT_TEXT : ResultInputs::RESULT_NUMBER,
+      resultInputsIndex
+    );
+  }
+
   mt::USI Parameter::dialog() {
 
     const bool noArguments = (argumentType == TEXT && texts.empty()) ||
