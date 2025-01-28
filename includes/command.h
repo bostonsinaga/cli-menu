@@ -67,7 +67,7 @@ namespace cli_menu {
       mt::CR_BOL connected
     );
 
-    // prioritize the rest of direct directInputs
+    // prioritize the rest of 'directInputs'
     bool isDirectInputsError(mt::CR_STR controlName);
 
     mt::USI pointToNeighbor(mt::CR_BOL toNext);
