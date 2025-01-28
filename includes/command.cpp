@@ -720,7 +720,9 @@ namespace cli_menu {
         }
 
         // chain call ends
-        if (flag != PASSED_FLAG) return flag;
+        if (flag != PASSED_FLAG && flag != ERROR_FLAG) {
+          return flag;
+        }
       }
     }
 
@@ -793,9 +795,11 @@ namespace cli_menu {
     }
     else if (Control::helpTest(controlStr)) {
       printHelp();
+      return ERROR_FLAG;
     }
     else if (Control::listTest(controlStr)) {
       printList();
+      return ERROR_FLAG;
     }
     else if (
       Control::nextTest(controlStr) ||
@@ -823,6 +827,9 @@ namespace cli_menu {
     else if (Control::quitTest(controlStr)) {
       return CANCELED_FLAG;
     }
+    else if (Control::resetTest(controlStr)) {
+      return CANCELED_FLAG;
+    }
     else if (Control::selectTest(controlStr)) {
       if (dialogOn) {
         Message::printNeatDialog(
@@ -837,6 +844,9 @@ namespace cli_menu {
 
         if (flag != ERROR_FLAG) return flag;
       }
+    }
+    else if (Control::viewTest(controlStr)) {
+      return CANCELED_FLAG;
     }
 
     return PASSED_FLAG;
