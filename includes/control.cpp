@@ -163,13 +163,6 @@ namespace cli_menu {
       "  yes = y, no = n, or boolean\n"
     );
   }
-
-  void Control::printError() {
-    Message::printItalicString(
-      Message::listPointStyle + " unknown controller\n",
-      Color::GRAY
-    );
-  }
 }
 
 #endif // __CLI_MENU__CONTROL_CPP__

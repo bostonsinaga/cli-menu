@@ -49,7 +49,6 @@ namespace cli_menu {
     static void printToggleHelp();
 
     static const mt::USI getSharedFlag() { return sharedFlag; }
-    static void printError();
   };
 }
 
