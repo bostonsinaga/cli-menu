@@ -137,10 +137,6 @@ namespace cli_menu {
 
     // decorated input interface
     static void setDialogInput(std::string &buffer);
-
-    static void printListPointStyle() {
-      std::cout << listPointStyle << ' ';
-    }
   };
 }
 
