@@ -8,6 +8,10 @@ namespace cli_menu {
 
   std::string ResultInputs::title = "";
 
+  const std::string ResultInputs::subtitles[3] = {
+    "TEXTS", "NUMBERS", "CONDITIONS"
+  };
+
   mt::VEC_STR ResultInputs::cutLongText(
     mt::CR_VEC_STR textVec,
     mt::CR_INT mostCharsCount
@@ -54,10 +58,6 @@ namespace cli_menu {
     std::cout << "ResultInputs (" << ResultInputs::texts.size() << "):";
     Message::printBoundaryLine(1, 0);
 
-    static const std::string subtitles[3] = {
-      "TEXTS", "NUMBERS", "CONDITIONS"
-    };
-
     int mostCharsCount = 0;
 
     // specify number of spaces before the colon to tidy up
@@ -78,16 +78,19 @@ namespace cli_menu {
           << std::string(mostCharsCount - names[j].length(), ' ')
           << " : [";
 
+        // texts
         if (i == 0) {
           ResultInputs::printList<std::string>(
             cutLongText(texts[j], mostCharsCount), mostCharsCount
           );
         }
+        // numbers
         else if (i == 1) {
           ResultInputs::printList<mt::LD>(
             numbers[j], mostCharsCount
           );
         }
+        // conditions
         else ResultInputs::printList<bool>(
           conditions[j], mostCharsCount
         );
@@ -99,6 +102,36 @@ namespace cli_menu {
     }
 
     Message::printBoundaryLine(0, 1);
+  }
+
+  void ResultInputs::printAt(
+    RESULT_TYPE type,
+    mt::CR_INT index
+  ) {
+    Message::printBoundaryLine(1, 1);
+    std::cout << subtitles[type] << ": [";
+
+    // texts
+    if (type == RESULT_TEXT) {
+      ResultInputs::printList<std::string>(
+        cutLongText(texts.size() > index ?
+          texts[index] : mt::VEC_STR{}, 2
+        ), 2
+      );
+    }
+    // numbers
+    else if (type == RESULT_NUMBER) {
+      ResultInputs::printList<mt::LD>(
+        numbers.size() > index ? numbers[index] : mt::VEC_LD{}, 4
+      );
+    }
+    // conditions
+    else ResultInputs::printList<bool>(
+      conditions.size() > index ? conditions[index] : mt::VEC_BOL{}, 7
+    );
+
+    std::cout << ']';
+    Message::printBoundaryLine(1, 1);
   }
 
   /** SETTERS */

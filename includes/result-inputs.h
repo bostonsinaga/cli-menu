@@ -12,6 +12,8 @@ namespace cli_menu {
     mt::VEC2_LD numbers;
     mt::VEC2_BOL conditions;
 
+    static const std::string subtitles[3];
+
     static mt::VEC_STR cutLongText(
       mt::CR_VEC_STR textVec,
       mt::CR_INT mostCharsCount
@@ -37,9 +39,14 @@ namespace cli_menu {
     }
 
   public:
+    enum RESULT_TYPE {
+      RESULT_TEXT, RESULT_NUMBER, RESULT_CONDITION
+    };
+
     static std::string title;
 
     void printVector();
+    void printAt(RESULT_TYPE type, mt::CR_INT index);
     void rename(mt::CR_INT i, mt::CR_STR name);
 
     void addName(mt::CR_STR name);
