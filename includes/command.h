@@ -156,7 +156,7 @@ namespace cli_menu {
     mt::USI matchTo(Command *target);
     mt::USI conversation();
     virtual mt::USI answerControl(mt::CR_STR controlStr);
-    virtual mt::USI answerSpecial(mt::CR_STR cinStr);
+    virtual mt::USI answerSpecial(mt::CR_STR bufferStr);
 
     // callable in all levels
     mt::USI question();

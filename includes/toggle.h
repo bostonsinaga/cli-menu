@@ -18,7 +18,7 @@ namespace cli_menu {
     void resetData(mt::CR_BOL discarded) override;
     mt::USI match() override;
     mt::USI answerControl(mt::CR_STR controlStr) override;
-    mt::USI answerSpecial(mt::CR_STR cinStr) override;
+    mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI dialog() override;
 
   protected:

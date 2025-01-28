@@ -39,7 +39,7 @@ namespace cli_menu {
     mt::USI match() override;
     mt::USI middleMatch(mt::CR_BOL needUnused = false);
     mt::USI answerControl(mt::CR_STR controlStr) override;
-    mt::USI answerSpecial(mt::CR_STR cinStr) override;
+    mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI dialog() override;
 
   protected:
