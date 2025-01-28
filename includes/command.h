@@ -195,7 +195,7 @@ namespace cli_menu {
     enum {
       CANCELED_FLAG,  // original
       COMPLETED_FLAG, // original
-      ERROR_FLAG,     // pseudo
+      CONTINUE_FLAG,  // pseudo
       FAILED_FLAG,    // original
       PASSED_FLAG     // pseudo
     };

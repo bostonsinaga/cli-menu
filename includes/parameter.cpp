@@ -193,7 +193,7 @@ namespace cli_menu {
       return PASSED_FLAG;
     }
 
-    return ERROR_FLAG;
+    return CONTINUE_FLAG;
   }
 
   mt::USI Parameter::notPopBackSet() {
@@ -302,7 +302,7 @@ namespace cli_menu {
           // redirected to first child or unused neighbor
           return middleMatch(true);
         }
-        else if (flag != ERROR_FLAG) {
+        else if (flag != CONTINUE_FLAG) {
           return flag;
         }
 

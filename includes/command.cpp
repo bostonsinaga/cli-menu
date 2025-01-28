@@ -287,7 +287,7 @@ namespace cli_menu {
       "You are now at the root level. No more groups upward."
     );
 
-    return ERROR_FLAG;
+    return CONTINUE_FLAG;
   }
 
   // for supporters
@@ -572,7 +572,7 @@ namespace cli_menu {
     }
 
     printNullptrNeighborError();
-    return ERROR_FLAG;
+    return CONTINUE_FLAG;
   }
 
   mt::USI Command::tryToSkip(mt::CR_BOL toNext) {
@@ -607,7 +607,7 @@ namespace cli_menu {
       );
     }
 
-    return ERROR_FLAG;
+    return CONTINUE_FLAG;
   }
 
   mt::USI Command::tryToSelect(mt::CR_STR additionalMessage) {
@@ -620,7 +620,7 @@ namespace cli_menu {
           "unable to select before " + additionalMessage
         );
 
-        return ERROR_FLAG;
+        return CONTINUE_FLAG;
       }
       // the 'selecting' will be an opposite in overridden 'dialog' method
       else {
@@ -634,7 +634,7 @@ namespace cli_menu {
       }
     }
 
-    return ERROR_FLAG;
+    return CONTINUE_FLAG;
   }
 
   // has a newline at the end
@@ -721,7 +721,7 @@ namespace cli_menu {
         }
 
         // chain call ends
-        if (flag != PASSED_FLAG && flag != ERROR_FLAG) {
+        if (flag != PASSED_FLAG && flag != CONTINUE_FLAG) {
           return flag;
         }
       }
@@ -741,7 +741,7 @@ namespace cli_menu {
       // stop at the root
       flag = tryToGoBack();
 
-      if (flag != ERROR_FLAG) return flag;
+      if (flag != CONTINUE_FLAG) return flag;
     }
     else if (Control::clipboardTest(controlStr)) {
 
@@ -796,11 +796,11 @@ namespace cli_menu {
     }
     else if (Control::helpTest(controlStr)) {
       printHelp();
-      return ERROR_FLAG;
+      return CONTINUE_FLAG;
     }
     else if (Control::listTest(controlStr)) {
       printList();
-      return ERROR_FLAG;
+      return CONTINUE_FLAG;
     }
     else if (
       Control::nextTest(controlStr) ||
@@ -811,7 +811,7 @@ namespace cli_menu {
           Control::getSharedFlag() == Control::NEXT
         );
 
-        if (flag != ERROR_FLAG) {
+        if (flag != CONTINUE_FLAG) {
           return flag;
         }
       }
@@ -820,7 +820,7 @@ namespace cli_menu {
           Control::getSharedFlag() == Control::NEXT
         );
 
-        if (flag != ERROR_FLAG) {
+        if (flag != CONTINUE_FLAG) {
           return flag;
         }
       }
@@ -843,12 +843,12 @@ namespace cli_menu {
           "condition is given" : "arguments are given"
         );
 
-        if (flag != ERROR_FLAG) return flag;
+        if (flag != CONTINUE_FLAG) return flag;
       }
     }
     else if (Control::viewTest(controlStr)) {
       viewAction();
-      return ERROR_FLAG;
+      return CONTINUE_FLAG;
     }
 
     return PASSED_FLAG;
