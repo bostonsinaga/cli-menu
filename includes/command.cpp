@@ -697,34 +697,28 @@ namespace cli_menu {
   }
 
   mt::USI Command::conversation() {
-    std::string cinStr;
+    std::string bufferStr;
     mt::USI flag;
 
     while (true) {
-      Message::printListPointStyle();
+      Message::setDialogInput(bufferStr);
 
-      // wait until the 'enter' key is pressed
-      if (std::cin >> cinStr) {
+      if (!bufferStr.empty()) {
 
         // copy to secure original input
-        std::string controlStr = mt_uti::StrTools::getStringToLowercase(cinStr);
+        std::string controlStr = mt_uti::StrTools::getStringToLowercase(bufferStr);
 
         // controller detection
         flag = answerControl(controlStr);
 
         // special handling
         if (flag == PASSED_FLAG) {
-          onFreeChangeInputLetterCase(cinStr);
-          flag = answerSpecial(cinStr);
+          onFreeChangeInputLetterCase(bufferStr);
+          flag = answerSpecial(bufferStr);
         }
 
         // chain call ends
         if (flag != PASSED_FLAG) return flag;
-      }
-      // prevent infinite loop when pressing 'ctrl+c' 
-      else {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
     }
 
@@ -785,19 +779,18 @@ namespace cli_menu {
         Message::ERROR_FLAG, "already in selection mode"
       );
     }
-    else Control::printError();
 
     return PASSED_FLAG;
   }
 
   // find developer defined command
-  mt::USI Command::answerSpecial(mt::CR_STR cinStr) {
+  mt::USI Command::answerSpecial(mt::CR_STR bufferStr) {
 
     Command *found;
     bool isContinue = false;
 
     if (isParent()) {
-      found = static_cast<Cm*>(getChild(cinStr));
+      found = static_cast<Cm*>(getChild(bufferStr));
     }
     else {
       TREE *usedParent;
@@ -810,7 +803,7 @@ namespace cli_menu {
       }
 
       if (!isContinue) {
-        found = static_cast<Cm*>(usedParent->getChild(cinStr));
+        found = static_cast<Cm*>(usedParent->getChild(bufferStr));
       }
     }
 
