@@ -696,7 +696,7 @@ namespace cli_menu {
     );
   }
 
-  mt::USI Command::conversation() {
+  mt::USI Command::conversation(mt::CR_BOL dialogOn) {
     std::string bufferStr;
     mt::USI flag;
 
@@ -709,12 +709,14 @@ namespace cli_menu {
         std::string controlStr = mt_uti::StrTools::getStringToLowercase(bufferStr);
 
         // controller detection
-        flag = answerControl(controlStr);
+        flag = answerControl(controlStr, dialogOn);
 
         // special handling
         if (flag == PASSED_FLAG) {
           onFreeChangeInputLetterCase(bufferStr);
-          flag = answerSpecial(bufferStr);
+
+          if (dialogOn) flag = Command::answerSpecial(bufferStr);
+          else flag = answerSpecial(bufferStr);
         }
 
         // chain call ends
@@ -725,32 +727,68 @@ namespace cli_menu {
     return CANCELED_FLAG;
   }
 
-  mt::USI Command::answerControl(mt::CR_STR controlStr) {
+  mt::USI Command::answerControl(
+    mt::CR_STR controlStr,
+    mt::CR_BOL dialogOn
+  ) {
+    mt::USI flag;
 
     if (Control::backTest(controlStr)) {
-      const mt::USI tryToGoBackFlag = tryToGoBack();
 
-      if (tryToGoBackFlag != ERROR_FLAG) {
-        return tryToGoBackFlag;
-      }
+      // stop at the root
+      flag = tryToGoBack();
+
+      if (flag != ERROR_FLAG) return flag;
     }
     else if (Control::clipboardTest(controlStr)) {
-      printClipboardError();
+
+      // hidden paste only available for parameters
+      if (dialogOn) {
+        Command::clipboardAction();
+      }
+      else clipboardAction();
     }
     else if (Control::enterTest(controlStr)) {
+      bool isContinue = true;
 
-      // pointing to first child
-      if (isParent()) {
-        return dialogTo(
-          static_cast<Cm*>(children.front())
-        );
+      if (!dialogOn) { // in question
+
+        // requires explicit value
+        if (!used && required) {
+
+          Message::printNeatDialog(
+            Message::ERROR_FLAG,
+            getInheritanceFlag() == TOGGLE ?
+            "this " + getLevelName() + " needs a condition" :
+            "this " + getLevelName() + " needs arguments"
+          );
+
+          isContinue = false;
+        }
+        // custom test
+        else {
+          flag = questionEnterTest();
+          if (flag != PASSED_FLAG) return flag;
+        }
       }
-      // directly completed
-      else if (doesUltimateAllowEnter()) {
 
-        Command::lastCom = chooseLastCommand();
-        initDefaultData();
-        return COMPLETED_FLAG;
+      // these also in derived version
+      if (isContinue) {
+
+        // pointing to first child
+        if (isParent()) {
+
+          return dialogTo(
+            static_cast<Cm*>(children.front())
+          );
+        }
+        // directly completed
+        else if (doesUltimateAllowEnter()) {
+
+          initDefaultData();
+          Command::lastCom = chooseLastCommand();
+          return COMPLETED_FLAG;
+        }
       }
     }
     else if (Control::helpTest(controlStr)) {
@@ -763,21 +801,42 @@ namespace cli_menu {
       Control::nextTest(controlStr) ||
       Control::previousTest(controlStr)
     ) {
-      const mt::USI pointToNeighborFlag = pointToNeighbor(
-        Control::getSharedFlag() == Control::NEXT
-      );
+      if (dialogOn) {
+        flag = pointToNeighbor(
+          Control::getSharedFlag() == Control::NEXT
+        );
 
-      if (pointToNeighborFlag != ERROR_FLAG) {
-        return pointToNeighborFlag;
+        if (flag != ERROR_FLAG) {
+          return flag;
+        }
+      }
+      else { // in question
+        flag = tryToSkip(
+          Control::getSharedFlag() == Control::NEXT
+        );
+
+        if (flag != ERROR_FLAG) {
+          return flag;
+        }
       }
     }
     else if (Control::quitTest(controlStr)) {
       return CANCELED_FLAG;
     }
     else if (Control::selectTest(controlStr)) {
-      Message::printNeatDialog(
-        Message::ERROR_FLAG, "already in selection mode"
-      );
+      if (dialogOn) {
+        Message::printNeatDialog(
+          Message::ERROR_FLAG, "already in selection mode"
+        );
+      }
+      else { // in question
+        flag = tryToSelect(
+          getInheritanceFlag() == TOGGLE ?
+          "condition is given" : "arguments are given"
+        );
+
+        if (flag != ERROR_FLAG) return flag;
+      }
     }
 
     return PASSED_FLAG;
@@ -832,7 +891,7 @@ namespace cli_menu {
 
   mt::USI Command::question() {
     printQuestionBoundaryLine();
-    return conversation();
+    return conversation(false);
   }
 
   mt::USI Command::questionTo(Command *target) {
@@ -847,7 +906,7 @@ namespace cli_menu {
     // inverted in derived method
     selecting = true;
 
-    return conversation();
+    return conversation(true);
   }
 
   mt::USI Command::dialogTo(Command *target) {
@@ -1206,7 +1265,7 @@ namespace cli_menu {
     std::cout << "Command Error..";
   }
 
-  void Command::printClipboardError() {
+  void Command::clipboardAction() {
     Message::printNeatDialog(
       Message::ERROR_FLAG,
       "hidden text pasting is only available for parameters"
