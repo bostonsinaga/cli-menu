@@ -59,9 +59,9 @@ namespace cli_menu {
   void Parameter::initDefaultData() {
 
     if (argumentType == TEXT) {
-      INPUTS.result.addTexts(name, {defaultText});
+      resultInputs.addTexts(name, {defaultText});
     }
-    else INPUTS.result.addNumbers(name, {defaultNumber});
+    else resultInputs.addNumbers(name, {defaultNumber});
 
     useResultInputsIndex();
   }
@@ -81,10 +81,10 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        INPUTS.result.addTexts(name, {argument});
+        resultInputs.addTexts(name, {argument});
       }
       // whitespace is separator
-      else INPUTS.result.addNumbers(
+      else resultInputs.addNumbers(
         name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
 
@@ -93,11 +93,11 @@ namespace cli_menu {
     // accumulated
     else {
       if (argumentType == TEXT) {
-        INPUTS.result.pushText(INPUTS.index, argument);
+        resultInputs.pushText(resultInputsIndex, argument);
       }
       // whitespace is separator
-      else INPUTS.result.pushNumbers(
-        INPUTS.index,
+      else resultInputs.pushNumbers(
+        resultInputsIndex,
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
     }
@@ -108,9 +108,9 @@ namespace cli_menu {
 
       // backup vector member
       if (argumentType == TEXT) {
-        texts = INPUTS.result.getTexts(INPUTS.index);
+        texts = resultInputs.getTexts(resultInputsIndex);
       }
-      else numbers = INPUTS.result.getNumbers(INPUTS.index);
+      else numbers = resultInputs.getNumbers(resultInputsIndex);
 
       // pop vector
       Command::resetData(discarded);
@@ -119,9 +119,9 @@ namespace cli_menu {
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
-          INPUTS.result.clearText(INPUTS.index);
+          resultInputs.clearText(resultInputsIndex);
         }
-        else INPUTS.result.clearNumber(INPUTS.index);
+        else resultInputs.clearNumber(resultInputsIndex);
       }
     }
   }
@@ -155,8 +155,8 @@ namespace cli_menu {
 
   mt::USI Parameter::popBackSet() {
 
-    // only capture the last reversed 'INPUTS.direct'
-    if (INPUTS.direct.size() > 0) {
+    // only capture the last reversed 'directInputs'
+    if (directInputs.size() > 0) {
       bool found = false;
 
       std::string copyInput;
@@ -166,7 +166,7 @@ namespace cli_menu {
       else continuation = getContinuation();
 
       if (continuation) {
-        copyMatchInput(copyInput, INPUTS.direct.back());
+        copyMatchInput(copyInput, directInputs.back());
 
         continuation->iterate<mt::CR_STR, bool&>(
           Parameter::checkArgument, copyInput, found
@@ -186,8 +186,8 @@ namespace cli_menu {
       }
 
       resetData(false);
-      setData(INPUTS.direct.back());
-      INPUTS.direct.pop_back();
+      setData(directInputs.back());
+      directInputs.pop_back();
 
       if (isToddler()) return COMPLETED_FLAG;
       return PASSED_FLAG;
@@ -282,21 +282,21 @@ namespace cli_menu {
 
   mt::USI Parameter::match() {
 
-    if (INPUTS.direct.size()) {
+    if (directInputs.size()) {
       std::string copyName, copyInput;
 
       // copy to secure original strings
       copyMatchStrings(
-        copyName, copyInput, INPUTS.direct.back()
+        copyName, copyInput, directInputs.back()
       );
 
       if (copyName == DashTest::cleanSingle(copyInput)) {
-        INPUTS.direct.pop_back();
+        directInputs.pop_back();
         Command::lastCom = this;
 
         const mt::USI flag = popBackSet();
 
-        // 'INPUTS.direct' may be empty
+        // 'directInputs' may be empty
         if (flag == PASSED_FLAG) {
 
           // redirected to first child or unused neighbor
@@ -306,14 +306,14 @@ namespace cli_menu {
           return flag;
         }
 
-        // 'INPUTS.direct' is empty, could invoke 'question'
+        // 'directInputs' is empty, could invoke 'question'
         return notPopBackSet();
       }
 
       // point to neighbor if input not matched
       return askNeighbor();
     }
-    // 'INPUTS.direct' completion
+    // 'directInputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
         static_cast<Cm*>(parent)
@@ -346,7 +346,7 @@ namespace cli_menu {
   mt::USI Parameter::questionEnterTest() {
 
     // question in the middle, back to match
-    if (!INPUTS.direct.empty()) {
+    if (!directInputs.empty()) {
       return middleMatch();
     }
 
@@ -366,9 +366,9 @@ namespace cli_menu {
     // remember the past
     else {
       if (argumentType == TEXT) {
-        INPUTS.result.addTexts(name, texts);
+        resultInputs.addTexts(name, texts);
       }
-      else INPUTS.result.addNumbers(name, numbers);
+      else resultInputs.addNumbers(name, numbers);
 
       useResultInputsIndex();
     }

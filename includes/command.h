@@ -110,12 +110,9 @@ namespace cli_menu {
       dialogued;
 
     static Command *lastCom;
-
-    static struct Inputs {
-      mt::VEC_STR direct;
-      ResultInputs result;
-      int index = -1;
-    } INPUTS;
+    static mt::VEC_STR directInputs;
+    static ResultInputs resultInputs;
+    int resultInputsIndex = -1;
 
     virtual void resetData(mt::CR_BOL discarded);
     bool executeTo(Command *target);

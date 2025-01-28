@@ -175,11 +175,11 @@ namespace cli_menu {
      * to compare with program name e.g. "./bin/program.exe".
      */
     for (int i = 1; i < argc; i++) {
-      INPUTS.direct.push_back(argv[i]);
+      directInputs.push_back(argv[i]);
     }
 
     // will get 'pop_back' in 'Command::match'
-    std::reverse(INPUTS.direct.begin(), INPUTS.direct.end());
+    std::reverse(directInputs.begin(), directInputs.end());
 
     if (Command::usingLowercaseName) {
       changeTreeNamesToLowercase();

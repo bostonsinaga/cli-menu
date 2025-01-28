@@ -48,7 +48,7 @@ namespace cli_menu {
   ) {}
 
   void Toggle::initData(mt::CR_VEC_BOL data) {
-    INPUTS.result.addConditions(name, data);
+    resultInputs.addConditions(name, data);
     useResultInputsIndex();
   }
 
@@ -56,8 +56,8 @@ namespace cli_menu {
     if (!used) {
       initData({condition});
     }
-    else INPUTS.result.pushCondition(
-      INPUTS.index, condition
+    else resultInputs.pushCondition(
+      resultInputsIndex, condition
     );
   }
 
@@ -66,14 +66,14 @@ namespace cli_menu {
   ) {
     if (used) {
       // backup vector member
-      conditions = INPUTS.result.getConditions(INPUTS.index);
+      conditions = resultInputs.getConditions(resultInputsIndex);
 
       // pop vector
       Command::resetData(discarded);
 
       // clean vector member
       if (!(discarded || accumulating)) {
-        INPUTS.result.clearCondition(INPUTS.index);
+        resultInputs.clearCondition(resultInputsIndex);
       }
     }
   }
@@ -114,17 +114,17 @@ namespace cli_menu {
 
   mt::USI Toggle::match() {
 
-    if (INPUTS.direct.size()) {
+    if (directInputs.size()) {
       std::string copyName, copyInput;
 
       // copy to secure original strings
       copyMatchStrings(
-        copyName, copyInput, INPUTS.direct.back()
+        copyName, copyInput, directInputs.back()
       );
 
       if (copyName == DashTest::cleanDouble(copyInput)) {
 
-        INPUTS.direct.pop_back();
+        directInputs.pop_back();
         Command::lastCom = this;
         resetData(false);
 
@@ -139,11 +139,11 @@ namespace cli_menu {
         // toddler
         else {
           // actually there is no need for argument
-          if (INPUTS.direct.size() > 0) {
+          if (directInputs.size() > 0) {
 
             int boolFlag = Control::booleanTest(
               mt_uti::StrTools::getStringToLowercase(
-                *(INPUTS.direct.end() - 2)
+                *(directInputs.end() - 2)
               )
             );
 
@@ -161,7 +161,7 @@ namespace cli_menu {
       // point to neighbor if input not matched
       return askNeighbor();
     }
-    // 'INPUTS.direct' completion
+    // 'directInputs' completion
     else if (isMatchNeedDialog()) {
       return dialogTo(
         static_cast<Cm*>(parent)

@@ -25,7 +25,8 @@ namespace cli_menu {
   };
 
   Command *Command::lastCom = nullptr;
-  struct Command::Inputs Command::INPUTS;
+  mt::VEC_STR Command::directInputs = {};
+  ResultInputs Command::resultInputs = {};
 
   Command::Command(
     mt::CR_STR name_in,
@@ -76,8 +77,8 @@ namespace cli_menu {
 
   void Command::resetData(mt::CR_BOL discarded) {
     if (discarded) {
-      INPUTS.result.popName();
-      INPUTS.index = -1;
+      resultInputs.popName();
+      resultInputsIndex = -1;
       unuseRequired();
     }
   }
@@ -400,7 +401,7 @@ namespace cli_menu {
   }
 
   void Command::useResultInputsIndex() {
-    INPUTS.index = INPUTS.result.getLastIndex();
+    resultInputsIndex = resultInputs.getLastIndex();
     useRequired();
   }
 
@@ -470,7 +471,7 @@ namespace cli_menu {
     ResultInputs::title = name;
 
     if (callback) {
-      callback(INPUTS.result);
+      callback(resultInputs);
       called = true;
     }
     else if (plainCallback) {
@@ -527,7 +528,7 @@ namespace cli_menu {
     static Command *curCom = nullptr;
     static std::string text = "";
 
-    if (INPUTS.direct.empty()) {
+    if (directInputs.empty()) {
       return false;
     }
     else if (curCom != this) {
@@ -539,8 +540,8 @@ namespace cli_menu {
       };
 
       // singular
-      if (INPUTS.direct.size() == 1 || (
-        INPUTS.direct.size() == 2 && DashTest::isSingle(INPUTS.direct.back())
+      if (directInputs.size() == 1 || (
+        directInputs.size() == 2 && DashTest::isSingle(directInputs.back())
       )) {
         strArr[1] = "a ";
         strArr[3] = " is";
@@ -846,6 +847,7 @@ namespace cli_menu {
       }
     }
     else if (Control::viewTest(controlStr)) {
+      resultInputs.printVector(resultInputsIndex);
       return CANCELED_FLAG;
     }
 
@@ -935,13 +937,13 @@ namespace cli_menu {
     );
 
     std::string inputLevelName = "input",
-      inputName = DashTest::cleanSingle(INPUTS.direct.back());
+      inputName = DashTest::cleanSingle(directInputs.back());
 
     if (!inputName.empty()) {
       inputLevelName = "parameter";
     }
     else {
-      inputName = DashTest::cleanDouble(INPUTS.direct.back());
+      inputName = DashTest::cleanDouble(directInputs.back());
 
       if (!inputName.empty()) {
         inputLevelName = "toggle";
@@ -955,7 +957,7 @@ namespace cli_menu {
 
     // reset values
     circularCheckpoint = nullptr;
-    INPUTS.direct = {};
+    directInputs = {};
 
     if (isMatchNeedDialog(false)) return dialogTo(
       static_cast<Cm*>(parent)
