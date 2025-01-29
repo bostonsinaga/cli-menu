@@ -7,10 +7,10 @@ namespace cli_menu {
 
   class ResultInputs {
   private:
-    mt::VEC_STR names;
-    mt::VEC2_STR texts;
-    mt::VEC2_LD numbers;
-    mt::VEC2_BOL conditions;
+    static mt::VEC_STR names;
+    static mt::VEC2_STR texts;
+    static mt::VEC2_LD numbers;
+    static mt::VEC2_BOL conditions;
 
     static const std::string subtitles[3];
 
@@ -45,49 +45,49 @@ namespace cli_menu {
 
     static std::string title;
 
-    void printVector();
-    void printAt(RESULT_TYPE type, mt::CR_INT index);
-    void rename(mt::CR_INT i, mt::CR_STR name);
+    static void printVector();
+    static void printAt(RESULT_TYPE type, mt::CR_INT index);
+    static void rename(mt::CR_INT i, mt::CR_STR name);
 
-    void addName(mt::CR_STR name);
-    void addTexts(mt::CR_STR name, mt::CR_VEC_STR vec);
-    void addNumbers(mt::CR_STR name, mt::CR_VEC_LD vec);
-    void addConditions(mt::CR_STR name, mt::CR_VEC_BOL vec);
+    static void addName(mt::CR_STR name);
+    static void addTexts(mt::CR_STR name, mt::CR_VEC_STR vec);
+    static void addNumbers(mt::CR_STR name, mt::CR_VEC_LD vec);
+    static void addConditions(mt::CR_STR name, mt::CR_VEC_BOL vec);
 
-    void clearText(mt::CR_INT index);
-    void clearNumber(mt::CR_INT index);
-    void clearCondition(mt::CR_INT index);
+    static void clearText(mt::CR_INT index);
+    static void clearNumber(mt::CR_INT index);
+    static void clearCondition(mt::CR_INT index);
 
-    void pushText(mt::CR_INT index, mt::CR_STR value);
-    void pushNumber(mt::CR_INT index, mt::CR_LD value);
-    void pushCondition(mt::CR_INT index, mt::CR_BOL value);
+    static void pushText(mt::CR_INT index, mt::CR_STR value);
+    static void pushNumber(mt::CR_INT index, mt::CR_LD value);
+    static void pushCondition(mt::CR_INT index, mt::CR_BOL value);
 
-    void pushTexts(mt::CR_INT i, mt::CR_VEC_STR vec);
-    void pushNumbers(mt::CR_INT i, mt::CR_VEC_LD vec);
-    void pushConditions(mt::CR_INT i, mt::CR_VEC_BOL vec);
+    static void pushTexts(mt::CR_INT i, mt::CR_VEC_STR vec);
+    static void pushNumbers(mt::CR_INT i, mt::CR_VEC_LD vec);
+    static void pushConditions(mt::CR_INT i, mt::CR_VEC_BOL vec);
 
-    void cutName(mt::CR_INT i);
-    void cutText(mt::CR_INT i, mt::CR_INT j);
-    void cutNumbers(mt::CR_INT i, mt::CR_INT j);
-    void cutCondition(mt::CR_INT i, mt::CR_INT j);
+    static void cutName(mt::CR_INT i);
+    static void cutText(mt::CR_INT i, mt::CR_INT j);
+    static void cutNumbers(mt::CR_INT i, mt::CR_INT j);
+    static void cutCondition(mt::CR_INT i, mt::CR_INT j);
 
-    void popName();
-    void popText(mt::CR_INT i);
-    void popNumbers(mt::CR_INT i);
-    void popCondition(mt::CR_INT i);
+    static void popName();
+    static void popText(mt::CR_INT i);
+    static void popNumbers(mt::CR_INT i);
+    static void popCondition(mt::CR_INT i);
 
-    std::string getName(mt::CR_INT i);
-    std::string getText(mt::CR_INT i, mt::CR_INT j);
-    mt::LD getNumber(mt::CR_INT i, mt::CR_INT j);
-    bool getCondition(mt::CR_INT i, mt::CR_INT j);
+    static std::string getName(mt::CR_INT i);
+    static std::string getText(mt::CR_INT i, mt::CR_INT j);
+    static mt::LD getNumber(mt::CR_INT i, mt::CR_INT j);
+    static bool getCondition(mt::CR_INT i, mt::CR_INT j);
 
-    mt::VEC_STR getTexts(mt::CR_INT i);
-    mt::VEC_LD getNumbers(mt::CR_INT i);
-    mt::VEC_BOL getConditions(mt::CR_INT i);
+    static mt::VEC_STR getTexts(mt::CR_INT i);
+    static mt::VEC_LD getNumbers(mt::CR_INT i);
+    static mt::VEC_BOL getConditions(mt::CR_INT i);
 
-    int getSize() { return names.size(); }
-    int getLastIndex() { return names.size() - 1; }
-    bool doesAnyVectorContain(mt::CR_INT index);
+    static int getSize() { return names.size(); }
+    static int getLastIndex() { return names.size() - 1; }
+    static bool doesAnyVectorContain(mt::CR_INT index);
   };
 }
 

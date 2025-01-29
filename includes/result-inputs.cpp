@@ -7,6 +7,10 @@
 namespace cli_menu {
 
   std::string ResultInputs::title = "";
+  mt::VEC_STR ResultInputs::names = {};
+  mt::VEC2_STR ResultInputs::texts = {};
+  mt::VEC2_LD ResultInputs::numbers = {};
+  mt::VEC2_BOL ResultInputs::conditions = {};
 
   const std::string ResultInputs::subtitles[3] = {
     "TEXTS", "NUMBERS", "CONDITIONS"
