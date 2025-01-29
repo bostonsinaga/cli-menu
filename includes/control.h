@@ -17,12 +17,9 @@ namespace cli_menu {
 
   public:
     enum CONTROL_FLAG {
-      BACK = 0, CLIPBOARD = 1,
-      ENTER = 2, HELP = 3,
-      LIST = 4, MODIFY = 5,
-      NEXT = 6, PREVIOUS = 7,
-      QUIT = 8, RESET = 9,
-      SELECT = 10, VIEW = 11
+      BACK, CLIPBOARD, ENTER, HELP,
+      LIST, MODIFY, NEXT, PREVIOUS,
+      QUIT, RESET, SELECT, VIEW
     };
 
     static void rename(
