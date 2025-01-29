@@ -840,7 +840,8 @@ namespace cli_menu {
       return CANCELED_FLAG;
     }
     else if (Control::resetTest(controlStr)) {
-      return CANCELED_FLAG;
+      resetData(true);
+      return CONTINUE_FLAG;
     }
     else if (Control::selectTest(controlStr)) {
       if (dialogOn) {
