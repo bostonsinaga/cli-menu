@@ -19,6 +19,8 @@ namespace cli_menu {
     Color::GOLD(255, 215, 0),
     Color::GRAY(128, 128, 128),
     Color::GREEN(0, 255, 0),
+    Color::LIGHT_BLUE(223, 223, 255),
+    Color::LIGHT_GREEN(223, 255, 223),
     Color::LIME(191, 255, 0),
     Color::MAGENTA(255, 0, 255),
     Color::MAROON(128, 0, 0),
@@ -29,6 +31,7 @@ namespace cli_menu {
     Color::PINK(255, 192, 203),
     Color::PURPLE(128, 0, 128),
     Color::RED(255, 0, 0),
+    Color::ROYAL_BLUE(0, 95, 223),
     Color::SALMON(255, 140, 105),
     Color::SILVER(192, 192, 192),
     Color::SKY_BLUE(135, 206, 235),
@@ -401,6 +404,8 @@ namespace cli_menu {
       << Color::getString(" gold         \n", Color::GOLD, Color::WHITE)
       << Color::getString(" gray         \n", Color::GRAY, Color::WHITE)
       << Color::getString(" green        \n", Color::GREEN, Color::WHITE)
+      << Color::getString(" light_blue   \n", Color::LIGHT_BLUE, Color::GRAY)
+      << Color::getString(" light_green  \n", Color::LIGHT_GREEN, Color::GRAY)
       << Color::getString(" lime         \n", Color::LIME, Color::GRAY)
       << Color::getString(" magenta      \n", Color::MAGENTA, Color::WHITE)
       << Color::getString(" maroon       \n", Color::MAROON, Color::WHITE)
@@ -411,6 +416,7 @@ namespace cli_menu {
       << Color::getString(" pink         \n", Color::PINK, Color::GRAY)
       << Color::getString(" purple       \n", Color::PURPLE, Color::WHITE)
       << Color::getString(" red          \n", Color::RED, Color::WHITE)
+      << Color::getString(" royal_blue   \n", Color::ROYAL_BLUE, Color::WHITE)
       << Color::getString(" salmon       \n", Color::SALMON, Color::WHITE)
       << Color::getString(" silver       \n", Color::SILVER, Color::GRAY)
       << Color::getString(" sky_blue     \n", Color::SKY_BLUE, Color::GRAY)
