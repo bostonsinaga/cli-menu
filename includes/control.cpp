@@ -136,7 +136,7 @@ namespace cli_menu {
     if (!(maxLengths[0] || maxLengths[1])) {
       bool even;
 
-      for (int i = 0; i < TOTAL - 1; i++) {
+      for (int i = 0; i < TOTAL; i++) {
         even = !(i % 2);
 
         if (NAMES[i][0].length() > maxLengths[even]) {
@@ -144,7 +144,7 @@ namespace cli_menu {
         }
       }
 
-      for (int i = 0; i < TOTAL - 1; i++) {
+      for (int i = 0; i < TOTAL; i++) {
         even = !(i % 2);
         text += even ? "  " : " ";
 
@@ -154,7 +154,7 @@ namespace cli_menu {
 
         text += " = " + modeSymbol + NAMES[i][1];
 
-        if (i < TOTAL - 2) {
+        if (i < TOTAL - 1) {
           text += even ? "," : ",\n";
         }
         else text += "\n";
