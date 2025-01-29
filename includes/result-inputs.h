@@ -89,10 +89,6 @@ namespace cli_menu {
     int getLastIndex() { return names.size() - 1; }
     bool doesAnyVectorContain(mt::CR_INT index);
   };
-
-  // callback formats
-  typedef std::function<void(ResultInputs&)> RESULT_CALLBACK;
-  typedef std::function<void()> PLAIN_CALLBACK;
 }
 
 #endif // __CLI_MENU__RESULT_INPUTS_H__
