@@ -1146,8 +1146,7 @@ namespace cli_menu {
     else Message::printString(
       comName, Color::BLACK,
       isContainer() && !questionedGroup ?
-        Color(223, 223, 255) :  // light blue
-        Color(223, 255, 223)    // light green
+        Color::LIGHT_BLUE : Color::LIGHT_GREEN
     );
 
     // dialog status in brackets

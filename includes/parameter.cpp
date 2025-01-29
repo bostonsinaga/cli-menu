@@ -250,7 +250,7 @@ namespace cli_menu {
     text += nameStr + Color::getString(
       inputTypeStr,
       Command::usingDashesBoundaryLine ?
-        Color::AZURE : Color(0, 95, 223)
+        Color::AZURE : Color::ROYAL_BLUE
     );
 
     // add level name
