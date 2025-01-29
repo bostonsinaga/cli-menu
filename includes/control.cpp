@@ -135,30 +135,26 @@ namespace cli_menu {
 
     if (!(maxLengths[0] || maxLengths[1])) {
       bool even;
-      int j;
 
       for (int i = 0; i < TOTAL - 1; i++) {
-        j = i+1;
         even = !(i % 2);
 
-        if (NAMES[j][0].length() > maxLengths[even]) {
-          maxLengths[even] = NAMES[j][0].length();
+        if (NAMES[i][0].length() > maxLengths[even]) {
+          maxLengths[even] = NAMES[i][0].length();
         }
       }
 
       for (int i = 0; i < TOTAL - 1; i++) {
-
-        j = i+1;
         even = !(i % 2);
         text += even ? "  " : " ";
 
-        text += modeSymbol + NAMES[j][0] + std::string(
-          maxLengths[even] - NAMES[j][0].length(), ' '
+        text += modeSymbol + NAMES[i][0] + std::string(
+          maxLengths[even] - NAMES[i][0].length(), ' '
         );
 
-        text += " = " + modeSymbol + NAMES[j][1];
+        text += " = " + modeSymbol + NAMES[i][1];
 
-        if (j < TOTAL - 1) {
+        if (i < TOTAL - 2) {
           text += even ? "," : ",\n";
         }
         else text += "\n";
