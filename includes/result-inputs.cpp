@@ -55,7 +55,8 @@ namespace cli_menu {
       std::cout << "'" << ResultInputs::title << "' ";
     }
 
-    std::cout << "ResultInputs (" << ResultInputs::texts.size() << "):";
+    Message::printString("ResultInputs", Color::SKY_BLUE);
+    std::cout << " (" << ResultInputs::texts.size() << "):";
     Message::printBoundaryLine(1, 0);
 
     int mostCharsCount = 0;
@@ -70,7 +71,9 @@ namespace cli_menu {
     // print the list (all inputs from commands)
     for (int i = 0; i < 3; i++) {
 
-      std::cout << "\n" << subtitles[i] << ": ";
+      Message::printString(
+        "\n" + subtitles[i] + ": ", Color::LIGHT_GREEN
+      );
 
       for (int j = 0; j < names.size(); j++) {
         std::cout
@@ -101,7 +104,7 @@ namespace cli_menu {
       std::cout << std::endl;
     }
 
-    Message::printBoundaryLine(0, 1);
+    Message::printBoundaryLine(0, 2);
   }
 
   void ResultInputs::printAt(
@@ -109,7 +112,8 @@ namespace cli_menu {
     mt::CR_INT index
   ) {
     Message::printBoundaryLine(1, 1);
-    std::cout << subtitles[type] << ": [";
+    Message::printString(subtitles[type] + ": ", Color::SKY_BLUE);
+    std::cout << '[';
 
     // texts
     if (type == RESULT_TEXT) {
@@ -131,7 +135,7 @@ namespace cli_menu {
     );
 
     std::cout << ']';
-    Message::printBoundaryLine(1, 1);
+    Message::printBoundaryLine(1, 2);
   }
 
   /** SETTERS */
