@@ -12,25 +12,7 @@ namespace cli_menu {
     Command *parent_in,
     mt::CR_BOL argumentType_in,
     mt::CR_BOL accumulating_in,
-    RESULT_CALLBACK callback_in,
-    mt::CR_BOL propagatingCallback_in
-  ) : Command::Command(
-    name_in, description_in,
-    required_in, parent_in,
-    accumulating_in, callback_in,
-    propagatingCallback_in
-  ) {
-    argumentType = argumentType_in;
-  }
-
-  Parameter::Parameter(
-    mt::CR_STR name_in,
-    mt::CR_STR description_in,
-    mt::CR_BOL required_in,
-    Command *parent_in,
-    mt::CR_BOL argumentType_in,
-    mt::CR_BOL accumulating_in,
-    PLAIN_CALLBACK callback_in,
+    CM_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command::Command(
     name_in, description_in,
@@ -59,9 +41,9 @@ namespace cli_menu {
   void Parameter::initDefaultData() {
 
     if (argumentType == TEXT) {
-      resultInputs.addTexts(name, {defaultText});
+      ResultInputs::addTexts(name, {defaultText});
     }
-    else resultInputs.addNumbers(name, {defaultNumber});
+    else ResultInputs::addNumbers(name, {defaultNumber});
 
     useResultInputsIndex();
   }
@@ -81,10 +63,10 @@ namespace cli_menu {
 
     if (!used) {
       if (argumentType == TEXT) {
-        resultInputs.addTexts(name, {argument});
+        ResultInputs::addTexts(name, {argument});
       }
       // whitespace is separator
-      else resultInputs.addNumbers(
+      else ResultInputs::addNumbers(
         name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
 
@@ -93,10 +75,10 @@ namespace cli_menu {
     // accumulated
     else {
       if (argumentType == TEXT) {
-        resultInputs.pushText(resultInputsIndex, argument);
+        ResultInputs::pushText(resultInputsIndex, argument);
       }
       // whitespace is separator
-      else resultInputs.pushNumbers(
+      else ResultInputs::pushNumbers(
         resultInputsIndex,
         mt_uti::Scanner<mt::LD>::parseNumbers(argument)
       );
@@ -108,9 +90,9 @@ namespace cli_menu {
 
       // backup vector member
       if (argumentType == TEXT) {
-        texts = resultInputs.getTexts(resultInputsIndex);
+        texts = ResultInputs::getTexts(resultInputsIndex);
       }
-      else numbers = resultInputs.getNumbers(resultInputsIndex);
+      else numbers = ResultInputs::getNumbers(resultInputsIndex);
 
       // pop vector
       Command::resetData(discarded);
@@ -119,9 +101,9 @@ namespace cli_menu {
       if (!(discarded || accumulating)) {
 
         if (argumentType == TEXT) {
-          resultInputs.clearText(resultInputsIndex);
+          ResultInputs::clearText(resultInputsIndex);
         }
-        else resultInputs.clearNumber(resultInputsIndex);
+        else ResultInputs::clearNumber(resultInputsIndex);
       }
     }
   }
@@ -354,7 +336,7 @@ namespace cli_menu {
   }
 
   void Parameter::viewAction() {
-    resultInputs.printAt(
+    ResultInputs::printAt(
       argumentType == TEXT ?
       ResultInputs::RESULT_TEXT : ResultInputs::RESULT_NUMBER,
       resultInputsIndex
@@ -374,9 +356,9 @@ namespace cli_menu {
     // remember the past
     else {
       if (argumentType == TEXT) {
-        resultInputs.addTexts(name, texts);
+        ResultInputs::addTexts(name, texts);
       }
-      else resultInputs.addNumbers(name, numbers);
+      else ResultInputs::addNumbers(name, numbers);
 
       useResultInputsIndex();
     }

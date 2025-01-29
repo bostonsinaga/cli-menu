@@ -58,18 +58,7 @@ namespace cli_menu {
       Command *parent_in,
       mt::CR_BOL argumentType_in,
       mt::CR_BOL accumulating_in,
-      RESULT_CALLBACK callback_in,
-      mt::CR_BOL propagatingCallback_in = true
-    );
-
-    Parameter(
-      mt::CR_STR name_in,
-      mt::CR_STR description_in,
-      mt::CR_BOL required_in,
-      Command *parent_in,
-      mt::CR_BOL argumentType_in,
-      mt::CR_BOL accumulating_in,
-      PLAIN_CALLBACK callback_in,
+      CM_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 

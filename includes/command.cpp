@@ -26,7 +26,6 @@ namespace cli_menu {
 
   Command *Command::lastCom = nullptr;
   mt::VEC_STR Command::directInputs = {};
-  ResultInputs Command::resultInputs = {};
 
   Command::Command(
     mt::CR_STR name_in,
@@ -34,28 +33,11 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    RESULT_CALLBACK callback_in,
+    CM_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : TREE(name_in) {
     description = description_in;
     callback = callback_in;
-    required = required_in;
-    accumulating = accumulating_in;
-    propagatingCallback = propagatingCallback_in;
-    setParent(parent_in);
-  }
-
-  Command::Command(
-    mt::CR_STR name_in,
-    mt::CR_STR description_in,
-    mt::CR_BOL required_in,
-    Command *parent_in,
-    mt::CR_BOL accumulating_in,
-    PLAIN_CALLBACK callback_in,
-    mt::CR_BOL propagatingCallback_in
-  ) : TREE(name_in) {
-    description = description_in;
-    plainCallback = callback_in;
     required = required_in;
     accumulating = accumulating_in;
     propagatingCallback = propagatingCallback_in;
@@ -77,7 +59,7 @@ namespace cli_menu {
 
   void Command::resetData(mt::CR_BOL discarded) {
     if (discarded) {
-      resultInputs.popName();
+      ResultInputs::popName();
       resultInputsIndex = -1;
       unuseRequired();
     }
@@ -385,8 +367,7 @@ namespace cli_menu {
   }
 
   void Command::useRequired() {
-
-    if (resultInputs.doesAnyVectorContain(resultInputsIndex)) {
+    if (ResultInputs::doesAnyVectorContain(resultInputsIndex)) {
       used = true;
 
       if (parent) {
@@ -404,7 +385,7 @@ namespace cli_menu {
   }
 
   void Command::useResultInputsIndex() {
-    resultInputsIndex = resultInputs.getLastIndex();
+    resultInputsIndex = ResultInputs::getLastIndex();
     useRequired();
   }
 
@@ -474,11 +455,7 @@ namespace cli_menu {
     ResultInputs::title = name;
 
     if (callback) {
-      callback(resultInputs);
-      called = true;
-    }
-    else if (plainCallback) {
-      plainCallback();
+      callback();
       called = true;
     }
 

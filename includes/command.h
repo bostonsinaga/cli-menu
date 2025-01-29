@@ -6,6 +6,10 @@
 #include "result-inputs.h"
 
 namespace cli_menu {
+
+  // utilize 'ResultInputs' with its static members
+  typedef std::function<void()> CM_CALLBACK;
+
   /**
    * It is recommended to use derived classes
    * for feature completeness.
@@ -21,8 +25,7 @@ namespace cli_menu {
 
   private:
     bool propagatingCallback = true;
-    RESULT_CALLBACK callback;
-    PLAIN_CALLBACK plainCallback;
+    CM_CALLBACK callback;
     VEC_TREE requiredItems;
 
     static Command *circularCheckpoint;
@@ -111,7 +114,6 @@ namespace cli_menu {
 
     static Command *lastCom;
     static mt::VEC_STR directInputs;
-    static ResultInputs resultInputs;
     int resultInputsIndex = -1;
 
     virtual void resetData(mt::CR_BOL discarded);
@@ -208,17 +210,7 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       Command *parent_in,
       mt::CR_BOL accumulating_in,
-      RESULT_CALLBACK callback_in,
-      mt::CR_BOL propagatingCallback_in = true
-    );
-
-    Command(
-      mt::CR_STR name_in,
-      mt::CR_STR description_in,
-      mt::CR_BOL required_in,
-      Command *parent_in,
-      mt::CR_BOL accumulating_in,
-      PLAIN_CALLBACK callback_in,
+      CM_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
     );
 
@@ -266,12 +258,8 @@ namespace cli_menu {
       clipboard = newClipboard;
     }
 
-    void setCallback(RESULT_CALLBACK callback_in) {
+    void setCallback(CM_CALLBACK callback_in) {
       callback = callback_in;
-    }
-
-    void setCallback(PLAIN_CALLBACK callback_in) {
-      plainCallback = callback_in;
     }
 
     void setAsUltimate();

@@ -11,22 +11,7 @@ namespace cli_menu {
     mt::CR_BOL required_in,
     Command *parent_in,
     mt::CR_BOL accumulating_in,
-    RESULT_CALLBACK callback_in,
-    mt::CR_BOL propagatingCallback_in
-  ) : Command(
-    name_in, description_in,
-    required_in, parent_in,
-    accumulating_in, callback_in,
-    propagatingCallback_in
-  ) {}
-
-  Toggle::Toggle(
-    mt::CR_STR name_in,
-    mt::CR_STR description_in,
-    mt::CR_BOL required_in,
-    Command *parent_in,
-    mt::CR_BOL accumulating_in,
-    PLAIN_CALLBACK callback_in,
+    CM_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Command(
     name_in, description_in,
@@ -48,7 +33,7 @@ namespace cli_menu {
   ) {}
 
   void Toggle::initData(mt::CR_VEC_BOL data) {
-    resultInputs.addConditions(name, data);
+    ResultInputs::addConditions(name, data);
     useResultInputsIndex();
   }
 
@@ -56,7 +41,7 @@ namespace cli_menu {
     if (!used) {
       initData({condition});
     }
-    else resultInputs.pushCondition(
+    else ResultInputs::pushCondition(
       resultInputsIndex, condition
     );
   }
@@ -66,14 +51,14 @@ namespace cli_menu {
   ) {
     if (used) {
       // backup vector member
-      conditions = resultInputs.getConditions(resultInputsIndex);
+      conditions = ResultInputs::getConditions(resultInputsIndex);
 
       // pop vector
       Command::resetData(discarded);
 
       // clean vector member
       if (!(discarded || accumulating)) {
-        resultInputs.clearCondition(resultInputsIndex);
+        ResultInputs::clearCondition(resultInputsIndex);
       }
     }
   }
@@ -206,7 +191,7 @@ namespace cli_menu {
   }
 
   void Toggle::viewAction() {
-    resultInputs.printAt(
+    ResultInputs::printAt(
       ResultInputs::RESULT_CONDITION,
       resultInputsIndex
     );
