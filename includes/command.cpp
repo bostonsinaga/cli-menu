@@ -750,6 +750,8 @@ namespace cli_menu {
         Command::clipboardAction();
       }
       else clipboardAction();
+
+      return CONTINUE_FLAG;
     }
     else if (Control::enterTest(controlStr)) {
       bool isContinue = true;
@@ -800,6 +802,15 @@ namespace cli_menu {
     }
     else if (Control::listTest(controlStr)) {
       printList();
+      return CONTINUE_FLAG;
+    }
+    else if (Control::modifyTest(controlStr)) {
+      if (dialogOn) return question();
+
+      Message::printNeatDialog(
+        Message::ERROR_FLAG, "already in insert mode"
+      );
+
       return CONTINUE_FLAG;
     }
     else if (
