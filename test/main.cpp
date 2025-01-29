@@ -1,27 +1,27 @@
 #include <iostream>
 #include "cli-menu.h"
 
-void programFun(cm::ResultInputs &resultInputs) {
+void programFun() {
   std::cout << "\nProgram is called..\n";
 }
 
-void dialogFun(cm::ResultInputs &resultInputs) {
+void dialogFun() {
   std::cout << "\nDialog is called..\n";
 }
 
-void fooFun(cm::ResultInputs &resultInputs) {
+void fooFun() {
   std::cout << "\nFoo is called..\n";
 }
 
-void sentenceFun(cm::ResultInputs &resultInputs) {
+void sentenceFun() {
   std::cout << "\nSentence is called..\n";
 }
 
-void wordFun(cm::ResultInputs &resultInputs) {
+void wordFun() {
   std::cout << "\nWrite word..\n";
 }
 
-void tidyFun(cm::ResultInputs &resultInputs) {
+void tidyFun() {
   std::cout << "\nTidy up..\n";
 }
 
