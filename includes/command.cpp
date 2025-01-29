@@ -385,10 +385,13 @@ namespace cli_menu {
   }
 
   void Command::useRequired() {
-    used = true;
 
-    if (parent) {
-      static_cast<Cm*>(parent)->revokeRequiredItems(this);
+    if (resultInputs.doesAnyVectorContain(resultInputsIndex)) {
+      used = true;
+
+      if (parent) {
+        static_cast<Cm*>(parent)->revokeRequiredItems(this);
+      }
     }
   }
 
