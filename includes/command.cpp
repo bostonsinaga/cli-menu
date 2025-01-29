@@ -912,7 +912,6 @@ namespace cli_menu {
   }
 
   mt::USI Command::dialog() {
-
     printAfterBoundaryLine(getInlineRootNames());
 
     // inverted in derived method
@@ -922,8 +921,7 @@ namespace cli_menu {
   }
 
   mt::USI Command::dialogTo(Command *target) {
-    if (target) return target->dialog(
-    );
+    if (target) return target->dialog();
     return COMPLETED_FLAG;
   }
 
@@ -1179,14 +1177,17 @@ namespace cli_menu {
   }
 
   void Command::printQuestionBoundaryLine() {
-
-    // question display on non-supporters
+    /**
+     * The 'questionedGroup' must be true
+     * before calling 'printAfterBoundaryLine'.
+     */
     if (isContainer()) {
-
-      printAfterBoundaryLine(getInlineRootNames());
       questionedGroup = true;
+      printAfterBoundaryLine(getInlineRootNames());
     }
-    else printAfterBoundaryLine(getFullNameWithUltimate());
+    else printAfterBoundaryLine(
+      getFullNameWithUltimate()
+    );
   }
 
   void Command::printChildrenNamesDescriptions(
