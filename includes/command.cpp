@@ -318,7 +318,7 @@ namespace cli_menu {
 
     Message::printNeatDialog(
       Message::ERROR_FLAG,
-      "this " + getLevelName(true) + " has no "
+      "this " + getLevelName(isSupporter()) + " has no "
       + (parent || children.size() ? "neighbors" : "connections")
     );
   }
@@ -742,9 +742,7 @@ namespace cli_menu {
 
           Message::printNeatDialog(
             Message::ERROR_FLAG,
-            getInheritanceFlag() == TOGGLE ?
-            "this " + getLevelName() + " needs a condition" :
-            "this " + getLevelName() + " needs arguments"
+            "this " + getLevelName(isSupporter()) + getNeedsString()
           );
 
           isContinue = false;
@@ -834,8 +832,8 @@ namespace cli_menu {
       }
       else { // in question
         flag = tryToSelect(
-          getInheritanceFlag() == TOGGLE ?
-          "condition is given" : "arguments are given"
+          std::string(getInheritanceFlag() == TOGGLE ?
+          "conditions" : "arguments") + " are given"
         );
 
         if (flag != CONTINUE_FLAG) return flag;
