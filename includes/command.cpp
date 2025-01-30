@@ -367,12 +367,10 @@ namespace cli_menu {
   }
 
   void Command::useRequired() {
-    if (ResultInputs::doesAnyVectorContain(resultInputsIndex)) {
-      used = true;
+    used = true;
 
-      if (parent) {
-        static_cast<Cm*>(parent)->revokeRequiredItems(this);
-      }
+    if (parent) {
+      static_cast<Cm*>(parent)->revokeRequiredItems(this);
     }
   }
 
@@ -722,6 +720,7 @@ namespace cli_menu {
       flag = tryToGoBack();
 
       if (flag != CONTINUE_FLAG) return flag;
+      return CONTINUE_FLAG;
     }
     else if (Control::clipboardTest(controlStr)) {
 
@@ -757,7 +756,7 @@ namespace cli_menu {
         }
       }
 
-      // these also in derived version
+      // these also in question
       if (isContinue) {
 
         // pointing to first child
@@ -775,6 +774,8 @@ namespace cli_menu {
           return COMPLETED_FLAG;
         }
       }
+
+      return CONTINUE_FLAG;
     }
     else if (Control::helpTest(controlStr)) {
       printHelp();
@@ -815,6 +816,8 @@ namespace cli_menu {
           return flag;
         }
       }
+
+      return CONTINUE_FLAG;
     }
     else if (Control::quitTest(controlStr)) {
       return CANCELED_FLAG;
@@ -837,6 +840,8 @@ namespace cli_menu {
 
         if (flag != CONTINUE_FLAG) return flag;
       }
+
+      return CONTINUE_FLAG;
     }
     else if (Control::viewTest(controlStr)) {
       viewAction();
@@ -1007,9 +1012,7 @@ namespace cli_menu {
               isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
             );
 
-          Message::printDialog(
-            Message::ERROR_FLAG, errStr, 1
-          );
+          Message::printDialog(Message::ERROR_FLAG, errStr, 1);
         }
       }
 
