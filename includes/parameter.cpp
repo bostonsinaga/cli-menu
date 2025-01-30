@@ -172,7 +172,7 @@ namespace cli_menu {
 
           Message::printNeatDialog(
             Message::ERROR_FLAG,
-            "the '" + name + "' " + getLevelName() + " needs arguments", 1
+            "the '" + name + "' " + getLevelName() + getNeedsString(), 1
           );
 
           return question();
@@ -198,7 +198,7 @@ namespace cli_menu {
 
       Message::printNeatDialog(
         Message::ERROR_FLAG,
-        "the last " + getLevelName() + " needs arguments", 1
+        "the last " + getLevelName() + getNeedsString(), 1
       );
 
       return question();
@@ -272,6 +272,12 @@ namespace cli_menu {
     }
 
     return Color::getString(usedStr, Color::MAGENTA);
+  }
+
+  const std::string Parameter::getNeedsString() const {
+    return " needs" + std::string(
+      argumentType == NUMBER ? " numeric " : " "
+    ) + "arguments";
   }
 
   mt::USI Parameter::match() {
