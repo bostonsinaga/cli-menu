@@ -149,7 +149,7 @@ namespace cli_menu {
     void changeTreeNamesToUppercase();
 
     virtual const std::string getNeedsString() const {
-      return " needs command";
+      return " needs values";
     }
 
     virtual mt::USI match() {
