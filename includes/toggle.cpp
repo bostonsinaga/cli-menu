@@ -37,6 +37,12 @@ namespace cli_menu {
     useResultInputsIndex();
   }
 
+  void Toggle::initDefaultData() {
+    if (!used) {
+      initData({defaultCondition});
+    }
+  }
+
   void Toggle::setData(mt::CR_BOL condition) {
     if (!used) {
       initData({condition});
