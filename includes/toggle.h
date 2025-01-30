@@ -15,6 +15,10 @@ namespace cli_menu {
     void resetData(mt::CR_BOL discarded) override;
     void viewAction() override;
 
+    const std::string getNeedsString() const override {
+      return " needs conditions";
+    }
+
     mt::USI match() override;
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI dialog() override;

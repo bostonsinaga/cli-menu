@@ -38,6 +38,8 @@ namespace cli_menu {
       mt::CR_BOL usingAbbreviations
     ) override;
 
+    const std::string getNeedsString() const override;
+
     mt::USI match() override;
     mt::USI middleMatch(mt::CR_BOL needUnused = false);
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;

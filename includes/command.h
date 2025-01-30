@@ -148,6 +148,10 @@ namespace cli_menu {
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
 
+    virtual const std::string getNeedsString() const {
+      return " needs command";
+    }
+
     virtual mt::USI match() {
       return FAILED_FLAG;
     }
