@@ -39,13 +39,15 @@ namespace cli_menu {
   }
 
   void Parameter::initDefaultData() {
+    if (!used) {
 
-    if (argumentType == TEXT) {
-      ResultInputs::addTexts(name, {defaultText});
+      if (argumentType == TEXT) {
+        ResultInputs::addTexts(name, {defaultText});
+      }
+      else ResultInputs::addNumbers(name, {defaultNumber});
+
+      useResultInputsIndex();
     }
-    else ResultInputs::addNumbers(name, {defaultNumber});
-
-    useResultInputsIndex();
   }
 
   void Parameter::setData(mt::CR_STR argument) {
