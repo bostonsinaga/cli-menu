@@ -66,13 +66,23 @@ namespace cli_menu {
     if (!used) {
       if (argumentType == TEXT) {
         ResultInputs::addTexts(name, {argument});
+        useResultInputsIndex();
       }
       // whitespace is separator
-      else ResultInputs::addNumbers(
-        name, mt_uti::Scanner<mt::LD>::parseNumbers(argument)
-      );
+      else {
+        mt::VEC_LD numArgs;
+        mt_uti::Scanner<mt::LD>::parseNumbers(argument, numArgs);
 
-      useResultInputsIndex();
+        // just for numbers
+        if (!numArgs.empty()) {
+          ResultInputs::addNumbers(name, numArgs);
+          useResultInputsIndex();
+        }
+        else Message::printNeatDialog(
+          Message::ERROR_FLAG,
+          "only accepts numeric arguments"
+        );
+      }
     }
     // accumulated
     else {
