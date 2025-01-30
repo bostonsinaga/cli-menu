@@ -10,11 +10,8 @@ namespace cli_menu {
     mt::VEC_BOL conditions;
     bool defaultCondition = false;
 
-    void initDefaultData() override {
-      initData({defaultCondition});
-    }
-
     void initData(mt::CR_VEC_BOL data);
+    void initDefaultData() override;
     void resetData(mt::CR_BOL discarded) override;
     void viewAction() override;
 
