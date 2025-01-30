@@ -87,7 +87,6 @@ namespace cli_menu {
 
     static int getSize() { return names.size(); }
     static int getLastIndex() { return names.size() - 1; }
-    static bool doesAnyVectorContain(mt::CR_INT index);
   };
 }
 

@@ -320,20 +320,6 @@ namespace cli_menu {
   mt::VEC_BOL ResultInputs::getConditions(mt::CR_INT i) {
     return mt_uti::VecTools<mt::VEC_BOL>::getAt(conditions, i, {});
   }
-
-  bool ResultInputs::doesAnyVectorContain(mt::CR_INT index) {
-    return (
-      (mt_uti::VecTools<mt::VEC_STR>::hasIndex(texts, index) &&
-        !texts[index].empty()
-      ) ||
-      (mt_uti::VecTools<mt::VEC_LD>::hasIndex(numbers, index) &&
-        !numbers[index].empty()
-      ) ||
-      (mt_uti::VecTools<mt::VEC_BOL>::hasIndex(conditions, index) &&
-        !conditions[index].empty()
-      )
-    );
-  }
 }
 
 #endif // __CLI_MENU__RESULT_INPUTS_CPP__
