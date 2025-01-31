@@ -80,7 +80,7 @@ namespace cli_menu {
         }
         else Message::printNeatDialog(
           Message::ERROR_FLAG,
-          "only accepts numeric arguments"
+          "only accepts numeric values"
         );
       }
     }

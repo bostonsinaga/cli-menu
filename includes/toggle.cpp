@@ -190,7 +190,7 @@ namespace cli_menu {
     }
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
-      "only accept boolean values and controllers"
+      "only accepts boolean values"
     );
 
     return PASSED_FLAG;
