@@ -849,11 +849,39 @@ namespace cli_menu {
     return PASSED_FLAG;
   }
 
-  // find developer defined command
   mt::USI Command::answerSpecial(mt::CR_STR bufferStr) {
-
     Command *found;
     bool isContinue = false;
+
+    /** Rematch from dialog */
+
+    if (isParent() && (
+      DashTest::isDouble(bufferStr) ||
+      DashTest::isSingle(bufferStr)
+    )) {
+      if (directInputs.empty()) {
+
+        bool recentlySpace = false;
+        directInputs.push_back("");
+
+        for (mt::CR_CH ch : bufferStr) {
+
+          if (ch == ' ') {
+            if (!recentlySpace) directInputs.push_back("");
+            recentlySpace = true;
+          }
+          else {
+            directInputs.back() += ch;
+            recentlySpace = false;
+          }
+        }
+
+        std::reverse(directInputs.begin(), directInputs.end());
+        return matchTo(static_cast<Cm*>(children[0]));
+      }
+    }
+
+    /** Find developer defined command */
 
     if (isParent()) {
       found = static_cast<Cm*>(getChild(bufferStr));
