@@ -58,7 +58,7 @@ namespace cli_menu {
   }
 
   void Command::resetData(RESET_FLAG resetFlag) {
-    if (resetFlag) {
+    if (resetFlag == RESET_FLAG::DISCARD) {
       ResultInputs::popName();
       resultInputsIndex = -1;
       unuseRequired();
