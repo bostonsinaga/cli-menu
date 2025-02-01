@@ -9,18 +9,33 @@ namespace cli_menu {
   enum { COMMAND, PROGRAM, PARAMETER, TOGGLE };
 
   class DashTest {
+  private:
+    static bool isDigitLetter(mt::CR_STR str, mt::CR_INT index) {
+
+      if (mt_uti::StrTools::isDigit(str[index]) ||
+        mt_uti::StrTools::isLetter(str[index])
+      ) { return true; }
+
+      return false;
+    }
+
   public:
     static bool isSingle(mt::CR_STR str) {
-      if (str.length() > 1 && str[0] == '-') {
-        return true;
-      }
+
+      if (str.length() > 1 && str[0] == '-' &&
+        isDigitLetter(str, 1)
+      ) { return true; }
+
       return false;
     }
 
     static bool isDouble(mt::CR_STR str) {
+
       if (str.length() > 2 &&
-        str[0] == '-' && str[1] == '-'
+        str[0] == '-' && str[1] == '-' &&
+        isDigitLetter(str, 2)
       ) { return true; }
+
       return false;
     }
 
