@@ -1,16 +1,5 @@
 set (SOURCES
-  base.h
-  color.h
-  message.h
-  clipboard.h
-  control.h
-  result-inputs.h
-  command.h
-  parameter.h
-  toggle.h
-  program.h
-  cli-menu.h
-
+  base.cpp
   color.cpp
   message.cpp
   clipboard.cpp
