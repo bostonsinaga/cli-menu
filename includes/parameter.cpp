@@ -97,20 +97,22 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::resetData(mt::CR_BOL discarded) {
+  void Parameter::resetData(RESET_FLAG resetFlag) {
     if (used) {
 
       // backup vector member
-      if (argumentType == TEXT) {
-        texts = ResultInputs::getTexts(resultInputsIndex);
+      if (resetFlag != RESET_FLAG::DISCARD) {
+        if (argumentType == TEXT) {
+          texts = ResultInputs::getTexts(resultInputsIndex);
+        }
+        else numbers = ResultInputs::getNumbers(resultInputsIndex);
       }
-      else numbers = ResultInputs::getNumbers(resultInputsIndex);
 
       // pop vector
-      Command::resetData(discarded);
+      Command::resetData(resetFlag);
 
       // clean vector member
-      if (!(discarded || accumulating)) {
+      if (resetFlag == RESET_FLAG::KEEP && accumulating) {
 
         if (argumentType == TEXT) {
           ResultInputs::clearText(resultInputsIndex);
@@ -179,7 +181,7 @@ namespace cli_menu {
         }
       }
 
-      resetData(false);
+      resetData(RESET_FLAG::KEEP);
       setData(directInputs.back());
       directInputs.pop_back();
 

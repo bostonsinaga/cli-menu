@@ -14,7 +14,7 @@ namespace cli_menu {
     long double defaultNumber = 0;
 
     void initDefaultData() override;
-    void resetData(mt::CR_BOL discarded) override;
+    void resetData(RESET_FLAG resetFlag) override;
     void viewAction() override;
 
     void clipboardAction() override {
