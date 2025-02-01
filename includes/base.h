@@ -10,7 +10,7 @@ namespace cli_menu {
 
   class DashTest {
   private:
-    static bool isDigitLetter(mt::CR_STR str, mt::CR_INT index);
+    static bool isLetter(mt::CR_STR str, mt::CR_INT index);
 
   public:
     static bool isSingle(mt::CR_STR str);

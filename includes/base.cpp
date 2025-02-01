@@ -5,19 +5,17 @@
 
 namespace cli_menu {
 
-  bool DashTest::isDigitLetter(mt::CR_STR str, mt::CR_INT index) {
-
-    if (mt_uti::StrTools::isDigit(str[index]) ||
-      mt_uti::StrTools::isLetter(str[index])
-    ) { return true; }
-
+  bool DashTest::isLetter(mt::CR_STR str, mt::CR_INT index) {
+    if (mt_uti::StrTools::isLetter(str[index])) {
+      return true;
+    }
     return false;
   }
 
   bool DashTest::isSingle(mt::CR_STR str) {
 
     if (str.length() > 1 && str[0] == '-' &&
-      isDigitLetter(str, 1)
+      isLetter(str, 1)
     ) { return true; }
 
     return false;
@@ -27,7 +25,7 @@ namespace cli_menu {
 
     if (str.length() > 2 &&
       str[0] == '-' && str[1] == '-' &&
-      isDigitLetter(str, 2)
+      isLetter(str, 2)
     ) { return true; }
 
     return false;
