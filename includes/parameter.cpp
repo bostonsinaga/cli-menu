@@ -282,7 +282,7 @@ namespace cli_menu {
 
   mt::USI Parameter::match() {
 
-    if (directInputs.size()) {
+    if (!directInputs.empty()) {
       std::string copyName, copyInput;
 
       // copy to secure original strings
