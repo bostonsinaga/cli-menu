@@ -112,7 +112,7 @@ namespace cli_menu {
       Command::resetData(resetFlag);
 
       // clean vector member
-      if (resetFlag == RESET_FLAG::KEEP && accumulating) {
+      if (resetFlag == RESET_FLAG::KEEP && !accumulating) {
 
         if (argumentType == TEXT) {
           ResultInputs::clearText(resultInputsIndex);

@@ -64,7 +64,7 @@ namespace cli_menu {
       Command::resetData(resetFlag);
 
       // clean vector member
-      if (resetFlag == KEEP && accumulating) {
+      if (resetFlag == KEEP && !accumulating) {
         ResultInputs::clearCondition(resultInputsIndex);
       }
     }
