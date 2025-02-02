@@ -12,7 +12,7 @@ namespace cli_menu {
 
     void initData(mt::CR_VEC_BOL data);
     void initDefaultData() override;
-    void resetData(RESET_FLAG resetFlag) override;
+    void resetData(mt::CR_BOL discarded) override;
     void viewAction() override;
 
     const std::string getNeedsString() const override {

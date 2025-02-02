@@ -116,11 +116,7 @@ namespace cli_menu {
     static mt::VEC_STR directInputs;
     int resultInputsIndex = -1;
 
-    enum RESET_FLAG {
-      KEEP, RELEASE, DISCARD
-    };
-
-    virtual void resetData(RESET_FLAG resetFlag);
+    virtual void resetData(mt::CR_BOL discarded);
     bool executeTo(Command *target);
 
     mt::UI getRequiredCount();

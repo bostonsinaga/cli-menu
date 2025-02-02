@@ -57,8 +57,8 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
-  void Command::resetData(RESET_FLAG resetFlag) {
-    if (resetFlag == RESET_FLAG::DISCARD) {
+  void Command::resetData(mt::CR_BOL discarded) {
+    if (discarded) {
       ResultInputs::popName();
       resultInputsIndex = -1;
       unuseRequired();
@@ -260,7 +260,7 @@ namespace cli_menu {
 
     if (parent) {
       if (!isDirectInputsError("go back")) {
-        resetData(RESET_FLAG::RELEASE);
+        resetData(true);
         return static_cast<Cm*>(parent)->dialog();
       }
     }
@@ -545,7 +545,7 @@ namespace cli_menu {
     LINKED_LIST *neighbor = toNext ? next : previous;
 
     if (neighbor) {
-      resetData(RESET_FLAG::RELEASE);
+      resetData(true);
       return static_cast<Cm*>(neighbor)->dialog();
     }
 
@@ -573,7 +573,7 @@ namespace cli_menu {
         LINKED_LIST *neighbor = toNext ? next : previous;
 
         if (neighbor) {
-          resetData(RESET_FLAG::RELEASE);
+          resetData(true);
           return dialogTo(static_cast<Cm*>(neighbor));
         }
 
@@ -821,7 +821,7 @@ namespace cli_menu {
       return CANCELED_FLAG;
     }
     else if (Control::resetTest(controlStr)) {
-      resetData(RESET_FLAG::DISCARD);
+      resetData(true);
       return CONTINUE_FLAG;
     }
     else if (Control::selectTest(controlStr)) {

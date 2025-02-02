@@ -52,19 +52,17 @@ namespace cli_menu {
     );
   }
 
-  void Toggle::resetData(RESET_FLAG resetFlag) {
+  void Toggle::resetData(mt::CR_BOL discarded) {
     if (used) {
 
-      // backup vector member
-      if (resetFlag != RESET_FLAG::DISCARD) {
-        conditions = ResultInputs::getConditions(resultInputsIndex);
-      }
+      // backup registered vector
+      conditions = ResultInputs::getConditions(resultInputsIndex);
 
-      // pop vector
-      Command::resetData(resetFlag);
+      // pop registered vector
+      Command::resetData(discarded);
 
-      // clean vector member
-      if (resetFlag == KEEP && !accumulating) {
+      // clean registered vector
+      if (!(discarded || accumulating)) {
         ResultInputs::clearCondition(resultInputsIndex);
       }
     }
@@ -118,7 +116,7 @@ namespace cli_menu {
 
         directInputs.pop_back();
         Command::lastCom = this;
-        resetData(RESET_FLAG::KEEP);
+        resetData(false);
 
         if (isParent()) {
           setData(true);
