@@ -15,6 +15,10 @@ namespace cli_menu {
     void resetData(mt::CR_BOL discarded) override;
     void viewAction() override;
 
+    void resetBackupData() override {
+      conditionsBackup = {};
+    }
+
     const std::string getNeedsString() const override {
       return " needs conditions";
     }

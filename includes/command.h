@@ -117,6 +117,7 @@ namespace cli_menu {
     int resultInputsIndex = -1;
 
     virtual void resetData(mt::CR_BOL discarded);
+    virtual void resetBackupData() {}
     bool executeTo(Command *target);
 
     mt::UI getRequiredCount();

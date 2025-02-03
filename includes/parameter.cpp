@@ -120,6 +120,11 @@ namespace cli_menu {
     }
   }
 
+  void Parameter::resetBackupData() {
+    textsBackup = {};
+    numbersBackup = {};
+  }
+
   // check if 'copyInput' is a command keyword
   bool Parameter::checkArgument(
     LINKED_LIST *node,
