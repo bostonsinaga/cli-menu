@@ -7,8 +7,8 @@ namespace cli_menu {
 
   class Parameter : public Command {
   private:
-    mt::VEC_STR texts;
-    mt::VEC_LD numbers;
+    mt::VEC_STR textsBackup;
+    mt::VEC_LD numbersBackup;
     bool argumentType = false;
     std::string defaultText = "";
     long double defaultNumber = 0;

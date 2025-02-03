@@ -102,9 +102,9 @@ namespace cli_menu {
 
       // backup registered vector
       if (argumentType == TEXT) {
-        texts = ResultInputs::getTexts(resultInputsIndex);
+        textsBackup = ResultInputs::getTexts(resultInputsIndex);
       }
-      else numbers = ResultInputs::getNumbers(resultInputsIndex);
+      else numbersBackup = ResultInputs::getNumbers(resultInputsIndex);
 
       // pop registered vector
       Command::resetData(discarded);
@@ -363,8 +363,8 @@ namespace cli_menu {
 
   mt::USI Parameter::dialog() {
 
-    const bool noArguments = (argumentType == TEXT && texts.empty()) ||
-      (argumentType == NUMBER && numbers.empty());
+    const bool noArguments = (argumentType == TEXT && textsBackup.empty()) ||
+      (argumentType == NUMBER && numbersBackup.empty());
 
     const bool needQuestion = (!used && !selecting && isParent()) || isToddler();
 
@@ -374,9 +374,9 @@ namespace cli_menu {
     // remember the past
     else {
       if (argumentType == TEXT) {
-        ResultInputs::addTexts(name, texts);
+        ResultInputs::addTexts(name, textsBackup);
       }
-      else ResultInputs::addNumbers(name, numbers);
+      else ResultInputs::addNumbers(name, numbersBackup);
 
       useResultInputsIndex();
     }

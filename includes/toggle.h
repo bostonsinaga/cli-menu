@@ -7,7 +7,7 @@ namespace cli_menu {
 
   class Toggle : public Command {
   private:
-    mt::VEC_BOL conditions;
+    mt::VEC_BOL conditionsBackup;
     bool defaultCondition = false;
 
     void initData(mt::CR_VEC_BOL data);

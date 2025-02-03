@@ -56,7 +56,7 @@ namespace cli_menu {
     if (used) {
 
       // backup registered vector
-      conditions = ResultInputs::getConditions(resultInputsIndex);
+      conditionsBackup = ResultInputs::getConditions(resultInputsIndex);
 
       // pop registered vector
       Command::resetData(discarded);
@@ -205,13 +205,13 @@ namespace cli_menu {
   mt::USI Toggle::dialog() {
     const bool needQuestion = parent && !selecting && isToddler();
 
-    if (conditions.empty()) {
+    if (conditionsBackup.empty()) {
       if (needQuestion) {
         return question();
       }
     }
     // remember the past
-    else initData(conditions);
+    else initData(conditionsBackup);
 
     // inverted in base method
     selecting = false;
