@@ -80,7 +80,9 @@ namespace cli_menu {
         }
         else Message::printNeatDialog(
           Message::ERROR_FLAG,
-          "only accepts numeric values"
+          std::string(matching ? getSentenceSubject(this) : "")
+          + " only accepts numeric values",
+          2 * !Command::matching
         );
       }
     }
