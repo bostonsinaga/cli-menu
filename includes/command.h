@@ -93,7 +93,6 @@ namespace cli_menu {
     std::string description;
 
     bool accumulating = false,
-      matching = true,
       questionedGroup = false,
       required = false,
       selecting = false,
@@ -110,7 +109,8 @@ namespace cli_menu {
       usingLowercaseName,
       usingUppercaseName,
       usingDashesBoundaryLine,
-      dialogued;
+      dialogued,
+      matching;
 
     static Command *lastCom;
     static mt::VEC_STR directInputs;

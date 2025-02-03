@@ -173,7 +173,7 @@ namespace cli_menu {
 
         // question in the middle
         if (found && required) {
-          matching = false;
+          Command::matching = false;
 
           Message::printNeatDialog(
             Message::ERROR_FLAG,
@@ -199,7 +199,7 @@ namespace cli_menu {
 
     // has no argument
     if (Command::dialogued) {
-      matching = false;
+      Command::matching = false;
 
       Message::printNeatDialog(
         Message::ERROR_FLAG,
@@ -335,7 +335,7 @@ namespace cli_menu {
 
   // match continues after question in the middle
   mt::USI Parameter::middleMatch(mt::CR_BOL needUnused) {
-    matching = true;
+    Command::matching = true;
 
     return matchTo(
       static_cast<Cm*>(getContinuation(needUnused))

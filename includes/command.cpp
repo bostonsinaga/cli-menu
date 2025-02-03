@@ -14,7 +14,8 @@ namespace cli_menu {
     Command::usingLowercaseName = false,
     Command::usingUppercaseName = false,
     Command::usingDashesBoundaryLine = false,
-    Command::dialogued = false;
+    Command::dialogued = false,
+    Command::matching = true;
 
   const mt::USI Command::disguiseFlags[disguiseCount] = {
     PROGRAM
@@ -876,6 +877,8 @@ namespace cli_menu {
 
       if (lastCom) lastCom->resetBackupData();
       std::reverse(directInputs.begin(), directInputs.end());
+
+      Command::matching = true;
       return matchTo(static_cast<Cm*>(children[0]));
     }
 
@@ -1040,7 +1043,7 @@ namespace cli_menu {
         }
       }
 
-      matching = false;
+      Command::matching = false;
       return true;
     }
 
@@ -1095,7 +1098,7 @@ namespace cli_menu {
 
   void Command::onFreeChangeInputLetterCase(std::string &strIn) {
 
-    if ((matching || selecting) &&
+    if ((Command::matching || selecting) &&
       !Command::usingCaseSensitiveName
     ) {
       if (Command::usingLowercaseName) {
