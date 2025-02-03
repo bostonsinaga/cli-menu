@@ -256,6 +256,10 @@ namespace cli_menu {
     return "";
   }
 
+  std::string Command::getSentenceSubject(Command *subject) {
+    return "the '" + subject->name + "' " + subject->getLevelName();
+  }
+
   // not for program or question in the middle
   mt::USI Command::tryToGoBack() {
 
@@ -1010,25 +1014,23 @@ namespace cli_menu {
         // group or toddler
         if (!parCom->ultimate) {
 
-          const std::string firstErrStr = "The '"
-            + parCom->name + "' "
-            + parCom->getLevelName() + " has ";
-
-          const std::string lastErrStr = " that need"
+          const std::string errStr = " that need"
             + std::string(isOneLeft ? "s": "")
-            + " to be used.";
+            + " to be used";
 
-          if (reqCt > 1) Message::printDialog(
+          if (reqCt > 1) Message::printNeatDialog(
             Message::ERROR_FLAG,
-            firstErrStr + parCom->getChildrenLevelName(true)
-            + lastErrStr, 1
+            getSentenceSubject(parCom) + " has "
+            + parCom->getChildrenLevelName(true)
+            + errStr, 1
           );
           // one incomplete
-          else Message::printDialog(
+          else Message::printNeatDialog(
             Message::ERROR_FLAG,
-            firstErrStr + "a " + oneLeft->getLevelName()
+            getSentenceSubject(parCom) + " has "
+            + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
-            + lastErrStr, 1
+            + errStr, 1
           );
         }
         // ultimate or supporter
