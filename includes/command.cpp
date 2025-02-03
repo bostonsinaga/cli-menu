@@ -874,6 +874,7 @@ namespace cli_menu {
         }
       }
 
+      if (lastCom) lastCom->resetBackupData();
       std::reverse(directInputs.begin(), directInputs.end());
       return matchTo(static_cast<Cm*>(children[0]));
     }
