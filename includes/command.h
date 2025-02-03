@@ -138,6 +138,8 @@ namespace cli_menu {
 
     std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
+    std::string getSentenceSubject(Command *subject);
+
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printNullptrNeighborError();
     mt::USI tryToGoBack();
