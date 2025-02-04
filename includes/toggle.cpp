@@ -171,28 +171,15 @@ namespace cli_menu {
     int boolFlag = Control::booleanTest(bufferStr);
 
     // condition input
-    if (boolFlag) {
-
-      Command::lastCom = chooseLastCommand();
-      setData(Control::revealBoolean(boolFlag));
-
-      // inside ultimate only
-      if (isSupporter()) return questionTo(
-        getUnusedNeighbor(this)
-      );
-      // dead end
-      else if (isToddler()) {
-        return COMPLETED_FLAG;
-      }
-      // back to this dialog
-      return Command::dialog();
-    }
+    if (boolFlag) setData(
+      Control::revealBoolean(boolFlag)
+    );
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
       "only accepts boolean values"
     );
 
-    return PASSED_FLAG;
+    return downTheChannel();
   }
 
   void Toggle::viewAction() {
@@ -219,9 +206,6 @@ namespace cli_menu {
     }
     // remember the past
     else initData(conditionsBackup);
-
-    // inverted in base method
-    Command::selecting = false;
 
     // no need to set condition exclusively on parent
     if (!used) setData(true);
