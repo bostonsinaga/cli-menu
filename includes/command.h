@@ -187,9 +187,6 @@ namespace cli_menu {
     // 'INPUTS.direct' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
 
-    mt::USI tryToSkip(mt::CR_BOL toNext);
-    mt::USI tryToSelect(mt::CR_STR additionalMessage);
-
     virtual void clipboardAction();
     virtual void viewAction() {}
 
