@@ -81,8 +81,8 @@ namespace cli_menu {
         else Message::printNeatDialog(
           Message::ERROR_FLAG,
           std::string(matching ? getSentenceSubject(this) : "")
-          + " only accepts numeric values",
-          2 * !Command::matching
+          + "only accepts numeric values",
+          !Command::matching
         );
       }
     }
@@ -101,7 +101,6 @@ namespace cli_menu {
 
   void Parameter::resetData(mt::CR_BOL discarded) {
     if (used) {
-
       // backup registered vector
       if (argumentType == TEXT) {
         textsBackup = ResultInputs::getTexts(resultInputsIndex);
@@ -328,13 +327,14 @@ namespace cli_menu {
   // argument input
   mt::USI Parameter::answerSpecial(mt::CR_STR bufferStr) {
     setData(bufferStr);
-    return PASSED_FLAG;
+    return downTheChannel();
   }
 
   mt::USI Parameter::questionEnterTest() {
 
     // question in the middle, back to match
     if (!directInputs.empty()) {
+      Command::selecting = false;
       return middleMatch();
     }
 
@@ -377,9 +377,6 @@ namespace cli_menu {
 
       useResultInputsIndex();
     }
-
-    // inverted in base method
-    Command::selecting = false;
 
     // no need to set argument exclusively
     return Command::dialog();
