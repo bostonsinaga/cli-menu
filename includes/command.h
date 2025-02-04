@@ -157,6 +157,7 @@ namespace cli_menu {
 
     mt::USI matchTo(Command *target);
     mt::USI conversation(mt::CR_BOL dialogOn);
+    mt::USI downTheChannel();
 
     mt::USI answerControl(
       mt::CR_STR controlStr,
