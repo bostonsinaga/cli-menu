@@ -258,7 +258,7 @@ namespace cli_menu {
   }
 
   std::string Command::getSentenceSubject(Command *subject) {
-    return "the '" + subject->name + "' " + subject->getLevelName();
+    return "the '" + subject->name + "' " + subject->getLevelName() + " ";
   }
 
   // not for program or question in the middle
@@ -596,19 +596,34 @@ namespace cli_menu {
 
       // third
       std::string remains;
+      bool isEmpty = false;
 
       if (usingAbbreviations) {
-        if (!used) return "emp";
-        else if (accumulating) remains += "acc";
+        if (!used) {
+          status += "emp";
+          isEmpty = true;
+        }
+        else if (accumulating) {
+          remains += "acc";
+        }
         else remains += "cor";
       }
       else {
-        if (!used) return "empty";
-        else if (accumulating) remains += "accumulation";
+        if (!used) {
+          status += "empty";
+          isEmpty = true;
+        }
+        else if (accumulating) {
+          remains += "accumulation";
+        }
         else remains += "correction";
       }
 
-      status += Color::getString(remains, Color::MAGENTA);
+      if (!isEmpty) {
+        remains = Color::getString(remains, Color::MAGENTA);
+      }
+
+      status += remains;
       fontColor = Color::VIOLET;
 
       // inverted in 'question' method
@@ -651,6 +666,27 @@ namespace cli_menu {
     }
 
     return CANCELED_FLAG;
+  }
+
+  mt::USI Command::downTheChannel() {
+
+    // the 'question' will stop after pressing enter
+    if (!accumulating) {
+      Command::lastCom = chooseLastCommand();
+
+      // inside ultimate only
+      if (isSupporter()) return questionTo(
+        getUnusedNeighbor(this)
+      );
+      // dead end
+      else if (isToddler()) {
+        return COMPLETED_FLAG;
+      }
+      // back to this dialog
+      return Command::dialog();
+    }
+
+    return PASSED_FLAG;
   }
 
   mt::USI Command::answerControl(
@@ -704,6 +740,7 @@ namespace cli_menu {
 
         // pointing to first child
         if (isParent()) {
+          Command::selecting = false;
 
           return dialogTo(
             static_cast<Cm*>(children.front())
@@ -839,6 +876,7 @@ namespace cli_menu {
       DashTest::isSingle(bufferStr)
     )) {
       bool recentlySpace = false;
+      Command::selecting = false;
       directInputs.push_back("");
 
       for (mt::CR_CH ch : bufferStr) {
@@ -882,6 +920,7 @@ namespace cli_menu {
 
     if (!isContinue) {
       if (found) {
+        Command::selecting = false;
         return found->dialog();
       }
       else if (isUltimate()) {
@@ -913,12 +952,10 @@ namespace cli_menu {
     return COMPLETED_FLAG;
   }
 
+  // command selection
   mt::USI Command::dialog() {
-    printAfterBoundaryLine(getInlineRootNames());
-
-    // inverted in derived method
     Command::selecting = true;
-
+    printAfterBoundaryLine(getInlineRootNames());
     return conversation(true);
   }
 
@@ -994,14 +1031,14 @@ namespace cli_menu {
 
           if (reqCt > 1) Message::printNeatDialog(
             Message::ERROR_FLAG,
-            getSentenceSubject(parCom) + " has "
+            getSentenceSubject(parCom) + "has "
             + parCom->getChildrenLevelName(true)
             + errStr, 1
           );
           // one incomplete
           else Message::printNeatDialog(
             Message::ERROR_FLAG,
-            getSentenceSubject(parCom) + " has "
+            getSentenceSubject(parCom) + "has "
             + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
             + errStr, 1
