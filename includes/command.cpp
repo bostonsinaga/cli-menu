@@ -594,7 +594,20 @@ namespace cli_menu {
       ) + ", ";
 
       // third
-      status += getFillingStatusString(usingAbbreviations);
+      std::string remains;
+
+      if (usingAbbreviations) {
+        if (!used) return "emp";
+        else if (accumulating) remains += "acc";
+        else remains += "cor";
+      }
+      else {
+        if (!used) return "empty";
+        else if (accumulating) remains += "accumulation";
+        else remains += "correction";
+      }
+
+      status += Color::getString(remains, Color::MAGENTA);
       fontColor = Color::VIOLET;
 
       // inverted in 'question' method
@@ -603,18 +616,6 @@ namespace cli_menu {
 
     return Color::getItalicString(
       status + (withBrackets ? ")\n" : "\n"), fontColor
-    );
-  }
-
-  std::string Command::getFillingStatusString(
-    mt::CR_BOL usingAbbreviations
-  ) {
-    if (!used) {
-      return usingAbbreviations ? "emp" : "empty";
-    }
-
-    return Color::getString(
-      usingAbbreviations ? "cor" : "correction", Color::MAGENTA
     );
   }
 
