@@ -34,11 +34,6 @@ namespace cli_menu {
 
     mt::USI popBackSet();
     mt::USI notPopBackSet();
-
-    std::string getFillingStatusString(
-      mt::CR_BOL usingAbbreviations
-    ) override;
-
     const std::string getNeedsString() const override;
 
     mt::USI match() override;

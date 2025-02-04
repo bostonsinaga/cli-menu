@@ -50,10 +50,6 @@ namespace cli_menu {
       mt::CR_BOL forcedToSupporterVersion = false
     );
 
-    virtual std::string getFillingStatusString(
-      mt::CR_BOL usingAbbreviations
-    );
-
     void addRequiredItems(Command *command);
     void reduceRequiredItems(Command *command);
     void registerRequiredItems(Command *command);

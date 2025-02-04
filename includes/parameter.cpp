@@ -262,25 +262,6 @@ namespace cli_menu {
     return text;
   }
 
-  std::string Parameter::getFillingStatusString(
-    mt::CR_BOL usingAbbreviations
-  ) {
-    std::string usedStr;
-
-    if (usingAbbreviations) {
-      if (!used) return "emp";
-      else if (accumulating) usedStr = "acc";
-      else usedStr = "cor";
-    }
-    else {
-      if (!used) return "empty";
-      else if (accumulating) usedStr = "accumulation";
-      else usedStr = "correction";
-    }
-
-    return Color::getString(usedStr, Color::MAGENTA);
-  }
-
   const std::string Parameter::getNeedsString() const {
     return " needs" + std::string(
       argumentType == NUMBER ? " numeric " : " "
