@@ -558,68 +558,6 @@ namespace cli_menu {
     return CONTINUE_FLAG;
   }
 
-  mt::USI Command::tryToSkip(mt::CR_BOL toNext) {
-
-    // not allowed inside ultimate
-    if (isSupporter() && required && !used) {
-
-      Message::printNeatDialog(
-        Message::ERROR_FLAG,
-        "cannot skip this " + getLevelName(true) + " with empty "
-        + (getInheritanceFlag() == PARAMETER ? "argument" : "condition")
-      );
-    }
-    // question in the middle check
-    else if (!isDirectInputsError("skip")) {
-      Command::lastCom = ultimate;
-
-      // container
-      if (isContainer()) {
-        LINKED_LIST *neighbor = toNext ? next : previous;
-
-        if (neighbor) {
-          resetData(true);
-          return dialogTo(static_cast<Cm*>(neighbor));
-        }
-
-        printNullptrNeighborError();
-      }
-      // supporter
-      else return questionTo(
-        getUnusedNeighbor(this)
-      );
-    }
-
-    return CONTINUE_FLAG;
-  }
-
-  mt::USI Command::tryToSelect(mt::CR_STR additionalMessage) {
-
-    if (!isDirectInputsError("select")) {
-
-      if (required) {
-        Message::printNeatDialog(
-          Message::ERROR_FLAG,
-          "unable to select before " + additionalMessage
-        );
-
-        return CONTINUE_FLAG;
-      }
-      // the 'selecting' will be an opposite in overridden 'dialog' method
-      else {
-        if (isSupporter()) {
-          Command *parCom = static_cast<Cm*>(parent);
-          return parCom->dialog();
-        }
-
-        // parent
-        return Command::dialog();
-      }
-    }
-
-    return CONTINUE_FLAG;
-  }
-
   // has a newline at the end
   std::string Command::getDialogStatusString(
     mt::CR_BOL usingAbbreviations,
@@ -810,13 +748,31 @@ namespace cli_menu {
           return flag;
         }
       }
-      else { // in question
-        flag = tryToSkip(
-          Control::getSharedFlag() == Control::NEXT
-        );
+      // in question
+      else {
+        // question in the middle check
+        if (!isDirectInputsError("skip")) {
+          Command::lastCom = ultimate;
 
-        if (flag != CONTINUE_FLAG) {
-          return flag;
+          // container
+          if (isContainer()) {
+
+            LINKED_LIST *neighbor = (
+              Control::getSharedFlag() == Control::NEXT ?
+              next : previous
+            );
+
+            if (neighbor) {
+              resetData(true);
+              return dialogTo(static_cast<Cm*>(neighbor));
+            }
+
+            printNullptrNeighborError();
+          }
+          // supporter
+          else return questionTo(
+            getUnusedNeighbor(this)
+          );
         }
       }
 
@@ -836,12 +792,28 @@ namespace cli_menu {
         );
       }
       else { // in question
-        flag = tryToSelect(
-          std::string(getInheritanceFlag() == TOGGLE ?
-          "conditions" : "arguments") + " are given"
-        );
+        if (!isDirectInputsError("select")) {
 
-        if (flag != CONTINUE_FLAG) return flag;
+          if (required) {
+            Message::printNeatDialog(
+              Message::ERROR_FLAG,
+              "unable to select before "
+              + std::string(getInheritanceFlag() == TOGGLE ?
+                "conditions" : "arguments"
+              ) + " are given"
+            );
+          }
+          // the 'selecting' will be an opposite in overridden 'dialog' method
+          else {
+            if (isSupporter()) {
+              Command *parCom = static_cast<Cm*>(parent);
+              return parCom->dialog();
+            }
+
+            // parent
+            return Command::dialog();
+          }
+        }
       }
 
       return CONTINUE_FLAG;
