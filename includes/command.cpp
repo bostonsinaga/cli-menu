@@ -15,7 +15,8 @@ namespace cli_menu {
     Command::usingUppercaseName = false,
     Command::usingDashesBoundaryLine = false,
     Command::dialogued = false,
-    Command::matching = true;
+    Command::matching = true,
+    Command::selecting = false;
 
   const mt::USI Command::disguiseFlags[disguiseCount] = {
     PROGRAM
@@ -916,7 +917,7 @@ namespace cli_menu {
     printAfterBoundaryLine(getInlineRootNames());
 
     // inverted in derived method
-    selecting = true;
+    Command::selecting = true;
 
     return conversation(true);
   }
@@ -1073,7 +1074,7 @@ namespace cli_menu {
 
   void Command::onFreeChangeInputLetterCase(std::string &strIn) {
 
-    if ((Command::matching || selecting) &&
+    if ((Command::matching || Command::selecting) &&
       !Command::usingCaseSensitiveName
     ) {
       if (Command::usingLowercaseName) {

@@ -91,7 +91,6 @@ namespace cli_menu {
     bool accumulating = false,
       questionedGroup = false,
       required = false,
-      selecting = false,
       used = false;
 
     /**
@@ -106,7 +105,8 @@ namespace cli_menu {
       usingUppercaseName,
       usingDashesBoundaryLine,
       dialogued,
-      matching;
+      matching,
+      selecting;
 
     static Command *lastCom;
     static mt::VEC_STR directInputs;

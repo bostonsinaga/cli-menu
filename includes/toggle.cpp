@@ -202,8 +202,15 @@ namespace cli_menu {
     );
   }
 
+  /**
+   * Might call 'question' for arguments
+   * before selection in 'dialog'.
+   */
   mt::USI Toggle::dialog() {
-    const bool needQuestion = parent && !selecting && isToddler();
+
+    const bool needQuestion = (
+      parent && !Command::selecting && isToddler()
+    );
 
     if (conditionsBackup.empty()) {
       if (needQuestion) {
@@ -214,7 +221,7 @@ namespace cli_menu {
     else initData(conditionsBackup);
 
     // inverted in base method
-    selecting = false;
+    Command::selecting = false;
 
     // no need to set condition exclusively on parent
     if (!used) setData(true);

@@ -349,12 +349,21 @@ namespace cli_menu {
     );
   }
 
+  /**
+   * Might call 'question' for arguments
+   * before selection in 'dialog'.
+   */
   mt::USI Parameter::dialog() {
 
-    const bool noArguments = (argumentType == TEXT && textsBackup.empty()) ||
-      (argumentType == NUMBER && numbersBackup.empty());
+    const bool noArguments = (
+      (argumentType == TEXT && textsBackup.empty()) ||
+      (argumentType == NUMBER && numbersBackup.empty())
+    );
 
-    const bool needQuestion = (!used && !selecting && isParent()) || isToddler();
+    const bool needQuestion = (
+      (!used && !Command::selecting && isParent()) ||
+      isToddler()
+    );
 
     if (noArguments) {
       if (needQuestion) return question();
@@ -370,7 +379,7 @@ namespace cli_menu {
     }
 
     // inverted in base method
-    selecting = false;
+    Command::selecting = false;
 
     // no need to set argument exclusively
     return Command::dialog();
