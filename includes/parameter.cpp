@@ -63,38 +63,41 @@ namespace cli_menu {
 
     if (isEmpty) return;
 
-    if (!used) {
-      if (argumentType == TEXT) {
+    // overwrite
+    if (!accumulating) resetData(true);
+
+    if (argumentType == TEXT) {
+      if (!used) {
         ResultInputs::addTexts(name, {argument});
         useResultInputsIndex();
       }
+      // accumulated
+      else ResultInputs::pushText(
+        resultInputsIndex, argument
+      );
+    }
+    // just for numbers
+    else {
       // whitespace is separator
-      else {
-        mt::VEC_LD numArgs;
-        mt_uti::Scanner<mt::LD>::parseNumbers(argument, numArgs);
+      mt::VEC_LD numArgs;
+      mt_uti::Scanner<mt::LD>::parseNumbers(argument, numArgs);
 
-        // just for numbers
-        if (!numArgs.empty()) {
+      if (!numArgs.empty()) {
+        if (!used) {
           ResultInputs::addNumbers(name, numArgs);
           useResultInputsIndex();
         }
-        else Message::printNeatDialog(
-          Message::ERROR_FLAG,
-          std::string(matching ? getSentenceSubject(this) : "")
-          + "only accepts numeric values",
-          !Command::matching
+        // accumulated
+        else ResultInputs::pushNumbers(
+          resultInputsIndex,
+          mt_uti::Scanner<mt::LD>::parseNumbers(argument)
         );
       }
-    }
-    // accumulated
-    else {
-      if (argumentType == TEXT) {
-        ResultInputs::pushText(resultInputsIndex, argument);
-      }
-      // whitespace is separator
-      else ResultInputs::pushNumbers(
-        resultInputsIndex,
-        mt_uti::Scanner<mt::LD>::parseNumbers(argument)
+      else Message::printNeatDialog(
+        Message::ERROR_FLAG,
+        std::string(matching ? getSentenceSubject(this) : "")
+        + "only accepts numeric values",
+        2 * !Command::matching
       );
     }
   }
