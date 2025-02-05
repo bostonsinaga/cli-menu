@@ -14,6 +14,7 @@ namespace cli_menu {
     long double defaultNumber = 0;
 
     void initDefaultData() override;
+    void setData(mt::CR_STR argument);
     void resetData(RESET_FLAG resetFlag) override;
     void resetBackupData() override;
     void viewAction() override;
@@ -41,9 +42,6 @@ namespace cli_menu {
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI questionEnterTest() override;
     mt::USI dialog() override;
-
-  protected:
-    void setData(mt::CR_STR argument);
 
   public:
     enum {TEXT, NUMBER};

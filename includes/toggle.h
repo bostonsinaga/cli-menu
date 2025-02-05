@@ -12,6 +12,7 @@ namespace cli_menu {
 
     void initData(mt::CR_VEC_BOL data);
     void initDefaultData() override;
+    void setData(mt::CR_BOL condition);
     void resetData(RESET_FLAG resetFlag) override;
     void viewAction() override;
 
@@ -26,9 +27,6 @@ namespace cli_menu {
     mt::USI match() override;
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI dialog() override;
-
-  protected:
-    void setData(mt::CR_BOL condition);
 
   public:
     Toggle(): Command() {}
