@@ -165,6 +165,10 @@ namespace cli_menu {
     // will get 'pop_back' in 'Command::match'
     std::reverse(directInputs.begin(), directInputs.end());
 
+    // add the program name instead as it can be compared
+    directInputs.push_back("--" + name);
+
+    // transform letters case
     if (Command::usingLowercaseName) {
       changeTreeNamesToLowercase();
     }
@@ -172,17 +176,12 @@ namespace cli_menu {
       changeTreeNamesToUppercase();
     }
 
-    setData(true);
-
     //_____________________|
     // Chain to Completion |
     //_____________________|
 
     if (children.size() > 0) {
-
-      mt::USI flag = matchTo(
-        static_cast<Cm*>(children.front())
-      );
+      mt::USI flag = matchTo(this);
 
       switch (flag) {
         case COMPLETED_FLAG: {
