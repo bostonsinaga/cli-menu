@@ -64,7 +64,7 @@ namespace cli_menu {
     if (isEmpty) return;
 
     // overwrite
-    if (!accumulating) resetData(true);
+    if (!accumulating) resetData(RESET_FLAG::DISCARD);
 
     if (argumentType == TEXT) {
       if (!used) {
@@ -102,19 +102,26 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::resetData(mt::CR_BOL discarded) {
+  void Parameter::resetData(RESET_FLAG resetFlag) {
     if (used) {
+
       // backup registered vector
-      if (argumentType == TEXT) {
-        textsBackup = ResultInputs::getTexts(resultInputsIndex);
+      if (resetFlag == RESET_FLAG::BACKUP) {
+        if (argumentType == TEXT) {
+          textsBackup = ResultInputs::getTexts(resultInputsIndex);
+        }
+        else numbersBackup = ResultInputs::getNumbers(resultInputsIndex);
       }
-      else numbersBackup = ResultInputs::getNumbers(resultInputsIndex);
+      // clean the backup
+      else if (resetFlag == RESET_FLAG::DISCARD) {
+        resetBackupData();
+      }
 
       // pop registered vector
-      Command::resetData(discarded);
+      Command::resetData(resetFlag);
 
       // clean registered vector
-      if (!(discarded || accumulating)) {
+      if (resetFlag != RESET_FLAG::DISCARD && !accumulating) {
 
         if (argumentType == TEXT) {
           ResultInputs::clearText(resultInputsIndex);
@@ -188,7 +195,7 @@ namespace cli_menu {
         }
       }
 
-      resetData(false);
+      resetData(RESET_FLAG::INIT);
       setData(directInputs.back());
       directInputs.pop_back();
 

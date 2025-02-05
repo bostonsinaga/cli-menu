@@ -12,7 +12,7 @@ namespace cli_menu {
 
     void initData(mt::CR_VEC_BOL data);
     void initDefaultData() override;
-    void resetData(mt::CR_BOL discarded) override;
+    void resetData(RESET_FLAG resetFlag) override;
     void viewAction() override;
 
     void resetBackupData() override {

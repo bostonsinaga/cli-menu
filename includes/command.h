@@ -112,7 +112,11 @@ namespace cli_menu {
     static mt::VEC_STR directInputs;
     int resultInputsIndex = -1;
 
-    virtual void resetData(mt::CR_BOL discarded);
+    enum RESET_FLAG {
+      INIT, BACKUP, DISCARD
+    };
+
+    virtual void resetData(RESET_FLAG resetFlag);
     virtual void resetBackupData() {}
     bool executeTo(Command *target);
 
