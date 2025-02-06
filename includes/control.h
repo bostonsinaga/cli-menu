@@ -41,10 +41,6 @@ namespace cli_menu {
     static bool selectTest(mt::CR_STR str);
     static bool viewTest(mt::CR_STR str);
 
-    // returns 0 (other), 1 (false), 2 (true)
-    static int booleanTest(mt::CR_STR str);
-    static bool revealBoolean(mt::CR_INT testedFlag);
-
     static void printParameterHelp();
     static void printToggleHelp();
 

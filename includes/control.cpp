@@ -109,25 +109,6 @@ namespace cli_menu {
     return whitespacesCheck(str) == VIEW;
   }
 
-  int Control::booleanTest(mt::CR_STR str) {
-    if (str == "y" || str == "yes" ||
-      str == "1" || str == "true"
-    ) {
-      return 2;
-    }
-    else if (str == "n" || str == "no" ||
-      str == "0" || str == "false"
-    ) {
-      return 1;
-    }
-    return 0;
-  }
-
-  bool Control::revealBoolean(mt::CR_INT testedFlag) {
-    if (testedFlag > 1) return true;
-    return false;
-  }
-
   void Control::printParameterHelp() {
 
     static int maxLengths[] = {0, 0};
