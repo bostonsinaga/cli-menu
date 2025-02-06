@@ -134,7 +134,7 @@ namespace cli_menu {
         }
         // toddler
         else {
-          // actually there is no need for argument
+          // explicit condition
           if (directInputs.size() > 0) {
 
             int boolFlag = Control::booleanTest(
@@ -149,12 +149,18 @@ namespace cli_menu {
             }
             else setData(true);
           }
+          // implicit condition
+          else {
+            setData(true);
+            return COMPLETED_FLAG;
+          }
 
+          // matched point to neighbor
           return matchTo(getUnusedNeighbor(this));
         }
       }
 
-      // point to neighbor if input not matched
+      // not matched point to neighbor
       return askNeighbor();
     }
     // 'directInputs' completion
