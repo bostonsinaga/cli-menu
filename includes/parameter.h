@@ -23,18 +23,6 @@ namespace cli_menu {
       setData(clipboard.paste());
     }
 
-    static bool checkCommandKeyword(
-      LINKED_LIST *node,
-      mt::CR_STR copyInput,
-      bool &found
-    );
-
-    LINKED_LIST *getContinuation(
-      mt::CR_BOL needUnused = false
-    );
-
-    mt::USI popBackSet();
-    mt::USI notPopBackSet();
     const std::string getNeedsString() const override;
 
     mt::USI match() override;
