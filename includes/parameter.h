@@ -14,7 +14,7 @@ namespace cli_menu {
     long double defaultNumber = 0;
 
     void initDefaultData() override;
-    void setData(mt::CR_STR argument);
+    void setData(mt::CR_STR input) override;
     void resetData(RESET_FLAG resetFlag) override;
     void resetBackupData() override;
     void viewAction() override;
@@ -23,7 +23,7 @@ namespace cli_menu {
       setData(clipboard.paste());
     }
 
-    static bool checkArgument(
+    static bool checkCommandKeyword(
       LINKED_LIST *node,
       mt::CR_STR copyInput,
       bool &found

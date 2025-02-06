@@ -50,11 +50,11 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::setData(mt::CR_STR argument) {
+  void Parameter::setData(mt::CR_STR input) {
     bool isEmpty = true;
 
-    // ignore empty argument
-    for (mt::CR_CH ch : argument) {
+    // ignore empty input
+    for (mt::CR_CH ch : input) {
       if (ch != ' ' && ch != '\t' && ch != '\n') {
         isEmpty = false;
         break;
@@ -68,19 +68,19 @@ namespace cli_menu {
 
     if (argumentType == TEXT) {
       if (!used) {
-        ResultInputs::addTexts(name, {argument});
+        ResultInputs::addTexts(name, {input});
         useResultInputsIndex();
       }
       // accumulated
       else ResultInputs::pushText(
-        resultInputsIndex, argument
+        resultInputsIndex, input
       );
     }
     // just for numbers
     else {
       // whitespace is separator
       mt::VEC_LD numArgs;
-      mt_uti::Scanner<mt::LD>::parseNumbers(argument, numArgs);
+      mt_uti::Scanner<mt::LD>::parseNumbers(input, numArgs);
 
       if (!numArgs.empty()) {
         if (!used) {
@@ -90,7 +90,7 @@ namespace cli_menu {
         // accumulated
         else ResultInputs::pushNumbers(
           resultInputsIndex,
-          mt_uti::Scanner<mt::LD>::parseNumbers(argument)
+          mt_uti::Scanner<mt::LD>::parseNumbers(input)
         );
       }
       else Message::printNeatDialog(
@@ -136,8 +136,7 @@ namespace cli_menu {
     numbersBackup = {};
   }
 
-  // check if 'copyInput' is a command keyword
-  bool Parameter::checkArgument(
+  bool Parameter::checkCommandKeyword(
     LINKED_LIST *node,
     mt::CR_STR copyInput,
     bool &found
@@ -179,7 +178,7 @@ namespace cli_menu {
         copyMatchInput(copyInput, directInputs.back());
 
         continuation->iterate<mt::CR_STR, bool&>(
-          Parameter::checkArgument, copyInput, found
+          checkCommandKeyword, copyInput, found
         );
 
         // question in the middle
