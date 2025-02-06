@@ -116,6 +116,7 @@ namespace cli_menu {
       INIT, BACKUP, DISCARD
     };
 
+    virtual void setData(mt::CR_STR input) {}
     virtual void resetData(RESET_FLAG resetFlag);
     virtual void resetBackupData() {}
     bool executeTo(Command *target);
