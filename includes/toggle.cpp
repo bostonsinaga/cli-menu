@@ -32,6 +32,26 @@ namespace cli_menu {
     accumulating_in
   ) {}
 
+  int Toggle::booleanTest(mt::CR_STR str) {
+    if (str == "y" || str == "yes" ||
+      str == "1" || str == "true"
+    ) {
+      return 2;
+    }
+    else if (str == "n" || str == "no" ||
+      str == "0" || str == "false"
+    ) {
+      return 1;
+    }
+    return 0;
+  }
+
+  // use 'booleanTest' first before using this
+  bool Toggle::revealBoolean(mt::CR_INT testedFlag) {
+    if (testedFlag > 1) return true;
+    return false;
+  }
+
   void Toggle::initData(mt::CR_VEC_BOL data) {
     ResultInputs::addConditions(name, data);
     useResultInputsIndex();
@@ -43,13 +63,23 @@ namespace cli_menu {
     }
   }
 
-  void Toggle::setData(mt::CR_BOL condition) {
+  void Toggle::setCondition(mt::CR_BOL condition) {
     if (!used) {
       initData({condition});
     }
     else ResultInputs::pushCondition(
       resultInputsIndex, condition
     );
+  }
+
+  void Toggle::setData(mt::CR_STR input) {
+    int boolFlag = Toggle::booleanTest(input);
+
+    // between 1 or 2 is true
+    if (boolFlag) {
+      setCondition(Toggle::revealBoolean(boolFlag));
+    }
+    else setCondition(defaultCondition);
   }
 
   void Toggle::resetData(RESET_FLAG resetFlag) {
@@ -125,7 +155,7 @@ namespace cli_menu {
         resetData(RESET_FLAG::INIT);
 
         if (isParent()) {
-          setData(true);
+          setCondition(true);
 
           // redirected to first child
           return matchTo(
@@ -137,21 +167,13 @@ namespace cli_menu {
           // explicit condition
           if (directInputs.size() > 0) {
 
-            int boolFlag = Control::booleanTest(
-              mt_uti::StrTools::getStringToLowercase(
-                *(directInputs.end() - 2)
-              )
-            );
-
-            // between 1 or 2 is true
-            if (boolFlag) {
-              setData(Control::revealBoolean(boolFlag));
-            }
-            else setData(true);
+            setData(mt_uti::StrTools::getStringToLowercase(
+              *(directInputs.end() - 2)
+            ));
           }
           // implicit condition
           else {
-            setData(true);
+            setCondition(true);
             return COMPLETED_FLAG;
           }
 
@@ -178,13 +200,14 @@ namespace cli_menu {
     return FAILED_FLAG;
   }
 
-  mt::USI Toggle::answerSpecial(mt::CR_STR bufferStr) {
-
-    int boolFlag = Control::booleanTest(bufferStr);
+  mt::USI Toggle::answerSpecial(
+    mt::CR_STR bufferStr
+  ) {
+    int boolFlag = Toggle::booleanTest(bufferStr);
 
     // condition input
-    if (boolFlag) setData(
-      Control::revealBoolean(boolFlag)
+    if (boolFlag) setCondition(
+      Toggle::revealBoolean(boolFlag)
     );
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
@@ -220,7 +243,7 @@ namespace cli_menu {
     else initData(conditionsBackup);
 
     // no need to set condition exclusively on parent
-    if (!used) setData(true);
+    if (!used) setCondition(true);
 
     return Command::dialog();
   }
