@@ -69,6 +69,12 @@ namespace cli_menu {
     // prioritize the rest of 'directInputs'
     bool isDirectInputsError(mt::CR_STR controlName);
 
+    static bool checkCommandKeyword(
+      LINKED_LIST *node,
+      mt::CR_STR copyInput,
+      bool &found
+    );
+
     mt::USI pointToNeighbor(mt::CR_BOL toNext);
     static bool isTemporaryLetterCaseChange();
     void onFreeChangeInputLetterCase(std::string &strIn);
@@ -160,6 +166,12 @@ namespace cli_menu {
       return FAILED_FLAG;
     }
 
+    LINKED_LIST *getContinuation(
+      mt::CR_BOL needUnused = false
+    );
+
+    mt::USI popBackSet();
+    mt::USI notPopBackSet();
     mt::USI matchTo(Command *target);
     mt::USI conversation(mt::CR_BOL dialogOn);
     mt::USI downTheChannel();
