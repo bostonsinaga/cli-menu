@@ -34,7 +34,7 @@ namespace cli_menu {
     CM_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
   ) : Toggle(
-    name_in, description_in, false, nullptr,
+    name_in, description_in, true, nullptr,
     accumulating_in, callback_in, propagatingCallback_in
   ) {
     author = author_in;
@@ -48,7 +48,7 @@ namespace cli_menu {
     CR_VERSION version_in,
     mt::CR_BOL accumulating_in
   ) : Toggle(
-    name_in, description_in, false, nullptr, accumulating_in
+    name_in, description_in, true, nullptr, accumulating_in
   ) {
     author = author_in;
     version = version_in;
