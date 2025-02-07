@@ -170,8 +170,9 @@ namespace cli_menu {
       mt::CR_BOL needUnused = false
     );
 
+    // call this after passing 'DashTest::clean..'
     mt::USI popBackSet();
-    mt::USI notPopBackSet();
+
     mt::USI matchTo(Command *target);
     mt::USI conversation(mt::CR_BOL dialogOn);
     mt::USI downTheChannel();
