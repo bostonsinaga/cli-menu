@@ -523,17 +523,22 @@ namespace cli_menu {
     directInputs.pop_back();
     Command::lastCom = this;
 
-    // only capture the last reversed 'directInputs'
-    if (directInputs.size() > 0) {
-      bool found = false;
+    // will determine explicit or implicit value
+    if (directInputs.empty()) {
+      return CONTINUE_FLAG;
+    }
 
+    // capture non 'DashTest' of 'directInputs'
+    while (directInputs.size() > 0) {
+
+      bool found = false;
       std::string copyInput;
       LINKED_LIST *continuation;
 
       if (isToddler()) continuation = nullptr;
       else continuation = getContinuation();
 
-      // parent only
+      // parent level
       if (continuation) {
         copyMatchInput(copyInput, directInputs.back());
 
@@ -541,28 +546,34 @@ namespace cli_menu {
           checkCommandKeyword, copyInput, found
         );
 
-        // question in the middle
-        if (found && required) {
-          Command::matching = false;
+        // command keyword detected
+        if (found) {
 
-          Message::printNeatDialog(
-            Message::ERROR_FLAG,
-            "the '" + name + "' " + getLevelName() + getNeedsString(), 1
-          );
+          // question in the middle
+          if (required) {
+            Command::matching = false;
 
-          return question();
+            Message::printNeatDialog(
+              Message::ERROR_FLAG,
+              "the '" + name + "' " + getLevelName() + getNeedsString(), 1
+            );
+
+            return question();
+          }
+
+          // value has been captured
+          return static_cast<Cm*>(continuation)->match();
         }
       }
 
       resetData(RESET_FLAG::INIT);
       setData(directInputs.back());
       directInputs.pop_back();
-
-      if (isToddler()) return COMPLETED_FLAG;
-      return PASSED_FLAG;
     }
 
-    return CONTINUE_FLAG;
+    // 'directInputs' now is empty
+    if (isToddler()) return COMPLETED_FLAG;
+    return PASSED_FLAG;
   }
 
   mt::USI Command::matchTo(Command *target) {
