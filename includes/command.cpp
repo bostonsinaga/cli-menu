@@ -519,6 +519,10 @@ namespace cli_menu {
 
   mt::USI Command::popBackSet() {
 
+    // name has been detected
+    directInputs.pop_back();
+    Command::lastCom = this;
+
     // only capture the last reversed 'directInputs'
     if (directInputs.size() > 0) {
       bool found = false;
@@ -529,6 +533,7 @@ namespace cli_menu {
       if (isToddler()) continuation = nullptr;
       else continuation = getContinuation();
 
+      // parent only
       if (continuation) {
         copyMatchInput(copyInput, directInputs.back());
 
@@ -558,23 +563,6 @@ namespace cli_menu {
     }
 
     return CONTINUE_FLAG;
-  }
-
-  mt::USI Command::notPopBackSet() {
-
-    // has no argument
-    if (Command::dialogued) {
-      Command::matching = false;
-
-      Message::printNeatDialog(
-        Message::ERROR_FLAG,
-        "the last " + getLevelName() + getNeedsString(), 1
-      );
-
-      return question();
-    }
-    // no dialog
-    return FAILED_FLAG;
   }
 
   mt::USI Command::matchTo(Command *target) {
