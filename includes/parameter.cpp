@@ -97,7 +97,7 @@ namespace cli_menu {
         Message::ERROR_FLAG,
         std::string(matching ? getSentenceSubject(this) : "")
         + "only accepts numeric values",
-        2 * !Command::matching
+        !Command::matching
       );
     }
   }
@@ -200,24 +200,38 @@ namespace cli_menu {
         copyName, copyInput, directInputs.back()
       );
 
+      // e.g. '-name argument'
       if (copyName == DashTest::cleanSingle(copyInput)) {
-        directInputs.pop_back();
-        Command::lastCom = this;
-
         const mt::USI flag = popBackSet();
 
-        // 'directInputs' may be empty
+        // redirected to first child or unused neighbor
         if (flag == PASSED_FLAG) {
-
-          // redirected to first child or unused neighbor
           return middleMatch(true);
         }
+        // 'directInputs' may now be empty (dialog may already invoked)
         else if (flag != CONTINUE_FLAG) {
           return flag;
         }
 
-        // 'directInputs' is empty, could invoke 'question'
-        return notPopBackSet();
+        // implicit argument
+        if (!required) {
+          initDefaultData();
+          return COMPLETED_FLAG;
+        }
+        // has no argument
+        else if (Command::dialogued) {
+          Command::matching = false;
+
+          Message::printNeatDialog(
+            Message::ERROR_FLAG,
+            "the last " + getLevelName() + getNeedsString(), 1
+          );
+
+          return question();
+        }
+
+        // no dialog
+        return FAILED_FLAG;
       }
 
       // point to neighbor if input not matched
