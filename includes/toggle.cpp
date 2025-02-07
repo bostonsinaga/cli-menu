@@ -79,7 +79,7 @@ namespace cli_menu {
     if (boolFlag) {
       setCondition(Toggle::revealBoolean(boolFlag));
     }
-    else setCondition(defaultCondition);
+    else initDefaultData();
   }
 
   void Toggle::resetData(RESET_FLAG resetFlag) {
@@ -148,38 +148,30 @@ namespace cli_menu {
         copyName, copyInput, directInputs.back()
       );
 
+      // e.g. '--name condition'
       if (copyName == DashTest::cleanDouble(copyInput)) {
 
-        directInputs.pop_back();
-        Command::lastCom = this;
-        resetData(RESET_FLAG::INIT);
+        Command *firstChild;
+        const mt::USI flag = popBackSet();
 
         if (isParent()) {
-          setCondition(true);
-
-          // redirected to first child
-          return matchTo(
-            static_cast<Cm*>(children.front())
-          );
+          firstChild = static_cast<Cm*>(children.front());
         }
-        // toddler
-        else {
-          // explicit condition
-          if (directInputs.size() > 0) {
 
-            setData(mt_uti::StrTools::getStringToLowercase(
-              *(directInputs.end() - 2)
-            ));
-          }
-          // implicit condition
-          else {
-            setCondition(true);
-            return COMPLETED_FLAG;
-          }
-
-          // matched point to neighbor
-          return matchTo(getUnusedNeighbor(this));
+        // redirected to first child
+        if (flag == PASSED_FLAG) {
+          matchTo(firstChild);
         }
+        // 'directInputs' may now be empty (dialog may already invoked)
+        else if (flag != CONTINUE_FLAG) {
+          return flag;
+        }
+
+        // implicit condition
+        initDefaultData();
+
+        if (isToddler()) return COMPLETED_FLAG;
+        return matchTo(firstChild);
       }
 
       // not matched point to neighbor
@@ -211,7 +203,8 @@ namespace cli_menu {
     );
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
-      "only accepts boolean values"
+      "only accepts boolean values",
+      !Command::matching
     );
 
     return downTheChannel();
@@ -243,7 +236,7 @@ namespace cli_menu {
     else initData(conditionsBackup);
 
     // no need to set condition exclusively on parent
-    if (!used) setCondition(true);
+    initDefaultData();
 
     return Command::dialog();
   }
