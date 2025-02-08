@@ -26,7 +26,8 @@ namespace cli_menu {
     const std::string getNeedsString() const override;
 
     mt::USI match() override;
-    mt::USI middleMatch(mt::CR_BOL needUnused = false);
+    mt::USI middleMatch(mt::CR_BOL needUnusedNeighbor);
+    mt::USI channelTheParent() override;
     mt::USI answerSpecial(mt::CR_STR bufferStr) override;
     mt::USI questionEnterTest() override;
     mt::USI dialog() override;

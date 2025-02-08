@@ -253,12 +253,22 @@ namespace cli_menu {
   }
 
   // match continues after question in the middle
-  mt::USI Parameter::middleMatch(mt::CR_BOL needUnused) {
+  mt::USI Parameter::middleMatch(mt::CR_BOL needUnusedNeighbor) {
     Command::matching = true;
 
-    return matchTo(
-      static_cast<Cm*>(getContinuation(needUnused))
-    );
+    return matchTo(static_cast<Cm*>(
+      getContinuation(needUnusedNeighbor)
+    ));
+  }
+
+  mt::USI Parameter::channelTheParent() {
+
+    // question in the middle, back to match
+    if (!directInputs.empty()) {
+      return middleMatch(false);
+    }
+
+    return Command::channelTheParent();
   }
 
   // argument input
@@ -272,7 +282,7 @@ namespace cli_menu {
     // question in the middle, back to match
     if (!directInputs.empty()) {
       Command::selecting = false;
-      return middleMatch();
+      return middleMatch(false);
     }
 
     return PASSED_FLAG;
