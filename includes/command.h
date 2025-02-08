@@ -167,7 +167,7 @@ namespace cli_menu {
     }
 
     LINKED_LIST *getContinuation(
-      mt::CR_BOL needUnused = false
+      mt::CR_BOL needUnusedNeighbor
     );
 
     // call this after passing 'DashTest::clean..'
@@ -176,6 +176,8 @@ namespace cli_menu {
     mt::USI matchTo(Command *target);
     mt::USI conversation(mt::CR_BOL dialogOn);
     mt::USI downTheChannel();
+
+    virtual mt::USI channelTheParent();
 
     mt::USI answerControl(
       mt::CR_STR controlStr,

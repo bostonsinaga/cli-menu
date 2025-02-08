@@ -510,10 +510,10 @@ namespace cli_menu {
   }
 
   Command::LINKED_LIST *Command::getContinuation(
-    mt::CR_BOL needUnused
+    mt::CR_BOL needUnusedNeighbor
   ) {
     if (isParent()) return children.front();
-    else if (needUnused) return getUnusedNeighbor(this);
+    else if (needUnusedNeighbor) return getUnusedNeighbor(this);
     return next;
   }
 
@@ -536,7 +536,7 @@ namespace cli_menu {
       LINKED_LIST *continuation;
 
       if (isToddler()) continuation = nullptr;
-      else continuation = getContinuation();
+      else continuation = getContinuation(false);
 
       // parent level
       if (continuation) {
@@ -586,6 +586,11 @@ namespace cli_menu {
     Command::lastCom = chooseLastCommand(true);
 
     return COMPLETED_FLAG;
+  }
+
+  // back to this dialog by default
+  mt::USI Command::channelTheParent() {
+    return Command::dialog();
   }
 
   //________|
@@ -767,8 +772,8 @@ namespace cli_menu {
       else if (isToddler()) {
         return COMPLETED_FLAG;
       }
-      // back to this dialog
-      return Command::dialog();
+      // back to this dialog by default
+      return channelTheParent();
     }
 
     return PASSED_FLAG;
