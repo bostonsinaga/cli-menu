@@ -2,8 +2,13 @@
 #define __CLI_MENU__PROGRAM_CPP__
 
 #include "program.h"
+#include <csignal>
 
 namespace cli_menu {
+
+  void ctrlCSignalHandler(int) {
+    Message::INTERRUPTED_CTRL_C.store(true);
+  }
 
   Version::Version(
     mt::CR_UI major_in,
@@ -175,6 +180,9 @@ namespace cli_menu {
     else if (Command::usingUppercaseName) {
       changeTreeNamesToUppercase();
     }
+
+    // register signal handler for Ctrl+C (SIGINT)
+    std::signal(SIGINT, ctrlCSignalHandler);
 
     //_____________________|
     // Chain to Completion |
