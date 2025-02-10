@@ -150,17 +150,22 @@ namespace cli_menu {
 
       // e.g. '--name condition'
       if (copyName == DashTest::cleanDouble(copyInput)) {
-
         Command *firstChild;
-        const mt::USI flag = popBackSet();
 
+        /**
+         * Must be before the 'popBackSet' call
+         * to avoid question in the middle error.
+         */
         if (isParent()) {
+          required = false;
           firstChild = static_cast<Cm*>(children.front());
         }
 
+        const mt::USI flag = popBackSet();
+
         // redirected to first child
         if (flag == PASSED_FLAG) {
-          matchTo(firstChild);
+          return matchTo(firstChild);
         }
         // 'directInputs' may now be empty (dialog may already invoked)
         else if (flag != CONTINUE_FLAG) {
