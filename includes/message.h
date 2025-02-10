@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__MESSAGE_H__
 #define __CLI_MENU__MESSAGE_H__
 
+#include <atomic>
 #include "color.h"
 
 namespace cli_menu {
@@ -24,6 +25,9 @@ namespace cli_menu {
       HINT_FLAG, WARNING_FLAG, ERROR_FLAG,
       SUCCEED_FLAG, CANCELED_FLAG
     };
+
+    // use an atomic boolean to signal an interrupt
+    static std::atomic<bool> INTERRUPTED_CTRL_C;
 
     // 2 after beginning + 4 around colon + 3 before end
     static const int frameSpacesCount = 9;
@@ -135,8 +139,11 @@ namespace cli_menu {
       mt::CR_INT endNewlinesCount = 2
     );
 
+    // to prevent infinite loop after pressing 'ctrl+c'
+    static bool interruptedCtrlC();
+
     // decorated input interface
-    static void setDialogInput(std::string &buffer);
+    static bool setDialogInput(std::string &buffer);
   };
 }
 

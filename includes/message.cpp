@@ -8,6 +8,7 @@ namespace cli_menu {
   char Message::boundaryCharacter = '-';
   int Message::boundaryCharactersAmount = 45;
   std::string Message::listPointStyle = ">";
+  std::atomic<bool> Message::INTERRUPTED_CTRL_C(false);
 
   void Message::editToCapitalFirstPeriodEnd(
     std::string &text,
@@ -314,9 +315,36 @@ namespace cli_menu {
     printDialog(flag, reason, endNewlinesCount);
   }
 
-  void Message::setDialogInput(std::string &buffer) {
+  // check if interrupted before waiting for input
+  bool Message::interruptedCtrlC() {
+
+    if (Message::INTERRUPTED_CTRL_C.load()) {
+      std::cout << std::endl;
+
+      printDialog(
+        ERROR_FLAG, "Interrupt signal received. Exiting program.", 1
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  bool Message::setDialogInput(std::string &buffer) {
+
+    // decoration string
     std::cout << listPointStyle << ' ';
+
+    if (interruptedCtrlC()) return false;
+
+    // user input
     std::getline(std::cin, buffer);
+
+    if (interruptedCtrlC()) return false;
+
+    // loop still running
+    return true;
   }
 }
 
