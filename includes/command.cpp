@@ -730,7 +730,9 @@ namespace cli_menu {
     mt::USI flag;
 
     while (true) {
-      Message::setDialogInput(bufferStr);
+      if (!Message::setDialogInput(bufferStr)) {
+        break;
+      }
 
       if (!bufferStr.empty()) {
 
