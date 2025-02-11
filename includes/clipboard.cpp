@@ -6,32 +6,8 @@
 
 namespace cli_menu {
 
-  Clipboard::Clipboard() {
-    rule = Clipboard::defaultRule;
-  }
-
-  Clipboard::Clipboard(rule_clbk rule_in) {
-    rule = rule_in;
-  }
-
-  Clipboard::Clipboard(mt::CR_STR errorMessage_in) {
-    rule = Clipboard::defaultRule;
-    errorMessage = errorMessage_in;
-  }
-
-  Clipboard::Clipboard(
-    rule_clbk rule_in,
-    mt::CR_STR errorMessage_in
-  ) {
-    rule = rule_in;
-    errorMessage = errorMessage_in;
-  }
-
-  bool Clipboard::defaultRule(mt::CR_STR text) {
-    return true;
-  }
-
-  std::string Clipboard::paste() {
+  template<>
+  void Clipboard::paste() {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
@@ -43,8 +19,12 @@ namespace cli_menu {
 
     HANDLE hData = GetClipboardData(CF_TEXT);
 
-    if (hData == nullptr) {
-      std::cerr << "\n__Failed to get clipboard data" << std::endl;
+    if (!hData) {
+      Message::printNeatDialog(
+        Message::ERROR_FLAG,
+        "failed to get clipboard data"
+      );
+
       CloseClipboard();
       return "";
     }
@@ -53,8 +33,11 @@ namespace cli_menu {
 
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
-    if (pszText == nullptr) {
-      std::cerr << "\n__Failed to lock clipboard data" << std::endl;
+    if (!pszText) {
+      Message::printNeatDialog(
+        Message::ERROR_FLAG,
+        "failed to lock clipboard data"
+      );
     }
     else GlobalUnlock(hData);
 
@@ -68,7 +51,7 @@ namespace cli_menu {
       if (errorMessage.empty()) {
         Message::printNeatDialog(
           Message::ERROR_FLAG,
-          "invalid clipboard content"
+          "invalid clipboard content", 0
         );
       }
       else Message::printNeatDialog(
@@ -77,7 +60,7 @@ namespace cli_menu {
       );
     }
     else Message::printNeatDialog(
-      Message::HINT_FLAG,
+      Message::SUCCEED_FLAG,
       "pasted from clipboard"
     );
 
