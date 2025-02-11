@@ -2,7 +2,6 @@ set (SOURCES
   base.cpp
   color.cpp
   message.cpp
-  clipboard.cpp
   control.cpp
   result-inputs.cpp
   command.cpp
