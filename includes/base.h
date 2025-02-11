@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__BASE_H__
 #define __CLI_MENU__BASE_H__
 
+#include <windows.h>
 #include "mini-tools.h"
 
 namespace cli_menu {
