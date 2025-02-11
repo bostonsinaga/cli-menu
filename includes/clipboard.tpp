@@ -6,13 +6,43 @@
 
 namespace cli_menu {
 
-  template<>
-  void Clipboard::paste() {
+  template <typename T>
+  Clipboard<T>::Clipboard(RuleCallback<T> rule_in) {
+    customized = true;
+    rule = rule_in;
+  }
+
+  template <typename T>
+  Clipboard<T>::Clipboard(mt::CR_STR errorMessage_in) {
+    rule = Clipboard::defaultRule;
+    errorMessage = errorMessage_in;
+  }
+
+  template <typename T>
+  Clipboard<T>::Clipboard(
+    RuleCallback<T> rule_in,
+    mt::CR_STR errorMessage_in
+  ) {
+    customized = true;
+    rule = rule_in;
+    errorMessage = errorMessage_in;
+  }
+
+  template <typename T>
+  static bool Clipboard<T>::defaultRule(
+    mt::CR_STR text, T &dataRef
+  ) {
+    dataRef = text;
+    return true;
+  }
+
+  template <typename T>
+  void Clipboard<T>::paste(T &dataRef) {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
       std::cerr << "\n__Failed to open clipboard" << std::endl;
-      return "";
+      return;
     }
 
     /** Get clipboard data */
@@ -26,7 +56,7 @@ namespace cli_menu {
       );
 
       CloseClipboard();
-      return "";
+      return;
     }
 
     /** Convert it to string */
@@ -41,13 +71,14 @@ namespace cli_menu {
     }
     else GlobalUnlock(hData);
 
+    // moved to variable
     std::string text(pszText);
 
     // done with clipboard
     CloseClipboard();
 
     // print error message
-    if (!rule(text)) {
+    if (!rule(text, dataRef)) {
       if (errorMessage.empty()) {
         Message::printNeatDialog(
           Message::ERROR_FLAG,
@@ -63,9 +94,6 @@ namespace cli_menu {
       Message::SUCCEED_FLAG,
       "pasted from clipboard"
     );
-
-    // the product
-    return text;
   }
 }
 
