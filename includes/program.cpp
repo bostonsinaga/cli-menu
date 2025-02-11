@@ -111,17 +111,15 @@ namespace cli_menu {
       static const std::string text_1 = (
         Color::getString(
           "Welcome to '" + mt_uti::StrTools::getStringToUppercase(name),
-          Color::WHITE
+          Color::SKY_BLUE
         ) + "'\n\n" + description
         + "\n\nversion: " + version.stringify()
         + "\nauthor: " + author
       );
 
       static const std::string text_2 = (
-        Color::getString("\nHINTS:\n\n", Color::WHITE)
+        Color::getString("\nHINTS:\n\n", Color::SKY_BLUE)
         + "* Use '-' for parameter and '--' for toggle\n"
-        + "* The <req> or <opt> are only available in parameter (text/number)\n"
-        + "* The toggle (boolean) always optional, except for main command and groups\n"
         + "* Please type '--[command] --help' to view detailed information"
       );
 
