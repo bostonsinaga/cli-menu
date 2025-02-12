@@ -5,27 +5,15 @@
 
 namespace cli_menu {
 
+  /** Only for string copy */
   class Clipboard {
   private:
-    typedef std::function<bool(mt::CR_STR)> rule_clbk;
-
-    std::string errorMessage;
-    rule_clbk rule;
-
-    static bool defaultRule(mt::CR_STR text);
+    static void printSucceed();
 
   public:
-    Clipboard();
-    Clipboard(rule_clbk rule_in);
-    Clipboard(mt::CR_STR errorMessage_in);
-
-    Clipboard(
-      rule_clbk rule_in,
-      mt::CR_STR errorMessage_in
-    );
-
-    // only for string copy
-    std::string paste();
+    static std::string pasteText();
+    static std::string pasteNumbers();
+    static std::string pasteConditions();
   };
 }
 

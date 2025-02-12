@@ -1,46 +1,28 @@
 #ifndef __CLI_MENU__CLIPBOARD_CPP__
 #define __CLI_MENU__CLIPBOARD_CPP__
 
+#include <windows.h>
 #include "clipboard.h"
 
 namespace cli_menu {
 
-  template <typename T>
-  Clipboard<T>::Clipboard(RuleCallback<T> rule_in) {
-    customized = true;
-    rule = rule_in;
+  void Clipboard::printSucceed() {
+    Message::printNeatDialog(
+      Message::SUCCEED_FLAG,
+      "pasted from clipboard"
+    );
   }
 
-  template <typename T>
-  Clipboard<T>::Clipboard(mt::CR_STR errorMessage_in) {
-    rule = Clipboard::defaultRule;
-    errorMessage = errorMessage_in;
-  }
-
-  template <typename T>
-  Clipboard<T>::Clipboard(
-    RuleCallback<T> rule_in,
-    mt::CR_STR errorMessage_in
-  ) {
-    customized = true;
-    rule = rule_in;
-    errorMessage = errorMessage_in;
-  }
-
-  template <typename T>
-  static bool Clipboard<T>::defaultRule(
-    mt::CR_STR text, T &dataRef
-  ) {
-    dataRef = text;
-    return true;
-  }
-
-  template <typename T>
-  void Clipboard<T>::paste(T &dataRef) {
+  void Clipboard::pasteText(std::string &dataRef) {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
-      std::cerr << "\n__Failed to open clipboard" << std::endl;
+
+      Message::printNeatDialog(
+        Message::ERROR_FLAG,
+        "failed to open clipboard"
+      );
+
       return;
     }
 
@@ -70,29 +52,49 @@ namespace cli_menu {
     }
     else GlobalUnlock(hData);
 
-    // moved to variable
-    std::string text(pszText);
+    // assign to reference
+    dataRef = std::string(pszText);
 
     // done with clipboard
     CloseClipboard();
 
-    // print error message
-    if (!rule(text, dataRef)) {
-      if (errorMessage.empty()) {
-        Message::printNeatDialog(
-          Message::ERROR_FLAG,
-          "invalid clipboard content", 0
+    printSucceed();
+  }
+
+  void Clipboard::pasteNumbers(mt::VEC_LD &numbersRef) {
+    std::string textRef;
+    pasteText(textRef);
+    mt_uti::Scanner<mt::LD>::parseNumbers(textRef, numbersRef);
+  }
+
+  void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
+
+    bool boolFlag;
+    std::string textRef;
+    mt::VEC_STR textVec {""};
+
+    pasteText(textRef);
+
+    // truncated by spaces
+    for (mt::CR_CH ch : textRef) {
+      if (Util::isWhitespace(ch)) {
+        textVec.push_back("");
+      }
+      else textVec.back() += ch;
+    }
+
+    // parse booleans
+    for (mt::CR_STR str : textVec) {
+      boolFlag = Util::booleanTest(str);
+
+      if (boolFlag) {
+        conditionsRef.push_back(
+          Util::revealBoolean(boolFlag)
         );
       }
-      else Message::printNeatDialog(
-        Message::ERROR_FLAG,
-        errorMessage
-      );
     }
-    else Message::printNeatDialog(
-      Message::SUCCEED_FLAG,
-      "pasted from clipboard"
-    );
+
+    printSucceed();
   }
 }
 
