@@ -44,6 +44,8 @@ namespace cli_menu {
   }
 
   void Toggle::setCondition(mt::CR_BOL condition) {
+    overwrite();
+
     if (!used) {
       initData({condition});
     }
@@ -53,6 +55,8 @@ namespace cli_menu {
   }
 
   void Toggle::setConditions(mt::CR_VEC_BOL conditions) {
+    overwrite();
+
     if (!used) {
       initData(conditions);
     }

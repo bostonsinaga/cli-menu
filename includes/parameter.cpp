@@ -52,6 +52,8 @@ namespace cli_menu {
 
   void Parameter::setNumbers(mt::CR_VEC_LD numbers) {
     if (!numbers.empty()) {
+      overwrite();
+
       if (!used) {
         ResultInputs::addNumbers(name, numbers);
         useResultInputsIndex();
@@ -80,12 +82,12 @@ namespace cli_menu {
       }
     }
 
+    // only spaces detected
     if (isEmpty) return;
 
-    // overwrite
-    if (!accumulating) resetData(RESET_FLAG::DISCARD);
-
     if (argumentType == PARAM_TEXT) {
+      overwrite();
+
       if (!used) {
         ResultInputs::addTexts(name, {input});
         useResultInputsIndex();
