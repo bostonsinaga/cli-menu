@@ -1338,7 +1338,7 @@ namespace cli_menu {
 
       // current dialog status
       if (!summarized) {
-        text = Color::getString("THIS: ", Color::GREEN)
+        text = Color::getString("THIS: ", Color::SKY_BLUE)
           + getDialogStatusString(false, false, true) + "\n";
       }
       else text = "";
