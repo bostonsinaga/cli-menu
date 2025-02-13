@@ -11,9 +11,9 @@ namespace cli_menu {
     static void printSucceed();
 
   public:
-    static std::string pasteText();
-    static std::string pasteNumbers();
-    static std::string pasteConditions();
+    static void pasteText(std::string &dataRef);
+    static void pasteNumbers(mt::VEC_LD &numbersRef);
+    static void pasteConditions(mt::VEC_BOL &conditionsRef);
   };
 }
 
