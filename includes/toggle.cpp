@@ -68,8 +68,7 @@ namespace cli_menu {
   void Toggle::setData(mt::CR_STR input) {
     Util::BOOL_FLAG boolFlag = Util::booleanTest(input);
 
-    // between 1 or 2 is true
-    if (boolFlag) {
+    if (boolFlag != Util::BOOL_OTHER) {
       setCondition(Util::revealBoolean(boolFlag));
     }
     else initDefaultData();
@@ -190,13 +189,12 @@ namespace cli_menu {
     return FAILED_FLAG;
   }
 
-  mt::USI Toggle::answerSpecial(
-    mt::CR_STR bufferStr
-  ) {
+  mt::USI Toggle::answerSpecial(mt::CR_STR bufferStr) {
+
     Util::BOOL_FLAG boolFlag = Util::booleanTest(bufferStr);
 
     // condition input
-    if (boolFlag) setCondition(
+    if (boolFlag != Util::BOOL_OTHER) setCondition(
       Util::revealBoolean(boolFlag)
     );
     else Message::printNeatDialog(
