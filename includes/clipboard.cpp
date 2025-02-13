@@ -69,25 +69,33 @@ namespace cli_menu {
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
 
+    bool pushed = false;
     Util::BOOL_FLAG boolFlag;
-    std::string textRef;
     mt::VEC_STR textVec {""};
 
+    std::string textRef;
     pasteText(textRef);
 
     // truncated by spaces
     for (mt::CR_CH ch : textRef) {
+
       if (Util::isWhitespace(ch)) {
-        textVec.push_back("");
+        if (!pushed) {
+          textVec.push_back("");
+          pushed = true;
+        }
       }
-      else textVec.back() += ch;
+      else {
+        textVec.back() += ch;
+        pushed = false;
+      }
     }
 
     // parse booleans
     for (mt::CR_STR str : textVec) {
       boolFlag = Util::booleanTest(str);
 
-      if (boolFlag) {
+      if (boolFlag != Util::BOOL_OTHER) {
         conditionsRef.push_back(
           Util::revealBoolean(boolFlag)
         );
