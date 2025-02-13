@@ -293,9 +293,9 @@ namespace cli_menu {
   void Parameter::clipboardAction() {
 
     if (argumentType == PARAM_TEXT) {
-      std::string textsRef;
-      Clipboard::pasteText(textsRef);
-      setData(textsRef);
+      std::string textRef;
+      Clipboard::pasteText(textRef);
+      setData(textRef);
     }
     else {
       mt::VEC_LD numbersRef;
