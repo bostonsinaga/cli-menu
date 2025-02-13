@@ -10,13 +10,17 @@ namespace cli_menu {
 
   class Util {
   public:
-    static bool isWhitespace(mt::CR_CH ch);
+    enum BOOL_FLAG {
+      BOOL_OTHER, BOOL_FALSE, BOOL_TRUE
+    };
 
-    // returns 0 (other), 1 (false), 2 (true)
-    static int booleanTest(mt::CR_STR str);
+    static bool isWhitespace(mt::CR_CH ch);
+    static BOOL_FLAG booleanTest(mt::CR_STR str);
 
     // use 'booleanTest' first before using this
-    static bool revealBoolean(mt::CR_INT testedFlag);
+    static bool revealBoolean(BOOL_FLAG testedFlag) {
+      return testedFlag == BOOL_TRUE;
+    }
   };
 
   class DashTest {

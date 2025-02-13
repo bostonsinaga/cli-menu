@@ -9,23 +9,18 @@ namespace cli_menu {
     return ch == ' ' || ch == '\t' || ch == '\n';
   }
 
-  int Util::booleanTest(mt::CR_STR str) {
+  Util::BOOL_FLAG Util::booleanTest(mt::CR_STR str) {
     if (str == "y" || str == "yes" ||
       str == "1" || str == "true"
     ) {
-      return 2;
+      return BOOL_TRUE;
     }
     else if (str == "n" || str == "no" ||
       str == "0" || str == "false"
     ) {
-      return 1;
+      return BOOL_FALSE;
     }
-    return 0;
-  }
-
-  bool Util::revealBoolean(mt::CR_INT testedFlag) {
-    if (testedFlag > 1) return true;
-    return false;
+    return BOOL_OTHER;
   }
 
   bool DashTest::isLetter(mt::CR_STR str, mt::CR_INT index) {
