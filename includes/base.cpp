@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   bool Util::isWhitespace(mt::CR_CH ch) {
-    return ch == ' ' || ch == '\t' || ch == '\n';
+    return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
   }
 
   Util::BOOL_FLAG Util::booleanTest(mt::CR_STR str) {
