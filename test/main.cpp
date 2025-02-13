@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     "Start conversation",
     true,
     test,
-    cm::Parameter::NUMBER,
+    cm::Parameter::PARAM_NUMBER,
     false,
     dialogFun
   );
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     "foo description",
     true,
     dialog,
-    cm::Parameter::TEXT,
+    cm::Parameter::PARAM_TEXT,
     false,
     fooFun
   );
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     "run description",
     false,
     go,
-    cm::Parameter::NUMBER,
+    cm::Parameter::PARAM_NUMBER,
     false
   );
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     "sentence description",
     true,
     dialog,
-    cm::Parameter::TEXT,
+    cm::Parameter::PARAM_TEXT,
     false,
     sentenceFun
   );
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
     "word description",
     true,
     sentence,
-    cm::Parameter::TEXT,
+    cm::Parameter::PARAM_TEXT,
     false,
     wordFun
   );
