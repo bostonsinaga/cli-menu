@@ -32,26 +32,6 @@ namespace cli_menu {
     accumulating_in
   ) {}
 
-  int Toggle::booleanTest(mt::CR_STR str) {
-    if (str == "y" || str == "yes" ||
-      str == "1" || str == "true"
-    ) {
-      return 2;
-    }
-    else if (str == "n" || str == "no" ||
-      str == "0" || str == "false"
-    ) {
-      return 1;
-    }
-    return 0;
-  }
-
-  // use 'booleanTest' first before using this
-  bool Toggle::revealBoolean(mt::CR_INT testedFlag) {
-    if (testedFlag > 1) return true;
-    return false;
-  }
-
   void Toggle::initData(mt::CR_VEC_BOL data) {
     ResultInputs::addConditions(name, data);
     useResultInputsIndex();
@@ -73,11 +53,11 @@ namespace cli_menu {
   }
 
   void Toggle::setData(mt::CR_STR input) {
-    int boolFlag = Toggle::booleanTest(input);
+    int boolFlag = Util::booleanTest(input);
 
     // between 1 or 2 is true
     if (boolFlag) {
-      setCondition(Toggle::revealBoolean(boolFlag));
+      setCondition(Util::revealBoolean(boolFlag));
     }
     else initDefaultData();
   }
@@ -200,11 +180,11 @@ namespace cli_menu {
   mt::USI Toggle::answerSpecial(
     mt::CR_STR bufferStr
   ) {
-    int boolFlag = Toggle::booleanTest(bufferStr);
+    int boolFlag = Util::booleanTest(bufferStr);
 
     // condition input
     if (boolFlag) setCondition(
-      Toggle::revealBoolean(boolFlag)
+      Util::revealBoolean(boolFlag)
     );
     else Message::printNeatDialog(
       Message::ERROR_FLAG,
