@@ -69,7 +69,7 @@ namespace cli_menu {
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
 
-    bool boolFlag;
+    Util::BOOL_FLAG boolFlag;
     std::string textRef;
     mt::VEC_STR textVec {""};
 
@@ -93,8 +93,6 @@ namespace cli_menu {
         );
       }
     }
-
-    printSucceed();
   }
 }
 
