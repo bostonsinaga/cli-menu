@@ -1407,7 +1407,7 @@ namespace cli_menu {
   void Command::clipboardAction() {
     Message::printNeatDialog(
       Message::ERROR_FLAG,
-      "hidden text pasting is only available in fulfillment"
+      "hidden text pasting is only available in insertion"
     );
   }
 
