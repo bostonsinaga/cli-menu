@@ -66,7 +66,7 @@ namespace cli_menu {
   }
 
   void Toggle::setData(mt::CR_STR input) {
-    int boolFlag = Util::booleanTest(input);
+    Util::BOOL_FLAG boolFlag = Util::booleanTest(input);
 
     // between 1 or 2 is true
     if (boolFlag) {
@@ -193,7 +193,7 @@ namespace cli_menu {
   mt::USI Toggle::answerSpecial(
     mt::CR_STR bufferStr
   ) {
-    int boolFlag = Util::booleanTest(bufferStr);
+    Util::BOOL_FLAG boolFlag = Util::booleanTest(bufferStr);
 
     // condition input
     if (boolFlag) setCondition(
