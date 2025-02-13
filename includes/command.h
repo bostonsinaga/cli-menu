@@ -18,9 +18,6 @@ namespace cli_menu {
   protected:
     using LINKED_LIST = mt_ds::linked_list::Node;
     using TREE = mt_ds::tree::Node;
-
-    typedef mt_ds::tree::VEC_NODE VEC_TREE;
-    typedef mt_ds::tree::CR_VEC_NODE CR_VEC_TREE;
     typedef Command Cm;
 
   private:
@@ -91,7 +88,6 @@ namespace cli_menu {
 
   protected:
     Command *ultimate = nullptr;
-    Clipboard clipboard;
     std::string description;
 
     bool accumulating = false,
@@ -274,10 +270,6 @@ namespace cli_menu {
       std::string &hookInput,
       mt::CR_STR oriInput
     );
-
-    void setClipboard(const Clipboard &newClipboard) {
-      clipboard = newClipboard;
-    }
 
     void setCallback(CM_CALLBACK callback_in) {
       callback = callback_in;
