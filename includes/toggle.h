@@ -13,8 +13,10 @@ namespace cli_menu {
     void initData(mt::CR_VEC_BOL data);
     void initDefaultData() override;
     void setCondition(mt::CR_BOL condition);
+    void setConditions(mt::CR_VEC_BOL conditions);
     void setData(mt::CR_STR input) override;
     void resetData(RESET_FLAG resetFlag) override;
+    void clipboardAction() override;
     void viewAction() override;
 
     void resetBackupData() override {

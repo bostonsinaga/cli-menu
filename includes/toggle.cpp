@@ -52,6 +52,15 @@ namespace cli_menu {
     );
   }
 
+  void Toggle::setConditions(mt::CR_VEC_BOL conditions) {
+    if (!used) {
+      initData(conditions);
+    }
+    else ResultInputs::pushConditions(
+      resultInputsIndex, conditions
+    );
+  }
+
   void Toggle::setData(mt::CR_STR input) {
     int boolFlag = Util::booleanTest(input);
 
@@ -193,6 +202,12 @@ namespace cli_menu {
     );
 
     return downTheChannel();
+  }
+
+  void Toggle::clipboardAction() {
+    mt::VEC_BOL conditionsRef;
+    Clipboard::pasteConditions(conditionsRef);
+    setConditions(conditionsRef);
   }
 
   void Toggle::viewAction() {
