@@ -10,7 +10,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL argumentType_in,
+    PARAM_TYPE argumentType_in,
     mt::CR_BOL accumulating_in,
     CM_CALLBACK callback_in,
     mt::CR_BOL propagatingCallback_in
@@ -28,7 +28,7 @@ namespace cli_menu {
     mt::CR_STR description_in,
     mt::CR_BOL required_in,
     Command *parent_in,
-    mt::CR_BOL argumentType_in,
+    PARAM_TYPE argumentType_in,
     mt::CR_BOL accumulating_in
   ) : Command::Command(
     name_in, description_in,
@@ -41,7 +41,7 @@ namespace cli_menu {
   void Parameter::initDefaultData() {
     if (!used) {
 
-      if (argumentType == TEXT) {
+      if (argumentType == PARAM_TEXT) {
         ResultInputs::addTexts(name, {defaultText});
       }
       else ResultInputs::addNumbers(name, {defaultNumber});
@@ -50,12 +50,31 @@ namespace cli_menu {
     }
   }
 
+  void Parameter::setNumbers(mt::CR_VEC_LD numbers) {
+    if (!numbers.empty()) {
+      if (!used) {
+        ResultInputs::addNumbers(name, numbers);
+        useResultInputsIndex();
+      }
+      // accumulated
+      else ResultInputs::pushNumbers(
+        resultInputsIndex, numbers
+      );
+    }
+    else Message::printNeatDialog(
+      Message::ERROR_FLAG,
+      std::string(matching ? getSentenceSubject(this) : "")
+      + "only accepts numeric values",
+      !Command::matching
+    );
+  }
+
   void Parameter::setData(mt::CR_STR input) {
     bool isEmpty = true;
 
     // ignore empty input
     for (mt::CR_CH ch : input) {
-      if (ch != ' ' && ch != '\t' && ch != '\n') {
+      if (!Util::isWhitespace(ch)) {
         isEmpty = false;
         break;
       }
@@ -66,7 +85,7 @@ namespace cli_menu {
     // overwrite
     if (!accumulating) resetData(RESET_FLAG::DISCARD);
 
-    if (argumentType == TEXT) {
+    if (argumentType == PARAM_TEXT) {
       if (!used) {
         ResultInputs::addTexts(name, {input});
         useResultInputsIndex();
@@ -79,26 +98,9 @@ namespace cli_menu {
     // just for numbers
     else {
       // whitespace is separator
-      mt::VEC_LD numArgs;
-      mt_uti::Scanner<mt::LD>::parseNumbers(input, numArgs);
-
-      if (!numArgs.empty()) {
-        if (!used) {
-          ResultInputs::addNumbers(name, numArgs);
-          useResultInputsIndex();
-        }
-        // accumulated
-        else ResultInputs::pushNumbers(
-          resultInputsIndex,
-          mt_uti::Scanner<mt::LD>::parseNumbers(input)
-        );
-      }
-      else Message::printNeatDialog(
-        Message::ERROR_FLAG,
-        std::string(matching ? getSentenceSubject(this) : "")
-        + "only accepts numeric values",
-        !Command::matching
-      );
+      mt::VEC_LD numbers;
+      mt_uti::Scanner<mt::LD>::parseNumbers(input, numbers);
+      setNumbers(numbers);
     }
   }
 
@@ -107,7 +109,7 @@ namespace cli_menu {
 
       // backup registered vector
       if (resetFlag == RESET_FLAG::BACKUP) {
-        if (argumentType == TEXT) {
+        if (argumentType == PARAM_TEXT) {
           textsBackup = ResultInputs::getTexts(resultInputsIndex);
         }
         else numbersBackup = ResultInputs::getNumbers(resultInputsIndex);
@@ -123,7 +125,7 @@ namespace cli_menu {
       // clean registered vector
       if (resetFlag != RESET_FLAG::DISCARD && !accumulating) {
 
-        if (argumentType == TEXT) {
+        if (argumentType == PARAM_TEXT) {
           ResultInputs::clearText(resultInputsIndex);
         }
         else ResultInputs::clearNumber(resultInputsIndex);
@@ -137,7 +139,7 @@ namespace cli_menu {
   }
 
   std::string Parameter::getStringifiedArgumentType() {
-    if (argumentType == TEXT) return "text";
+    if (argumentType == PARAM_TEXT) return "text";
     return "number";
   }
 
@@ -186,7 +188,7 @@ namespace cli_menu {
 
   const std::string Parameter::getNeedsString() const {
     return " needs" + std::string(
-      argumentType == NUMBER ? " numeric " : " "
+      argumentType == PARAM_NUMBER ? " numeric " : " "
     ) + "arguments";
   }
 
@@ -288,9 +290,23 @@ namespace cli_menu {
     return PASSED_FLAG;
   }
 
+  void Parameter::clipboardAction() {
+
+    if (argumentType == PARAM_TEXT) {
+      std::string textsRef;
+      Clipboard::pasteText(textsRef);
+      setData(textsRef);
+    }
+    else {
+      mt::VEC_LD numbersRef;
+      Clipboard::pasteNumbers(numbersRef);
+      setNumbers(numbersRef);
+    }
+  }
+
   void Parameter::viewAction() {
     ResultInputs::printAt(
-      argumentType == TEXT ?
+      argumentType == PARAM_TEXT ?
       ResultInputs::RESULT_TEXT : ResultInputs::RESULT_NUMBER,
       resultInputsIndex
     );
@@ -303,8 +319,8 @@ namespace cli_menu {
   mt::USI Parameter::dialog() {
 
     const bool noArguments = (
-      (argumentType == TEXT && textsBackup.empty()) ||
-      (argumentType == NUMBER && numbersBackup.empty())
+      (argumentType == PARAM_TEXT && textsBackup.empty()) ||
+      (argumentType == PARAM_NUMBER && numbersBackup.empty())
     );
 
     const bool needQuestion = (
@@ -317,7 +333,7 @@ namespace cli_menu {
     }
     // remember the past
     else {
-      if (argumentType == TEXT) {
+      if (argumentType == PARAM_TEXT) {
         ResultInputs::addTexts(name, textsBackup);
       }
       else ResultInputs::addNumbers(name, numbersBackup);

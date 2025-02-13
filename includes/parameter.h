@@ -6,22 +6,23 @@
 namespace cli_menu {
 
   class Parameter : public Command {
+  public:
+    enum PARAM_TYPE {PARAM_TEXT, PARAM_NUMBER};
+
   private:
     mt::VEC_STR textsBackup;
     mt::VEC_LD numbersBackup;
-    bool argumentType = false;
+    PARAM_TYPE argumentType = PARAM_TEXT;
     std::string defaultText = "";
     long double defaultNumber = 0;
 
     void initDefaultData() override;
+    void setNumbers(mt::CR_VEC_LD numbers);
     void setData(mt::CR_STR input) override;
     void resetData(RESET_FLAG resetFlag) override;
     void resetBackupData() override;
+    void clipboardAction() override;
     void viewAction() override;
-
-    void clipboardAction() override {
-      setData(clipboard.paste());
-    }
 
     const std::string getNeedsString() const override;
 
@@ -33,7 +34,6 @@ namespace cli_menu {
     mt::USI dialog() override;
 
   public:
-    enum {TEXT, NUMBER};
     Parameter(): Command() {}
 
     Parameter(
@@ -41,7 +41,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      mt::CR_BOL argumentType_in,
+      PARAM_TYPE argumentType_in,
       mt::CR_BOL accumulating_in,
       CM_CALLBACK callback_in,
       mt::CR_BOL propagatingCallback_in = true
@@ -52,7 +52,7 @@ namespace cli_menu {
       mt::CR_STR description_in,
       mt::CR_BOL required_in,
       Command *parent_in,
-      mt::CR_BOL argumentType_in,
+      PARAM_TYPE argumentType_in,
       mt::CR_BOL accumulating_in
     );
 
