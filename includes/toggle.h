@@ -18,6 +18,7 @@ namespace cli_menu {
     void resetData(RESET_FLAG resetFlag) override;
     void clipboardAction() override;
     void viewAction() override;
+    void printTypeError();
 
     void resetBackupData() override {
       conditionsBackup = {};
