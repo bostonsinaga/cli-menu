@@ -58,8 +58,10 @@ namespace cli_menu {
     overwrite();
 
     if (!used) {
-      initData(conditions);
+      if (!accumulating) initData({conditions.back()});
+      else initData(conditions);
     }
+    // always in accumulation
     else ResultInputs::pushConditions(
       resultInputsIndex, conditions
     );
@@ -130,6 +132,14 @@ namespace cli_menu {
     return text;
   }
 
+  void Toggle::printTypeError() {
+    Message::printNeatDialog(
+      Message::ERROR_FLAG,
+      "only accepts boolean values",
+      !Command::matching
+    );
+  }
+
   mt::USI Toggle::match() {
 
     if (!directInputs.empty()) {
@@ -197,19 +207,20 @@ namespace cli_menu {
     if (boolFlag != Util::BOOL_OTHER) setCondition(
       Util::revealBoolean(boolFlag)
     );
-    else Message::printNeatDialog(
-      Message::ERROR_FLAG,
-      "only accepts boolean values",
-      !Command::matching
-    );
+    else printTypeError();
 
     return downTheChannel();
   }
 
   void Toggle::clipboardAction() {
+
     mt::VEC_BOL conditionsRef;
     Clipboard::pasteConditions(conditionsRef);
-    setConditions(conditionsRef);
+
+    if (!conditionsRef.empty()) {
+      setConditions(conditionsRef);
+    }
+    else printTypeError();
   }
 
   void Toggle::viewAction() {
