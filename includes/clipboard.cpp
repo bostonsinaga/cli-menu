@@ -6,10 +6,13 @@
 
 namespace cli_menu {
 
-  void Clipboard::printSucceed() {
+  bool Clipboard::internalCalling = false;
+
+  void Clipboard::printSucceed(mt::CR_BOL hasNewline) {
     Message::printNeatDialog(
       Message::SUCCEED_FLAG,
-      "pasted from clipboard"
+      "pasted from clipboard",
+      2 * hasNewline
     );
   }
 
@@ -58,16 +61,27 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    printSucceed();
+    if (!internalCalling) {
+      printSucceed(true);
+    }
   }
 
   void Clipboard::pasteNumbers(mt::VEC_LD &numbersRef) {
+    internalCalling = true;
+
     std::string textRef;
     pasteText(textRef);
-    mt_uti::Scanner<mt::LD>::parseNumbers(textRef, numbersRef);
+
+    mt_uti::Scanner<mt::LD>::parseNumbers(
+      textRef, numbersRef
+    );
+
+    printSucceed(!numbersRef.empty());
+    internalCalling = false;
   }
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
+    internalCalling = true;
 
     bool pushed = false;
     Util::BOOL_FLAG boolFlag;
@@ -101,6 +115,9 @@ namespace cli_menu {
         );
       }
     }
+
+    printSucceed(!conditionsRef.empty());
+    internalCalling = false;
   }
 }
 
