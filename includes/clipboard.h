@@ -8,7 +8,8 @@ namespace cli_menu {
   /** Only for string copy */
   class Clipboard {
   private:
-    static void printSucceed();
+    static bool internalCalling;
+    static void printSucceed(mt::CR_BOL hasNewline);
 
   public:
     static void pasteText(std::string &dataRef);
