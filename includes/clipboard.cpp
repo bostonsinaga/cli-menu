@@ -8,12 +8,15 @@ namespace cli_menu {
 
   bool Clipboard::internalCalling = false;
 
-  void Clipboard::printSucceed(mt::CR_BOL hasNewline) {
+  void Clipboard::printSucceed(mt::CR_INT endNewlinesCount) {
+
     Message::printNeatDialog(
       Message::SUCCEED_FLAG,
       "pasted from clipboard",
-      2 * hasNewline
+      endNewlinesCount
     );
+
+    internalCalling = false;
   }
 
   void Clipboard::pasteText(std::string &dataRef) {
@@ -62,7 +65,7 @@ namespace cli_menu {
     CloseClipboard();
 
     if (!internalCalling) {
-      printSucceed(true);
+      printSucceed(2);
     }
   }
 
@@ -76,8 +79,7 @@ namespace cli_menu {
       textRef, numbersRef
     );
 
-    printSucceed(!numbersRef.empty());
-    internalCalling = false;
+    printSucceed(!numbersRef.empty() + 1);
   }
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
@@ -116,8 +118,7 @@ namespace cli_menu {
       }
     }
 
-    printSucceed(!conditionsRef.empty());
-    internalCalling = false;
+    printSucceed(!conditionsRef.empty() + 1);
   }
 }
 
