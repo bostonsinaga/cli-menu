@@ -9,7 +9,7 @@ namespace cli_menu {
   class Clipboard {
   private:
     static bool internalCalling;
-    static void printSucceed(mt::CR_BOL hasNewline);
+    static void printSucceed(mt::CR_INT endNewlinesCount);
 
   public:
     static void pasteText(std::string &dataRef);
