@@ -47,35 +47,35 @@ namespace cli_menu {
   }
 
   std::string Message::getColoredTag(
-    mt::CR_USI flag,
+    mt::CR_USI enumeration,
     mt::CR_STR text
   ) {
-    switch (flag) {
-      case HINT_FLAG: {
+    switch (enumeration) {
+      case MESSAGE_HINT: {
         return Color::getString(
           text.empty() ? "HINT. " : text,
           Color::SKY_BLUE
         );
       }
-      case WARNING_FLAG: {
+      case MESSAGE_WARNING: {
         return Color::getString(
           text.empty() ? "WARNING. " : text,
           Color::YELLOW
         );
       }
-      case ERROR_FLAG: {
+      case MESSAGE_ERROR: {
         return Color::getString(
           text.empty() ? "ERROR. " : text,
           Color::RED
         );
       }
-      case SUCCEED_FLAG: {
+      case MESSAGE_SUCCEED: {
         return Color::getString(
           text.empty() ? "SUCCEED. " : text,
           Color::GREEN
         );
       }
-      case CANCELED_FLAG: {
+      case MESSAGE_CANCELED: {
         return Color::getString(
           text.empty() ? "CANCELED. " : text,
           Color::ORANGE
@@ -239,7 +239,7 @@ namespace cli_menu {
   }
 
   void Message::printNamed(
-    mt::CR_USI flag,
+    mt::CR_USI enumeration,
     mt::CR_STR text,
     mt::CR_STR name,
     mt::CR_BOL toUppercase
@@ -253,19 +253,19 @@ namespace cli_menu {
         ) << ": ";
       }
 
-      std::cout << getColoredTag(flag) << text << std::endl;
+      std::cout << getColoredTag(enumeration) << text << std::endl;
     }
   }
 
   void Message::printNeatNamed(
-    mt::CR_USI flag,
+    mt::CR_USI enumeration,
     std::string text,
     mt::CR_STR name,
     mt::CR_BOL toUppercase
   ) {
     int i, j;
     editToCapitalFirstPeriodEnd(text, i, j);
-    printNamed(flag, text, name, toUppercase);
+    printNamed(enumeration, text, name, toUppercase);
   }
 
   void Message::printBoundaryLine(
@@ -294,25 +294,25 @@ namespace cli_menu {
   }
 
   void Message::printDialog(
-    mt::CR_USI flag,
+    mt::CR_USI enumeration,
     mt::CR_STR reason,
     int endNewlinesCount
   ) {
     endNewlinesCount *= endNewlinesCount >= 0;
 
     std::cout
-      << getColoredTag(flag, "\n" + listPointStyle + " " + reason)
+      << getColoredTag(enumeration, "\n" + listPointStyle + " " + reason)
       << std::string(endNewlinesCount, '\n');
   }
 
   void Message::printNeatDialog(
-    mt::CR_USI flag,
+    mt::CR_USI enumeration,
     std::string reason,
     mt::CR_INT endNewlinesCount
   ) {
     int i, j;
     editToCapitalFirstPeriodEnd(reason, i, j);
-    printDialog(flag, reason, endNewlinesCount);
+    printDialog(enumeration, reason, endNewlinesCount);
   }
 
   // check if interrupted before waiting for input
@@ -322,7 +322,7 @@ namespace cli_menu {
       std::cout << std::endl;
 
       printDialog(
-        ERROR_FLAG, "Interrupt signal received. Exiting program.", 1
+        MESSAGE_ERROR, "Interrupt signal received. Exiting program.", 1
       );
 
       return true;

@@ -10,6 +10,15 @@ namespace cli_menu {
   // utilize 'ResultInputs' with its static members
   typedef std::function<void()> CM_CALLBACK;
 
+  // enumerations that control the 'match', 'dialog', and 'question' calls
+  enum COMMAND_ENUM {
+    COMMAND_CANCELED,  // original
+    COMMAND_COMPLETED, // original
+    COMMAND_CONTINUE,  // pseudo
+    COMMAND_FAILED,    // original
+    COMMAND_PASSED     // pseudo
+  };
+
   /**
    * It is recommended to use derived classes
    * for feature completeness.
@@ -30,7 +39,7 @@ namespace cli_menu {
 
     static Command *circularCheckpoint;
     static const int disguiseCount = 1;
-    static const mt::USI disguiseFlags[disguiseCount];
+    static const INHERITANCE_ENUM disguiseEnums[disguiseCount];
     static const std::string disguiseNames[disguiseCount][2];
 
     virtual void initDefaultData() {}
@@ -75,7 +84,7 @@ namespace cli_menu {
       bool &found
     );
 
-    mt::USI pointToNeighbor(mt::CR_BOL toNext);
+    COMMAND_ENUM pointToNeighbor(mt::CR_BOL toNext);
     static bool isTemporaryLetterCaseChange();
     void onFreeChangeInputLetterCase(std::string &strIn);
 
@@ -90,6 +99,10 @@ namespace cli_menu {
     );
 
   protected:
+    enum RESET_ENUM {
+      RESET_INIT, RESET_BACKUP, RESET_DISCARD
+    };
+
     Command *ultimate = nullptr;
     std::string description;
 
@@ -100,7 +113,7 @@ namespace cli_menu {
 
     /**
      * Requires a conditional statement on this variable
-     * in derived class that listed in 'disguiseFlags'.
+     * in derived class that listed in 'disguiseEnums'.
      */
     bool disguised = false;
 
@@ -117,16 +130,12 @@ namespace cli_menu {
     static mt::VEC_STR directInputs;
     int resultInputsIndex = -1;
 
-    enum RESET_FLAG {
-      INIT, BACKUP, DISCARD
-    };
-
     void overwrite() {
-      if (!accumulating) resetData(RESET_FLAG::DISCARD);
+      if (!accumulating) resetData(RESET_DISCARD);
     }
 
     virtual void setData(mt::CR_STR input) {}
-    virtual void resetData(RESET_FLAG resetFlag);
+    virtual void resetData(RESET_ENUM resetEnum);
     virtual void resetBackupData() {}
     bool executeTo(Command *target);
 
@@ -152,7 +161,7 @@ namespace cli_menu {
 
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printNullptrNeighborError();
-    mt::USI tryToGoBack();
+    COMMAND_ENUM tryToGoBack();
 
     Command *chooseLastCommand(
       mt::CR_BOL onlyParent = false
@@ -165,8 +174,8 @@ namespace cli_menu {
       return " needs values";
     }
 
-    virtual mt::USI match() {
-      return FAILED_FLAG;
+    virtual COMMAND_ENUM match() {
+      return COMMAND_CONTINUE;
     }
 
     LINKED_LIST *getContinuation(
@@ -174,35 +183,35 @@ namespace cli_menu {
     );
 
     // call this after passing 'DashTest::clean..'
-    mt::USI popBackSet();
+    COMMAND_ENUM popBackSet();
 
-    mt::USI matchTo(Command *target);
-    mt::USI conversation(mt::CR_BOL dialogOn);
-    mt::USI downTheChannel();
+    COMMAND_ENUM matchTo(Command *target);
+    COMMAND_ENUM conversation(mt::CR_BOL dialogOn);
+    COMMAND_ENUM downTheChannel();
 
-    virtual mt::USI channelTheParent();
+    virtual COMMAND_ENUM channelTheParent();
 
-    mt::USI answerControl(
+    COMMAND_ENUM answerControl(
       mt::CR_STR controlStr,
       mt::CR_BOL dialogOn
     );
 
-    virtual mt::USI answerSpecial(mt::CR_STR bufferStr);
+    virtual COMMAND_ENUM answerSpecial(mt::CR_STR bufferStr);
 
     // callable in all levels
-    mt::USI question();
-    mt::USI questionTo(Command *target);
+    COMMAND_ENUM question();
+    COMMAND_ENUM questionTo(Command *target);
 
-    virtual mt::USI questionEnterTest() {
-      return PASSED_FLAG;
+    virtual COMMAND_ENUM questionEnterTest() {
+      return COMMAND_PASSED;
     }
 
     // only called in containers
-    virtual mt::USI dialog();
-    mt::USI dialogTo(Command *target);
+    virtual COMMAND_ENUM dialog();
+    COMMAND_ENUM dialogTo(Command *target);
 
     // point to neighbor if input not matched
-    mt::USI askNeighbor();
+    COMMAND_ENUM askNeighbor();
 
     // 'INPUTS.direct' is empty and has 'requiredItems'
     bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
@@ -218,14 +227,6 @@ namespace cli_menu {
     void printQuestionBoundaryLine();
 
   public:
-    enum {
-      CANCELED_FLAG,  // original
-      COMPLETED_FLAG, // original
-      CONTINUE_FLAG,  // pseudo
-      FAILED_FLAG,    // original
-      PASSED_FLAG     // pseudo
-    };
-
     Command() {}
 
     Command(
@@ -252,8 +253,11 @@ namespace cli_menu {
     ) override;
 
     VEC_TREE releaseChildren() override;
-    virtual mt::USI getInheritanceFlag() { return COMMAND; }
     virtual std::string getDashedName() { return name; }
+
+    virtual INHERITANCE_ENUM getInheritanceEnum() {
+      return INHERITANCE_COMMAND;
+    }
 
     virtual std::string getFullName(
       mt::CR_BOL useDash = true,

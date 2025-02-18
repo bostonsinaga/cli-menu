@@ -19,19 +19,19 @@ namespace cli_menu {
     void initDefaultData() override;
     void setNumbers(mt::CR_VEC_LD numbers);
     void setData(mt::CR_STR input) override;
-    void resetData(RESET_FLAG resetFlag) override;
+    void resetData(RESET_ENUM resetEnum) override;
     void resetBackupData() override;
     void clipboardAction() override;
     void viewAction() override;
 
     const std::string getNeedsString() const override;
 
-    mt::USI match() override;
-    mt::USI middleMatch(mt::CR_BOL needUnusedNeighbor);
-    mt::USI channelTheParent() override;
-    mt::USI answerSpecial(mt::CR_STR bufferStr) override;
-    mt::USI questionEnterTest() override;
-    mt::USI dialog() override;
+    COMMAND_ENUM match() override;
+    COMMAND_ENUM middleMatch(mt::CR_BOL needUnusedNeighbor);
+    COMMAND_ENUM channelTheParent() override;
+    COMMAND_ENUM answerSpecial(mt::CR_STR bufferStr) override;
+    COMMAND_ENUM questionEnterTest() override;
+    COMMAND_ENUM dialog() override;
 
   public:
     Parameter(): Command() {}
@@ -67,7 +67,10 @@ namespace cli_menu {
       CR_CLR nameColor = Color()
     ) override;
 
-    mt::USI getInheritanceFlag() override { return PARAMETER; }
+    INHERITANCE_ENUM getInheritanceEnum() override {
+      return INHERITANCE_PARAMETER;
+    }
+
     void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
     bool isAccumulating() { return accumulating; }
   };

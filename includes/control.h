@@ -5,9 +5,16 @@
 
 namespace cli_menu {
 
+  // obtained after testing the input string
+  enum CONTROL_ENUM {
+    CONTROL_BACK, CONTROL_CLIPBOARD, CONTROL_ENTER, CONTROL_HELP,
+    CONTROL_LIST, CONTROL_MODIFY, CONTROL_NEXT, CONTROL_PREVIOUS,
+    CONTROL_QUIT, CONTROL_RESET, CONTROL_SELECT, CONTROL_VIEW
+  };
+
   class Control {
   private:
-    static mt::USI sharedFlag;
+    static CONTROL_ENUM sharedEnum;
     static const int TOTAL = 12;
 
     static std::string
@@ -16,14 +23,8 @@ namespace cli_menu {
     static mt::SI whitespacesCheck(mt::CR_STR str);
 
   public:
-    enum CONTROL_FLAG {
-      BACK, CLIPBOARD, ENTER, HELP,
-      LIST, MODIFY, NEXT, PREVIOUS,
-      QUIT, RESET, SELECT, VIEW
-    };
-
     static void rename(
-      CONTROL_FLAG flag,
+      const CONTROL_ENUM& index,
       mt::CR_STR name,
       mt::CR_STR abbreviation
     );
@@ -44,7 +45,9 @@ namespace cli_menu {
     static void printParameterHelp();
     static void printToggleHelp();
 
-    static const mt::USI getSharedFlag() { return sharedFlag; }
+    static const CONTROL_ENUM getSharedEnum() {
+      return sharedEnum;
+    }
   };
 }
 

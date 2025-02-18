@@ -11,7 +11,7 @@ namespace cli_menu {
   void Clipboard::printSucceed(mt::CR_INT endNewlinesCount) {
 
     Message::printNeatDialog(
-      Message::SUCCEED_FLAG,
+      MESSAGE_SUCCEED,
       "pasted from clipboard",
       endNewlinesCount
     );
@@ -25,7 +25,7 @@ namespace cli_menu {
     if (!OpenClipboard(nullptr)) {
 
       Message::printNeatDialog(
-        Message::ERROR_FLAG,
+        MESSAGE_ERROR,
         "failed to open clipboard"
       );
 
@@ -38,7 +38,7 @@ namespace cli_menu {
 
     if (!hData) {
       Message::printNeatDialog(
-        Message::ERROR_FLAG,
+        MESSAGE_ERROR,
         "failed to get clipboard data"
       );
 
@@ -52,7 +52,7 @@ namespace cli_menu {
 
     if (!pszText) {
       Message::printNeatDialog(
-        Message::ERROR_FLAG,
+        MESSAGE_ERROR,
         "failed to lock clipboard data"
       );
     }
@@ -86,7 +86,7 @@ namespace cli_menu {
     internalCalling = true;
 
     bool pushed = false;
-    Util::BOOL_FLAG boolFlag;
+    Util::BOOL_ENUM boolEnum;
     mt::VEC_STR textVec {""};
 
     std::string textRef;
@@ -109,11 +109,11 @@ namespace cli_menu {
 
     // parse booleans
     for (mt::CR_STR str : textVec) {
-      boolFlag = Util::booleanTest(str);
+      boolEnum = Util::booleanTest(str);
 
-      if (boolFlag != Util::BOOL_OTHER) {
+      if (boolEnum != Util::BOOL_OTHER) {
         conditionsRef.push_back(
-          Util::revealBoolean(boolFlag)
+          Util::revealBoolean(boolEnum)
         );
       }
     }

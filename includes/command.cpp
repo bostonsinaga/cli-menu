@@ -18,8 +18,8 @@ namespace cli_menu {
     Command::matching = true,
     Command::selecting = false;
 
-  const mt::USI Command::disguiseFlags[disguiseCount] = {
-    PROGRAM
+  const INHERITANCE_ENUM Command::disguiseEnums[disguiseCount] = {
+    INHERITANCE_PROGRAM
   };
 
   const std::string Command::disguiseNames[disguiseCount][2] = {
@@ -59,8 +59,8 @@ namespace cli_menu {
     setParent(parent_in);
   }
 
-  void Command::resetData(RESET_FLAG resetFlag) {
-    if (resetFlag != RESET_FLAG::INIT) {
+  void Command::resetData(RESET_ENUM resetEnum) {
+    if (resetEnum != RESET_INIT) {
       ResultInputs::popName();
       resultInputsIndex = -1;
       unuseRequired();
@@ -181,7 +181,7 @@ namespace cli_menu {
     if (isVerbose) {
       if (isParent()) levelName += " ";
 
-      if (getInheritanceFlag() == PARAMETER) {
+      if (getInheritanceEnum() == INHERITANCE_PARAMETER) {
         levelName += "parameter";
       }
       else levelName += "toggle";
@@ -262,20 +262,20 @@ namespace cli_menu {
   }
 
   // not for program or question in the middle
-  mt::USI Command::tryToGoBack() {
+  COMMAND_ENUM Command::tryToGoBack() {
 
     if (parent) {
       if (!isDirectInputsError("go back")) {
-        resetData(RESET_FLAG::BACKUP);
+        resetData(RESET_BACKUP);
         return static_cast<Cm*>(parent)->dialog();
       }
     }
     else Message::printDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "You are now at the root level. No more groups upward."
     );
 
-    return CONTINUE_FLAG;
+    return COMMAND_CONTINUE;
   }
 
   // for supporters
@@ -298,7 +298,7 @@ namespace cli_menu {
           isOneLeftNotThis = !isThis && isOneLeft;
 
         Message::printNeatDialog(
-          Message::ERROR_FLAG,
+          MESSAGE_ERROR,
           "unable to process before "
           + std::string( isOneLeftNotThis ? "a " : "" )
           + std::string( isThis ? "this " : "required " )
@@ -323,7 +323,7 @@ namespace cli_menu {
     }
 
     Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "this " + getLevelName(isSupporter()) + " has no "
       + (parent || children.size() ? "neighbors" : "connections")
     );
@@ -517,7 +517,7 @@ namespace cli_menu {
     return next;
   }
 
-  mt::USI Command::popBackSet() {
+  COMMAND_ENUM Command::popBackSet() {
 
     // name has been detected
     directInputs.pop_back();
@@ -525,7 +525,7 @@ namespace cli_menu {
 
     // will determine explicit or implicit value
     if (directInputs.empty()) {
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
 
     // capture non 'DashTest' of 'directInputs'
@@ -554,7 +554,7 @@ namespace cli_menu {
             Command::matching = false;
 
             Message::printNeatDialog(
-              Message::ERROR_FLAG,
+              MESSAGE_ERROR,
               "the '" + name + "' " + getLevelName() + getNeedsString(), 1
             );
 
@@ -566,30 +566,30 @@ namespace cli_menu {
         }
       }
 
-      resetData(RESET_FLAG::INIT);
+      resetData(RESET_INIT);
       setData(directInputs.back());
       directInputs.pop_back();
     }
 
     // 'directInputs' now is empty
-    if (isToddler()) return COMPLETED_FLAG;
-    return PASSED_FLAG;
+    if (isToddler()) return COMMAND_COMPLETED;
+    return COMMAND_PASSED;
   }
 
-  mt::USI Command::matchTo(Command *target) {
+  COMMAND_ENUM Command::matchTo(Command *target) {
     if (target) {
       return target->match();
     }
-    else if (isParent()) return FAILED_FLAG;
+    else if (isParent()) return COMMAND_FAILED;
 
     // toddler pointing to its parent
     Command::lastCom = chooseLastCommand(true);
 
-    return COMPLETED_FLAG;
+    return COMMAND_COMPLETED;
   }
 
   // back to this dialog by default
-  mt::USI Command::channelTheParent() {
+  COMMAND_ENUM Command::channelTheParent() {
     return Command::dialog();
   }
 
@@ -632,21 +632,21 @@ namespace cli_menu {
       text = "unable to " + controlName + text;
     }
 
-    Message::printNeatDialog(Message::ERROR_FLAG, text);
+    Message::printNeatDialog(MESSAGE_ERROR, text);
     return true;
   }
 
-  mt::USI Command::pointToNeighbor(mt::CR_BOL toNext) {
+  COMMAND_ENUM Command::pointToNeighbor(mt::CR_BOL toNext) {
 
     LINKED_LIST *neighbor = toNext ? next : previous;
 
     if (neighbor) {
-      resetData(RESET_FLAG::BACKUP);
+      resetData(RESET_BACKUP);
       return static_cast<Cm*>(neighbor)->dialog();
     }
 
     printNullptrNeighborError();
-    return CONTINUE_FLAG;
+    return COMMAND_CONTINUE;
   }
 
   // has a newline at the end
@@ -666,7 +666,7 @@ namespace cli_menu {
     // question
     else {
       // first
-      if (getInheritanceFlag() == PARAMETER) {
+      if (getInheritanceEnum() == INHERITANCE_PARAMETER) {
         status += usingAbbreviations ? "par" : "parameter";
       }
       else status += usingAbbreviations ? "tog" : "toggle";
@@ -725,9 +725,9 @@ namespace cli_menu {
     );
   }
 
-  mt::USI Command::conversation(mt::CR_BOL dialogOn) {
+  COMMAND_ENUM Command::conversation(mt::CR_BOL dialogOn) {
     std::string bufferStr;
-    mt::USI flag;
+    COMMAND_ENUM enumeration;
 
     while (true) {
       if (!Message::setDialogInput(bufferStr)) {
@@ -740,27 +740,27 @@ namespace cli_menu {
         std::string controlStr = mt_uti::StrTools::getStringToLowercase(bufferStr);
 
         // controller detection
-        flag = answerControl(controlStr, dialogOn);
+        enumeration = answerControl(controlStr, dialogOn);
 
         // special handling
-        if (flag == PASSED_FLAG) {
+        if (enumeration == COMMAND_PASSED) {
           onFreeChangeInputLetterCase(bufferStr);
 
-          if (dialogOn) flag = Command::answerSpecial(bufferStr);
-          else flag = answerSpecial(bufferStr);
+          if (dialogOn) enumeration = Command::answerSpecial(bufferStr);
+          else enumeration = answerSpecial(bufferStr);
         }
 
         // chain call ends
-        if (flag != PASSED_FLAG && flag != CONTINUE_FLAG) {
-          return flag;
+        if (enumeration != COMMAND_PASSED && enumeration != COMMAND_CONTINUE) {
+          return enumeration;
         }
       }
     }
 
-    return CANCELED_FLAG;
+    return COMMAND_CANCELED;
   }
 
-  mt::USI Command::downTheChannel() {
+  COMMAND_ENUM Command::downTheChannel() {
 
     // the 'question' will stop after pressing enter
     if (!accumulating) {
@@ -772,28 +772,28 @@ namespace cli_menu {
       );
       // dead end
       else if (isToddler()) {
-        return COMPLETED_FLAG;
+        return COMMAND_COMPLETED;
       }
       // back to this dialog by default
       return channelTheParent();
     }
 
-    return PASSED_FLAG;
+    return COMMAND_PASSED;
   }
 
-  mt::USI Command::answerControl(
+  COMMAND_ENUM Command::answerControl(
     mt::CR_STR controlStr,
     mt::CR_BOL dialogOn
   ) {
-    mt::USI flag;
+    COMMAND_ENUM enumeration;
 
     if (Control::backTest(controlStr)) {
 
       // stop at the root
-      flag = tryToGoBack();
+      enumeration = tryToGoBack();
 
-      if (flag != CONTINUE_FLAG) return flag;
-      return CONTINUE_FLAG;
+      if (enumeration != COMMAND_CONTINUE) return enumeration;
+      return COMMAND_CONTINUE;
     }
     else if (Control::clipboardTest(controlStr)) {
 
@@ -803,7 +803,7 @@ namespace cli_menu {
       }
       else clipboardAction();
 
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::enterTest(controlStr)) {
       bool isContinue = true;
@@ -814,7 +814,7 @@ namespace cli_menu {
         if (!used && required) {
 
           Message::printNeatDialog(
-            Message::ERROR_FLAG,
+            MESSAGE_ERROR,
             "this " + getLevelName(isSupporter()) + getNeedsString()
           );
 
@@ -822,8 +822,8 @@ namespace cli_menu {
         }
         // custom test
         else {
-          flag = questionEnterTest();
-          if (flag != PASSED_FLAG) return flag;
+          enumeration = questionEnterTest();
+          if (enumeration != COMMAND_PASSED) return enumeration;
         }
       }
 
@@ -843,40 +843,40 @@ namespace cli_menu {
 
           initDefaultData();
           Command::lastCom = chooseLastCommand();
-          return COMPLETED_FLAG;
+          return COMMAND_COMPLETED;
         }
       }
 
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::helpTest(controlStr)) {
       printHelp();
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::listTest(controlStr)) {
       printList();
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::modifyTest(controlStr)) {
       if (dialogOn) return question();
 
       Message::printNeatDialog(
-        Message::ERROR_FLAG, "already in insert mode"
+        MESSAGE_ERROR, "already in insert mode"
       );
 
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (
       Control::nextTest(controlStr) ||
       Control::previousTest(controlStr)
     ) {
       if (dialogOn) {
-        flag = pointToNeighbor(
-          Control::getSharedFlag() == Control::NEXT
+        enumeration = pointToNeighbor(
+          Control::getSharedEnum() == CONTROL_NEXT
         );
 
-        if (flag != CONTINUE_FLAG) {
-          return flag;
+        if (enumeration != COMMAND_CONTINUE) {
+          return enumeration;
         }
       }
       // in question
@@ -889,12 +889,12 @@ namespace cli_menu {
           if (isContainer()) {
 
             LINKED_LIST *neighbor = (
-              Control::getSharedFlag() == Control::NEXT ?
+              Control::getSharedEnum() == CONTROL_NEXT ?
               next : previous
             );
 
             if (neighbor) {
-              resetData(RESET_FLAG::BACKUP);
+              resetData(RESET_BACKUP);
               return dialogTo(static_cast<Cm*>(neighbor));
             }
 
@@ -907,19 +907,19 @@ namespace cli_menu {
         }
       }
 
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::quitTest(controlStr)) {
-      return CANCELED_FLAG;
+      return COMMAND_CANCELED;
     }
     else if (Control::resetTest(controlStr)) {
-      resetData(RESET_FLAG::DISCARD);
-      return CONTINUE_FLAG;
+      resetData(RESET_DISCARD);
+      return COMMAND_CONTINUE;
     }
     else if (Control::selectTest(controlStr)) {
       if (dialogOn) {
         Message::printNeatDialog(
-          Message::ERROR_FLAG, "already in selection mode"
+          MESSAGE_ERROR, "already in selection mode"
         );
       }
       else { // in question
@@ -927,9 +927,9 @@ namespace cli_menu {
 
           if (required) {
             Message::printNeatDialog(
-              Message::ERROR_FLAG,
+              MESSAGE_ERROR,
               "unable to select before "
-              + std::string(getInheritanceFlag() == TOGGLE ?
+              + std::string(getInheritanceEnum() == INHERITANCE_TOGGLE ?
                 "conditions" : "arguments"
               ) + " are given"
             );
@@ -947,17 +947,17 @@ namespace cli_menu {
         }
       }
 
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
     else if (Control::viewTest(controlStr)) {
       viewAction();
-      return CONTINUE_FLAG;
+      return COMMAND_CONTINUE;
     }
 
-    return PASSED_FLAG;
+    return COMMAND_PASSED;
   }
 
-  mt::USI Command::answerSpecial(mt::CR_STR bufferStr) {
+  COMMAND_ENUM Command::answerSpecial(mt::CR_STR bufferStr) {
     Command *found;
     bool isContinue = false;
 
@@ -1017,7 +1017,7 @@ namespace cli_menu {
       }
       else if (isUltimate()) {
         Message::printNeatDialog(
-          Message::ERROR_FLAG, "input not found"
+          MESSAGE_ERROR, "input not found"
         );
       }
       // toddler
@@ -1026,37 +1026,37 @@ namespace cli_menu {
       }
       // group
       else Message::printNeatDialog(
-        Message::ERROR_FLAG,
+        MESSAGE_ERROR,
         getChildrenLevelName(false) + " not found"
       );
     }
 
-    return PASSED_FLAG;
+    return COMMAND_PASSED;
   }
 
-  mt::USI Command::question() {
+  COMMAND_ENUM Command::question() {
     printQuestionBoundaryLine();
     return conversation(false);
   }
 
-  mt::USI Command::questionTo(Command *target) {
+  COMMAND_ENUM Command::questionTo(Command *target) {
     if (target) return target->question();
-    return COMPLETED_FLAG;
+    return COMMAND_COMPLETED;
   }
 
   // command selection
-  mt::USI Command::dialog() {
+  COMMAND_ENUM Command::dialog() {
     Command::selecting = true;
     printAfterBoundaryLine(getInlineRootNames());
     return conversation(true);
   }
 
-  mt::USI Command::dialogTo(Command *target) {
+  COMMAND_ENUM Command::dialogTo(Command *target) {
     if (target) return target->dialog();
-    return COMPLETED_FLAG;
+    return COMMAND_COMPLETED;
   }
 
-  mt::USI Command::askNeighbor() {
+  COMMAND_ENUM Command::askNeighbor() {
     if (!circularCheckpoint && next) {
       circularCheckpoint = this;
     }
@@ -1080,7 +1080,7 @@ namespace cli_menu {
     }
 
     Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "unknown " + inputLevelName + " named '" + inputName + "'", 1
     );
 
@@ -1092,7 +1092,7 @@ namespace cli_menu {
       static_cast<Cm*>(parent)
     );
 
-    return FAILED_FLAG;
+    return COMMAND_FAILED;
   }
 
   /**
@@ -1122,14 +1122,14 @@ namespace cli_menu {
             + " to be used";
 
           if (reqCt > 1) Message::printNeatDialog(
-            Message::ERROR_FLAG,
+            MESSAGE_ERROR,
             getSentenceSubject(parCom) + "has "
             + parCom->getChildrenLevelName(true)
             + errStr, 1
           );
           // one incomplete
           else Message::printNeatDialog(
-            Message::ERROR_FLAG,
+            MESSAGE_ERROR,
             getSentenceSubject(parCom) + "has "
             + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
@@ -1144,7 +1144,7 @@ namespace cli_menu {
               isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
             );
 
-          Message::printDialog(Message::ERROR_FLAG, errStr, 1);
+          Message::printDialog(MESSAGE_ERROR, errStr, 1);
         }
       }
 
@@ -1280,7 +1280,7 @@ namespace cli_menu {
     std::cout << getDialogStatusString(true, true);
 
     // once at toddler level of 'Toggle'
-    if (getInheritanceFlag() == TOGGLE && isToddler()) {
+    if (getInheritanceEnum() == INHERITANCE_TOGGLE && isToddler()) {
       static bool isInit = true;
 
       if (isInit && isToddler()) {
@@ -1370,7 +1370,7 @@ namespace cli_menu {
 
   void Command::printNoItems() {
     Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "this " + getLevelName(isSupporter()) + " does not have any items"
     );
   }
@@ -1406,7 +1406,7 @@ namespace cli_menu {
 
   void Command::clipboardAction() {
     Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "hidden text pasting is only available on insertion"
     );
   }
@@ -1419,7 +1419,7 @@ namespace cli_menu {
 
     for (int i = 0; i < disguiseCount; i++) {
       if (!command->disguised &&
-        command->getInheritanceFlag() == disguiseFlags[i]
+        command->getInheritanceEnum() == disguiseEnums[i]
       ) { break; }
     }
 
@@ -1427,7 +1427,7 @@ namespace cli_menu {
       command->disguised = true;
 
       Message::printNamed(
-        Message::WARNING_FLAG,
+        MESSAGE_WARNING,
         "Cannot add a '" + disguiseNames[detected][0] + "' (name: '" +
         command->name + "'). To keep proceeding, it is now considered as '"
         + disguiseNames[detected][1] + "'.",

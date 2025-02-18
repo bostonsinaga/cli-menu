@@ -187,33 +187,33 @@ namespace cli_menu {
     //_____________________|
 
     if (children.size() > 0) {
-      mt::USI flag = matchTo(this);
+      COMMAND_ENUM enumeration = matchTo(this);
 
-      switch (flag) {
-        case COMPLETED_FLAG: {
+      switch (enumeration) {
+        case COMMAND_COMPLETED: {
           // check if has any callback
           if (!executeTo(Command::lastCom)) {
             Message::printNeatNamed(
-              Message::ERROR_FLAG,
+              MESSAGE_ERROR,
               "no callback",
               Command::lastCom->getName()
             );
           }
           // succeeded after main callback
           else Message::printNeatNamed(
-            Message::SUCCEED_FLAG,
+            MESSAGE_SUCCEED,
             "output file written to 'foo.kml'",
             name
           );
         break;}
-        case CANCELED_FLAG: {
+        case COMMAND_CANCELED: {
           Message::printNeatNamed(
-            Message::CANCELED_FLAG,
+            MESSAGE_CANCELED,
             "program terminated",
             name
           );
         break;}
-        case FAILED_FLAG: {
+        case COMMAND_FAILED: {
           // program
           if (Command::lastCom == this) {
             if (!executeTo(Command::lastCom)) printError();
@@ -233,7 +233,7 @@ namespace cli_menu {
         // error
         default: {
           Message::printNeatNamed(
-            Message::ERROR_FLAG,
+            MESSAGE_ERROR,
             "there should be an error handler",
             name
           );
@@ -242,7 +242,7 @@ namespace cli_menu {
     }
     // no children
     else Message::printNeatNamed(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "no groups/commands available",
       name
     );

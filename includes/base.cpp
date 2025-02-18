@@ -9,7 +9,7 @@ namespace cli_menu {
     return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
   }
 
-  Util::BOOL_FLAG Util::booleanTest(mt::CR_STR str) {
+  Util::BOOL_ENUM Util::booleanTest(mt::CR_STR str) {
     if (str == "y" || str == "yes" ||
       str == "1" || str == "true"
     ) {

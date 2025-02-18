@@ -68,31 +68,31 @@ namespace cli_menu {
   }
 
   void Toggle::setData(mt::CR_STR input) {
-    Util::BOOL_FLAG boolFlag = Util::booleanTest(input);
+    Util::BOOL_ENUM boolEnum = Util::booleanTest(input);
 
-    if (boolFlag != Util::BOOL_OTHER) {
-      setCondition(Util::revealBoolean(boolFlag));
+    if (boolEnum != Util::BOOL_OTHER) {
+      setCondition(Util::revealBoolean(boolEnum));
     }
     else initDefaultData();
   }
 
-  void Toggle::resetData(RESET_FLAG resetFlag) {
+  void Toggle::resetData(RESET_ENUM resetEnum) {
     if (used) {
 
       // backup registered vector
-      if (resetFlag == RESET_FLAG::BACKUP) {
+      if (resetEnum == RESET_BACKUP) {
         conditionsBackup = ResultInputs::getConditions(resultInputsIndex);
       }
       // clean the backup
-      else if (resetFlag == RESET_FLAG::DISCARD) {
+      else if (resetEnum == RESET_DISCARD) {
         resetBackupData();
       }
 
       // pop registered vector
-      Command::resetData(resetFlag);
+      Command::resetData(resetEnum);
 
       // clean registered vector
-      if (resetFlag != RESET_FLAG::DISCARD && !accumulating) {
+      if (resetEnum != RESET_DISCARD && !accumulating) {
         ResultInputs::clearCondition(resultInputsIndex);
       }
     }
@@ -134,13 +134,13 @@ namespace cli_menu {
 
   void Toggle::printTypeError() {
     Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       "only accepts boolean values",
       !Command::matching
     );
   }
 
-  mt::USI Toggle::match() {
+  COMMAND_ENUM Toggle::match() {
 
     if (!directInputs.empty()) {
       std::string copyName, copyInput;
@@ -163,21 +163,21 @@ namespace cli_menu {
           firstChild = static_cast<Cm*>(children.front());
         }
 
-        const mt::USI flag = popBackSet();
+        const COMMAND_ENUM enumeration = popBackSet();
 
         // redirected to first child
-        if (flag == PASSED_FLAG) {
+        if (enumeration == COMMAND_PASSED) {
           return matchTo(firstChild);
         }
         // 'directInputs' may now be empty (dialog may already invoked)
-        else if (flag != CONTINUE_FLAG) {
-          return flag;
+        else if (enumeration != COMMAND_CONTINUE) {
+          return enumeration;
         }
 
         // implicit condition
         initDefaultData();
 
-        if (isToddler()) return COMPLETED_FLAG;
+        if (isToddler()) return COMMAND_COMPLETED;
         return matchTo(firstChild);
       }
 
@@ -193,19 +193,19 @@ namespace cli_menu {
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
       Command::lastCom = ultimate;
-      return COMPLETED_FLAG;
+      return COMMAND_COMPLETED;
     }
     // print error of incompleteness
-    return FAILED_FLAG;
+    return COMMAND_FAILED;
   }
 
-  mt::USI Toggle::answerSpecial(mt::CR_STR bufferStr) {
+  COMMAND_ENUM Toggle::answerSpecial(mt::CR_STR bufferStr) {
 
-    Util::BOOL_FLAG boolFlag = Util::booleanTest(bufferStr);
+    Util::BOOL_ENUM boolEnum = Util::booleanTest(bufferStr);
 
     // condition input
-    if (boolFlag != Util::BOOL_OTHER) setCondition(
-      Util::revealBoolean(boolFlag)
+    if (boolEnum != Util::BOOL_OTHER) setCondition(
+      Util::revealBoolean(boolEnum)
     );
     else printTypeError();
 
@@ -234,7 +234,7 @@ namespace cli_menu {
    * Might call 'question' for arguments
    * before selection in 'dialog'.
    */
-  mt::USI Toggle::dialog() {
+  COMMAND_ENUM Toggle::dialog() {
 
     const bool needQuestion = (
       parent && !Command::selecting && isToddler()

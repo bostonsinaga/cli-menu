@@ -53,7 +53,6 @@ namespace cli_menu {
 
     std::string getAuthor() { return author; }
     Version getVersion() { return version; }
-    mt::USI getInheritanceFlag() override { return PROGRAM; }
     std::string getDashedName() override;
 
     std::string getFullName(
@@ -62,6 +61,10 @@ namespace cli_menu {
       mt::CR_BOL useLevelName = true,
       CR_CLR nameColor = Color()
     ) override;
+
+    INHERITANCE_ENUM getInheritanceEnum() override {
+      return INHERITANCE_PROGRAM;
+    }
 
     static void useCaseSensitiveName(mt::CR_BOL isIt);
     static void useLowercaseName(mt::CR_BOL isIt);

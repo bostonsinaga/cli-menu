@@ -15,7 +15,7 @@ namespace cli_menu {
     void setCondition(mt::CR_BOL condition);
     void setConditions(mt::CR_VEC_BOL conditions);
     void setData(mt::CR_STR input) override;
-    void resetData(RESET_FLAG resetFlag) override;
+    void resetData(RESET_ENUM resetEnum) override;
     void clipboardAction() override;
     void viewAction() override;
     void printTypeError();
@@ -28,9 +28,9 @@ namespace cli_menu {
       return " needs conditions";
     }
 
-    mt::USI match() override;
-    mt::USI answerSpecial(mt::CR_STR bufferStr) override;
-    mt::USI dialog() override;
+    COMMAND_ENUM match() override;
+    COMMAND_ENUM answerSpecial(mt::CR_STR bufferStr) override;
+    COMMAND_ENUM dialog() override;
 
   public:
     Toggle(): Command() {}
@@ -53,7 +53,10 @@ namespace cli_menu {
       mt::CR_BOL accumulating_in
     );
 
-    mt::USI getInheritanceFlag() override { return TOGGLE; }
+    INHERITANCE_ENUM getInheritanceEnum() override {
+      return INHERITANCE_TOGGLE;
+    }
+
     std::string getDashedName() override;
 
     std::string getFullName(

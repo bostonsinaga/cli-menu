@@ -6,6 +6,12 @@
 
 namespace cli_menu {
 
+  // to select the color of a string or tag word
+  enum MESSAGE_ENUM {
+    MESSAGE_HINT, MESSAGE_WARNING, MESSAGE_ERROR,
+    MESSAGE_SUCCEED, MESSAGE_CANCELED
+  };
+
   class Message {
   private:
     static void editToCapitalFirstPeriodEnd(
@@ -16,16 +22,11 @@ namespace cli_menu {
 
     // the 'text' can replace the tag
     static std::string getColoredTag(
-      mt::CR_USI flag,
+      mt::CR_USI enumeration,
       mt::CR_STR text = ""
     );
 
   public:
-    enum {
-      HINT_FLAG, WARNING_FLAG, ERROR_FLAG,
-      SUCCEED_FLAG, CANCELED_FLAG
-    };
-
     // use an atomic boolean to signal an interrupt
     static std::atomic<bool> INTERRUPTED_CTRL_C;
 
@@ -109,14 +110,14 @@ namespace cli_menu {
     );
 
     static void printNamed(
-      mt::CR_USI flag,
+      mt::CR_USI enumeration,
       mt::CR_STR text,
       mt::CR_STR name = "",
       mt::CR_BOL toUppercase = true
     );
 
     static void printNeatNamed(
-      mt::CR_USI flag,
+      mt::CR_USI enumeration,
       std::string text,
       mt::CR_STR name = "",
       mt::CR_BOL toUppercase = true
@@ -128,13 +129,13 @@ namespace cli_menu {
     );
 
     static void printDialog(
-      mt::CR_USI flag,
+      mt::CR_USI enumeration,
       mt::CR_STR reason,
       int endNewlinesCount = 2
     );
 
     static void printNeatDialog(
-      mt::CR_USI flag,
+      mt::CR_USI enumeration,
       std::string reason,
       mt::CR_INT endNewlinesCount = 2
     );

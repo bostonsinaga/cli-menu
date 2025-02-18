@@ -64,7 +64,7 @@ namespace cli_menu {
       );
     }
     else Message::printNeatDialog(
-      Message::ERROR_FLAG,
+      MESSAGE_ERROR,
       std::string(matching ? getSentenceSubject(this) : "")
       + "only accepts numeric values",
       !Command::matching
@@ -106,26 +106,26 @@ namespace cli_menu {
     }
   }
 
-  void Parameter::resetData(RESET_FLAG resetFlag) {
+  void Parameter::resetData(RESET_ENUM resetEnum) {
     if (used) {
 
       // backup registered vector
-      if (resetFlag == RESET_FLAG::BACKUP) {
+      if (resetEnum == RESET_BACKUP) {
         if (argumentType == PARAM_TEXT) {
           textsBackup = ResultInputs::getTexts(resultInputsIndex);
         }
         else numbersBackup = ResultInputs::getNumbers(resultInputsIndex);
       }
       // clean the backup
-      else if (resetFlag == RESET_FLAG::DISCARD) {
+      else if (resetEnum == RESET_DISCARD) {
         resetBackupData();
       }
 
       // pop registered vector
-      Command::resetData(resetFlag);
+      Command::resetData(resetEnum);
 
       // clean registered vector
-      if (resetFlag != RESET_FLAG::DISCARD && !accumulating) {
+      if (resetEnum != RESET_DISCARD && !accumulating) {
 
         if (argumentType == PARAM_TEXT) {
           ResultInputs::clearText(resultInputsIndex);
@@ -194,7 +194,7 @@ namespace cli_menu {
     ) + "arguments";
   }
 
-  mt::USI Parameter::match() {
+  COMMAND_ENUM Parameter::match() {
 
     if (!directInputs.empty()) {
       std::string copyName, copyInput;
@@ -206,28 +206,28 @@ namespace cli_menu {
 
       // e.g. '-name argument'
       if (copyName == DashTest::cleanSingle(copyInput)) {
-        const mt::USI flag = popBackSet();
+        const COMMAND_ENUM enumeration = popBackSet();
 
         // redirected to first child or unused neighbor
-        if (flag == PASSED_FLAG) {
+        if (enumeration == COMMAND_PASSED) {
           return middleMatch(true);
         }
         // 'directInputs' may now be empty (dialog may already invoked)
-        else if (flag != CONTINUE_FLAG) {
-          return flag;
+        else if (enumeration != COMMAND_CONTINUE) {
+          return enumeration;
         }
 
         // implicit argument
         if (!required) {
           initDefaultData();
-          return COMPLETED_FLAG;
+          return COMMAND_COMPLETED;
         }
         // has no argument
         else if (Command::dialogued) {
           Command::matching = false;
 
           Message::printNeatDialog(
-            Message::ERROR_FLAG,
+            MESSAGE_ERROR,
             "the last " + getLevelName() + getNeedsString(), 1
           );
 
@@ -235,7 +235,7 @@ namespace cli_menu {
         }
 
         // no dialog
-        return FAILED_FLAG;
+        return COMMAND_FAILED;
       }
 
       // point to neighbor if input not matched
@@ -250,14 +250,14 @@ namespace cli_menu {
     // invoke callback
     else if (ultimate && getRequiredCount() == 0) {
       Command::lastCom = ultimate;
-      return COMPLETED_FLAG;
+      return COMMAND_COMPLETED;
     }
     // print error of incompleteness
-    return FAILED_FLAG;
+    return COMMAND_FAILED;
   }
 
   // match continues after question in the middle
-  mt::USI Parameter::middleMatch(mt::CR_BOL needUnusedNeighbor) {
+  COMMAND_ENUM Parameter::middleMatch(mt::CR_BOL needUnusedNeighbor) {
     Command::matching = true;
 
     return matchTo(static_cast<Cm*>(
@@ -265,7 +265,7 @@ namespace cli_menu {
     ));
   }
 
-  mt::USI Parameter::channelTheParent() {
+  COMMAND_ENUM Parameter::channelTheParent() {
 
     // question in the middle, back to match
     if (!directInputs.empty()) {
@@ -276,12 +276,12 @@ namespace cli_menu {
   }
 
   // argument input
-  mt::USI Parameter::answerSpecial(mt::CR_STR bufferStr) {
+  COMMAND_ENUM Parameter::answerSpecial(mt::CR_STR bufferStr) {
     setData(bufferStr);
     return downTheChannel();
   }
 
-  mt::USI Parameter::questionEnterTest() {
+  COMMAND_ENUM Parameter::questionEnterTest() {
 
     // question in the middle, back to match
     if (!directInputs.empty()) {
@@ -289,7 +289,7 @@ namespace cli_menu {
       return middleMatch(false);
     }
 
-    return PASSED_FLAG;
+    return COMMAND_PASSED;
   }
 
   void Parameter::clipboardAction() {
@@ -318,7 +318,7 @@ namespace cli_menu {
    * Might call 'question' for arguments
    * before selection in 'dialog'.
    */
-  mt::USI Parameter::dialog() {
+  COMMAND_ENUM Parameter::dialog() {
 
     const bool noArguments = (
       (argumentType == PARAM_TEXT && textsBackup.empty()) ||

@@ -23,15 +23,15 @@ namespace cli_menu {
   };
 
   std::string Control::modeSymbol = ":";
-  mt::USI Control::sharedFlag = -1;
+  CONTROL_ENUM Control::sharedEnum = CONTROL_BACK;
 
   void Control::rename(
-    CONTROL_FLAG flag,
+    const CONTROL_ENUM& index,
     mt::CR_STR name,
     mt::CR_STR abbreviation
   ) {
-    NAMES[flag][0] = name;
-    NAMES[flag][1] = abbreviation;
+    NAMES[index][0] = name;
+    NAMES[index][1] = abbreviation;
   }
 
   mt::SI Control::whitespacesCheck(mt::CR_STR str) {
@@ -52,7 +52,7 @@ namespace cli_menu {
       for (int j = 0; j < TOTAL; j++) {
 
         if (input == modeSymbol + NAMES[j][i]) {
-          sharedFlag = j;
+          sharedEnum = static_cast<CONTROL_ENUM>(j);
           return j;
         }
       }
@@ -62,51 +62,51 @@ namespace cli_menu {
   }
 
   bool Control::backTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == BACK;
+    return whitespacesCheck(str) == CONTROL_BACK;
   }
 
   bool Control::clipboardTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CLIPBOARD;
+    return whitespacesCheck(str) == CONTROL_CLIPBOARD;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == ENTER;
+    return whitespacesCheck(str) == CONTROL_ENTER;
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == HELP;
+    return whitespacesCheck(str) == CONTROL_HELP;
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == LIST;
+    return whitespacesCheck(str) == CONTROL_LIST;
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == MODIFY;
+    return whitespacesCheck(str) == CONTROL_MODIFY;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == NEXT;
+    return whitespacesCheck(str) == CONTROL_NEXT;
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == PREVIOUS;
+    return whitespacesCheck(str) == CONTROL_PREVIOUS;
   }
 
   bool Control::quitTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == QUIT;
+    return whitespacesCheck(str) == CONTROL_QUIT;
   }
 
   bool Control::resetTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == RESET;
+    return whitespacesCheck(str) == CONTROL_RESET;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == SELECT;
+    return whitespacesCheck(str) == CONTROL_SELECT;
   }
 
   bool Control::viewTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == VIEW;
+    return whitespacesCheck(str) == CONTROL_VIEW;
   }
 
   void Control::printParameterHelp() {

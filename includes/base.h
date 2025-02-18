@@ -5,21 +5,29 @@
 
 namespace cli_menu {
 
-  // inheritance flags
-  enum { COMMAND, PROGRAM, PARAMETER, TOGGLE };
+  /**
+   * As coefficients in a conditional block
+   * that can provide options for polymorphism.
+   */
+  enum INHERITANCE_ENUM {
+    INHERITANCE_COMMAND,
+    INHERITANCE_PROGRAM,
+    INHERITANCE_PARAMETER,
+    INHERITANCE_TOGGLE
+  };
 
   class Util {
   public:
-    enum BOOL_FLAG {
+    enum BOOL_ENUM {
       BOOL_OTHER, BOOL_FALSE, BOOL_TRUE
     };
 
     static bool isWhitespace(mt::CR_CH ch);
-    static BOOL_FLAG booleanTest(mt::CR_STR str);
+    static BOOL_ENUM booleanTest(mt::CR_STR str);
 
     // use 'booleanTest' first before using this
-    static bool revealBoolean(BOOL_FLAG testedFlag) {
-      return testedFlag == BOOL_TRUE;
+    static bool revealBoolean(BOOL_ENUM testedEnum) {
+      return testedEnum == BOOL_TRUE;
     }
   };
 
