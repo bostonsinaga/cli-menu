@@ -209,7 +209,7 @@ namespace cli_menu {
     );
     else printTypeError();
 
-    return downTheChannel();
+    return downTheChannel(COMMAND_PASSED);
   }
 
   void Toggle::clipboardAction() {

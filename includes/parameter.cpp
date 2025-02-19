@@ -278,7 +278,7 @@ namespace cli_menu {
   // argument input
   COMMAND_ENUM Parameter::answerSpecial(mt::CR_STR bufferStr) {
     setData(bufferStr);
-    return downTheChannel();
+    return downTheChannel(COMMAND_PASSED);
   }
 
   COMMAND_ENUM Parameter::questionEnterTest() {
