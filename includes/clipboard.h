@@ -7,10 +7,6 @@ namespace cli_menu {
 
   /** Only for string copy */
   class Clipboard {
-  private:
-    static bool internalCalling;
-    static void printSucceed(mt::CR_INT endNewlinesCount);
-
   public:
     static void pasteText(std::string &dataRef);
     static void pasteNumbers(mt::VEC_LD &numbersRef);

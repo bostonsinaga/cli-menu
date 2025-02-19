@@ -6,19 +6,6 @@
 
 namespace cli_menu {
 
-  bool Clipboard::internalCalling = false;
-
-  void Clipboard::printSucceed(mt::CR_INT endNewlinesCount) {
-
-    Message::printNeatDialog(
-      MESSAGE_SUCCEED,
-      "pasted from clipboard",
-      endNewlinesCount
-    );
-
-    internalCalling = false;
-  }
-
   void Clipboard::pasteText(std::string &dataRef) {
 
     // activate clipboard
@@ -64,27 +51,22 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    if (!internalCalling) {
-      printSucceed(2);
-    }
+    Message::printNeatDialog(
+      MESSAGE_SUCCEED,
+      "pasted from clipboard"
+    );
   }
 
   void Clipboard::pasteNumbers(mt::VEC_LD &numbersRef) {
-    internalCalling = true;
-
     std::string textRef;
     pasteText(textRef);
 
     mt_uti::Scanner<mt::LD>::parseNumbers(
       textRef, numbersRef
     );
-
-    printSucceed(!numbersRef.empty() + 1);
   }
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
-    internalCalling = true;
-
     bool pushed = false;
     Util::BOOL_ENUM boolEnum;
     mt::VEC_STR textVec {""};
@@ -117,8 +99,6 @@ namespace cli_menu {
         );
       }
     }
-
-    printSucceed(!conditionsRef.empty() + 1);
   }
 }
 
