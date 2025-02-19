@@ -760,7 +760,7 @@ namespace cli_menu {
     return COMMAND_CANCELED;
   }
 
-  COMMAND_ENUM Command::downTheChannel() {
+  COMMAND_ENUM Command::downTheChannel(CR_COMNUM defaultEnum) {
 
     // the 'question' will stop after pressing enter
     if (!accumulating) {
@@ -778,7 +778,7 @@ namespace cli_menu {
       return channelTheParent();
     }
 
-    return COMMAND_PASSED;
+    return defaultEnum;
   }
 
   COMMAND_ENUM Command::answerControl(
@@ -803,7 +803,7 @@ namespace cli_menu {
       }
       else clipboardAction();
 
-      return COMMAND_CONTINUE;
+      return downTheChannel(COMMAND_CONTINUE);
     }
     else if (Control::enterTest(controlStr)) {
       bool isContinue = true;
