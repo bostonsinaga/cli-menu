@@ -19,6 +19,8 @@ namespace cli_menu {
     COMMAND_PASSED     // pseudo
   };
 
+  typedef const COMMAND_ENUM& CR_COMNUM;
+
   /**
    * It is recommended to use derived classes
    * for feature completeness.
@@ -187,7 +189,7 @@ namespace cli_menu {
 
     COMMAND_ENUM matchTo(Command *target);
     COMMAND_ENUM conversation(mt::CR_BOL dialogOn);
-    COMMAND_ENUM downTheChannel();
+    COMMAND_ENUM downTheChannel(CR_COMNUM defaultEnum);
 
     virtual COMMAND_ENUM channelTheParent();
 
