@@ -130,14 +130,12 @@ namespace cli_menu {
 
     static void printDialog(
       mt::CR_USI enumeration,
-      mt::CR_STR reason,
-      int endNewlinesCount = 2
+      mt::CR_STR reason
     );
 
     static void printNeatDialog(
       mt::CR_USI enumeration,
-      std::string reason,
-      mt::CR_INT endNewlinesCount = 2
+      std::string reason
     );
 
     // to prevent infinite loop after pressing 'ctrl+c'
