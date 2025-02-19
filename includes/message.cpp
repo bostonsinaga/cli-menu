@@ -295,24 +295,27 @@ namespace cli_menu {
 
   void Message::printDialog(
     mt::CR_USI enumeration,
-    mt::CR_STR reason,
-    int endNewlinesCount
+    mt::CR_STR reason
   ) {
-    endNewlinesCount *= endNewlinesCount >= 0;
+    static bool initialNewline = true;
 
-    std::cout
-      << getColoredTag(enumeration, "\n" + listPointStyle + " " + reason)
-      << std::string(endNewlinesCount, '\n');
+    if (initialNewline) {
+      initialNewline = false;
+      std::cout << std::endl;
+    }
+
+    std::cout << getColoredTag(
+      enumeration, listPointStyle + " " + reason
+    ) << std::endl;
   }
 
   void Message::printNeatDialog(
     mt::CR_USI enumeration,
-    std::string reason,
-    mt::CR_INT endNewlinesCount
+    std::string reason
   ) {
     int i, j;
     editToCapitalFirstPeriodEnd(reason, i, j);
-    printDialog(enumeration, reason, endNewlinesCount);
+    printDialog(enumeration, reason);
   }
 
   // check if interrupted before waiting for input
@@ -321,8 +324,8 @@ namespace cli_menu {
     if (Message::INTERRUPTED_CTRL_C.load()) {
       std::cout << std::endl;
 
-      printDialog(
-        MESSAGE_ERROR, "Interrupt signal received. Exiting program.", 1
+      printDialog(MESSAGE_ERROR,
+        "Interrupt signal received. Exiting program."
       );
 
       return true;
