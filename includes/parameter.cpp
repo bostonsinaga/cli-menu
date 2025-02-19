@@ -65,9 +65,8 @@ namespace cli_menu {
     }
     else Message::printNeatDialog(
       MESSAGE_ERROR,
-      std::string(matching ? getSentenceSubject(this) : "")
-      + "only accepts numeric values",
-      !Command::matching
+      std::string(Command::matching ? getSentenceSubject(this) : "")
+      + "only accepts numeric values"
     );
   }
 
@@ -228,7 +227,7 @@ namespace cli_menu {
 
           Message::printNeatDialog(
             MESSAGE_ERROR,
-            "the last " + getLevelName() + getNeedsString(), 1
+            "the last " + getLevelName() + getNeedsString()
           );
 
           return question();

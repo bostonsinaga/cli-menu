@@ -555,7 +555,7 @@ namespace cli_menu {
 
             Message::printNeatDialog(
               MESSAGE_ERROR,
-              "the '" + name + "' " + getLevelName() + getNeedsString(), 1
+              "the '" + name + "' " + getLevelName() + getNeedsString()
             );
 
             return question();
@@ -1081,7 +1081,7 @@ namespace cli_menu {
 
     Message::printNeatDialog(
       MESSAGE_ERROR,
-      "unknown " + inputLevelName + " named '" + inputName + "'", 1
+      "unknown " + inputLevelName + " named '" + inputName + "'"
     );
 
     // reset values
@@ -1125,7 +1125,7 @@ namespace cli_menu {
             MESSAGE_ERROR,
             getSentenceSubject(parCom) + "has "
             + parCom->getChildrenLevelName(true)
-            + errStr, 1
+            + errStr
           );
           // one incomplete
           else Message::printNeatDialog(
@@ -1133,7 +1133,7 @@ namespace cli_menu {
             getSentenceSubject(parCom) + "has "
             + "a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
-            + errStr, 1
+            + errStr
           );
         }
         // ultimate or supporter
@@ -1144,7 +1144,7 @@ namespace cli_menu {
               isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
             );
 
-          Message::printDialog(MESSAGE_ERROR, errStr, 1);
+          Message::printDialog(MESSAGE_ERROR, errStr);
         }
       }
 

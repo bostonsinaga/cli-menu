@@ -135,8 +135,7 @@ namespace cli_menu {
   void Toggle::printTypeError() {
     Message::printNeatDialog(
       MESSAGE_ERROR,
-      "only accepts boolean values",
-      !Command::matching
+      "only accepts boolean values"
     );
   }
 
