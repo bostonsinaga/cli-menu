@@ -299,7 +299,7 @@ namespace cli_menu {
 
         Message::printNeatDialog(
           MESSAGE_ERROR,
-          "unable to process before "
+          getUnableToString("process", false)
           + std::string( isOneLeftNotThis ? "a " : "" )
           + std::string( isThis ? "this " : "required " )
           + ulCom->getChildrenLevelName(true)
@@ -554,8 +554,7 @@ namespace cli_menu {
             Command::matching = false;
 
             Message::printNeatDialog(
-              MESSAGE_ERROR,
-              "the '" + name + "' " + getLevelName() + getNeedsString()
+              MESSAGE_ERROR, getNeedsString(false)
             );
 
             return question();
@@ -609,27 +608,27 @@ namespace cli_menu {
       curCom = this;
       text = "";
 
-      std::string strArr[5] = {
-        " before ", "", "direct input", "", " processed"
+      std::string strArr[4] = {
+        "", "direct input", "", " processed"
       };
 
       // singular
       if (directInputs.size() == 1 || (
         directInputs.size() == 2 && DashTest::isSingle(directInputs.back())
       )) {
-        strArr[1] = "a ";
-        strArr[3] = " is";
+        strArr[0] = "a ";
+        strArr[2] = " is";
       }
       // plural
-      else strArr[3] = "s are";
+      else strArr[2] = "s are";
 
       // strings are united
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 4; i++) {
         text += strArr[i];
       }
 
       // final string
-      text = "unable to " + controlName + text;
+      text = getUnableToString(controlName, false) + text;
     }
 
     Message::printNeatDialog(MESSAGE_ERROR, text);
@@ -815,7 +814,7 @@ namespace cli_menu {
 
           Message::printNeatDialog(
             MESSAGE_ERROR,
-            "this " + getLevelName(isSupporter()) + getNeedsString()
+            getUnableToString("enter", true)
           );
 
           isContinue = false;
@@ -928,10 +927,7 @@ namespace cli_menu {
           if (required) {
             Message::printNeatDialog(
               MESSAGE_ERROR,
-              "unable to select before "
-              + std::string(getInheritanceEnum() == INHERITANCE_TOGGLE ?
-                "conditions" : "arguments"
-              ) + " are given"
+              getUnableToString("select", true)
             );
           }
           // the 'selecting' will be an opposite in overridden 'dialog' method
@@ -1211,6 +1207,30 @@ namespace cli_menu {
       }
       else mt_uti::StrTools::changeStringToUppercase(strIn);
     }
+  }
+
+  std::string Command::getNeedsString(mt::CR_BOL isLast) {
+    std::string retStr;
+
+    if (isLast) {
+      retStr = "the last ";
+    }
+    else retStr = "the '" + name + "' ";
+
+    return retStr + getLevelName() + " needs " + inputTypeString;
+  }
+
+  std::string Command::getUnableToString(
+    mt::CR_STR controlName,
+    mt::CR_BOL isComplete
+  ) {
+    std::string retStr = "unable to " + controlName + " before ";
+
+    if (isComplete) {
+      retStr += inputTypeString + " are given";
+    }
+
+    return retStr;
   }
 
   void Command::copyMatchName(std::string &hookName) {
