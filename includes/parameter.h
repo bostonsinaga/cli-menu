@@ -16,6 +16,7 @@ namespace cli_menu {
     std::string defaultText = "";
     long double defaultNumber = 0;
 
+    void setInputTypeString();
     void initDefaultData() override;
     void setNumbers(mt::CR_VEC_LD numbers);
     void setData(mt::CR_STR input) override;
@@ -23,8 +24,6 @@ namespace cli_menu {
     void resetBackupData() override;
     void clipboardAction() override;
     void viewAction() override;
-
-    const std::string getNeedsString() const override;
 
     COMMAND_ENUM match() override;
     COMMAND_ENUM middleMatch(mt::CR_BOL needUnusedNeighbor);
@@ -34,7 +33,9 @@ namespace cli_menu {
     COMMAND_ENUM dialog() override;
 
   public:
-    Parameter(): Command() {}
+    Parameter(): Command() {
+      setInputTypeString();
+    }
 
     Parameter(
       mt::CR_STR name_in,

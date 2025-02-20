@@ -10,6 +10,10 @@ namespace cli_menu {
     mt::VEC_BOL conditionsBackup;
     bool defaultCondition = false;
 
+    void setInputTypeString() {
+      inputTypeString = "conditions";
+    }
+
     void initData(mt::CR_VEC_BOL data);
     void initDefaultData() override;
     void setCondition(mt::CR_BOL condition);
@@ -24,16 +28,14 @@ namespace cli_menu {
       conditionsBackup = {};
     }
 
-    const std::string getNeedsString() const override {
-      return " needs conditions";
-    }
-
     COMMAND_ENUM match() override;
     COMMAND_ENUM answerSpecial(mt::CR_STR bufferStr) override;
     COMMAND_ENUM dialog() override;
 
   public:
-    Toggle(): Command() {}
+    Toggle(): Command() {
+      setInputTypeString();
+    }
 
     Toggle(
       mt::CR_STR name_in,

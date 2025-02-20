@@ -21,6 +21,7 @@ namespace cli_menu {
     propagatingCallback_in
   ) {
     argumentType = argumentType_in;
+    setInputTypeString();
   }
 
   Parameter::Parameter(
@@ -36,6 +37,14 @@ namespace cli_menu {
     accumulating_in
   ) {
     argumentType = argumentType_in;
+    setInputTypeString();
+  }
+
+  void Parameter::setInputTypeString() {
+    if (argumentType == PARAM_NUMBER) {
+      inputTypeString = "numeric arguments";
+    }
+    else inputTypeString = "text arguments";
   }
 
   void Parameter::initDefaultData() {
@@ -154,7 +163,7 @@ namespace cli_menu {
     mt::CR_BOL useLevelName,
     CR_CLR nameColor
   ) {
-    std::string nameStr, inputTypeStr, text;
+    std::string nameStr, typeStr, text;
 
     // choose name
     if (useDash) {
@@ -169,12 +178,12 @@ namespace cli_menu {
 
     // add input 'argumentType'
     if (useInputType) {
-      inputTypeStr = "<" + getStringifiedArgumentType() + ">";
+      typeStr = "<" + getStringifiedArgumentType() + ">";
     }
 
     // final assignment
     text += nameStr + Color::getString(
-      inputTypeStr,
+      typeStr,
       Command::usingDashesBoundaryLine ?
         Color::AZURE : Color::ROYAL_BLUE
     );
@@ -185,12 +194,6 @@ namespace cli_menu {
     }
 
     return text;
-  }
-
-  const std::string Parameter::getNeedsString() const {
-    return " needs" + std::string(
-      argumentType == PARAM_NUMBER ? " numeric " : " "
-    ) + "arguments";
   }
 
   COMMAND_ENUM Parameter::match() {
@@ -226,8 +229,7 @@ namespace cli_menu {
           Command::matching = false;
 
           Message::printNeatDialog(
-            MESSAGE_ERROR,
-            "the last " + getLevelName() + getNeedsString()
+            MESSAGE_ERROR, getNeedsString(true)
           );
 
           return question();

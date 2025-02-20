@@ -18,7 +18,9 @@ namespace cli_menu {
     required_in, parent_in,
     accumulating_in, callback_in,
     propagatingCallback_in
-  ) {}
+  ) {
+    setInputTypeString();
+  }
 
   Toggle::Toggle(
     mt::CR_STR name_in,
@@ -30,7 +32,9 @@ namespace cli_menu {
     name_in, description_in,
     required_in, parent_in,
     accumulating_in
-  ) {}
+  ) {
+    setInputTypeString();
+  }
 
   void Toggle::initData(mt::CR_VEC_BOL data) {
     ResultInputs::addConditions(name, data);
