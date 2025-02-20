@@ -90,6 +90,11 @@ namespace cli_menu {
     static bool isTemporaryLetterCaseChange();
     void onFreeChangeInputLetterCase(std::string &strIn);
 
+    inline std::string getUnableToString(
+      mt::CR_STR controlName,
+      mt::CR_BOL isComplete
+    );
+
     /**
      * A condition setter for 'disguised' where the derived class
      * will behave as its base class (hiding its own abilities)
@@ -106,7 +111,9 @@ namespace cli_menu {
     };
 
     Command *ultimate = nullptr;
-    std::string description;
+
+    std::string description,
+      inputTypeString = "values";
 
     bool accumulating = false,
       questionedGroup = false,
@@ -160,6 +167,7 @@ namespace cli_menu {
     std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
     std::string getSentenceSubject(Command *subject);
+    inline std::string getNeedsString(mt::CR_BOL isLast);
 
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printNullptrNeighborError();
@@ -171,10 +179,6 @@ namespace cli_menu {
 
     void changeTreeNamesToLowercase();
     void changeTreeNamesToUppercase();
-
-    virtual const std::string getNeedsString() const {
-      return " needs values";
-    }
 
     virtual COMMAND_ENUM match() {
       return COMMAND_CONTINUE;
