@@ -71,7 +71,7 @@ namespace cli_menu {
       VEC_TREE &united
     );
 
-    // this only invoked by 'ultimate'
+    // this only called by 'ultimate'
     void relateToSupporter(
       TREE *node,
       mt::CR_BOL connected

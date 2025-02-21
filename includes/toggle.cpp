@@ -172,7 +172,7 @@ namespace cli_menu {
         if (enumeration == COMMAND_PASSED) {
           return matchTo(firstChild);
         }
-        // 'directInputs' may now be empty (dialog may already invoked)
+        // 'directInputs' may now be empty (dialog may already called)
         else if (enumeration != COMMAND_CONTINUE) {
           return enumeration;
         }

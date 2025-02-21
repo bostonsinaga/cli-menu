@@ -148,7 +148,7 @@ namespace cli_menu {
     );
   }
 
-  // the 'ultimate' confirmed to exist when this invoked
+  // the 'ultimate' confirmed to exist when this called
   std::string Command::getFullNameWithUltimate(
     mt::CR_STR separator,
     mt::CR_BOL startWithSeparator,
