@@ -166,7 +166,7 @@ namespace cli_menu {
 
     std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
-    std::string getSentenceSubject(Command *subject);
+    inline std::string getSubjectString(Command *subject);
     inline std::string getNeedsString(mt::CR_BOL isLast);
 
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);

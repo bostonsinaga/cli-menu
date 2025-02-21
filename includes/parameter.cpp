@@ -41,10 +41,16 @@ namespace cli_menu {
   }
 
   void Parameter::setInputTypeString() {
+
     if (argumentType == PARAM_NUMBER) {
-      inputTypeString = "numeric arguments";
+      inputTypeString = "numeric argument";
     }
-    else inputTypeString = "text arguments";
+    else inputTypeString = "text argument";
+
+    if (accumulating) {
+      inputTypeString += "s";
+    }
+    else inputTypeString = "a " + inputTypeString;
   }
 
   void Parameter::initDefaultData() {
@@ -74,7 +80,7 @@ namespace cli_menu {
     }
     else Message::printNeatDialog(
       MESSAGE_ERROR,
-      std::string(Command::matching ? getSentenceSubject(this) : "")
+      std::string(Command::matching ? getSubjectString(this) : "")
       + "only accepts numeric values"
     );
   }
@@ -346,6 +352,15 @@ namespace cli_menu {
 
     // no need to set argument exclusively
     return Command::dialog();
+  }
+
+  void Parameter::setAccumulating(mt::CR_BOL cond) {
+    accumulating = cond;
+
+    if (accumulating) {
+      inputTypeString += "s";
+    }
+    else inputTypeString = "a " + inputTypeString;
   }
 }
 

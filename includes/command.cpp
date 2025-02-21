@@ -257,10 +257,6 @@ namespace cli_menu {
     return "";
   }
 
-  std::string Command::getSentenceSubject(Command *subject) {
-    return "the '" + subject->name + "' " + subject->getLevelName() + " ";
-  }
-
   // not for program or question in the middle
   COMMAND_ENUM Command::tryToGoBack() {
 
@@ -1011,16 +1007,11 @@ namespace cli_menu {
         Command::selecting = false;
         return found->dialog();
       }
-      else if (isUltimate()) {
-        Message::printNeatDialog(
-          MESSAGE_ERROR, "input not found"
-        );
-      }
       // toddler
       else if (isToddler()) {
         printNoItems();
       }
-      // group
+      // parent
       else Message::printNeatDialog(
         MESSAGE_ERROR,
         getChildrenLevelName(false) + " not found"
@@ -1119,23 +1110,23 @@ namespace cli_menu {
 
           if (reqCt > 1) Message::printNeatDialog(
             MESSAGE_ERROR,
-            getSentenceSubject(parCom) + "has "
+            getSubjectString(parCom) + "has "
             + parCom->getChildrenLevelName(true)
             + errStr
           );
           // one incomplete
           else Message::printNeatDialog(
             MESSAGE_ERROR,
-            getSentenceSubject(parCom) + "has "
-            + "a " + oneLeft->getLevelName()
+            getSubjectString(parCom)
+            + "has a " + oneLeft->getLevelName()
             + " named '" + oneLeft->name + "'"
             + errStr
           );
         }
         // ultimate or supporter
         else {
-          const std::string errStr = "The '" + parCom->name
-            + "' command has " + std::string(isOneLeft ? "a " : "")
+          const std::string errStr = getSubjectString(parCom)
+            + "has " + std::string(isOneLeft ? "a " : "")
             + "required input" + std::string(
               isOneLeft ? (" named '" + oneLeft->name + "'.") : "s."
             );
@@ -1209,7 +1200,11 @@ namespace cli_menu {
     }
   }
 
-  std::string Command::getNeedsString(mt::CR_BOL isLast) {
+  inline std::string Command::getSubjectString(Command *subject) {
+    return "the '" + subject->name + "' " + subject->getLevelName() + " ";
+  }
+
+  inline std::string Command::getNeedsString(mt::CR_BOL isLast) {
     std::string retStr;
 
     if (isLast) {
@@ -1220,7 +1215,7 @@ namespace cli_menu {
     return retStr + getLevelName() + " needs " + inputTypeString;
   }
 
-  std::string Command::getUnableToString(
+  inline std::string Command::getUnableToString(
     mt::CR_STR controlName,
     mt::CR_BOL isComplete
   ) {

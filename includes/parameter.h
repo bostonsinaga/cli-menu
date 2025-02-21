@@ -72,7 +72,7 @@ namespace cli_menu {
       return INHERITANCE_PARAMETER;
     }
 
-    void setAccumulating(mt::CR_BOL cond) { accumulating = cond; }
+    void setAccumulating(mt::CR_BOL cond);
     bool isAccumulating() { return accumulating; }
   };
 }
