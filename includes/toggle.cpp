@@ -188,7 +188,7 @@ namespace cli_menu {
       return askNeighbor();
     }
     // 'directInputs' completion
-    else if (isMatchNeedDialog()) {
+    else if (doesMatchNeedDialog()) {
       return dialogTo(
         static_cast<Cm*>(parent)
       );

@@ -1075,7 +1075,7 @@ namespace cli_menu {
     circularCheckpoint = nullptr;
     directInputs = {};
 
-    if (isMatchNeedDialog(false)) return dialogTo(
+    if (doesMatchNeedDialog(false)) return dialogTo(
       static_cast<Cm*>(parent)
     );
 
@@ -1086,7 +1086,7 @@ namespace cli_menu {
    * This will not be used by program or orphan because there is
    * already a condition for empty children in 'Program::run'.
    */
-  bool Command::isMatchNeedDialog(mt::CR_BOL withMessage) {
+  bool Command::doesMatchNeedDialog(mt::CR_BOL withMessage) {
 
     Command *parCom = static_cast<Cm*>(parent);
     const mt::UI reqCt = parCom ? parCom->getRequiredCount() : 0;

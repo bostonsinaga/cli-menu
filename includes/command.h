@@ -220,7 +220,7 @@ namespace cli_menu {
     COMMAND_ENUM askNeighbor();
 
     // 'INPUTS.direct' is empty and has 'requiredItems'
-    bool isMatchNeedDialog(mt::CR_BOL withMessage = true);
+    bool doesMatchNeedDialog(mt::CR_BOL withMessage = true);
 
     virtual void clipboardAction();
     virtual void viewAction() {}
