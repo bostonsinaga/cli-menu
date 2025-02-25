@@ -1,5 +1,6 @@
 set (SOURCES
   base.cpp
+  language.cpp
   clipboard.cpp
   color.cpp
   message.cpp
