@@ -1,9 +1,9 @@
 set (SOURCES
   base.cpp
-  language.cpp
-  clipboard.cpp
   color.cpp
+  language.cpp
   message.cpp
+  clipboard.cpp
   control.cpp
   result-inputs.cpp
   command.cpp
