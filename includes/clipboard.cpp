@@ -77,7 +77,7 @@ namespace cli_menu {
     // truncated by spaces
     for (mt::CR_CH ch : textRef) {
 
-      if (Util::isWhitespace(ch)) {
+      if (mt_uti::StrTools::isWhitespace(ch)) {
         if (!pushed) {
           textVec.push_back("");
           pushed = true;
