@@ -25,23 +25,40 @@ namespace cli_menu {
 
   class Language {
   private:
-    static const int max_sentences_size = 13;
-    typedef mt::ARR<std::string, max_sentences_size> LANGARR;
+    static const int maxSentencesSize = 13;
+    typedef mt::ARR<std::string, maxSentencesSize> LANGARR;
 
-    // name and sentences
-    typedef mt::PAIR2<std::string, LANGARR> PAIR_LANGARR;
+    static const std::string defaultSentences[maxSentencesSize];
+    static mt::VEC<LANGARR> sentences;
+    static mt::VEC<std::string> collections;
+    static int currentCollectionIndex;
 
-    static const std::string DEFAULT_SENTENCES[max_sentences_size];
-    static mt::VEC<PAIR_LANGARR> SENTENCES_COLLECTION;
+    static std::string textCopy,
+      levelPlaceholder, namePlaceholder, typePlaceholder;
+
+    static bool hasIndex(mt::CR_INT collectionIndex) {
+      return mt_uti::VecTools<std::string>::hasIndex(
+        collections, collectionIndex
+      ) != -1;
+    }
 
   public:
-    static std::string
-      LEVEL_PLACEHOLDER, NAME_PLACEHOLDER, TYPE_PLACEHOLDER;
+    static int getCurrentCollectionIndex() {
+      return currentCollectionIndex;
+    }
 
-    // first called for 'SENTENCES' initialization
+    static std::string getTextCopy() {
+      return textCopy;
+    }
+
+    // call this before using 'solveTemplate'
+    static void initTextCopy(CR_LANGNUM sentencesIndex);
+
+    // first called for 'sentences' initialization
     static void reset();
 
     static void addCollection(mt::CR_STR name);
+    static void switchCollection(mt::CR_INT collectionIndex);
     static void removeCollection(mt::CR_INT collectionIndex);
 
     static void translate(
@@ -50,36 +67,18 @@ namespace cli_menu {
       mt::CR_STR sentence
     );
 
-    static std::string solveTemplate(
-      mt::CR_INT collectionIndex,
+    static void solveTemplate(
       CR_LANGNUM sentencesIndex,
       mt::CR_STR placeholder,
       mt::CR_VEC_STR replacements,
       mt::CR_PAIR<std::string> brackets = {"",""}
     );
 
-    std::string solveName(
-      mt::CR_INT collectionIndex,
+    static void solvePlaceholders(
       CR_LANGNUM sentencesIndex,
-      mt::CR_VEC_STR replacements
-    );
-
-    std::string solveLevelName(
-      mt::CR_INT collectionIndex,
-      CR_LANGNUM sentencesIndex,
-      mt::CR_PAIR<mt::VEC_STR> replacements
-    );
-
-    std::string solveNameType(
-      mt::CR_INT collectionIndex,
-      CR_LANGNUM sentencesIndex,
-      mt::CR_PAIR<mt::VEC_STR> replacements
-    );
-
-    std::string solveLevelNameType(
-      mt::CR_INT collectionIndex,
-      CR_LANGNUM sentencesIndex,
-      mt::CR_ARR<mt::VEC_STR, 3> replacements
+      mt::CR_VEC_STR levelReplacements = {},
+      mt::CR_VEC_STR nameReplacements = {},
+      mt::CR_VEC_STR typeReplacements = {}
     );
   };
 }

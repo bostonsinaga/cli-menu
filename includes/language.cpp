@@ -7,7 +7,7 @@
 namespace cli_menu {
 
   /** English Presets */
-  const std::string Language::DEFAULT_SENTENCES[max_sentences_size] = {
+  const std::string Language::defaultSentences[maxSentencesSize] = {
 
     // LANGERR_DIALOG_ALREADY_SELECTING,
     "already in selection mode",
@@ -38,29 +38,48 @@ namespace cli_menu {
     "unknown #LEVEL named #NAME"
   };
 
-  std::string Language::LEVEL_PLACEHOLDER = "#LEVEL",
-    Language::NAME_PLACEHOLDER = "#NAME",
-    Language::TYPE_PLACEHOLDER = "#TYPE";
+  mt::VEC<Language::LANGARR> Language::sentences = {};
+  mt::VEC<std::string> Language::collections = {};
+  int Language::currentCollectionIndex = 0;
 
-  void Language::addCollection(mt::CR_STR name) {
-    LANGARR newArr;
-    newArr.fill("");
+  std::string Language::textCopy = "",
+    Language::levelPlaceholder = "#LEVEL",
+    Language::namePlaceholder = "#NAME",
+    Language::typePlaceholder = "#TYPE";
 
-    if (mt_uti::VecTools<PAIR_LANGARR>::getIndex(
-      SENTENCES_COLLECTION, {name, newArr},
-      [](mt::CR<PAIR_LANGARR> rep, mt::CR<PAIR_LANGARR> com)->bool {
-        return rep.first == com.first;
-      }
-    ) != -1) {
-      SENTENCES_COLLECTION.push_back({
-        name, newArr
-      });
+  void Language::reset() {
+    sentences = {LANGARR{""}};
+
+    for (int i = 0; i < maxSentencesSize; i++) {
+      sentences[0][i] = defaultSentences[i];
     }
   }
 
+  void Language::addCollection(mt::CR_STR name) {
+    if (mt_uti::VecTools<std::string>::getIndex(
+      collections, name
+    ) != -1) {
+      collections.push_back(name);
+      sentences.push_back(LANGARR{""});
+    }
+  }
+
+  void Language::switchCollection(mt::CR_INT collectionIndex) {
+    if (hasIndex(collectionIndex)) {
+      currentCollectionIndex = collectionIndex;
+    } 
+  }
+
   void Language::removeCollection(mt::CR_INT collectionIndex) {
-    mt_uti::VecTools<PAIR_LANGARR>::cutSingle(
-      SENTENCES_COLLECTION,
+
+    mt_uti::VecTools<std::string>::cutSingle(
+      collections,
+      collectionIndex,
+      true
+    );
+
+    mt_uti::VecTools<LANGARR>::cutSingle(
+      sentences,
       collectionIndex,
       true
     );
@@ -71,100 +90,58 @@ namespace cli_menu {
     CR_LANGNUM sentencesIndex,
     mt::CR_STR sentence
   ) {
-    if (mt_uti::VecTools<PAIR_LANGARR>::hasIndex(
-      SENTENCES_COLLECTION, collectionIndex
-    )) {
-      SENTENCES_COLLECTION[collectionIndex].second[sentencesIndex] = sentence;
+    if (hasIndex(collectionIndex)) {
+      sentences[collectionIndex][sentencesIndex] = sentence;
     }
   }
 
-  std::string Language::solveTemplate(
-    mt::CR_INT collectionIndex,
+  void Language::initTextCopy(CR_LANGNUM sentencesIndex) {
+    textCopy = sentences[currentCollectionIndex][sentencesIndex];
+  }
+
+  void Language::solveTemplate(
     CR_LANGNUM sentencesIndex,
     mt::CR_STR placeholder,
     mt::CR_VEC_STR replacements,
     mt::CR_PAIR<std::string> brackets
   ) {
-    std::string textCopy = SENTENCES_COLLECTION[collectionIndex].second[sentencesIndex];
-    size_t textIndex;
+    size_t foundIndex;
 
     for (mt::CR_STR word : replacements) {
-      textIndex = textCopy.find(placeholder);
+      foundIndex = textCopy.find(placeholder);
 
-      if (textIndex != std::string::npos) {
+      if (foundIndex != std::string::npos) {
 
         // insert 'word' before 'placeholder'
-        textCopy.insert(textIndex, brackets.first + word + brackets.second);
-        textIndex += brackets.first.length() + word.length() + brackets.second.length();
+        textCopy.insert(foundIndex, brackets.first + word + brackets.second);
+        foundIndex += brackets.first.length() + word.length() + brackets.second.length();
 
-        // remove 'placeholder' from sentence
-        return textCopy.substr(0, textIndex)
-          + textCopy.substr(textIndex + placeholder.length());
+        // remove 'placeholder' from 'textCopy'
+        textCopy = textCopy.substr(0, foundIndex)
+          + textCopy.substr(foundIndex + placeholder.length());
       }
     }
-
-    return textCopy;
   }
 
-  std::string Language::solveName(
-    mt::CR_INT collectionIndex,
+  void Language::solvePlaceholders(
     CR_LANGNUM sentencesIndex,
-    mt::CR_VEC_STR replacements
+    mt::CR_VEC_STR levelReplacements,
+    mt::CR_VEC_STR nameReplacements,
+    mt::CR_VEC_STR typeReplacements
   ) {
-    return solveTemplate(
-      collectionIndex, sentencesIndex,
-      NAME_PLACEHOLDER, replacements,
-      {"'","'"}
-    );
-  }
+    initTextCopy(sentencesIndex);
 
-  std::string Language::solveLevelName(
-    mt::CR_INT collectionIndex,
-    CR_LANGNUM sentencesIndex,
-    mt::CR_PAIR<mt::VEC_STR> replacements
-  ) {
-    std::string textCopy = solveTemplate(
-      collectionIndex, sentencesIndex,
-      LEVEL_PLACEHOLDER, replacements.first
+    solveTemplate(
+      sentencesIndex, levelPlaceholder, levelReplacements
     );
 
-    return solveName(
-      collectionIndex, sentencesIndex, replacements.second
-    );
-  }
-
-  std::string Language::solveNameType(
-    mt::CR_INT collectionIndex,
-    CR_LANGNUM sentencesIndex,
-    mt::CR_PAIR<mt::VEC_STR> replacements
-  ) {
-    std::string textCopy = solveName(
-      collectionIndex, sentencesIndex, replacements.first
+    solveTemplate(
+      sentencesIndex, namePlaceholder,
+      nameReplacements, {"'","'"}
     );
 
-    return solveTemplate(
-      collectionIndex, sentencesIndex,
-      TYPE_PLACEHOLDER, replacements.second
-    );
-  }
-
-  std::string Language::solveLevelNameType(
-    mt::CR_INT collectionIndex,
-    CR_LANGNUM sentencesIndex,
-    mt::CR_ARR<mt::VEC_STR, 3> replacements
-  ) {
-    std::string textCopy = solveTemplate(
-      collectionIndex, sentencesIndex,
-      LEVEL_PLACEHOLDER, replacements[0]
-    );
-
-    textCopy += solveName(
-      collectionIndex, sentencesIndex, replacements[1]
-    );
-
-    return solveTemplate(
-      collectionIndex, sentencesIndex,
-      TYPE_PLACEHOLDER, replacements[2]
+    solveTemplate(
+      sentencesIndex, typePlaceholder, typeReplacements
     );
   }
 }
