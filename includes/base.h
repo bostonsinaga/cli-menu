@@ -22,7 +22,6 @@ namespace cli_menu {
       BOOL_OTHER, BOOL_FALSE, BOOL_TRUE
     };
 
-    static bool isWhitespace(mt::CR_CH ch);
     static BOOL_ENUM booleanTest(mt::CR_STR str);
 
     // use 'booleanTest' first before using this

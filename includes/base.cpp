@@ -5,10 +5,6 @@
 
 namespace cli_menu {
 
-  bool Util::isWhitespace(mt::CR_CH ch) {
-    return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
-  }
-
   Util::BOOL_ENUM Util::booleanTest(mt::CR_STR str) {
     if (str == "y" || str == "yes" ||
       str == "1" || str == "true"
