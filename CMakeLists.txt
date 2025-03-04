@@ -6,7 +6,7 @@ message(STATUS "Major version: ${test_VERSION_MAJOR}")
 message(STATUS "Minor version: ${test_VERSION_MINOR}")
 message(STATUS "Patch version: ${test_VERSION_PATCH}")
 
-set(minitools_dir submodules/mini-tools/includes)
+set(minitools_dir mini-tools/includes)
 
 add_subdirectory(${minitools_dir})
 add_subdirectory(includes)
