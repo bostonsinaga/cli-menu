@@ -157,6 +157,9 @@ namespace cli_menu {
      */
     Command::dialogued = completingDialog;
 
+    // initialize 'Language::sentences'
+    Language::reset();
+
     /**
      * Skip the first one because its format is unpredictable
      * to compare with program name e.g. "./bin/program.exe".
