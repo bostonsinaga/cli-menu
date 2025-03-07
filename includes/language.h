@@ -34,13 +34,9 @@ namespace cli_menu {
     static int currentCollectionIndex;
 
     static std::string textCopy,
-      levelPlaceholder, namePlaceholder, typePlaceholder;
+      levelPlaceholder, namePlaceholder, taskPlaceholder;
 
-    static bool hasIndex(mt::CR_INT collectionIndex) {
-      return mt_uti::VecTools<std::string>::hasIndex(
-        collections, collectionIndex
-      ) != -1;
-    }
+    static bool hasIndex(mt::CR_INT collectionIndex);
 
   public:
     static int getCurrentCollectionIndex() {
@@ -67,11 +63,14 @@ namespace cli_menu {
       mt::CR_STR sentence
     );
 
+    /**
+     * Call the 'mt_uti::StrTools::tidyUp'
+     * after this for neater text.
+     */
     static void solveTemplate(
-      CR_LANGNUM sentencesIndex,
       mt::CR_STR placeholder,
       mt::CR_VEC_STR replacements,
-      mt::CR_PAIR<std::string> brackets = {"",""}
+      mt::CR_PAIR<char> wordBracket = {'\0','\0'}
     );
 
     static void solvePlaceholders(
@@ -80,6 +79,20 @@ namespace cli_menu {
       mt::CR_VEC_STR nameReplacements = {},
       mt::CR_VEC_STR typeReplacements = {}
     );
+
+    /** Below are case sensitive */
+
+    static void setLevelPlaceholder(mt::CR_STR value) {
+      levelPlaceholder = value;
+    }
+
+    static void setNamePlaceholder(mt::CR_STR value) {
+      namePlaceholder = value;
+    }
+
+    static void setTaskPlaceholder(mt::CR_STR value) {
+      taskPlaceholder = value;
+    }
   };
 }
 
