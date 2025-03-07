@@ -14,28 +14,28 @@ namespace cli_menu {
     // LANGERR_DIALOG_BACK_AT_ROOT
     "no more groups above",
     // LANGERR_DIALOG_EMPTY_REQUIRED_ARGUMENTS
-    "unable to #TASK without explicit arguments",
+    "unable to ${TASK} without explicit arguments",
     // LANGERR_DIALOG_FORBIDDEN_HIDDEN_TEXT_PASTING
     "hidden text pasting is only available on insertion",
     // LANGERR_DIALOG_INCOMPLETE_ULTIMATE_PROCESS
     "unable to proceed until all required inputs are provided",
     // LANGERR_DIALOG_NO_ITEMS
-    "this #LEVEL does not have any items",
+    "this ${LEVEL} does not have any items",
     // LANGERR_DIALOG_NO_NEIGHBORS
-    "this #LEVEL has no neighbors",
+    "this ${LEVEL} has no neighbors",
     // LANGERR_DIALOG_NOT_FOUND
-    "#LEVEL not found",
+    "${LEVEL} not found",
     // LANGERR_DIALOG_UNPROCESSED_DIRECT_INPUTS
-    "unable to #TASK until the rest of direct inputs are processed",
+    "unable to ${TASK} until the rest of direct inputs are processed",
 
     // LANGERR_MATCH_EMPTY_REQUIRED_ARGUMENTS
-    "the #LEVEL named #NAME requires explicit arguments",
+    "the ${LEVEL} named ${NAME} requires explicit arguments",
     // LANGERR_MATCH_NEEDS_DIALOG_FOR_MANY
-    "the #NAME #LEVEL has #LEVEL that need to be used",
+    "the ${NAME} ${LEVEL} has ${LEVEL} that need to be used",
     // LANGERR_MATCH_NEEDS_DIALOG_FOR_ONE
-    "the #NAME #LEVEL has #LEVEL named #NAME that need to be used",
+    "the ${NAME} ${LEVEL} has ${LEVEL} named ${NAME} that need to be used",
     // LANGERR_MATCH_UNKNOWN_NEIGHBOR
-    "unknown #LEVEL named #NAME"
+    "unknown ${LEVEL} named ${NAME}"
   };
 
   mt::VEC<Language::LANGARR> Language::sentences = {};
@@ -43,9 +43,15 @@ namespace cli_menu {
   int Language::currentCollectionIndex = 0;
 
   std::string Language::textCopy = "",
-    Language::levelPlaceholder = "#LEVEL",
-    Language::namePlaceholder = "#NAME",
-    Language::typePlaceholder = "#TYPE";
+    Language::levelPlaceholder = "${LEVEL}",
+    Language::namePlaceholder = "${NAME}",
+    Language::taskPlaceholder = "${TASK}";
+
+  bool Language::hasIndex(mt::CR_INT collectionIndex) {
+    return mt_uti::VecTools<std::string>::hasIndex(
+      collections, collectionIndex
+    ) != -1;
+  }
 
   void Language::reset() {
     sentences = {LANGARR{""}};
@@ -100,10 +106,9 @@ namespace cli_menu {
   }
 
   void Language::solveTemplate(
-    CR_LANGNUM sentencesIndex,
     mt::CR_STR placeholder,
     mt::CR_VEC_STR replacements,
-    mt::CR_PAIR<std::string> brackets
+    mt::CR_PAIR<char> wordBracket
   ) {
     size_t foundIndex;
 
@@ -113,8 +118,17 @@ namespace cli_menu {
       if (foundIndex != std::string::npos) {
 
         // insert 'word' before 'placeholder'
-        textCopy.insert(foundIndex, brackets.first + word + brackets.second);
-        foundIndex += brackets.first.length() + word.length() + brackets.second.length();
+        textCopy.insert(
+          foundIndex,
+          wordBracket.first + word + wordBracket.second
+        );
+
+        // index moved right after the 'word'
+        foundIndex += (
+          bool(wordBracket.first)
+          + word.length()
+          + bool(wordBracket.second)
+        );
 
         // remove 'placeholder' from 'textCopy'
         textCopy = textCopy.substr(0, foundIndex)
@@ -127,21 +141,22 @@ namespace cli_menu {
     CR_LANGNUM sentencesIndex,
     mt::CR_VEC_STR levelReplacements,
     mt::CR_VEC_STR nameReplacements,
-    mt::CR_VEC_STR typeReplacements
+    mt::CR_VEC_STR taskReplacements
   ) {
     initTextCopy(sentencesIndex);
 
     solveTemplate(
-      sentencesIndex, levelPlaceholder, levelReplacements
+      levelPlaceholder, levelReplacements
     );
 
     solveTemplate(
-      sentencesIndex, namePlaceholder,
-      nameReplacements, {"'","'"}
+      namePlaceholder,
+      nameReplacements,
+      {'\'','\''}
     );
 
     solveTemplate(
-      sentencesIndex, typePlaceholder, typeReplacements
+      taskPlaceholder, taskReplacements
     );
   }
 }
