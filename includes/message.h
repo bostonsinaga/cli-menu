@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include "color.h"
+#include "language.h"
 
 namespace cli_menu {
 
@@ -14,12 +15,6 @@ namespace cli_menu {
 
   class Message {
   private:
-    static void editToCapitalFirstPeriodEnd(
-      std::string &text,
-      int &forwardSpaceBoundaryIndex,
-      int &reverseSpaceBoundaryIndex
-    );
-
     // the 'text' can replace the tag
     static std::string getColoredTag(
       mt::CR_USI enumeration,

@@ -10,42 +10,6 @@ namespace cli_menu {
   std::string Message::listPointStyle = ">";
   std::atomic<bool> Message::INTERRUPTED_CTRL_C(false);
 
-  void Message::editToCapitalFirstPeriodEnd(
-    std::string &text,
-    int &forwardSpaceBoundaryIndex,
-    int &reverseSpaceBoundaryIndex
-  ) {
-    if (!text.empty()) {
-      // forward
-      for (forwardSpaceBoundaryIndex = 0;
-        forwardSpaceBoundaryIndex < text.length();
-        forwardSpaceBoundaryIndex++
-      ) {
-        if (!mt_uti::StrTools::isSpaceLine(text[forwardSpaceBoundaryIndex])) {
-          mt_uti::StrTools::changeToUppercase(text[forwardSpaceBoundaryIndex]);
-          forwardSpaceBoundaryIndex--;
-          break;
-        }
-      }
-
-      // reverse
-      for (reverseSpaceBoundaryIndex = text.length() - 1;
-        reverseSpaceBoundaryIndex >= 0;
-        reverseSpaceBoundaryIndex--
-      ) {
-        if (!mt_uti::StrTools::isSpaceLine(text[reverseSpaceBoundaryIndex])) {
-          text = text.substr(
-            0, reverseSpaceBoundaryIndex + 1) + '.'
-            + text.substr(reverseSpaceBoundaryIndex + 1
-          );
-
-          reverseSpaceBoundaryIndex += 2;
-          break;
-        }
-      }
-    }
-  }
-
   std::string Message::getColoredTag(
     mt::CR_USI enumeration,
     mt::CR_STR text
@@ -92,7 +56,8 @@ namespace cli_menu {
 
   void Message::printNeatItalicString(std::string text) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
     std::cout << Color::getItalicString(text, i, j);
   }
 
@@ -102,7 +67,8 @@ namespace cli_menu {
 
   void Message::printNeatUnderlineString(std::string text) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
     std::cout << Color::getUnderlineString(text, i, j);
   }
 
@@ -120,7 +86,8 @@ namespace cli_menu {
     CR_CLR foreground
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getString(
       text, foreground, i, j
@@ -143,7 +110,8 @@ namespace cli_menu {
     CR_CLR background
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getString(
       text, foreground, background, i, j
@@ -164,7 +132,8 @@ namespace cli_menu {
     CR_CLR foreground
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getItalicString(
       text, foreground, i, j
@@ -187,7 +156,8 @@ namespace cli_menu {
     CR_CLR background
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getItalicString(
       text, foreground, background, i, j
@@ -208,7 +178,8 @@ namespace cli_menu {
     CR_CLR foreground
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getUnderlineString(
       text, foreground, i, j
@@ -231,7 +202,8 @@ namespace cli_menu {
     CR_CLR background
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
 
     std::cout << Color::getUnderlineString(
       text, foreground, background, i, j
@@ -264,7 +236,8 @@ namespace cli_menu {
     mt::CR_BOL toUppercase
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(text, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
     printNamed(enumeration, text, name, toUppercase);
   }
 
@@ -314,7 +287,8 @@ namespace cli_menu {
     std::string reason
   ) {
     int i, j;
-    editToCapitalFirstPeriodEnd(reason, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
+    mt_uti::StrTools::tidyUp(text, true, i, j);
     printDialog(enumeration, reason);
   }
 
