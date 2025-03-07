@@ -90,7 +90,7 @@ namespace cli_menu {
 
     // ignore empty input
     for (mt::CR_CH ch : input) {
-      if (!Util::isWhitespace(ch)) {
+      if (!mt_uti::StrTools::isWhitespace(ch)) {
         isEmpty = false;
         break;
       }
