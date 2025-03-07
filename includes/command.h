@@ -90,7 +90,7 @@ namespace cli_menu {
     static bool isTemporaryLetterCaseChange();
     void onFreeChangeInputLetterCase(std::string &strIn);
 
-    inline std::string getUnableToString(
+    std::string getUnableToString(
       mt::CR_STR controlName,
       mt::CR_BOL isComplete
     );
@@ -166,8 +166,8 @@ namespace cli_menu {
 
     std::string getLevelName(mt::CR_BOL isVerbose = false);
     std::string getChildrenLevelName(mt::CR_BOL onlyRequired);
-    inline std::string getSubjectString(Command *subject);
-    inline std::string getNeedsString(mt::CR_BOL isLast);
+    std::string getSubjectString(Command *subject);
+    std::string getNeedsString(mt::CR_BOL isLast);
 
     bool doesUltimateAllowEnter(mt::CR_BOL fromChild = false);
     void printNullptrNeighborError();

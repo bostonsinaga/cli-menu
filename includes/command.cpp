@@ -549,8 +549,13 @@ namespace cli_menu {
           if (required) {
             Command::matching = false;
 
+            Language::solvePlaceholders(
+              LANGERR_MATCH_EMPTY_REQUIRED_ARGUMENTS,
+              {name}, {getLevelName()}
+            );
+
             Message::printNeatDialog(
-              MESSAGE_ERROR, getNeedsString(false)
+              MESSAGE_ERROR, Language::getTextCopy()
             );
 
             return question();
@@ -1200,11 +1205,11 @@ namespace cli_menu {
     }
   }
 
-  inline std::string Command::getSubjectString(Command *subject) {
+  std::string Command::getSubjectString(Command *subject) {
     return "the '" + subject->name + "' " + subject->getLevelName() + " ";
   }
 
-  inline std::string Command::getNeedsString(mt::CR_BOL isLast) {
+  std::string Command::getNeedsString(mt::CR_BOL isLast) {
     std::string retStr;
 
     if (isLast) {
@@ -1215,7 +1220,7 @@ namespace cli_menu {
     return retStr + getLevelName() + " needs " + inputTypeString;
   }
 
-  inline std::string Command::getUnableToString(
+  std::string Command::getUnableToString(
     mt::CR_STR controlName,
     mt::CR_BOL isComplete
   ) {
