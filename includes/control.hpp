@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__CONTROL_H__
-#define __CLI_MENU__CONTROL_H__
+#ifndef __CLI_MENU__CONTROL_HPP__
+#define __CLI_MENU__CONTROL_HPP__
 
-#include "message.h"
+#include "message.hpp"
 
 namespace cli_menu {
 
@@ -51,4 +51,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__CONTROL_H__
+#endif // __CLI_MENU__CONTROL_HPP__

@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__PARAMETER_H__
-#define __CLI_MENU__PARAMETER_H__
+#ifndef __CLI_MENU__PARAMETER_HPP__
+#define __CLI_MENU__PARAMETER_HPP__
 
-#include "command.h"
+#include "command.hpp"
 
 namespace cli_menu {
 
@@ -77,4 +77,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__PARAMETER_H__
+#endif // __CLI_MENU__PARAMETER_HPP__

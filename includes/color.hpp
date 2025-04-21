@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__COLOR_H__
-#define __CLI_MENU__COLOR_H__
+#ifndef __CLI_MENU__COLOR_HPP__
+#define __CLI_MENU__COLOR_HPP__
 
-#include "base.h"
+#include "base.hpp"
 
 namespace cli_menu {
 
@@ -163,4 +163,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__COLOR_H__
+#endif // __CLI_MENU__COLOR_HPP__

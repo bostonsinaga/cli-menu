@@ -1,5 +1,5 @@
-#ifndef __CLI_MENU__BASE_H__
-#define __CLI_MENU__BASE_H__
+#ifndef __CLI_MENU__BASE_HPP__
+#define __CLI_MENU__BASE_HPP__
 
 #include "mini-tools.h"
 
@@ -42,4 +42,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__BASE_H__
+#endif // __CLI_MENU__BASE_HPP__

@@ -1,9 +1,9 @@
-#ifndef __CLI_MENU__MESSAGE_H__
-#define __CLI_MENU__MESSAGE_H__
+#ifndef __CLI_MENU__MESSAGE_HPP__
+#define __CLI_MENU__MESSAGE_HPP__
 
 #include <atomic>
-#include "color.h"
-#include "language.h"
+#include "color.hpp"
+#include "language.hpp"
 
 namespace cli_menu {
 
@@ -141,4 +141,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__MESSAGE_H__
+#endif // __CLI_MENU__MESSAGE_HPP__

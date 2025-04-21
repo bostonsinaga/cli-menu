@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__PROGRAM_H__
-#define __CLI_MENU__PROGRAM_H__
+#ifndef __CLI_MENU__PROGRAM_HPP__
+#define __CLI_MENU__PROGRAM_HPP__
 
-#include "toggle.h"
+#include "toggle.hpp"
 
 namespace cli_menu {
 
@@ -83,4 +83,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__PROGRAM_H__
+#endif // __CLI_MENU__PROGRAM_HPP__

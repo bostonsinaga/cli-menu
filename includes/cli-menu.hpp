@@ -1,17 +1,17 @@
-#ifndef __CLI_MENU_H__
-#define __CLI_MENU_H__
+#ifndef __CLI_MENU_HPP__
+#define __CLI_MENU_HPP__
 
-#include "base.h"
-#include "color.h"
-#include "message.h"
-#include "clipboard.h"
-#include "control.h"
-#include "result-inputs.h"
-#include "command.h"
-#include "parameter.h"
-#include "toggle.h"
-#include "program.h"
+#include "base.hpp"
+#include "color.hpp"
+#include "message.hpp"
+#include "clipboard.hpp"
+#include "control.hpp"
+#include "result-inputs.hpp"
+#include "command.hpp"
+#include "parameter.hpp"
+#include "toggle.hpp"
+#include "program.hpp"
 
 namespace cm = cli_menu;
 
-#endif // __CLI_MENU_H__
+#endif // __CLI_MENU_HPP__

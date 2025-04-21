@@ -1,9 +1,9 @@
-#ifndef __CLI_MENU__COMMAND_H__
-#define __CLI_MENU__COMMAND_H__
+#ifndef __CLI_MENU__COMMAND_HPP__
+#define __CLI_MENU__COMMAND_HPP__
 
-#include "clipboard.h"
-#include "control.h"
-#include "result-inputs.h"
+#include "clipboard.hpp"
+#include "control.hpp"
+#include "result-inputs.hpp"
 
 namespace cli_menu {
 
@@ -333,4 +333,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__COMMAND_H__
+#endif // __CLI_MENU__COMMAND_HPP__

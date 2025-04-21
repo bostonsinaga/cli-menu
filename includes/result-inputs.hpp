@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__RESULT_INPUTS_H__
-#define __CLI_MENU__RESULT_INPUTS_H__
+#ifndef __CLI_MENU__RESULT_INPUTS_HPP__
+#define __CLI_MENU__RESULT_INPUTS_HPP__
 
-#include "message.h"
+#include "message.hpp"
 
 namespace cli_menu {
 
@@ -90,4 +90,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__RESULT_INPUTS_H__
+#endif // __CLI_MENU__RESULT_INPUTS_HPP__
