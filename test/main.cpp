@@ -1,5 +1,5 @@
 #include <iostream>
-#include "cli-menu.h"
+#include "cli_menu.hpp"
 
 void programFun() {
   std::cout << "\nProgram is called..\n";

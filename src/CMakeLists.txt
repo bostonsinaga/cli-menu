@@ -5,7 +5,7 @@ set (SOURCES
   message.cpp
   clipboard.cpp
   control.cpp
-  result-inputs.cpp
+  result_inputs.cpp
   command.cpp
   parameter.cpp
   toggle.cpp
