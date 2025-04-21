@@ -1,8 +1,8 @@
 #ifndef __CLI_MENU__PROGRAM_CPP__
 #define __CLI_MENU__PROGRAM_CPP__
 
-#include "program.h"
 #include <csignal>
+#include "program.hpp"
 
 namespace cli_menu {
 

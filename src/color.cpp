@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COLOR_CPP__
 #define __CLI_MENU__COLOR_CPP__
 
-#include "color.h"
+#include "color.hpp"
 
 namespace cli_menu {
 

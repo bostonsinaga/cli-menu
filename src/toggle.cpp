@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__TOGGLE_CPP__
 #define __CLI_MENU__TOGGLE_CPP__
 
-#include "toggle.h"
+#include "toggle.hpp"
 
 namespace cli_menu {
 

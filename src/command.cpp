@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_CPP__
 #define __CLI_MENU__COMMAND_CPP__
 
-#include "command.h"
+#include "command.hpp"
 
 namespace cli_menu {
   //______________|

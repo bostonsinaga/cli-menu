@@ -2,7 +2,7 @@
 #define __CLI_MENU__CLIPBOARD_CPP__
 
 #include <windows.h>
-#include "clipboard.h"
+#include "clipboard.hpp"
 
 namespace cli_menu {
 

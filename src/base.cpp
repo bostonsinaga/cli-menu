@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__BASE_CPP__
 #define __CLI_MENU__BASE_CPP__
 
-#include "base.h"
+#include "base.hpp"
 
 namespace cli_menu {
 

@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__PARAMETER_CPP__
 #define __CLI_MENU__PARAMETER_CPP__
 
-#include "parameter.h"
+#include "parameter.hpp"
 
 namespace cli_menu {
 

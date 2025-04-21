@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__CONTROL_CPP__
 #define __CLI_MENU__CONTROL_CPP__
 
-#include "control.h"
+#include "control.hpp"
 
 namespace cli_menu {
   /**

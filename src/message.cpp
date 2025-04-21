@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__MESSAGE_CPP__
 #define __CLI_MENU__MESSAGE_CPP__
 
-#include "message.h"
+#include "message.hpp"
 
 namespace cli_menu {
 

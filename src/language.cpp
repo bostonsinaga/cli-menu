@@ -2,7 +2,7 @@
 #define __CLI_MENU__LANGUAGE_CPP__
 
 #include <string>
-#include "language.h"
+#include "language.hpp"
 
 namespace cli_menu {
 
