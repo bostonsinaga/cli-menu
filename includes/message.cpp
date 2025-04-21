@@ -287,8 +287,8 @@ namespace cli_menu {
     std::string reason
   ) {
     int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
+    mt_uti::StrTools::findSpaceBoundaryIndex(reason, i, j);
+    mt_uti::StrTools::tidyUp(reason, true, i, j);
     printDialog(enumeration, reason);
   }
 
