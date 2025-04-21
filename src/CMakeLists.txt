@@ -12,5 +12,5 @@ set (SOURCES
   program.cpp
 )
 
-add_library(cli-menu STATIC ${SOURCES})
-target_link_libraries(cli-menu mini-tools)
+add_library(cli_menu STATIC ${SOURCES})
+target_link_libraries(cli_menu mini-tools)
