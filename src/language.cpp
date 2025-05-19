@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__LANGUAGE_CPP__
 #define __CLI_MENU__LANGUAGE_CPP__
 
-#include <string>
 #include "language.hpp"
 
 namespace cli_menu {

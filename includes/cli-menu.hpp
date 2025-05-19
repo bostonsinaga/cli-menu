@@ -6,7 +6,7 @@
 #include "message.hpp"
 #include "clipboard.hpp"
 #include "control.hpp"
-#include "result_inputs.hpp"
+#include "result-inputs.hpp"
 #include "command.hpp"
 #include "parameter.hpp"
 #include "toggle.hpp"

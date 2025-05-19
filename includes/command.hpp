@@ -3,7 +3,7 @@
 
 #include "clipboard.hpp"
 #include "control.hpp"
-#include "result_inputs.hpp"
+#include "result-inputs.hpp"
 
 namespace cli_menu {
 

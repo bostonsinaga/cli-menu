@@ -1,8 +1,7 @@
 #ifndef __CLI_MENU__RESULT_INPUTS_CPP__
 #define __CLI_MENU__RESULT_INPUTS_CPP__
 
-#include <memory>
-#include "result_inputs.hpp"
+#include "result-inputs.hpp"
 
 namespace cli_menu {
 
