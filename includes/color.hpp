@@ -18,9 +18,7 @@ namespace cli_menu {
 
     static std::string correctNewlines(
       std::string &text,
-      mt::CR_STR escapeCode,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_STR escapeCode
     );
 
     static std::string getEscapeCode(
@@ -39,8 +37,7 @@ namespace cli_menu {
       std::string &text,
       mt::CR_STR styleEscapeCode,
       CR_CLR foreground,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace
     );
 
     static std::string getString(
@@ -48,12 +45,11 @@ namespace cli_menu {
       mt::CR_STR styleEscapeCode,
       CR_CLR foreground,
       CR_CLR background,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace
     );
 
   public:
-    static const Color
+    static constexpr Color
       AZURE, BLACK, BLUE, BROWN,
       CANARY, CHARTREUSE, CHOCOLATE, CRIMSON,
       CYAN, FOREST_GREEN, GOLD, GRAY,
@@ -104,58 +100,50 @@ namespace cli_menu {
     static std::string getString(
       std::string text,
       CR_CLR foreground,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getString(
       std::string text,
       CR_CLR foreground,
       CR_CLR background,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getItalicString(
       std::string text,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getItalicString(
       std::string text,
       CR_CLR foreground,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getItalicString(
       std::string text,
       CR_CLR foreground,
       CR_CLR background,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getUnderlineString(
       std::string text,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground,
       CR_CLR background,
-      mt::CR_INT forwardSpaceBoundaryIndex = -1,
-      mt::CR_INT reverseSpaceBoundaryIndex = -1
+      mt::CR_BOL excludeOuterWhitespace = true
     );
 
     static bool areEqual(CR_CLR color_1, CR_CLR color_2);
