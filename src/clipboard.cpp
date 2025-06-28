@@ -11,9 +11,9 @@ namespace cli_menu {
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
 
-      Message::printNeatDialog(
-        MESSAGE_ERROR,
-        "failed to open clipboard"
+      Console::logResponse(
+        CONSOLE_ERROR,
+        "Failed to open clipboard."
       );
 
       return;
@@ -24,9 +24,9 @@ namespace cli_menu {
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (!hData) {
-      Message::printNeatDialog(
-        MESSAGE_ERROR,
-        "failed to get clipboard data"
+      Console::logResponse(
+        CONSOLE_ERROR,
+        "Failed to get clipboard data."
       );
 
       CloseClipboard();
@@ -38,9 +38,9 @@ namespace cli_menu {
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (!pszText) {
-      Message::printNeatDialog(
-        MESSAGE_ERROR,
-        "failed to lock clipboard data"
+      Console::logResponse(
+        CONSOLE_ERROR,
+        "Failed to lock clipboard data."
       );
     }
     else GlobalUnlock(hData);
@@ -51,23 +51,27 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    Message::printNeatDialog(
-      MESSAGE_SUCCEED,
-      "pasted from clipboard"
+    Console::logResponse(
+      CONSOLE_SUCCEED,
+      "Pasted from clipboard."
     );
   }
 
-  void Clipboard::pasteNumbers(mt::VEC_LD &numbersRef) {
+  mt::VEC_LD Clipboard::pasteNumbers() {
+    mt::VEC_LD numbers;
     std::string textRef;
     pasteText(textRef);
 
     mt_uti::Scanner<mt::LD>::parseNumbers(
-      textRef, numbersRef
+      textRef, numbers
     );
+
+    return numbers;
   }
 
   void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
     bool pushed = false;
+
     Util::BOOL_ENUM boolEnum;
     mt::VEC_STR textVec {""};
 
@@ -98,6 +102,23 @@ namespace cli_menu {
           Util::revealBoolean(boolEnum)
         );
       }
+    }
+  }
+
+  HyphensDetector::HyphensDetector(CR_VEC_STR raws) {
+    int ctr = 0;
+
+    for (mt::CR_STR str : raws) {
+
+      for (mt::CR_CH ch : raws) {
+        if (ch == '-') ctr++;
+        else break;
+        if (ctr == 2) break;
+      }
+
+      if (ctr == 1) singleKeywords.push_back(str);
+      else doubleKeywords.push_back(str);
+      ctr = 0;
     }
   }
 }
