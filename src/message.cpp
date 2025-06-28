@@ -5,166 +5,59 @@
 
 namespace cli_menu {
 
-  char Message::boundaryCharacter = '-';
-  int Message::boundaryCharactersAmount = 45;
-  std::string Message::listPointStyle = ">";
-  std::atomic<bool> Message::INTERRUPTED_CTRL_C(false);
+  /** NORMAL */
 
-  std::string Message::getColoredTag(
-    mt::CR_USI enumeration,
-    mt::CR_STR text
+  void Message::logString(
+    mt::CR_STR text,
+    CR_CLR foreground
   ) {
-    switch (enumeration) {
-      case MESSAGE_HINT: {
-        return Color::getString(
-          text.empty() ? "HINT. " : text,
-          Color::SKY_BLUE
-        );
-      }
-      case MESSAGE_WARNING: {
-        return Color::getString(
-          text.empty() ? "WARNING. " : text,
-          Color::YELLOW
-        );
-      }
-      case MESSAGE_ERROR: {
-        return Color::getString(
-          text.empty() ? "ERROR. " : text,
-          Color::RED
-        );
-      }
-      case MESSAGE_SUCCEED: {
-        return Color::getString(
-          text.empty() ? "SUCCEED. " : text,
-          Color::GREEN
-        );
-      }
-      case MESSAGE_CANCELED: {
-        return Color::getString(
-          text.empty() ? "CANCELED. " : text,
-          Color::ORANGE
-        );
-      }
-    }
-
-    return "";
+    std::cout << Color::getString(
+      text, foreground
+    );
   }
 
-  void Message::printItalicString(mt::CR_STR text) {
+  void Message::logString(
+    mt::CR_STR text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::cout << Color::getString(
+      text, foreground, background
+    );
+  }
+
+  /** ITALIC */
+
+  void Message::logItalicString(mt::CR_STR text) {
     std::cout << Color::getItalicString(text);
   }
 
-  void Message::printNeatItalicString(std::string text) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-    std::cout << Color::getItalicString(text, i, j);
+  void Message::logItalicString(
+    mt::CR_STR text,
+    CR_CLR foreground
+  ) {
+    std::cout << Color::getItalicString(
+      text, foreground
+    );
   }
 
-  void Message::printUnderlineString(mt::CR_STR text) {
+  void Message::logItalicString(
+    mt::CR_STR text,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::cout << Color::getItalicString(
+      text, foreground, background
+    );
+  }
+
+  /** UNDERLINE */
+
+  void Message::logUnderlineString(mt::CR_STR text) {
     std::cout << Color::getUnderlineString(text);
   }
 
-  void Message::printNeatUnderlineString(std::string text) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-    std::cout << Color::getUnderlineString(text, i, j);
-  }
-
-  void Message::printString(
-    mt::CR_STR text,
-    CR_CLR foreground
-  ) {
-    std::cout << Color::getString(
-      text, foreground
-    );
-  }
-
-  void Message::printNeatString(
-    std::string text,
-    CR_CLR foreground
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-
-    std::cout << Color::getString(
-      text, foreground, i, j
-    );
-  }
-
-  void Message::printString(
-    mt::CR_STR text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    std::cout << Color::getString(
-      text, foreground, background
-    );
-  }
-
-  void Message::printNeatString(
-    std::string text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-
-    std::cout << Color::getString(
-      text, foreground, background, i, j
-    );
-  }
-
-  void Message::printItalicString(
-    mt::CR_STR text,
-    CR_CLR foreground
-  ) {
-    std::cout << Color::getItalicString(
-      text, foreground
-    );
-  }
-
-  void Message::printNeatItalicString(
-    std::string text,
-    CR_CLR foreground
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-
-    std::cout << Color::getItalicString(
-      text, foreground, i, j
-    );
-  }
-
-  void Message::printItalicString(
-    mt::CR_STR text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    std::cout << Color::getItalicString(
-      text, foreground, background
-    );
-  }
-
-  void Message::printNeatItalicString(
-    std::string text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-
-    std::cout << Color::getItalicString(
-      text, foreground, background, i, j
-    );
-  }
-
-  void Message::printUnderlineString(
+  void Message::logUnderlineString(
     mt::CR_STR text,
     CR_CLR foreground
   ) {
@@ -173,20 +66,7 @@ namespace cli_menu {
     );
   }
 
-  void Message::printNeatUnderlineString(
-    std::string text,
-    CR_CLR foreground
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-
-    std::cout << Color::getUnderlineString(
-      text, foreground, i, j
-    );
-  }
-
-  void Message::printUnderlineString(
+  void Message::logUnderlineString(
     mt::CR_STR text,
     CR_CLR foreground,
     CR_CLR background
@@ -196,109 +76,37 @@ namespace cli_menu {
     );
   }
 
-  void Message::printNeatUnderlineString(
-    std::string text,
-    CR_CLR foreground,
-    CR_CLR background
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
+  /** SPECIALS */
 
-    std::cout << Color::getUnderlineString(
-      text, foreground, background, i, j
-    );
+  void Message::logBoundaryLine() {
+    std::cout << std::endl
+      << std::string(boundaryCharactersAmount, boundaryCharacter)
+      << std::endl;
   }
 
-  void Message::printNamed(
-    mt::CR_USI enumeration,
-    mt::CR_STR text,
-    mt::CR_STR name,
-    mt::CR_BOL toUppercase
-  ) {
-    if (text.length() > 0) {
-      std::cout << std::endl;
-
-      if (!name.empty()) {
-        std::cout << (toUppercase ?
-          mt_uti::StrTools::getStringToUppercase(name) : name
-        ) << ": ";
-      }
-
-      std::cout << getColoredTag(enumeration) << text << std::endl;
-    }
-  }
-
-  void Message::printNeatNamed(
-    mt::CR_USI enumeration,
-    std::string text,
-    mt::CR_STR name,
-    mt::CR_BOL toUppercase
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(text, i, j);
-    mt_uti::StrTools::tidyUp(text, true, i, j);
-    printNamed(enumeration, text, name, toUppercase);
-  }
-
-  void Message::printBoundaryLine(
-    int startNewlinesCount,
-    int endNewlinesCount
-  ) {
-    static int ct = 0;
-    static char ch;
-    static std::string boundaryLine;
-
-    startNewlinesCount *= startNewlinesCount >= 0;
-    endNewlinesCount *= endNewlinesCount >= 0;
-
-    if (boundaryCharactersAmount > 0 &&
-      (ct != boundaryCharactersAmount || ch != boundaryCharacter)
-    ) {
-      ct = boundaryCharactersAmount;
-      ch = boundaryCharacter;
-      boundaryLine = std::string(ct, ch);
-    }
-
-    if (ct > 0) std::cout
-      << std::string(startNewlinesCount, '\n')
-      << boundaryLine
-      << std::string(endNewlinesCount, '\n');
-  }
-
-  void Message::printDialog(
-    mt::CR_USI enumeration,
+  void Message::logResponse(
+    CR_MESSAGE_ENUM statusCode,
     mt::CR_STR reason
   ) {
-    static bool initialNewline = true;
-
-    if (initialNewline) {
-      initialNewline = false;
-      std::cout << std::endl;
-    }
-
-    std::cout << getColoredTag(
-      enumeration, listPointStyle + " " + reason
+    std::cout << std::endl << Message::logString(
+      listPointStyle + " " + reason,
+      Message::colors[statusCode]
     ) << std::endl;
   }
 
-  void Message::printNeatDialog(
-    mt::CR_USI enumeration,
-    std::string reason
-  ) {
-    int i, j;
-    mt_uti::StrTools::findSpaceBoundaryIndex(reason, i, j);
-    mt_uti::StrTools::tidyUp(reason, true, i, j);
-    printDialog(enumeration, reason);
+  /** SETTERS */
+
+  void Message::setInterruptedCtrlC() {
+    INTERRUPTED_CTRL_C.store(true);
   }
 
-  // check if interrupted before waiting for input
-  bool Message::interruptedCtrlC() {
+  bool Message::isInterruptedCtrlC() {
 
+    // 'CTRL+C' is detected
     if (Message::INTERRUPTED_CTRL_C.load()) {
       std::cout << std::endl;
 
-      printDialog(MESSAGE_ERROR,
+      Message::logResponse(MESSAGE_ERROR,
         "Interrupt signal received. Exiting program."
       );
 
@@ -313,15 +121,22 @@ namespace cli_menu {
     // decoration string
     std::cout << listPointStyle << ' ';
 
-    if (interruptedCtrlC()) return false;
+    if (Message::isInterruptedCtrlC()) return false; // stop loop
 
     // user input
     std::getline(std::cin, buffer);
 
-    if (interruptedCtrlC()) return false;
+    if (Message::isInterruptedCtrlC()) return false; // stop loop
 
     // loop still running
     return true;
+  }
+
+  void Message::setColor(
+    CR_MESSAGE_ENUM statusCode,
+    CR_CLR color_in
+  ) {
+    Message::colors[statusCode] = color_in;
   }
 }
 
