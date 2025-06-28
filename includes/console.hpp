@@ -1,21 +1,20 @@
-#ifndef __CLI_MENU__MESSAGE_HPP__
-#define __CLI_MENU__MESSAGE_HPP__
+#ifndef __CLI_MENU__CONSOLE_HPP__
+#define __CLI_MENU__CONSOLE_HPP__
 
 #include <atomic>
 #include "color.hpp"
-#include "language.hpp"
 
 namespace cli_menu {
 
   // to select the color of a string or tag word
-  enum MESSAGE_ENUM {
-    MESSAGE_HINT, MESSAGE_WARNING, MESSAGE_ERROR,
-    MESSAGE_SUCCEED, MESSAGE_CANCELED
+  enum CONSOLE_ENUM {
+    CONSOLE_HINT, CONSOLE_WARNING, CONSOLE_ERROR,
+    CONSOLE_SUCCEED, CONSOLE_CANCELED
   };
 
-  typedef const MESSAGE_ENUM& CR_MESSAGE_ENUM;
+  typedef const CONSOLE_ENUM& CR_CONSOLE_ENUM;
 
-  class Message {
+  class Console {
   private:
     static constexpr int statusCodeCount = 5;
 
@@ -85,7 +84,7 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      CR_MESSAGE_ENUM statusCode,
+      CR_CONSOLE_ENUM statusCode,
       mt::CR_STR reason
     );
 
@@ -105,10 +104,10 @@ namespace cli_menu {
 
     // edit the 'colors'
     static void setColor(
-      CR_MESSAGE_ENUM statusCode,
+      CR_CONSOLE_ENUM statusCode,
       CR_CLR color_in
     );
   };
 }
 
-#endif // __CLI_MENU__MESSAGE_HPP__
+#endif // __CLI_MENU__CONSOLE_HPP__

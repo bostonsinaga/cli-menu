@@ -1,13 +1,13 @@
-#ifndef __CLI_MENU__MESSAGE_CPP__
-#define __CLI_MENU__MESSAGE_CPP__
+#ifndef __CLI_MENU__CONSOLE_CPP__
+#define __CLI_MENU__CONSOLE_CPP__
 
-#include "message.hpp"
+#include "console.hpp"
 
 namespace cli_menu {
 
   /** NORMAL */
 
-  void Message::logString(
+  void Console::logString(
     mt::CR_STR text,
     CR_CLR foreground
   ) {
@@ -16,7 +16,7 @@ namespace cli_menu {
     );
   }
 
-  void Message::logString(
+  void Console::logString(
     mt::CR_STR text,
     CR_CLR foreground,
     CR_CLR background
@@ -28,11 +28,11 @@ namespace cli_menu {
 
   /** ITALIC */
 
-  void Message::logItalicString(mt::CR_STR text) {
+  void Console::logItalicString(mt::CR_STR text) {
     std::cout << Color::getItalicString(text);
   }
 
-  void Message::logItalicString(
+  void Console::logItalicString(
     mt::CR_STR text,
     CR_CLR foreground
   ) {
@@ -41,7 +41,7 @@ namespace cli_menu {
     );
   }
 
-  void Message::logItalicString(
+  void Console::logItalicString(
     mt::CR_STR text,
     CR_CLR foreground,
     CR_CLR background
@@ -53,11 +53,11 @@ namespace cli_menu {
 
   /** UNDERLINE */
 
-  void Message::logUnderlineString(mt::CR_STR text) {
+  void Console::logUnderlineString(mt::CR_STR text) {
     std::cout << Color::getUnderlineString(text);
   }
 
-  void Message::logUnderlineString(
+  void Console::logUnderlineString(
     mt::CR_STR text,
     CR_CLR foreground
   ) {
@@ -66,7 +66,7 @@ namespace cli_menu {
     );
   }
 
-  void Message::logUnderlineString(
+  void Console::logUnderlineString(
     mt::CR_STR text,
     CR_CLR foreground,
     CR_CLR background
@@ -78,35 +78,35 @@ namespace cli_menu {
 
   /** SPECIALS */
 
-  void Message::logBoundaryLine() {
+  void Console::logBoundaryLine() {
     std::cout << std::endl
       << std::string(boundaryCharactersAmount, boundaryCharacter)
       << std::endl;
   }
 
-  void Message::logResponse(
-    CR_MESSAGE_ENUM statusCode,
+  void Console::logResponse(
+    CR_CONSOLE_ENUM statusCode,
     mt::CR_STR reason
   ) {
-    std::cout << std::endl << Message::logString(
+    std::cout << std::endl << Console::logString(
       listPointStyle + " " + reason,
-      Message::colors[statusCode]
+      Console::colors[statusCode]
     ) << std::endl;
   }
 
   /** SETTERS */
 
-  void Message::setInterruptedCtrlC() {
+  void Console::setInterruptedCtrlC() {
     INTERRUPTED_CTRL_C.store(true);
   }
 
-  bool Message::isInterruptedCtrlC() {
+  bool Console::isInterruptedCtrlC() {
 
     // 'CTRL+C' is detected
-    if (Message::INTERRUPTED_CTRL_C.load()) {
+    if (Console::INTERRUPTED_CTRL_C.load()) {
       std::cout << std::endl;
 
-      Message::logResponse(MESSAGE_ERROR,
+      Console::logResponse(MESSAGE_ERROR,
         "Interrupt signal received. Exiting program."
       );
 
@@ -116,28 +116,28 @@ namespace cli_menu {
     return false;
   }
 
-  bool Message::setDialogInput(std::string &buffer) {
+  bool Console::setDialogInput(std::string &buffer) {
 
     // decoration string
     std::cout << listPointStyle << ' ';
 
-    if (Message::isInterruptedCtrlC()) return false; // stop loop
+    if (Console::isInterruptedCtrlC()) return false; // stop loop
 
     // user input
     std::getline(std::cin, buffer);
 
-    if (Message::isInterruptedCtrlC()) return false; // stop loop
+    if (Console::isInterruptedCtrlC()) return false; // stop loop
 
     // loop still running
     return true;
   }
 
-  void Message::setColor(
-    CR_MESSAGE_ENUM statusCode,
+  void Console::setColor(
+    CR_CONSOLE_ENUM statusCode,
     CR_CLR color_in
   ) {
-    Message::colors[statusCode] = color_in;
+    Console::colors[statusCode] = color_in;
   }
 }
 
-#endif // __CLI_MENU__MESSAGE_CPP__
+#endif // __CLI_MENU__CONSOLE_CPP__
