@@ -12,8 +12,6 @@ namespace cli_menu {
     CONSOLE_SUCCEED, CONSOLE_CANCELED
   };
 
-  typedef const CONSOLE_ENUM& CR_CONSOLE_ENUM;
-
   class Console {
   private:
     static constexpr int statusCodeCount = 5;
@@ -84,7 +82,7 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      CR_CONSOLE_ENUM statusCode,
+      const CONSOLE_ENUM &statusCode,
       mt::CR_STR reason
     );
 
@@ -104,7 +102,7 @@ namespace cli_menu {
 
     // edit the 'colors'
     static void setColor(
-      CR_CONSOLE_ENUM statusCode,
+      const CONSOLE_ENUM &statusCode,
       CR_CLR color_in
     );
   };

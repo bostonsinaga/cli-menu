@@ -85,7 +85,7 @@ namespace cli_menu {
   }
 
   void Console::logResponse(
-    CR_CONSOLE_ENUM statusCode,
+    const CONSOLE_ENUM &statusCode,
     mt::CR_STR reason
   ) {
     std::cout << std::endl << Console::logString(
@@ -133,7 +133,7 @@ namespace cli_menu {
   }
 
   void Console::setColor(
-    CR_CONSOLE_ENUM statusCode,
+    const CONSOLE_ENUM &statusCode,
     CR_CLR color_in
   ) {
     Console::colors[statusCode] = color_in;
