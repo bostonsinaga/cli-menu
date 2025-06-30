@@ -1,5 +1,5 @@
-#ifndef __CLI_MENU__UTILS_HPP__
-#define __CLI_MENU__UTILS_HPP__
+#ifndef __CLI_MENU__CLIPBOARD_HPP__
+#define __CLI_MENU__CLIPBOARD_HPP__
 
 #include "language.hpp"
 
@@ -16,4 +16,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__UTILS_HPP__
+#endif // __CLI_MENU__CLIPBOARD_HPP__
