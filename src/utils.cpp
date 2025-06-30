@@ -6,14 +6,13 @@
 
 namespace cli_menu {
 
-  void Clipboard::pasteText(std::string &dataRef) {
+  std::string Clipboard::pasteText() {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
 
-      Console::logResponse(
-        CONSOLE_ERROR,
-        "Failed to open clipboard."
+      Language::printResponse(
+        LANGUAGE_CLIPBOARD_OPEN_FAILURE
       );
 
       return;
@@ -24,62 +23,60 @@ namespace cli_menu {
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (!hData) {
-      Console::logResponse(
-        CONSOLE_ERROR,
-        "Failed to get clipboard data."
+      Language::printResponse(
+        LANGUAGE_CLIPBOARD_GET_FAILURE
       );
 
       CloseClipboard();
       return;
     }
 
-    /** Convert it to string */
+    /** Convert 'hData' to string */
 
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (!pszText) {
-      Console::logResponse(
-        CONSOLE_ERROR,
-        "Failed to lock clipboard data."
+      Language::printResponse(
+        LANGUAGE_CLIPBOARD_LOCK_FAILURE
       );
     }
     else GlobalUnlock(hData);
 
-    // assign to reference
-    dataRef = std::string(pszText);
+    // copy for safety
+    std::string pasted = std::string(pszText);
 
     // done with clipboard
     CloseClipboard();
 
-    Console::logResponse(
-      CONSOLE_SUCCEED,
-      "Pasted from clipboard."
+    Language::printResponse(
+      LANGUAGE_CLIPBOARD_PASTED
     );
+
+    return pasted;
   }
 
   mt::VEC_LD Clipboard::pasteNumbers() {
     mt::VEC_LD numbers;
-    std::string textRef;
-    pasteText(textRef);
+    std::string text = pasteText();
 
     mt_uti::Scanner<mt::LD>::parseNumbers(
-      textRef, numbers
+      text, numbers
     );
 
     return numbers;
   }
 
-  void Clipboard::pasteConditions(mt::VEC_BOL &conditionsRef) {
+  mt::VEC_BOL Clipboard::pasteConditions() {
+
+    mt::VEC_BOL conditions;
     bool pushed = false;
 
     Util::BOOL_ENUM boolEnum;
     mt::VEC_STR textVec {""};
-
-    std::string textRef;
-    pasteText(textRef);
+    std::string text = pasteText();
 
     // truncated by spaces
-    for (mt::CR_CH ch : textRef) {
+    for (mt::CR_CH ch : text) {
 
       if (mt_uti::StrTools::isWhitespace(ch)) {
         if (!pushed) {
@@ -95,31 +92,12 @@ namespace cli_menu {
 
     // parse booleans
     for (mt::CR_STR str : textVec) {
-      boolEnum = Util::booleanTest(str);
-
-      if (boolEnum != Util::BOOL_OTHER) {
-        conditionsRef.push_back(
-          Util::revealBoolean(boolEnum)
-        );
-      }
+      conditions.push_back(
+        Language::booleanize(str)
+      );
     }
-  }
 
-  HyphensDetector::HyphensDetector(CR_VEC_STR raws) {
-    int ctr = 0;
-
-    for (mt::CR_STR str : raws) {
-
-      for (mt::CR_CH ch : raws) {
-        if (ch == '-') ctr++;
-        else break;
-        if (ctr == 2) break;
-      }
-
-      if (ctr == 1) singleKeywords.push_back(str);
-      else doubleKeywords.push_back(str);
-      ctr = 0;
-    }
+    return conditions;
   }
 }
 

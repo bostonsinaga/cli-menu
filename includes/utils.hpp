@@ -1,33 +1,18 @@
 #ifndef __CLI_MENU__UTILS_HPP__
 #define __CLI_MENU__UTILS_HPP__
 
-#include "console.hpp"
+#include "language.hpp"
 
 namespace cli_menu {
 
   /** ONLY FOR STRING COPY! */
   class Clipboard {
-  private:
-    static void pasteText(std::string &dataRef);
-    static void pasteNumbers(mt::VEC_LD &numbersRef);
-    static void pasteConditions(mt::VEC_BOL &conditionsRef);
+  public:
+    static std::string pasteText();
+    static mt::VEC_LD pasteNumbers();
+    static mt::VEC_BOL pasteConditions();
 
     Clipboard() = delete;
-    friend class Command;
-  };
-
-  class HyphensDetector {
-  private:
-    VEC_STR singleKeywords, doubleKeywords;
-    HyphensDetector() = delete;
-
-    /**
-     * The 'raws' is expected to be obtained
-     * from the main function parameters.
-     */
-    HyphensDetector(CR_VEC_STR raws);
-
-    friend class Command;
   };
 }
 
