@@ -85,13 +85,29 @@ namespace cli_menu {
   }
 
   void Console::logResponse(
-    const CONSOLE_ENUM &statusCode,
+    const CODE &statusCode,
     mt::CR_STR reason
   ) {
     std::cout << std::endl << Console::logString(
       listPointStyle + " " + reason,
       Console::colors[statusCode]
     ) << std::endl;
+  }
+
+  bool Console::cinDialogInput(std::string &buffer) {
+
+    // decoration string
+    std::cout << listPointStyle << ' ';
+
+    if (Console::isInterruptedCtrlC()) return false; // stop loop
+
+    // user input
+    std::getline(std::cin, buffer);
+
+    if (Console::isInterruptedCtrlC()) return false; // stop loop
+
+    // loop still running
+    return true;
   }
 
   /** SETTERS */
@@ -116,24 +132,8 @@ namespace cli_menu {
     return false;
   }
 
-  bool Console::setDialogInput(std::string &buffer) {
-
-    // decoration string
-    std::cout << listPointStyle << ' ';
-
-    if (Console::isInterruptedCtrlC()) return false; // stop loop
-
-    // user input
-    std::getline(std::cin, buffer);
-
-    if (Console::isInterruptedCtrlC()) return false; // stop loop
-
-    // loop still running
-    return true;
-  }
-
   void Console::setColor(
-    const CONSOLE_ENUM &statusCode,
+    const CODE &statusCode,
     CR_CLR color_in
   ) {
     Console::colors[statusCode] = color_in;

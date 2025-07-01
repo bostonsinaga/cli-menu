@@ -6,20 +6,19 @@
 
 namespace cli_menu {
 
-  // to select the color of a string or tag word
-  enum CONSOLE_ENUM {
-    CONSOLE_HINT, CONSOLE_WARNING, CONSOLE_ERROR,
-    CONSOLE_SUCCEED, CONSOLE_CANCELED
-  };
-
   class Console {
+  public:
+    enum CODE {
+      CANCELED, ERROR, HINT, SUCCEED, WARNING, 
+    };
+
   private:
-    static constexpr int statusCodeCount = 5;
+    static constexpr int totalStatus = 5;
 
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
-    inline static colors[statusCodeCount] = {
+    inline static colors[totalStatus] = {
       Color::BLUE,
       Color::YELLOW,
       Color::RED,
@@ -82,9 +81,12 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      const CONSOLE_ENUM &statusCode,
+      const CODE &statusCode,
       mt::CR_STR reason
     );
+
+    // decorated input interface
+    static bool cinDialogInput(std::string &buffer);
 
     /** SETTERS */
 
@@ -94,15 +96,9 @@ namespace cli_menu {
     // check if interrupted before waiting for input
     static bool isInterruptedCtrlC();
 
-    // decorated input interface
-    static bool setDialogInput(std::string &buffer);
-
-    // outline style by default
-    static void setAsFilledStyle() { outlineStyle = false; }
-
     // edit the 'colors'
     static void setColor(
-      const CONSOLE_ENUM &statusCode,
+      const CODE &statusCode,
       CR_CLR color_in
     );
   };
