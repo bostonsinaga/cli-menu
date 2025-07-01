@@ -85,12 +85,12 @@ namespace cli_menu {
   }
 
   void Console::logResponse(
-    const CODE &statusCode,
+    const CODE &code,
     mt::CR_STR reason
   ) {
     std::cout << std::endl << Console::logString(
       listPointStyle + " " + reason,
-      Console::colors[statusCode]
+      Console::colors[code]
     ) << std::endl;
   }
 
@@ -133,10 +133,10 @@ namespace cli_menu {
   }
 
   void Console::setColor(
-    const CODE &statusCode,
+    const CODE &code,
     CR_CLR color_in
   ) {
-    Console::colors[statusCode] = color_in;
+    Console::colors[code] = color_in;
   }
 }
 

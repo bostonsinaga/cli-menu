@@ -81,7 +81,7 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      const CODE &statusCode,
+      const CODE &code,
       mt::CR_STR reason
     );
 
@@ -98,7 +98,7 @@ namespace cli_menu {
 
     // edit the 'colors'
     static void setColor(
-      const CODE &statusCode,
+      const CODE &code,
       CR_CLR color_in
     );
   };
