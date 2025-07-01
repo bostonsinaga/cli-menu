@@ -9,7 +9,7 @@ namespace cli_menu {
   class Console {
   public:
     enum CODE {
-      CANCELED, ERROR, HINT, SUCCEED, WARNING, 
+      CANCEL, ERROR, HINT, CORRECT, WARNING, 
     };
 
   private:
@@ -19,11 +19,11 @@ namespace cli_menu {
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
     inline static colors[totalStatus] = {
-      Color::BLUE,
-      Color::YELLOW,
+      Color::ORANGE,
       Color::RED,
+      Color::BLUE,
       Color::GREEN,
-      Color::ORANGE
+      Color::YELLOW
     };
 
   public:
