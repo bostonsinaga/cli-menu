@@ -92,7 +92,7 @@ namespace cli_menu {
 
     /**
      * Booleanizer Multilingual Feature.
-     * Add/remove the terms with its member functions.
+     * Interact directly with its member functions.
      */
     inline static mt_util::Booleanizer booleanizer;
   };
