@@ -86,7 +86,7 @@ namespace cli_menu {
     return whitespacesCheck(str) == VIEW;
   }
 
-  void Control::printParameterInformation(mt::CR_STR existingISOCode) {
+  void Control::printAbbreviations(mt::CR_STR existingISOCode) {
     static bool printed = false;
 
     if (!printed && termsFound(existingISOCode)) {

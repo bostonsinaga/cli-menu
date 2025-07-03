@@ -61,7 +61,7 @@ namespace cli_menu {
     static bool selectTest(mt::CR_STR str);
     static bool viewTest(mt::CR_STR str);
 
-    static void printParameterInformation(mt::CR_STR existingISOCode);
+    static void printAbbreviations(mt::CR_STR existingISOCode);
     static void printToggleAvailableValues(mt::CR_STR existingISOCode);
 
     static const CODE getSharedEnum() {
