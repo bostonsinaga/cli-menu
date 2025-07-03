@@ -89,7 +89,7 @@ namespace cli_menu {
   void Control::printAbbreviations(mt::CR_STR existingISOCode) {
     static bool printed = false;
 
-    if (!printed && termsFound(existingISOCode)) {
+    if (!printed && hasISOCode(existingISOCode)) {
       printed = true;
 
       for (int i = 0; i < totalKeys; i++) {
@@ -102,7 +102,7 @@ namespace cli_menu {
   void Control::printToggleAvailableValues(mt::CR_STR existingISOCode) {
     static bool printed = false;
 
-    if (!printed && booleanizer.termsFound(existingISOCode)) {
+    if (!printed && booleanizer.hasISOCode(existingISOCode)) {
       printed = true;
       VEC_STR trueTerms = booleanizer.getTrueTerms();
       VEC_STR falseTerms = booleanizer.getFalseTerms();
@@ -127,7 +127,7 @@ namespace cli_menu {
     }
   }
 
-  bool Control::termsFound(mt::CR_STR existingISOCode) {
+  bool Control::hasISOCode(mt::CR_STR existingISOCode) {
     return mt::STRUNORMAP_FOUND<mt::ARR<std::string, totalKeys>(
       terms, existingISOCode
     );
@@ -148,7 +148,7 @@ namespace cli_menu {
     mt::CR_STR selectTerm,
     mt::CR_STR viewTerm
   ) {
-    if (termsFound(newISOCode)) {
+    if (hasISOCode(newISOCode)) {
       terms[newISOCode][BACK] = backTerm;
       terms[newISOCode][CLIPBOARD] = clipboardTerm;
       terms[newISOCode][ENTER] = enterTerm;

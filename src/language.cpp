@@ -72,7 +72,7 @@ namespace cli_menu {
     Console::CORRECT
   };
 
-  bool Language::messagesFound(mt::CR_STR existingISOCode) {
+  bool Language::hasISOCode(mt::CR_STR existingISOCode) {
     return mt::STRUNORMAP_FOUND<mt::ARR_STR<totalMessages>>(
       messages, existingISOCode
     );
@@ -96,7 +96,7 @@ namespace cli_menu {
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
   ) {
-    if (messagesFound(existingISOCode)) {
+    if (hasISOCode(existingISOCode)) {
       messages[existingISOCode][ALREADY_SELECTING] = alreadySelectingMessage;
       messages[existingISOCode][ARGUMENT_REQUIRED] = argumentRequiredMessage;
       messages[existingISOCode][CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;

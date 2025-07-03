@@ -70,7 +70,7 @@ namespace cli_menu {
 
     /** Multilingual Feature */
 
-    static bool termsFound(mt::CR_STR existingISOCode);
+    static bool hasISOCode(mt::CR_STR existingISOCode);
 
     static void addTerms(
       mt::CR_STR newISOCode,

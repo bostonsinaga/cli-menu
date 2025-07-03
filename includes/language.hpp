@@ -32,7 +32,7 @@ namespace cli_menu {
 
   public:
     Language() = delete;
-    bool messagesFound(mt::CR_STR existingISOCode);
+    bool hasISOCode(mt::CR_STR existingISOCode);
 
     static void addMessages(
       mt::CR_STR existingISOCode,
