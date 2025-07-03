@@ -4,44 +4,21 @@
 #include "control.hpp"
 
 namespace cli_menu {
-  /**
-   * The test argument is expected to be lowercase.
-   */
-  std::string Control::NAMES[TOTAL][2] = {
-    { "back",      "b" },
-    { "clipboard", "c" },
-    { "enter",     "e" },
-    { "help",      "h" },
-    { "list",      "l" },
-    { "modify",    "m" },
-    { "next",      "n" },
-    { "previous",  "p" },
-    { "quit",      "q" },
-    { "reset",     "r" },
-    { "select",    "s" },
-    { "view",      "v" }
-  };
 
-  std::string Control::modeSymbol = ":";
-  CONTROL_ENUM Control::sharedEnum = CONTROL_BACK;
+  /** English Presets */
+  mt::STRUNORMAP<mt::ARR_STR<Control::totalKeys>> Control::terms = {{"en", {
+    "back", "clipboard", "enter", "help", "list", "modify",
+    "next", "previous", "quit", "reset", "select", "view"
+  }}};
 
-  void Control::rename(
-    const CONTROL_ENUM& index,
-    mt::CR_STR name,
-    mt::CR_STR abbreviation
-  ) {
-    NAMES[index][0] = name;
-    NAMES[index][1] = abbreviation;
-  }
-
-  mt::SI Control::whitespacesCheck(mt::CR_STR str) {
+  Control::CODE Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
     std::string input;
 
-    // force return when 'abc123 space abc123' is detected
+    // force to return 'UNKNOWN' when pattern 'abc123 \t abc123' is detected
     for (mt::CR_CH ch : str) {
       if (!mt_uti::StrTools::isWhitespace(ch)) {
-        if (prevSpaced && !input.empty()) return -1;
+        if (prevSpaced && !input.empty()) return UNKNOWN;
         input += ch;
       }
       else prevSpaced = true;
@@ -49,106 +26,146 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < TOTAL; j++) {
+      for (int j = 0; j < totalKeys; j++) {
 
-        if (input == modeSymbol + NAMES[j][i]) {
-          sharedEnum = static_cast<CONTROL_ENUM>(j);
+        if (input == modeSymbol + keyLetters[j][i]) {
+          sharedEnum = static_cast<CODE>(j);
           return j;
         }
       }
     }
 
-    return -1;
+    return UNKNOWN;
   }
 
   bool Control::backTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_BACK;
+    return whitespacesCheck(str) == BACK;
   }
 
   bool Control::clipboardTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_CLIPBOARD;
+    return whitespacesCheck(str) == CLIPBOARD;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_ENTER;
+    return whitespacesCheck(str) == ENTER;
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_HELP;
+    return whitespacesCheck(str) == HELP;
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_LIST;
+    return whitespacesCheck(str) == LIST;
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_MODIFY;
+    return whitespacesCheck(str) == MODIFY;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_NEXT;
+    return whitespacesCheck(str) == NEXT;
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_PREVIOUS;
+    return whitespacesCheck(str) == PREVIOUS;
   }
 
   bool Control::quitTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_QUIT;
+    return whitespacesCheck(str) == QUIT;
   }
 
   bool Control::resetTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET;
+    return whitespacesCheck(str) == RESET;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_SELECT;
+    return whitespacesCheck(str) == SELECT;
   }
 
   bool Control::viewTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW;
+    return whitespacesCheck(str) == VIEW;
   }
 
-  void Control::printParameterHelp() {
+  void Control::printParameterInformation(mt::CR_STR existingISOCode) {
+    static bool printed = false;
 
-    static int maxLengths[] = {0, 0};
-    static std::string text = "";
+    if (!printed && termsFound(existingISOCode)) {
+      printed = true;
 
-    if (!(maxLengths[0] || maxLengths[1])) {
-      bool even;
-
-      for (int i = 0; i < TOTAL; i++) {
-        even = !(i % 2);
-
-        if (NAMES[i][0].length() > maxLengths[even]) {
-          maxLengths[even] = NAMES[i][0].length();
-        }
-      }
-
-      for (int i = 0; i < TOTAL; i++) {
-        even = !(i % 2);
-        text += even ? "  " : " ";
-
-        text += modeSymbol + NAMES[i][0] + std::string(
-          maxLengths[even] - NAMES[i][0].length(), ' '
-        );
-
-        text += " = " + modeSymbol + NAMES[i][1];
-
-        if (i < TOTAL - 1) {
-          text += even ? "," : ",\n";
-        }
-        else text += "\n";
+      for (int i = 0; i < totalKeys; i++) {
+        std::cout << "  '" << keyLetters[i] << "' = "
+          << terms[existingISOCode][i] << std::endl;
       }
     }
-
-    Message::printItalicString(text);
   }
 
-  void Control::printToggleHelp() {
-    Message::printItalicString(
-      "  yes = y, no = n, or boolean\n"
+  void Control::printToggleAvailableValues(mt::CR_STR existingISOCode) {
+    static bool printed = false;
+
+    if (!printed && booleanizer.termsFound(existingISOCode)) {
+      printed = true;
+      VEC_STR trueTerms = booleanizer.getTrueTerms();
+      VEC_STR falseTerms = booleanizer.getFalseTerms();
+
+      for (int i = 0; i < trueTerms.size() - 1; i++) {
+        std::cout << '\'' << trueTerms[i] << "', ";
+      }
+
+      if (!trueTerms.empty()) {
+        std::cout << '\'' << trueTerms[trueTerms.size() - 1] << "', n != 0\n";
+      }
+
+      std::cout << std::endl;
+
+      for (int i = 0; i < falseTerms.size() - 1; i++) {
+        std::cout << '\'' << falseTerms[i] << "', ";
+      }
+
+      if (!falseTerms.empty()) {
+        std::cout << '\'' << falseTerms[falseTerms.size() - 1] << "', n == 0\n";
+      }
+    }
+  }
+
+  bool Control::termsFound(mt::CR_STR existingISOCode) {
+    return mt::STRUNORMAP_FOUND<mt::ARR<std::string, totalKeys>(
+      terms, existingISOCode
     );
+  }
+
+  void Control::addTerms(
+    mt::CR_STR newISOCode,
+    mt::CR_STR backTerm,
+    mt::CR_STR clipboardTerm,
+    mt::CR_STR enterTerm,
+    mt::CR_STR helpTerm,
+    mt::CR_STR listTerm,
+    mt::CR_STR modifyTerm,
+    mt::CR_STR nextTerm,
+    mt::CR_STR previousTerm,
+    mt::CR_STR quitTerm,
+    mt::CR_STR resetTerm,
+    mt::CR_STR selectTerm,
+    mt::CR_STR viewTerm
+  ) {
+    if (termsFound(newISOCode)) {
+      terms[newISOCode][BACK] = backTerm;
+      terms[newISOCode][CLIPBOARD] = clipboardTerm;
+      terms[newISOCode][ENTER] = enterTerm;
+      terms[newISOCode][HELP] = helpTerm;
+      terms[newISOCode][LIST] = listTerm;
+      terms[newISOCode][MODIFY] = modifyTerm;
+      terms[newISOCode][NEXT] = nextTerm;
+      terms[newISOCode][PREVIOUS] = previousTerm;
+      terms[newISOCode][QUIT] = quitTerm;
+      terms[newISOCode][RESET] = resetTerm;
+      terms[newISOCode][SELECT] = selectTerm;
+      terms[newISOCode][VIEW] = viewTerm;
+    }
+  }
+
+  void Control::removeTerms(mt::CR_STR existingISOCode) {
+    terms[existingISOCode].erase();
   }
 }
 

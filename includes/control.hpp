@@ -1,30 +1,49 @@
 #ifndef __CLI_MENU__CONTROL_HPP__
 #define __CLI_MENU__CONTROL_HPP__
 
-#include "message.hpp"
+#include "mini-tools.hpp"
 
 namespace cli_menu {
 
-  // obtained after testing the input string
-  enum CONTROL_ENUM {
-    CONTROL_BACK, CONTROL_CLIPBOARD, CONTROL_ENTER, CONTROL_HELP,
-    CONTROL_LIST, CONTROL_MODIFY, CONTROL_NEXT, CONTROL_PREVIOUS,
-    CONTROL_QUIT, CONTROL_RESET, CONTROL_SELECT, CONTROL_VIEW
-  };
-
   class Control {
+  public:
+    // can be obtained after testing the input string
+    enum CODE {
+      UNKNOWN,
+      BACK, CLIPBOARD, ENTER, HELP,
+      LIST, MODIFY, NEXT, PREVIOUS,
+      QUIT, RESET, SELECT, VIEW
+    };
+
   private:
-    static CONTROL_ENUM sharedEnum;
-    static const int TOTAL = 12;
+    inline static CODE sharedEnum = UNKNOWN;
+    static constexpr int totalKeys = 12;
 
-    static std::string
-      NAMES[TOTAL][2], modeSymbol;
+    inline static std::string symbol = ":",
+      keyLetters[totalKeys][2] = {
+        ["B", "b"], // back
+        ["C", "c"], // clipboard
+        ["E", "e"], // enter
+        ["H", "h"], // help
+        ["L", "l"], // list
+        ["M", "m"], // modify
+        ["N", "n"], // next
+        ["P", "p"], // previous
+        ["Q", "q"], // quit
+        ["R", "r"], // reset
+        ["S", "s"], // select
+        ["V", "v"]  // view
+      };
 
-    static mt::SI whitespacesCheck(mt::CR_STR str);
+    // find 'keyLetters' pattern in 'str'
+    static CODE whitespacesCheck(mt::CR_STR str);
+
+    // multilingual feature
+    static mt::STRUNORMAP<mt::ARR_STR<totalKeys>> terms;
 
   public:
     static void rename(
-      const CONTROL_ENUM& index,
+      const CODE& index,
       mt::CR_STR name,
       mt::CR_STR abbreviation
     );
@@ -42,12 +61,40 @@ namespace cli_menu {
     static bool selectTest(mt::CR_STR str);
     static bool viewTest(mt::CR_STR str);
 
-    static void printParameterHelp();
-    static void printToggleHelp();
+    static void printParameterInformation(mt::CR_STR existingISOCode);
+    static void printToggleAvailableValues(mt::CR_STR existingISOCode);
 
-    static const CONTROL_ENUM getSharedEnum() {
+    static const CODE getSharedEnum() {
       return sharedEnum;
     }
+
+    /** Multilingual Feature */
+
+    static bool termsFound(mt::CR_STR existingISOCode);
+
+    static void addTerms(
+      mt::CR_STR newISOCode,
+      mt::CR_STR backTerm,
+      mt::CR_STR clipboardTerm,
+      mt::CR_STR enterTerm,
+      mt::CR_STR helpTerm,
+      mt::CR_STR listTerm,
+      mt::CR_STR modifyTerm,
+      mt::CR_STR nextTerm,
+      mt::CR_STR previousTerm,
+      mt::CR_STR quitTerm,
+      mt::CR_STR resetTerm,
+      mt::CR_STR selectTerm,
+      mt::CR_STR viewTerm
+    );
+
+    static void removeTerms(mt::CR_STR existingISOCode);
+
+    /**
+     * Booleanizer Multilingual Feature.
+     * Add/remove the terms with its member functions.
+     */
+    inline static mt_util::Booleanizer booleanizer;
   };
 }
 
