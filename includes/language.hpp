@@ -26,28 +26,39 @@ namespace cli_menu {
     };
 
   private:
-    // special
-    inline static mt_util::Booleanizer booleanizer;
-
     static constexpr int totalMessages = 15;
-    inline static std::sring currentISOCode = "en";
-
     static mt::STRUNORMAP<mt::ARR_STR<totalMessages> messages;
     static consoleCodes[totalMessages];
 
   public:
     Language() = delete;
+    bool messagesFound(mt::CR_STR existingISOCode);
 
-    static void registerCollection(
-      mt::CR_STR ISOCode,
-      mt::CR_ARR_STR<totalMessages> collection
+    static void addMessages(
+      mt::CR_STR existingISOCode,
+      mt::CR_STR alreadySelectingMessage,
+      mt::CR_STR argumentRequiredMessage,
+      mt::CR_STR clipboardOpenFailureMessage,
+      mt::CR_STR clipboardGetFailureMessage,
+      mt::CR_STR clipboardLockFailureMessage,
+      mt::CR_STR clipboardPastedMessage,
+      mt::CR_STR commandNotFoundMessage,
+      mt::CR_STR forbiddenHiddenPasteMessage,
+      mt::CR_STR middleDialogMessage,
+      mt::CR_STR parameterAloneMessage,
+      mt::CR_STR parameterAtLeafMessage,
+      mt::CR_STR parameterAtRootMessage,
+      mt::CR_STR programCanceledMessage,
+      mt::CR_STR programFailedMessage,
+      mt::CR_STR programSucceededMessage
     );
 
-    static void printResponse(const CODE &code);
-    static void changeISOCode(mt::CR_STR ISOCode);
+    static void removeMessages(mt::CR_STR existingISOCode);
 
-    // special
-    static bool booleanize(CR_STR input);
+    static void printResponse(
+      mt::CR_STR responseCode,
+      const CODE &code
+    );
   };
 }
 

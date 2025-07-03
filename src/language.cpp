@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   /** English Presets */
-  std::string Language::messages["en"] = {
+  mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages> Language::messages = {{"en", {
     // ALREADY_SELECTING
     "Already in selection mode.",
     // ARGUMENT_REQUIRED
@@ -37,9 +37,9 @@ namespace cli_menu {
     "Program failed.",
     // PROGRAM_SUCCEEDED
     "Program succeeded.",
-  };
+  }}};
 
-  Console::CODE consoleCodes[totalMessages] = {
+  Console::CODE Language::consoleCodes[Language::totalMessages] = {
     // ALREADY_SELECTING
     Console::WARNING,
     // ARGUMENT_REQUIRED
@@ -72,24 +72,61 @@ namespace cli_menu {
     Console::CORRECT
   };
 
-  void Language::registerCollection(
-    mt::CR_STR ISOCode,
-    mt::CR_ARR_STR<totalMessages> collection
-  );
-
-  void Language::printResponse(const CODE &code) {
-    Console::logResponse(
-      consoleCodes[code],
-      messages[code]
+  bool Language::messagesFound(mt::CR_STR existingISOCode) {
+    return mt::STRUNORMAP_FOUND<mt::ARR_STR<totalMessages>>(
+      messages, existingISOCode
     );
   }
 
-  void Language::changeISOCode(mt::CR_STR ISOCode) {
-    currentISOCode = ISOCode;
+  void Language::addMessages(
+    mt::CR_STR existingISOCode,
+    mt::CR_STR alreadySelectingMessage,
+    mt::CR_STR argumentRequiredMessage,
+    mt::CR_STR clipboardOpenFailureMessage,
+    mt::CR_STR clipboardGetFailureMessage,
+    mt::CR_STR clipboardLockFailureMessage,
+    mt::CR_STR clipboardPastedMessage,
+    mt::CR_STR commandNotFoundMessage,
+    mt::CR_STR forbiddenHiddenPasteMessage,
+    mt::CR_STR middleDialogMessage,
+    mt::CR_STR parameterAloneMessage,
+    mt::CR_STR parameterAtLeafMessage,
+    mt::CR_STR parameterAtRootMessage,
+    mt::CR_STR programCanceledMessage,
+    mt::CR_STR programFailedMessage,
+    mt::CR_STR programSucceededMessage
+  ) {
+    if (messagesFound(existingISOCode)) {
+      messages[existingISOCode][ALREADY_SELECTING] = alreadySelectingMessage;
+      messages[existingISOCode][ARGUMENT_REQUIRED] = argumentRequiredMessage;
+      messages[existingISOCode][CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
+      messages[existingISOCode][CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
+      messages[existingISOCode][CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
+      messages[existingISOCode][CLIPBOARD_PASTED] = clipboardPastedMessage;
+      messages[existingISOCode][COMMAND_NOT_FOUND] = commandNotFoundMessage;
+      messages[existingISOCode][FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
+      messages[existingISOCode][MIDDLE_DIALOG] = middleDialogMessage;
+      messages[existingISOCode][PARAMETER_ALONE] = parameterAloneMessage;
+      messages[existingISOCode][PARAMETER_AT_LEAF] = parameterAtLeafMessage;
+      messages[existingISOCode][PARAMETER_AT_ROOT] = parameterAtRootMessage;
+      messages[existingISOCode][PROGRAM_CANCELED] = programCanceledMessage;
+      messages[existingISOCode][PROGRAM_FAILED] = programFailedMessage;
+      messages[existingISOCode][PROGRAM_SUCCEEDED] = programSucceededMessage;
+    }
   }
 
-  bool Language::booleanize(CR_STR input) {
-    return booleanizer.test(input, currentISOCode);
+  void Language::removeMessages(mt::CR_STR existingISOCode) {
+    messages[existingISOCode].erase();
+  }
+
+  void Language::printResponse(
+    mt::CR_STR existingISOCode,
+    const CODE &responseCode
+  ) {
+    Console::logResponse(
+      Language::consoleCodes[responseCode],
+      Language::messages[existingISOCode][responseCode]
+    );
   }
 }
 
