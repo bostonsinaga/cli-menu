@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__CONSOLE_HPP__
 #define __CLI_MENU__CONSOLE_HPP__
 
-#include <atomic>
 #include "color.hpp"
 
 namespace cli_menu {
@@ -14,9 +13,6 @@ namespace cli_menu {
 
   private:
     static constexpr int totalStatus = 5;
-
-    // use an atomic boolean to signal an interrupt
-    inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
     inline static colors[totalStatus] = {
       Color::ORANGE,
@@ -31,6 +27,12 @@ namespace cli_menu {
     inline static size_t boundaryCharactersAmount = 45;
     inline static std::string listPointStyle = ">";
     inline static bool outlineStyle = true;
+
+    // edit the 'colors'
+    static void setColor(
+      const CODE &code,
+      CR_CLR color_in
+    );
 
     /** NORMAL */
 
@@ -83,23 +85,6 @@ namespace cli_menu {
     static void logResponse(
       const CODE &code,
       mt::CR_STR reason
-    );
-
-    // decorated input interface
-    static bool cinDialogInput(std::string &buffer);
-
-    /** SETTERS */
-
-    // to prevent infinite loop after pressing 'ctrl+c'
-    static void setInterruptedCtrlC();
-
-    // check if interrupted before waiting for input
-    static bool isInterruptedCtrlC();
-
-    // edit the 'colors'
-    static void setColor(
-      const CODE &code,
-      CR_CLR color_in
     );
   };
 }

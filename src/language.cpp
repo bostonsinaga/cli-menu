@@ -21,6 +21,8 @@ namespace cli_menu {
     "Pasted from clipboard.",
     // COMMAND_NOT_FOUND
     "Parameter not found.",
+    // CTRL_C_SIGNAL_RECEIVED
+    "Interrupt signal received. Exiting program.",
     // FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
     // MIDDLE_DIALOG
@@ -127,6 +129,45 @@ namespace cli_menu {
       Language::consoleCodes[responseCode],
       Language::messages[existingISOCode][responseCode]
     );
+  }
+
+  /** Interrupted Ctrl+C */
+
+  bool Language::cinDialogInput(std::string &buffer) {
+
+    // decoration string
+    std::cout << listPointStyle << ' ';
+
+    if (Language::isInterruptedCtrlC()) return false; // stop loop
+
+    // user input
+    std::getline(std::cin, buffer);
+
+    if (Language::isInterruptedCtrlC()) return false; // stop loop
+
+    // loop still running
+    return true;
+  }
+
+  void Language::setInterruptedCtrlC() {
+    INTERRUPTED_CTRL_C.store(true);
+  }
+
+  bool Language::isInterruptedCtrlC(mt::CR_STR existingISOCode) {
+
+    // 'Ctrl+C' is detected
+    if (INTERRUPTED_CTRL_C.load()) {
+      std::cout << std::endl;
+
+      printResponse(
+        existingISOCode,
+        CTRL_C_SIGNAL_RECEIVED
+      );
+
+      return true;
+    }
+
+    return false;
   }
 }
 

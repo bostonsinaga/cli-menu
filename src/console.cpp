@@ -5,6 +5,13 @@
 
 namespace cli_menu {
 
+  void Console::setColor(
+    const CODE &code,
+    CR_CLR color_in
+  ) {
+    Console::colors[code] = color_in;
+  }
+
   /** NORMAL */
 
   void Console::logString(
@@ -92,51 +99,6 @@ namespace cli_menu {
       listPointStyle + " " + reason,
       Console::colors[code]
     ) << std::endl;
-  }
-
-  bool Console::cinDialogInput(std::string &buffer) {
-
-    // decoration string
-    std::cout << listPointStyle << ' ';
-
-    if (Console::isInterruptedCtrlC()) return false; // stop loop
-
-    // user input
-    std::getline(std::cin, buffer);
-
-    if (Console::isInterruptedCtrlC()) return false; // stop loop
-
-    // loop still running
-    return true;
-  }
-
-  /** SETTERS */
-
-  void Console::setInterruptedCtrlC() {
-    INTERRUPTED_CTRL_C.store(true);
-  }
-
-  bool Console::isInterruptedCtrlC() {
-
-    // 'CTRL+C' is detected
-    if (Console::INTERRUPTED_CTRL_C.load()) {
-      std::cout << std::endl;
-
-      Console::logResponse(MESSAGE_ERROR,
-        "Interrupt signal received. Exiting program."
-      );
-
-      return true;
-    }
-
-    return false;
-  }
-
-  void Console::setColor(
-    const CODE &code,
-    CR_CLR color_in
-  ) {
-    Console::colors[code] = color_in;
   }
 }
 
