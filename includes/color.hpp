@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COLOR_HPP__
 #define __CLI_MENU__COLOR_HPP__
 
-#include "base.hpp"
+#include "mini-tools.hpp"
 
 namespace cli_menu {
 

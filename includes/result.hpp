@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__RESULT_HPP__
 #define __CLI_MENU__RESULT_HPP__
 
+#include "mini-tools.hpp"
+
 namespace cli_menu {
 
   class Result {
