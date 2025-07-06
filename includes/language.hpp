@@ -61,8 +61,8 @@ namespace cli_menu {
     static void removeMessages(mt::CR_STR existingISOCode);
 
     static void printResponse(
-      mt::CR_STR responseCode,
-      const CODE &code
+      mt::CR_STR existingISOCode,
+      const CODE &responseCode
     );
 
     /** Interrupted 'Ctrl+C' Interactions */
