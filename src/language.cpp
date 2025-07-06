@@ -56,6 +56,8 @@ namespace cli_menu {
     Console::HINT,
     // COMMAND_NOT_FOUND
     Console::ERROR,
+    // CTRL_C_SIGNAL_RECEIVED
+    Console::HINT,
     // FORBIDDEN_HIDDEN_PASTE
     Console::WARNING,
     // MIDDLE_DIALOG
