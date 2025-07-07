@@ -2,11 +2,11 @@
 #define __CLI_MENU_HPP__
 
 #include "color.hpp"
-#include "control.hpp"
-#include "result.hpp"
 #include "console.hpp"
 #include "language.hpp"
 #include "clipboard.hpp"
+#include "control.hpp"
+#include "result.hpp"
 #include "command.hpp"
 #include "word.hpp"
 #include "number.hpp"
