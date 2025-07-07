@@ -71,7 +71,7 @@ namespace cli_menu {
     static bool cinDialogInput(std::string &buffer);
 
     // to prevent infinite loop after pressing 'Ctrl+C'
-    static void setInterruptedCtrlC();
+    static void setInterruptedCtrlC(int);
 
     // check if interrupted before waiting for input
     static bool isInterruptedCtrlC(mt::CR_STR existingISOCode);

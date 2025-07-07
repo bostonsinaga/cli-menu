@@ -151,7 +151,7 @@ namespace cli_menu {
     return true;
   }
 
-  void Language::setInterruptedCtrlC() {
+  void Language::setInterruptedCtrlC(int) {
     INTERRUPTED_CTRL_C.store(true);
   }
 
