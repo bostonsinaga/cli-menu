@@ -142,11 +142,12 @@ namespace cli_menu {
     mt::CR_INT argc,
     char *argv[]
   ) {
+    // register signal handler for Ctrl+C (SIGINT)
+    std::signal(SIGINT, ctrlCSignalHandler);
+
     CODE commandCode = match(
       mt_uti::StrTools::argvToStringVector(argc, argv)
     );
-
-    destroy();
   }
 }
 

@@ -48,7 +48,7 @@ namespace cli_menu {
     // propagate by default
     static void stopPropagation() { propagation = false; }
 
-    // start and finish (will call destructor)
+    // start match and dialog
     void run(
       mt::CR_INT argc,
       char *argv[]
