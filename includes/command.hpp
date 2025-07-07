@@ -39,6 +39,7 @@ namespace cli_menu {
       mt::CR_BOL required_in = false
     );
 
+    virtual void copyPaste() {}
     virtual void pushUnormap() {}
 
   public:
