@@ -102,7 +102,9 @@ namespace cli_menu {
           if (false) {
 
           }
-          else callback(result);
+          else if (callback()) {
+            
+          }
         }
         else {}
       }

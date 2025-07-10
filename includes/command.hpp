@@ -17,7 +17,7 @@ namespace cli_menu {
       propagation = true;
 
     // the program will stop if the callback returns false
-    typedef std::function<bool(Result&)> CALLBACK;
+    typedef std::function<bool()> CALLBACK;
     typedef const CALLBACK& CR_CALLBACK;
     CALLBACK callback;
 
