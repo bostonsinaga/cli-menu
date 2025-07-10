@@ -23,9 +23,7 @@ namespace cli_menu {
 
   void Toggle::pushUnormap(CR_STR raw) {
     Result::toggles[keyword].push_back(
-      Control::booleanizer.test(
-        Language::currentISOCode, raw
-      )
+      Control::booleanizerTest(raw)
     );
   }
 }
