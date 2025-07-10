@@ -17,12 +17,12 @@ namespace cli_menu {
 
   void Toggle::copyPaste() {
     mt_uti::VecTools<mt::LD>::concat(
-      toggles[keyword], Clipboard::pasteConditions()
+      Result::toggles[keyword], Clipboard::pasteConditions()
     );
   }
 
   void Toggle::pushUnormap(CR_STR raw) {
-    toggles[keyword].push_back(
+    Result::toggles[keyword].push_back(
       Control::booleanizer.test(
         Language::currentISOCode, raw
       )

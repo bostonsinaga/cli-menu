@@ -16,11 +16,11 @@ namespace cli_menu {
   ) {}
 
   void Word::copyPaste() {
-    words[keyword].push_back(Clipboard::pasteText());
+    Result::words[keyword].push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(CR_STR raw) {
-    words[keyword].push_back(raw);
+    Result::words[keyword].push_back(raw);
   }
 }
 
