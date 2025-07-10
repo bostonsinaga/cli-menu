@@ -17,34 +17,34 @@ namespace cli_menu {
 
   private:
     inline static CODE sharedEnum = UNKNOWN;
-    static constexpr int totalKeys = 12;
+    static constexpr int totalSymbols = 12;
     inline static std::string symbol = ":";
 
-    inline static char keyLetters[totalKeys][2] = {
-      {"B", "b"}, // back
-      {"C", "c"}, // clipboard
-      {"E", "e"}, // enter
-      {"H", "h"}, // help
-      {"L", "l"}, // list
-      {"M", "m"}, // modify
-      {"N", "n"}, // next
-      {"P", "p"}, // previous
-      {"Q", "q"}, // quit
-      {"R", "r"}, // reset
-      {"S", "s"}, // select
-      {"V", "v"}  // view
+    inline static const std::string symbols[totalSymbols][2] = {
+      {":B", ":b"}, // back
+      {":C", ":c"}, // clipboard
+      {":E", ":e"}, // enter
+      {":H", ":h"}, // help
+      {":L", ":l"}, // list
+      {":M", ":m"}, // modify
+      {":N", ":n"}, // next
+      {":P", ":p"}, // previous
+      {":Q", ":q"}, // quit
+      {":R", ":r"}, // reset
+      {":S", ":s"}, // select
+      {":V", ":v"}  // view
     };
 
-    // find 'keyLetters' pattern in 'str'
+    // find 'symbols' pattern in 'str'
     static CODE whitespacesCheck(mt::CR_STR str);
 
     // multilingual features
-    static mt::STRUNORMAP<mt::ARR_STR<totalKeys>> terms;
-    inline static mt_util::Booleanizer booleanizer;
-
-    friend class Clipboard;
+    static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
+    inline static mt_uti::Booleanizer booleanizer;
 
   public:
+    Control() = delete;
+
     static void rename(
       const CODE& index,
       mt::CR_STR name,
@@ -74,8 +74,8 @@ namespace cli_menu {
     /** Multilingual Features */
 
     // sync 'Language::currentISOCode' with 'Language::selectISOCode' manually
-    void addISOCode(mt::CR_STR newISOCode);
-    void removeISOCode(mt::CR_STR existingISOCode);
+    static void addISOCode(mt::CR_STR newISOCode);
+    static void removeISOCode(mt::CR_STR existingISOCode);
 
     static void setTerms(
       mt::CR_STR backTerm,
@@ -93,9 +93,11 @@ namespace cli_menu {
     );
 
     static void setBooleanizerTerms(
-      CR_VEC_STR existingTrueTerms,
-      CR_VEC_STR existingFalseTerms
+      mt::CR_VEC_STR existingTrueTerms,
+      mt::CR_VEC_STR existingFalseTerms
     );
+
+    static bool booleanizerTest(mt::CR_STR raw);
   };
 }
 

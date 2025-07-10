@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   /** English Presets */
-  mt::STRUNORMAP<mt::ARR_STR<Control::totalKeys>> Control::terms = {{"en", {
+  mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
     "back", "clipboard", "enter", "help", "list", "modify",
     "next", "previous", "quit", "reset", "select", "view"
   }}};
@@ -26,9 +26,9 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < totalKeys; j++) {
+      for (int j = 0; j < totalSymbols; j++) {
 
-        if (input == modeSymbol + keyLetters[j][i]) {
+        if (input == symbols[j][i]) {
           sharedEnum = static_cast<CODE>(j);
           return j;
         }
@@ -92,9 +92,9 @@ namespace cli_menu {
     if (!printed) {
       printed = true;
 
-      for (int i = 0; i < totalKeys; i++) {
-        std::cout << "  '" << keyLetters[i] << "' = "
-          << terms[currentISOCode][i] << std::endl;
+      for (int i = 0; i < totalSymbols; i++) {
+        std::cout << "  '" << symbols[i][1] << "' = "
+          << terms[Language::getCurrentISOCode()][i] << std::endl;
       }
     }
   }
@@ -104,8 +104,8 @@ namespace cli_menu {
 
     if (!printed) {
       printed = true;
-      VEC_STR trueTerms = booleanizer.getTrueTerms(currentISOCode);
-      VEC_STR falseTerms = booleanizer.getFalseTerms(currentISOCode);
+      mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::getCurrentISOCode());
+      mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::getCurrentISOCode());
 
       for (int i = 0; i < trueTerms.size() - 1; i++) {
         std::cout << '\'' << trueTerms[i] << "', ";
@@ -153,18 +153,35 @@ namespace cli_menu {
     mt::CR_STR selectTerm,
     mt::CR_STR viewTerm
   ) {
-    terms[Language::currentISOCode][BACK] = backTerm;
-    terms[Language::currentISOCode][CLIPBOARD] = clipboardTerm;
-    terms[Language::currentISOCode][ENTER] = enterTerm;
-    terms[Language::currentISOCode][HELP] = helpTerm;
-    terms[Language::currentISOCode][LIST] = listTerm;
-    terms[Language::currentISOCode][MODIFY] = modifyTerm;
-    terms[Language::currentISOCode][NEXT] = nextTerm;
-    terms[Language::currentISOCode][PREVIOUS] = previousTerm;
-    terms[Language::currentISOCode][QUIT] = quitTerm;
-    terms[Language::currentISOCode][RESET] = resetTerm;
-    terms[Language::currentISOCode][SELECT] = selectTerm;
-    terms[Language::currentISOCode][VIEW] = viewTerm;
+    terms[Language::getCurrentISOCode()][BACK] = backTerm;
+    terms[Language::getCurrentISOCode()][CLIPBOARD] = clipboardTerm;
+    terms[Language::getCurrentISOCode()][ENTER] = enterTerm;
+    terms[Language::getCurrentISOCode()][HELP] = helpTerm;
+    terms[Language::getCurrentISOCode()][LIST] = listTerm;
+    terms[Language::getCurrentISOCode()][MODIFY] = modifyTerm;
+    terms[Language::getCurrentISOCode()][NEXT] = nextTerm;
+    terms[Language::getCurrentISOCode()][PREVIOUS] = previousTerm;
+    terms[Language::getCurrentISOCode()][QUIT] = quitTerm;
+    terms[Language::getCurrentISOCode()][RESET] = resetTerm;
+    terms[Language::getCurrentISOCode()][SELECT] = selectTerm;
+    terms[Language::getCurrentISOCode()][VIEW] = viewTerm;
+  }
+
+  void Control::setBooleanizerTerms(
+    mt::CR_VEC_STR existingTrueTerms,
+    mt::CR_VEC_STR existingFalseTerms
+  ) {
+    booleanizer.changeTerms(
+      Language::getCurrentISOCode(),
+      existingTrueTerms,
+      existingFalseTerms
+    );
+  }
+
+  bool Control::booleanizerTest(mt::CR_STR raw) {
+    return booleanizer.test(
+      Language::getCurrentISOCode(), raw
+    );
   }
 }
 
