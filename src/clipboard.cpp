@@ -94,7 +94,7 @@ namespace cli_menu {
     for (mt::CR_STR str : textVec) {
       conditions.push_back(
         Control::booleanizer.test(
-          Language::currentISOCode, str
+          Language::getCurrentISOCode(), str
         )
       );
     }
