@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__PARAMETER_CPP__
-#define __CLI_MENU__PARAMETER_CPP__
+#ifndef __CLI_MENU__WORD_CPP__
+#define __CLI_MENU__WORD_CPP__
 
-#include "parameter.hpp"
+#include "word.hpp"
 
 namespace cli_menu {
 
@@ -24,4 +24,4 @@ namespace cli_menu {
   }
 }
 
-#endif // __CLI_MENU__PARAMETER_CPP__
+#endif // __CLI_MENU__WORD_CPP__

@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__NUMBER_HPP__
 #define __CLI_MENU__NUMBER_HPP__
 
+#include "command.hpp"
+
 namespace cli_menu {
 
   class Number : public Command {

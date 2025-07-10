@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__WORD_HPP__
 #define __CLI_MENU__WORD_HPP__
 
+#include "command.hpp"
+
 namespace cli_menu {
 
   class Word : public Command {

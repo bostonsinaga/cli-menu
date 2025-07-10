@@ -1,6 +1,8 @@
 #ifndef __CLI_MENU__NUMBER_CPP__
 #define __CLI_MENU__NUMBER_CPP__
 
+#include "number.hpp"
+
 namespace cli_menu {
 
   Number::Number(
