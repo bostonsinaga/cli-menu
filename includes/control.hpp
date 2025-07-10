@@ -18,22 +18,22 @@ namespace cli_menu {
   private:
     inline static CODE sharedEnum = UNKNOWN;
     static constexpr int totalKeys = 12;
+    inline static std::string symbol = ":";
 
-    inline static std::string symbol = ":",
-      keyLetters[totalKeys][2] = {
-        ["B", "b"], // back
-        ["C", "c"], // clipboard
-        ["E", "e"], // enter
-        ["H", "h"], // help
-        ["L", "l"], // list
-        ["M", "m"], // modify
-        ["N", "n"], // next
-        ["P", "p"], // previous
-        ["Q", "q"], // quit
-        ["R", "r"], // reset
-        ["S", "s"], // select
-        ["V", "v"]  // view
-      };
+    inline static char keyLetters[totalKeys][2] = {
+      {"B", "b"}, // back
+      {"C", "c"}, // clipboard
+      {"E", "e"}, // enter
+      {"H", "h"}, // help
+      {"L", "l"}, // list
+      {"M", "m"}, // modify
+      {"N", "n"}, // next
+      {"P", "p"}, // previous
+      {"Q", "q"}, // quit
+      {"R", "r"}, // reset
+      {"S", "s"}, // select
+      {"V", "v"}  // view
+    };
 
     // find 'keyLetters' pattern in 'str'
     static CODE whitespacesCheck(mt::CR_STR str);
