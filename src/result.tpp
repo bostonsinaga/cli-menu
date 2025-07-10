@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   template <typename T>
-  std::string Result::stringifiedVectorMember(T &vecmem) {
+  std::string Result::stringifiedVectorMember(mt::CR<T> vecmem) {
     std::string stringified;
 
     if constexpr (std::is_same_v<T, std::string>) {
@@ -28,22 +28,28 @@ namespace cli_menu {
     mt::CR_STR stringifiedType,
     mt::STRUNORMAP<mt::VEC<T>> &unormap
   ) {
-    // type title
-    Console::logResponse(Console::HINT, stringifiedType + ":\n");
+    if constexpr (
+      std::is_same_v<T, std::string> ||
+      std::is_same_v<T, mt::LD> ||
+      std::is_same_v<T, bool>
+    ) {
+      // type title
+      Console::logResponse(Console::HINT, stringifiedType + ":\n");
 
-    for (mt::CR_PAIR2<std::string, mt::VEC<T>> keyvec : unormap) {
-      int i = 0;
+      for (mt::CR_PAIR2<std::string, mt::VEC<T>> keyvec : unormap) {
+        int i = 0;
 
-      // keyword with size of vector
-      std::cout << "  " << keyvec.first << '(' << keyvec.second.size() << "):\n";
+        // keyword with size of vector
+        std::cout << "  " << keyvec.first << '(' << keyvec.second.size() << "):\n";
 
-      // members of vector
-      for (; i < keyvec.second.size() - 1; i++) {
-        std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << ",\n";
+        // members of vector
+        for (; i < keyvec.second.size() - 1; i++) {
+          std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << ",\n";
+        }
+
+        // the last member
+        std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << std::endl;
       }
-
-      // the last member
-      std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << std::endl;
     }
   }
 }
