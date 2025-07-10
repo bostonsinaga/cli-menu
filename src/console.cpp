@@ -95,10 +95,10 @@ namespace cli_menu {
     const CODE &code,
     mt::CR_STR reason
   ) {
-    std::cout << std::endl << Console::logString(
-      listPointStyle + " " + reason,
+    Console::logString(
+      "\n" + listPointStyle + ' ' + reason + '\n',
       Console::colors[code]
-    ) << std::endl;
+    );
   }
 }
 
