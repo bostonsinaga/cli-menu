@@ -1,7 +1,7 @@
-#ifndef __CLI_MENU__RESULT_INPUTS_CPP__
-#define __CLI_MENU__RESULT_INPUTS_CPP__
+#ifndef __CLI_MENU__RESULT_CPP__
+#define __CLI_MENU__RESULT_CPP__
 
-#include "result-inputs.hpp"
+#include "result.hpp"
 
 namespace cli_menu {
 
@@ -47,4 +47,4 @@ namespace cli_menu {
   }
 }
 
-#endif // __CLI_MENU__RESULT_INPUTS_CPP__
+#endif // __CLI_MENU__RESULT_CPP__
