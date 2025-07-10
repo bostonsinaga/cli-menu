@@ -8,7 +8,7 @@ namespace cli_menu {
   Toggle::Toggle(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in = false
+    mt::CR_BOL required_in
   ) : Command::Command(
     keyword_in,
     description_in,
