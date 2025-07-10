@@ -93,7 +93,9 @@ namespace cli_menu {
     // parse booleans
     for (mt::CR_STR str : textVec) {
       conditions.push_back(
-        Language::booleanize(str)
+        Control::booleanizer.test(
+          Language::currentISOCode, str
+        )
       );
     }
 
