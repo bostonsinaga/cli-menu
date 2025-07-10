@@ -86,26 +86,26 @@ namespace cli_menu {
     return whitespacesCheck(str) == VIEW;
   }
 
-  void Control::printAbbreviations(mt::CR_STR existingISOCode) {
+  void Control::printAbbreviations() {
     static bool printed = false;
 
-    if (!printed && hasISOCode(existingISOCode)) {
+    if (!printed) {
       printed = true;
 
       for (int i = 0; i < totalKeys; i++) {
         std::cout << "  '" << keyLetters[i] << "' = "
-          << terms[existingISOCode][i] << std::endl;
+          << terms[currentISOCode][i] << std::endl;
       }
     }
   }
 
-  void Control::printToggleAvailableValues(mt::CR_STR existingISOCode) {
+  void Control::printToggleAvailableValues() {
     static bool printed = false;
 
-    if (!printed && booleanizer.hasISOCode(existingISOCode)) {
+    if (!printed) {
       printed = true;
-      VEC_STR trueTerms = booleanizer.getTrueTerms();
-      VEC_STR falseTerms = booleanizer.getFalseTerms();
+      VEC_STR trueTerms = booleanizer.getTrueTerms(currentISOCode);
+      VEC_STR falseTerms = booleanizer.getFalseTerms(currentISOCode);
 
       for (int i = 0; i < trueTerms.size() - 1; i++) {
         std::cout << '\'' << trueTerms[i] << "', ";
@@ -127,14 +127,19 @@ namespace cli_menu {
     }
   }
 
-  bool Control::hasISOCode(mt::CR_STR existingISOCode) {
-    return mt::STRUNORMAP_FOUND<mt::ARR<std::string, totalKeys>(
-      terms, existingISOCode
-    );
+  void Control::addISOCode(mt::CR_STR newISOCode) {
+    Language::messages[newISOCode] = {};
+    terms[newISOCode] = {};
+    booleanizer.addTerms(newISOCode, {}, {});
   }
 
-  void Control::addTerms(
-    mt::CR_STR newISOCode,
+  void Control::removeISOCode(mt::CR_STR existingISOCode) {
+    Language::messages[existingISOCode].erase();
+    terms[existingISOCode].erase();
+    booleanizer.removeTerms(existingISOCode);
+  }
+
+  void Control::setTerms(
     mt::CR_STR backTerm,
     mt::CR_STR clipboardTerm,
     mt::CR_STR enterTerm,
@@ -148,24 +153,18 @@ namespace cli_menu {
     mt::CR_STR selectTerm,
     mt::CR_STR viewTerm
   ) {
-    if (hasISOCode(newISOCode)) {
-      terms[newISOCode][BACK] = backTerm;
-      terms[newISOCode][CLIPBOARD] = clipboardTerm;
-      terms[newISOCode][ENTER] = enterTerm;
-      terms[newISOCode][HELP] = helpTerm;
-      terms[newISOCode][LIST] = listTerm;
-      terms[newISOCode][MODIFY] = modifyTerm;
-      terms[newISOCode][NEXT] = nextTerm;
-      terms[newISOCode][PREVIOUS] = previousTerm;
-      terms[newISOCode][QUIT] = quitTerm;
-      terms[newISOCode][RESET] = resetTerm;
-      terms[newISOCode][SELECT] = selectTerm;
-      terms[newISOCode][VIEW] = viewTerm;
-    }
-  }
-
-  void Control::removeTerms(mt::CR_STR existingISOCode) {
-    terms[existingISOCode].erase();
+    terms[Language::currentISOCode][BACK] = backTerm;
+    terms[Language::currentISOCode][CLIPBOARD] = clipboardTerm;
+    terms[Language::currentISOCode][ENTER] = enterTerm;
+    terms[Language::currentISOCode][HELP] = helpTerm;
+    terms[Language::currentISOCode][LIST] = listTerm;
+    terms[Language::currentISOCode][MODIFY] = modifyTerm;
+    terms[Language::currentISOCode][NEXT] = nextTerm;
+    terms[Language::currentISOCode][PREVIOUS] = previousTerm;
+    terms[Language::currentISOCode][QUIT] = quitTerm;
+    terms[Language::currentISOCode][RESET] = resetTerm;
+    terms[Language::currentISOCode][SELECT] = selectTerm;
+    terms[Language::currentISOCode][VIEW] = viewTerm;
   }
 }
 

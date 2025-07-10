@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__CONTROL_HPP__
 #define __CLI_MENU__CONTROL_HPP__
 
-#include "mini-tools.hpp"
+#include "language.hpp"
 
 namespace cli_menu {
 
@@ -38,8 +38,11 @@ namespace cli_menu {
     // find 'keyLetters' pattern in 'str'
     static CODE whitespacesCheck(mt::CR_STR str);
 
-    // multilingual feature
+    // multilingual features
     static mt::STRUNORMAP<mt::ARR_STR<totalKeys>> terms;
+    inline static mt_util::Booleanizer booleanizer;
+
+    friend class Clipboard;
 
   public:
     static void rename(
@@ -61,19 +64,20 @@ namespace cli_menu {
     static bool selectTest(mt::CR_STR str);
     static bool viewTest(mt::CR_STR str);
 
-    static void printAbbreviations(mt::CR_STR existingISOCode);
-    static void printToggleAvailableValues(mt::CR_STR existingISOCode);
+    static void printAbbreviations();
+    static void printToggleAvailableValues();
 
     static const CODE getSharedEnum() {
       return sharedEnum;
     }
 
-    /** Multilingual Feature */
+    /** Multilingual Features */
 
-    static bool hasISOCode(mt::CR_STR existingISOCode);
+    // sync 'Language::currentISOCode' with 'Language::selectISOCode' manually
+    void addISOCode(mt::CR_STR newISOCode);
+    void removeISOCode(mt::CR_STR existingISOCode);
 
-    static void addTerms(
-      mt::CR_STR newISOCode,
+    static void setTerms(
       mt::CR_STR backTerm,
       mt::CR_STR clipboardTerm,
       mt::CR_STR enterTerm,
@@ -88,13 +92,10 @@ namespace cli_menu {
       mt::CR_STR viewTerm
     );
 
-    static void removeTerms(mt::CR_STR existingISOCode);
-
-    /**
-     * Booleanizer Multilingual Feature.
-     * Interact directly with its member functions.
-     */
-    inline static mt_util::Booleanizer booleanizer;
+    static void setBooleanizerTerms(
+      CR_VEC_STR existingTrueTerms,
+      CR_VEC_STR existingFalseTerms
+    );
   };
 }
 

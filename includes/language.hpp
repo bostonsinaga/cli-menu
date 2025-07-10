@@ -32,15 +32,25 @@ namespace cli_menu {
     static mt::STRUNORMAP<mt::ARR_STR<totalMessages> messages;
     static consoleCodes[totalMessages];
 
+    // default english
+    inline static currentISOCode = "en";
+
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
+    friend class Control;
+    friend class Toggle;
+
   public:
     Language() = delete;
+
+    // ask keyword existance in 'messages'
     bool hasISOCode(mt::CR_STR existingISOCode);
 
-    static void addMessages(
-      mt::CR_STR existingISOCode,
+    // set 'currentISOCode' value
+    static void selectISOCode(mt::CR_STR existingISOCode);
+
+    static void setMessages(
       mt::CR_STR alreadySelectingMessage,
       mt::CR_STR argumentRequiredMessage,
       mt::CR_STR clipboardOpenFailureMessage,
@@ -58,12 +68,7 @@ namespace cli_menu {
       mt::CR_STR programSucceededMessage
     );
 
-    static void removeMessages(mt::CR_STR existingISOCode);
-
-    static void printResponse(
-      mt::CR_STR existingISOCode,
-      const CODE &responseCode
-    );
+    static void printResponse(const CODE &responseCode);
 
     /** Interrupted 'Ctrl+C' Interactions */
 
@@ -74,7 +79,7 @@ namespace cli_menu {
     static void setInterruptedCtrlC(int);
 
     // check if interrupted before waiting for input
-    static bool isInterruptedCtrlC(mt::CR_STR existingISOCode);
+    static bool isInterruptedCtrlC();
   };
 }
 

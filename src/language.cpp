@@ -82,8 +82,13 @@ namespace cli_menu {
     );
   }
 
-  void Language::addMessages(
-    mt::CR_STR existingISOCode,
+  void Language::selectISOCode(mt::CR_STR existingISOCode) {
+    if (hasISOCode(existingISOCode)) {
+      currentISOCode = existingISOCode;
+    }
+  }
+
+  void Language::setMessages(
     mt::CR_STR alreadySelectingMessage,
     mt::CR_STR argumentRequiredMessage,
     mt::CR_STR clipboardOpenFailureMessage,
@@ -100,36 +105,27 @@ namespace cli_menu {
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
   ) {
-    if (hasISOCode(existingISOCode)) {
-      messages[existingISOCode][ALREADY_SELECTING] = alreadySelectingMessage;
-      messages[existingISOCode][ARGUMENT_REQUIRED] = argumentRequiredMessage;
-      messages[existingISOCode][CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
-      messages[existingISOCode][CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
-      messages[existingISOCode][CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
-      messages[existingISOCode][CLIPBOARD_PASTED] = clipboardPastedMessage;
-      messages[existingISOCode][COMMAND_NOT_FOUND] = commandNotFoundMessage;
-      messages[existingISOCode][FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
-      messages[existingISOCode][MIDDLE_DIALOG] = middleDialogMessage;
-      messages[existingISOCode][PARAMETER_ALONE] = parameterAloneMessage;
-      messages[existingISOCode][PARAMETER_AT_LEAF] = parameterAtLeafMessage;
-      messages[existingISOCode][PARAMETER_AT_ROOT] = parameterAtRootMessage;
-      messages[existingISOCode][PROGRAM_CANCELED] = programCanceledMessage;
-      messages[existingISOCode][PROGRAM_FAILED] = programFailedMessage;
-      messages[existingISOCode][PROGRAM_SUCCEEDED] = programSucceededMessage;
-    }
+    messages[currentISOCode][ALREADY_SELECTING] = alreadySelectingMessage;
+    messages[currentISOCode][ARGUMENT_REQUIRED] = argumentRequiredMessage;
+    messages[currentISOCode][CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
+    messages[currentISOCode][CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
+    messages[currentISOCode][CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
+    messages[currentISOCode][CLIPBOARD_PASTED] = clipboardPastedMessage;
+    messages[currentISOCode][COMMAND_NOT_FOUND] = commandNotFoundMessage;
+    messages[currentISOCode][FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
+    messages[currentISOCode][MIDDLE_DIALOG] = middleDialogMessage;
+    messages[currentISOCode][PARAMETER_ALONE] = parameterAloneMessage;
+    messages[currentISOCode][PARAMETER_AT_LEAF] = parameterAtLeafMessage;
+    messages[currentISOCode][PARAMETER_AT_ROOT] = parameterAtRootMessage;
+    messages[currentISOCode][PROGRAM_CANCELED] = programCanceledMessage;
+    messages[currentISOCode][PROGRAM_FAILED] = programFailedMessage;
+    messages[currentISOCode][PROGRAM_SUCCEEDED] = programSucceededMessage;
   }
 
-  void Language::removeMessages(mt::CR_STR existingISOCode) {
-    messages[existingISOCode].erase();
-  }
-
-  void Language::printResponse(
-    mt::CR_STR existingISOCode,
-    const CODE &responseCode
-  ) {
+  void Language::printResponse(const CODE &responseCode) {
     Console::logResponse(
       Language::consoleCodes[responseCode],
-      Language::messages[existingISOCode][responseCode]
+      Language::messages[currentISOCode][responseCode]
     );
   }
 
@@ -155,17 +151,13 @@ namespace cli_menu {
     INTERRUPTED_CTRL_C.store(true);
   }
 
-  bool Language::isInterruptedCtrlC(mt::CR_STR existingISOCode) {
+  bool Language::isInterruptedCtrlC() {
 
     // 'Ctrl+C' is detected
     if (INTERRUPTED_CTRL_C.load()) {
+
       std::cout << std::endl;
-
-      printResponse(
-        existingISOCode,
-        CTRL_C_SIGNAL_RECEIVED
-      );
-
+      printResponse(CTRL_C_SIGNAL_RECEIVED);
       return true;
     }
 
