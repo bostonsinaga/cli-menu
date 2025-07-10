@@ -1,15 +1,14 @@
 set (SOURCES
-  base.cpp
   color.cpp
+  console.cpp
   language.cpp
-  message.cpp
   clipboard.cpp
   control.cpp
-  result-inputs.cpp
+  result.cpp
   command.cpp
-  parameter.cpp
+  word.cpp
+  number.cpp
   toggle.cpp
-  program.cpp
 )
 
 add_library(cli-menu STATIC ${SOURCES})
