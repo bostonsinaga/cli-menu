@@ -8,7 +8,7 @@ namespace cli_menu {
   class Result {
   private:
     template <typename T>
-    static std::string stringifiedVectorMember(T &vecmem);
+    static std::string stringifiedVectorMember(mt::CR<T> vecmem);
 
     template <typename T>
     static void printType(
