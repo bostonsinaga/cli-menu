@@ -14,14 +14,14 @@ namespace cli_menu {
 
   void Result::addNumber(
     mt::CR_STR keyword,
-    mt::CR_STR input
+    mt::CR_LD input
   ) {
     numbers[keyword].push_back(input);
   }
 
   void Result::addToggle(
     mt::CR_STR keyword,
-    mt::CR_STR input
+    mt::CR_BOL input
   ) {
     toggles[keyword].push_back(input);
   }

@@ -17,13 +17,13 @@ namespace cli_menu {
     );
 
   public:
-    inline static mt::STRUNORMAP<std::string> words;
-    inline static mt::STRUNORMAP<mt::LD> numbers;
-    inline static mt::STRUNORMAP<bool> toggles;
+    inline static mt::STRUNORMAP<mt::VEC_STR> words;
+    inline static mt::STRUNORMAP<mt::VEC_LD> numbers;
+    inline static mt::STRUNORMAP<mt::VEC_BOL> toggles;
 
     static void addWord(mt::CR_STR keyword, mt::CR_STR input);
-    static void addNumber(mt::CR_STR keyword, mt::CR_STR input);
-    static void addToggle(mt::CR_STR keyword, mt::CR_STR input);
+    static void addNumber(mt::CR_STR keyword, mt::CR_LD input);
+    static void addToggle(mt::CR_STR keyword, mt::CR_BOL input);
 
     static void removeWord(mt::CR_STR keyword);
     static void removeNumber(mt::CR_STR keyword);
