@@ -38,16 +38,17 @@ namespace cli_menu {
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
-    friend class Control;
-    friend class Toggle;
-
   public:
     Language() = delete;
 
-    // ask keyword existance in 'messages'
-    bool hasISOCode(mt::CR_STR existingISOCode);
+    static mt::CR_STR getCurrentISOCode() {
+      return currentISOCode;
+    }
 
-    // set 'currentISOCode' value
+    // ask keyword existance in 'messages'
+    static bool hasISOCode(mt::CR_STR existingISOCode);
+
+    // change 'currentISOCode' value
     static void selectISOCode(mt::CR_STR existingISOCode);
 
     static void setMessages(
