@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  constexpr Color
+  const Color
     Color::AZURE(0, 127, 255),
     Color::BLACK(0, 0, 0),
     Color::BLUE(0, 0, 255),
@@ -237,13 +237,11 @@ namespace cli_menu {
   std::string Color::getString(
     std::string &text,
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR foreground
   ) {
     return correctNewlines(
       text,
-      getEscapeCode(styleEscapeCode, foreground, true),
-      excludeOuterWhitespace
+      getEscapeCode(styleEscapeCode, foreground, true)
     );
   }
 
@@ -251,103 +249,72 @@ namespace cli_menu {
     std::string &text,
     mt::CR_STR styleEscapeCode,
     CR_CLR foreground,
-    CR_CLR background,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR background
   ) {
     return correctNewlines(
       text,
-      getEscapeCode(styleEscapeCode, foreground, background),
-      excludeOuterWhitespace
+      getEscapeCode(styleEscapeCode, foreground, background)
     );
   }
 
   std::string Color::getString(
     std::string text,
-    CR_CLR foreground,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR foreground
   ) {
-    return getString(
-      text, "", foreground,
-      excludeOuterWhitespace
-    );
+    return getString(text, "", foreground);
   }
 
   std::string Color::getString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR background
   ) {
-    return getString(
-      text, "",
-      foreground, background,
-      excludeOuterWhitespace
-    );
+    return getString(text, "", foreground, background);
+  }
+
+  std::string Color::getItalicString(
+    std::string text
+  ) {
+    return correctNewlines(text, italic);
   }
 
   std::string Color::getItalicString(
     std::string text,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR foreground
   ) {
-    return correctNewlines(
-      text, italic, excludeOuterWhitespace
-    );
-  }
-
-  std::string Color::getItalicString(
-    std::string text,
-    CR_CLR foreground,
-    mt::CR_BOL excludeOuterWhitespace
-  ) {
-    return getString(
-      text, italic, foreground,
-      excludeOuterWhitespace
-    );
+    return getString(text, italic, foreground);
   }
 
   std::string Color::getItalicString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR background
   ) {
     return getString(
-      text, italic,
-      foreground, background,
-      excludeOuterWhitespace
+      text, italic, foreground, background
     );
   }
 
   std::string Color::getUnderlineString(
-    std::string text,
-    mt::CR_BOL excludeOuterWhitespace
+    std::string text
   ) {
-    return correctNewlines(
-      text, underline, excludeOuterWhitespace
-    );
+    return correctNewlines(text, underline);
   }
 
   std::string Color::getUnderlineString(
     std::string text,
-    CR_CLR foreground,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR foreground
   ) {
-    return getString(
-      text, underline,
-      foreground, excludeOuterWhitespace
-    );
+    return getString(text, underline, foreground);
   }
 
   std::string Color::getUnderlineString(
     std::string text,
     CR_CLR foreground,
-    CR_CLR background,
-    mt::CR_BOL excludeOuterWhitespace
+    CR_CLR background
   ) {
     return getString(
-      text, underline,
-      foreground, background,
-      excludeOuterWhitespace
+      text, underline, foreground, background
     );
   }
 

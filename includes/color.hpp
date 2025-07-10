@@ -36,20 +36,18 @@ namespace cli_menu {
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground,
-      mt::CR_BOL excludeOuterWhitespace
+      CR_CLR foreground
     );
 
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
       CR_CLR foreground,
-      CR_CLR background,
-      mt::CR_BOL excludeOuterWhitespace
+      CR_CLR background
     );
 
   public:
-    static constexpr Color
+    static const Color
       AZURE, BLACK, BLUE, BROWN,
       CANARY, CHARTREUSE, CHOCOLATE, CRIMSON,
       CYAN, FOREST_GREEN, GOLD, GRAY,
@@ -99,51 +97,43 @@ namespace cli_menu {
 
     static std::string getString(
       std::string text,
-      CR_CLR foreground,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR foreground
     );
 
     static std::string getString(
       std::string text,
       CR_CLR foreground,
-      CR_CLR background,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR background
+    );
+
+    static std::string getItalicString(
+      std::string text
     );
 
     static std::string getItalicString(
       std::string text,
-      mt::CR_BOL excludeOuterWhitespace = true
-    );
-
-    static std::string getItalicString(
-      std::string text,
-      CR_CLR foreground,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR foreground
     );
 
     static std::string getItalicString(
       std::string text,
       CR_CLR foreground,
-      CR_CLR background,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR background
+    );
+
+    static std::string getUnderlineString(
+      std::string text
     );
 
     static std::string getUnderlineString(
       std::string text,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR foreground
     );
 
     static std::string getUnderlineString(
       std::string text,
       CR_CLR foreground,
-      mt::CR_BOL excludeOuterWhitespace = true
-    );
-
-    static std::string getUnderlineString(
-      std::string text,
-      CR_CLR foreground,
-      CR_CLR background,
-      mt::CR_BOL excludeOuterWhitespace = true
+      CR_CLR background
     );
 
     static bool areEqual(CR_CLR color_1, CR_CLR color_2);
