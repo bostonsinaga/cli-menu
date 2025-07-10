@@ -8,7 +8,7 @@ namespace cli_menu {
   class Toggle : public Command {
   private:
     void copyPaste() override;
-    void pushUnormap(CR_STR raw) override;
+    void pushUnormap(mt::CR_STR raw) override;
 
   public:
     Toggle() = delete;

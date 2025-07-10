@@ -8,7 +8,7 @@ namespace cli_menu {
   class Word : public Command {
   private:
     void copyPaste() override;
-    void pushUnormap(CR_STR raw) override;
+    void pushUnormap(mt::CR_STR raw) override;
 
   public:
     Word() = delete;
