@@ -8,7 +8,7 @@ message(STATUS "Major version: ${PROJECT_VERSION_MAJOR}")
 message(STATUS "Minor version: ${PROJECT_VERSION_MINOR}")
 message(STATUS "Patch version: ${PROJECT_VERSION_PATCH}")
 
-add_subdirectory(mini-tools/includes)
+add_subdirectory(mini-tools)
 add_subdirectory(src)
 add_subdirectory(test)
 
