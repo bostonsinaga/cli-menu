@@ -14,7 +14,7 @@ namespace cli_menu {
   private:
     static constexpr int totalStatus = 5;
 
-    inline static colors[totalStatus] = {
+    inline static Color colors[totalStatus] = {
       Color::ORANGE,
       Color::RED,
       Color::BLUE,
