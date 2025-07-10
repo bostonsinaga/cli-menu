@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   /** English Presets */
-  mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages> Language::messages = {{"en", {
+  mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages>> Language::messages = {{"en", {
     // ALREADY_SELECTING
     "Already in selection mode.",
     // ARGUMENT_REQUIRED
@@ -134,7 +134,7 @@ namespace cli_menu {
   bool Language::cinDialogInput(std::string &buffer) {
 
     // decoration string
-    std::cout << listPointStyle << ' ';
+    std::cout << Console::listPointStyle << ' ';
 
     if (Language::isInterruptedCtrlC()) return false; // stop loop
 
