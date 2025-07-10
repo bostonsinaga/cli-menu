@@ -16,13 +16,13 @@ namespace cli_menu {
   ) {}
 
   void Number::copyPaste() {
-    mt_uti::VecTools<mt::LD>::concat(
+    mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[keyword], Clipboard::pasteNumbers()
     );
   }
 
   void Number::pushUnormap(CR_STR raw) {
-    mt_uti::VecTools<mt::LD>::concat(
+    mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[keyword], mt_uti::Scanner<mt::LD>::parseNumbers(raw)
     );
   }

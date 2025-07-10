@@ -16,7 +16,7 @@ namespace cli_menu {
   ) {}
 
   void Toggle::copyPaste() {
-    mt_uti::VecTools<mt::LD>::concat(
+    mt_uti::VecTools<mt::LD>::concatCopy(
       Result::toggles[keyword], Clipboard::pasteConditions()
     );
   }
