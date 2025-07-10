@@ -27,7 +27,7 @@ namespace cli_menu {
     typedef const CALLBACK& CR_CALLBACK;
     CALLBACK callback;
 
-    CODE match(CR_VEC_STR raws);
+    CODE match(mt::CR_VEC_STR raws);
     CODE dialog();
 
   protected:
@@ -41,7 +41,7 @@ namespace cli_menu {
     );
 
     virtual void copyPaste() {}
-    virtual void pushUnormap() {}
+    virtual void pushUnormap(mt::CR_STR raw) {}
 
   public:
     // dialogue by default
