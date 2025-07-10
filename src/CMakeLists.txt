@@ -2,9 +2,9 @@ set (SOURCES
   color.cpp
   console.cpp
   language.cpp
+  result.cpp
   clipboard.cpp
   control.cpp
-  result.cpp
   command.cpp
   word.cpp
   number.cpp
