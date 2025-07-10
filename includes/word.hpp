@@ -1,17 +1,17 @@
-#ifndef __CLI_MENU__TOGGLE_HPP__
-#define __CLI_MENU__TOGGLE_HPP__
+#ifndef __CLI_MENU__WORD_HPP__
+#define __CLI_MENU__WORD_HPP__
 
 namespace cli_menu {
 
-  class Toggle : public Command {
+  class Word : public Command {
   private:
     void copyPaste() override;
     void pushUnormap(CR_STR raw) override;
 
   public:
-    Toggle() = delete;
+    Word() = delete;
 
-    Toggle(
+    Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       mt::CR_BOL required_in = false
@@ -19,4 +19,4 @@ namespace cli_menu {
   };
 }
 
-#endif // __CLI_MENU__TOGGLE_HPP__
+#endif // __CLI_MENU__WORD_HPP__
