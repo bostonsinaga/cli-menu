@@ -8,6 +8,12 @@
 namespace cli_menu {
 
   class Command : public mt_ds::GeneralTree {
+  public:
+    // final status codes
+    enum CODE {
+      ERROR, SUCCEED, CANCELED
+    };
+
   private:
     std::string keyword, description;
     bool required;
@@ -25,11 +31,6 @@ namespace cli_menu {
     CODE dialog();
 
   protected:
-    // final status codes
-    enum CODE {
-      ERROR, SUCCEED, CANCELED
-    };
-
     std::string hyphens;
     Command() = delete;
 

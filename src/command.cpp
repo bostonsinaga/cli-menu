@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  Command(
+  Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     mt::CR_BOL required_in = false
