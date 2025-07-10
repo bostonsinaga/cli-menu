@@ -29,11 +29,11 @@ namespace cli_menu {
 
   private:
     static constexpr int totalMessages = 16;
-    static mt::STRUNORMAP<mt::ARR_STR<totalMessages> messages;
-    static consoleCodes[totalMessages];
+    static mt::STRUNORMAP<mt::ARR_STR<totalMessages>> messages;
+    static Console::CODE consoleCodes[totalMessages];
 
     // default english
-    inline static currentISOCode = "en";
+    inline static std::string currentISOCode = "en";
 
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
