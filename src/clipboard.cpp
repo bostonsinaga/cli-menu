@@ -15,7 +15,7 @@ namespace cli_menu {
         LANGUAGE_CLIPBOARD_OPEN_FAILURE
       );
 
-      return;
+      return "";
     }
 
     /** Get clipboard data */
@@ -28,7 +28,7 @@ namespace cli_menu {
       );
 
       CloseClipboard();
-      return;
+      return "";
     }
 
     /** Convert 'hData' to string */
@@ -56,14 +56,7 @@ namespace cli_menu {
   }
 
   mt::VEC_LD Clipboard::pasteNumbers() {
-    mt::VEC_LD numbers;
-    std::string text = pasteText();
-
-    mt_uti::Scanner<mt::LD>::parseNumbers(
-      text, numbers
-    );
-
-    return numbers;
+    return mt_uti::Scanner::parseNumbers<mt::LD>(pasteText());
   }
 
   mt::VEC_BOL Clipboard::pasteConditions() {
@@ -71,7 +64,6 @@ namespace cli_menu {
     mt::VEC_BOL conditions;
     bool pushed = false;
 
-    Util::BOOL_ENUM boolEnum;
     mt::VEC_STR textVec {""};
     std::string text = pasteText();
 
