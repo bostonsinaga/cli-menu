@@ -2,20 +2,21 @@
 #define __CLI_MENU__COMMAND_HPP__
 
 #include "clipboard.hpp"
-#include "control.hpp"
 #include "result.hpp"
 
 namespace cli_menu {
 
-  class Command : public mt_ds::GeneralTree {
-  public:
-    // final status codes
-    enum CODE {
-      ERROR, SUCCEED, CANCELED
-    };
+  // final status codes
+  enum COMMAND_CODE {
+    COMMAND_FAILED, COMMAND_ONGOING,
+    COMMAND_REQUIRED, COMMAND_SUCCEEDED, COMMAND_CANCELED
+  };
 
+  typedef const COMMAND_CODE& CR_COMMAND_CODE;
+
+  class Command : public mt_ds::GeneralTree {
   private:
-    std::string keyword, description;
+    std::string description;
     bool required;
 
     inline static bool
@@ -27,12 +28,13 @@ namespace cli_menu {
     typedef const CALLBACK& CR_CALLBACK;
     CALLBACK callback;
 
-    CODE match(mt::CR_VEC_STR raws);
-    CODE dialog();
+    COMMAND_CODE match(mt::CR_VEC_STR raws);
+    COMMAND_CODE dialog();
+    void printHelp();
+    void printList();
 
   protected:
-    std::string hyphens;
-    Command() = delete;
+    std::string hyphens, keyword;
 
     Command(
       mt::CR_STR keyword_in,
@@ -44,6 +46,8 @@ namespace cli_menu {
     virtual void pushUnormap(mt::CR_STR raw) {}
 
   public:
+    Command() = delete;
+
     // dialogue by default
     static void setNoDialog() { dialogued = false; }
 

@@ -11,14 +11,14 @@ namespace cli_menu {
     "next", "previous", "quit", "reset", "select", "view"
   }}};
 
-  Control::CODE Control::whitespacesCheck(mt::CR_STR str) {
+  CONTROL_CODE Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
     std::string input;
 
     // force to return 'UNKNOWN' when pattern 'abc123 \t abc123' is detected
     for (mt::CR_CH ch : str) {
       if (!mt_uti::StrTools::isWhitespace(ch)) {
-        if (prevSpaced && !input.empty()) return UNKNOWN;
+        if (prevSpaced && !input.empty()) return CONTROL_UNKNOWN;
         input += ch;
       }
       else prevSpaced = true;
@@ -29,61 +29,61 @@ namespace cli_menu {
       for (int j = 0; j < totalSymbols; j++) {
 
         if (input == symbols[j][i]) {
-          sharedEnum = static_cast<CODE>(j);
-          return j;
+          sharedEnum = static_cast<CONTROL_CODE>(j);
+          return sharedEnum;
         }
       }
     }
 
-    return UNKNOWN;
+    return CONTROL_UNKNOWN;
   }
 
   bool Control::backTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == BACK;
+    return whitespacesCheck(str) == CONTROL_BACK;
   }
 
   bool Control::clipboardTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CLIPBOARD;
+    return whitespacesCheck(str) == CONTROL_CLIPBOARD;
   }
 
   bool Control::enterTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == ENTER;
+    return whitespacesCheck(str) == CONTROL_ENTER;
   }
 
   bool Control::helpTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == HELP;
+    return whitespacesCheck(str) == CONTROL_HELP;
   }
 
   bool Control::listTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == LIST;
+    return whitespacesCheck(str) == CONTROL_LIST;
   }
 
   bool Control::modifyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == MODIFY;
+    return whitespacesCheck(str) == CONTROL_MODIFY;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == NEXT;
+    return whitespacesCheck(str) == CONTROL_NEXT;
   }
 
   bool Control::previousTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == PREVIOUS;
+    return whitespacesCheck(str) == CONTROL_PREVIOUS;
   }
 
   bool Control::quitTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == QUIT;
+    return whitespacesCheck(str) == CONTROL_QUIT;
   }
 
   bool Control::resetTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == RESET;
+    return whitespacesCheck(str) == CONTROL_RESET;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == SELECT;
+    return whitespacesCheck(str) == CONTROL_SELECT;
   }
 
   bool Control::viewTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == VIEW;
+    return whitespacesCheck(str) == CONTROL_VIEW;
   }
 
   void Control::printAbbreviations() {
@@ -94,7 +94,7 @@ namespace cli_menu {
 
       for (int i = 0; i < totalSymbols; i++) {
         std::cout << "  '" << symbols[i][1] << "' = "
-          << terms[Language::getCurrentISOCode()][i] << std::endl;
+          << terms[Language::currentISOCode][i] << std::endl;
       }
     }
   }
@@ -104,8 +104,8 @@ namespace cli_menu {
 
     if (!printed) {
       printed = true;
-      mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::getCurrentISOCode());
-      mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::getCurrentISOCode());
+      mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
+      mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::currentISOCode);
 
       for (int i = 0; i < trueTerms.size() - 1; i++) {
         std::cout << '\'' << trueTerms[i] << "', ";
@@ -134,8 +134,8 @@ namespace cli_menu {
   }
 
   void Control::removeISOCode(mt::CR_STR existingISOCode) {
-    Language::messages[existingISOCode].erase();
-    terms[existingISOCode].erase();
+    Language::messages.erase(existingISOCode);
+    terms.erase(existingISOCode);
     booleanizer.removeTerms(existingISOCode);
   }
 
@@ -153,18 +153,18 @@ namespace cli_menu {
     mt::CR_STR selectTerm,
     mt::CR_STR viewTerm
   ) {
-    terms[Language::getCurrentISOCode()][BACK] = backTerm;
-    terms[Language::getCurrentISOCode()][CLIPBOARD] = clipboardTerm;
-    terms[Language::getCurrentISOCode()][ENTER] = enterTerm;
-    terms[Language::getCurrentISOCode()][HELP] = helpTerm;
-    terms[Language::getCurrentISOCode()][LIST] = listTerm;
-    terms[Language::getCurrentISOCode()][MODIFY] = modifyTerm;
-    terms[Language::getCurrentISOCode()][NEXT] = nextTerm;
-    terms[Language::getCurrentISOCode()][PREVIOUS] = previousTerm;
-    terms[Language::getCurrentISOCode()][QUIT] = quitTerm;
-    terms[Language::getCurrentISOCode()][RESET] = resetTerm;
-    terms[Language::getCurrentISOCode()][SELECT] = selectTerm;
-    terms[Language::getCurrentISOCode()][VIEW] = viewTerm;
+    terms[Language::currentISOCode][CONTROL_BACK] = backTerm;
+    terms[Language::currentISOCode][CONTROL_CLIPBOARD] = clipboardTerm;
+    terms[Language::currentISOCode][CONTROL_ENTER] = enterTerm;
+    terms[Language::currentISOCode][CONTROL_HELP] = helpTerm;
+    terms[Language::currentISOCode][CONTROL_LIST] = listTerm;
+    terms[Language::currentISOCode][CONTROL_MODIFY] = modifyTerm;
+    terms[Language::currentISOCode][CONTROL_NEXT] = nextTerm;
+    terms[Language::currentISOCode][CONTROL_PREVIOUS] = previousTerm;
+    terms[Language::currentISOCode][CONTROL_QUIT] = quitTerm;
+    terms[Language::currentISOCode][CONTROL_RESET] = resetTerm;
+    terms[Language::currentISOCode][CONTROL_SELECT] = selectTerm;
+    terms[Language::currentISOCode][CONTROL_VIEW] = viewTerm;
   }
 
   void Control::setBooleanizerTerms(
@@ -172,7 +172,7 @@ namespace cli_menu {
     mt::CR_VEC_STR existingFalseTerms
   ) {
     booleanizer.changeTerms(
-      Language::getCurrentISOCode(),
+      Language::currentISOCode,
       existingTrueTerms,
       existingFalseTerms
     );
@@ -180,7 +180,7 @@ namespace cli_menu {
 
   bool Control::booleanizerTest(mt::CR_STR raw) {
     return booleanizer.test(
-      Language::getCurrentISOCode(), raw
+      Language::currentISOCode, raw
     );
   }
 }

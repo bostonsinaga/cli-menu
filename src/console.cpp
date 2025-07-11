@@ -6,7 +6,7 @@
 namespace cli_menu {
 
   void Console::setColor(
-    const CODE &code,
+    CR_CONSOLE_CODE code,
     CR_CLR color_in
   ) {
     Console::colors[code] = color_in;
@@ -92,7 +92,7 @@ namespace cli_menu {
   }
 
   void Console::logResponse(
-    const CODE &code,
+    CR_CONSOLE_CODE code,
     mt::CR_STR reason
   ) {
     Console::logString(

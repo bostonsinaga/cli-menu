@@ -5,18 +5,22 @@
 
 namespace cli_menu {
 
-  class Control {
-  public:
-    // can be obtained after testing the input string
-    enum CODE {
-      UNKNOWN,
-      BACK, CLIPBOARD, ENTER, HELP,
-      LIST, MODIFY, NEXT, PREVIOUS,
-      QUIT, RESET, SELECT, VIEW
-    };
+  // can be obtained after testing the input string
+  enum CONTROL_CODE {
+    CONTROL_UNKNOWN,
+    CONTROL_BACK, CONTROL_CLIPBOARD,
+    CONTROL_ENTER, CONTROL_HELP,
+    CONTROL_LIST, CONTROL_MODIFY,
+    CONTROL_NEXT, CONTROL_PREVIOUS,
+    CONTROL_QUIT, CONTROL_RESET,
+    CONTROL_SELECT, CONTROL_VIEW
+  };
 
+  typedef const CONTROL_CODE& CR_CONTROL_CODE;
+
+  class Control {
   private:
-    inline static CODE sharedEnum = UNKNOWN;
+    inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
     static constexpr int totalSymbols = 12;
     inline static std::string symbol = ":";
 
@@ -36,7 +40,7 @@ namespace cli_menu {
     };
 
     // find 'symbols' pattern in 'str'
-    static CODE whitespacesCheck(mt::CR_STR str);
+    static CONTROL_CODE whitespacesCheck(mt::CR_STR str);
 
     // multilingual features
     static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
@@ -44,12 +48,6 @@ namespace cli_menu {
 
   public:
     Control() = delete;
-
-    static void rename(
-      const CODE& index,
-      mt::CR_STR name,
-      mt::CR_STR abbreviation
-    );
 
     static bool backTest(mt::CR_STR str);
     static bool quitTest(mt::CR_STR str);
@@ -67,7 +65,7 @@ namespace cli_menu {
     static void printAbbreviations();
     static void printToggleAvailableValues();
 
-    static const CODE getSharedEnum() {
+    static CONTROL_CODE getSharedEnum() {
       return sharedEnum;
     }
 

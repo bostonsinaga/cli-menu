@@ -5,21 +5,23 @@
 
 namespace cli_menu {
 
-  class Console {
-  public:
-    enum CODE {
-      CANCEL, ERROR, HINT, CORRECT, WARNING, 
-    };
+  enum CONSOLE_CODE {
+    CONSOLE_ERROR, CONSOLE_WARNING,
+    CONSOLE_HINT, CONSOLE_CORRECT, CONSOLE_CANCEL
+  };
 
+  typedef const CONSOLE_CODE& CR_CONSOLE_CODE;
+
+  class Console {
   private:
     static constexpr int totalStatus = 5;
 
     inline static Color colors[totalStatus] = {
-      Color::ORANGE,
       Color::RED,
+      Color::YELLOW,
       Color::BLUE,
       Color::GREEN,
-      Color::YELLOW
+      Color::ORANGE
     };
 
   public:
@@ -30,7 +32,7 @@ namespace cli_menu {
 
     // edit the 'colors'
     static void setColor(
-      const CODE &code,
+      CR_CONSOLE_CODE code,
       CR_CLR color_in
     );
 
@@ -83,7 +85,7 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      const CODE &code,
+      CR_CONSOLE_CODE code,
       mt::CR_STR reason
     );
   };

@@ -7,73 +7,73 @@ namespace cli_menu {
 
   /** English Presets */
   mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages>> Language::messages = {{"en", {
-    // ALREADY_SELECTING
+    // LANGUAGE_ALREADY_SELECTING
     "Already in selection mode.",
-    // ARGUMENT_REQUIRED
+    // LANGUAGE_ARGUMENT_REQUIRED
     "Unable to process without explicit arguments."
-    // CLIPBOARD_OPEN_FAILURE,
+    // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
     "Failed to open clipboard.",
-    // CLIPBOARD_GET_FAILURE,
+    // LANGUAGE_CLIPBOARD_GET_FAILURE,
     "Failed to get clipboard data.",
-    // CLIPBOARD_LOCK_FAILURE
+    // LANGUAGE_CLIPBOARD_LOCK_FAILURE
     "Failed to lock clipboard data.",
-    // CLIPBOARD_PASTED
+    // LANGUAGE_CLIPBOARD_PASTED
     "Pasted from clipboard.",
-    // COMMAND_NOT_FOUND
-    "Parameter not found.",
-    // CTRL_C_SIGNAL_RECEIVED
+    // LANGUAGE_CTRL_C_SIGNAL_RECEIVED
     "Interrupt signal received. Exiting program.",
-    // FORBIDDEN_HIDDEN_PASTE
+    // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
-    // MIDDLE_DIALOG
+    // LANGUAGE_MIDDLE_DIALOG
     "Unable to process until the rest of direct inputs are processed.",
-    // PARAMETER_ALONE
+    // LANGUAGE_PARAMETER_ALONE
     "This parameter has no neighbors.",
-    // PARAMETER_AT_LEAF
+    // LANGUAGE_PARAMETER_AT_LEAF
     "This does not contain any parameters.",
-    // PARAMETER_AT_ROOT
+    // LANGUAGE_PARAMETER_AT_ROOT
     "No more groups above.",
-    // PROGRAM_CANCELED
+    // LANGUAGE_PARAMETER_NOT_FOUND
+    "Parameter not found.",
+    // LANGUAGE_PROGRAM_CANCELED
     "Program canceled.",
-    // PROGRAM_FAILED
+    // LANGUAGE_PROGRAM_FAILED
     "Program failed.",
-    // PROGRAM_SUCCEEDED
+    // LANGUAGE_PROGRAM_SUCCEEDED
     "Program succeeded.",
   }}};
 
-  Console::CODE Language::consoleCodes[Language::totalMessages] = {
-    // ALREADY_SELECTING
-    Console::WARNING,
-    // ARGUMENT_REQUIRED
-    Console::ERROR,
-    // CLIPBOARD_OPEN_FAILURE,
-    Console::ERROR,
-    // CLIPBOARD_GET_FAILURE,
-    Console::ERROR,
-    // CLIPBOARD_LOCK_FAILURE
-    Console::ERROR,
-    // CLIPBOARD_PASTED
-    Console::HINT,
-    // COMMAND_NOT_FOUND
-    Console::ERROR,
-    // CTRL_C_SIGNAL_RECEIVED
-    Console::HINT,
-    // FORBIDDEN_HIDDEN_PASTE
-    Console::WARNING,
-    // MIDDLE_DIALOG
-    Console::ERROR,
-    // PARAMETER_ALONE
-    Console::WARNING,
-    // PARAMETER_AT_LEAF
-    Console::WARNING,
-    // PARAMETER_AT_ROOT
-    Console::WARNING,
-    // PROGRAM_CANCELED
-    Console::CANCEL,
-    // PROGRAM_FAILED
-    Console::ERROR,
-    // PROGRAM_SUCCEEDED
-    Console::CORRECT
+  CONSOLE_CODE Language::consoleCodes[Language::totalMessages] = {
+    // LANGUAGE_ALREADY_SELECTING
+    CONSOLE_WARNING,
+    // LANGUAGE_ARGUMENT_REQUIRED
+    CONSOLE_ERROR,
+    // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
+    CONSOLE_ERROR,
+    // LANGUAGE_CLIPBOARD_GET_FAILURE,
+    CONSOLE_ERROR,
+    // LANGUAGE_CLIPBOARD_LOCK_FAILURE
+    CONSOLE_ERROR,
+    // LANGUAGE_CLIPBOARD_PASTED
+    CONSOLE_HINT,
+    // LANGUAGE_CTRL_C_SIGNAL_RECEIVED
+    CONSOLE_HINT,
+    // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
+    CONSOLE_WARNING,
+    // LANGUAGE_MIDDLE_DIALOG
+    CONSOLE_ERROR,
+    // LANGUAGE_PARAMETER_ALONE
+    CONSOLE_WARNING,
+    // LANGUAGE_PARAMETER_AT_LEAF
+    CONSOLE_WARNING,
+    // LANGUAGE_PARAMETER_AT_ROOT
+    CONSOLE_WARNING,
+    // LANGUAGE_PARAMETER_NOT_FOUND
+    CONSOLE_ERROR,
+    // LANGUAGE_PROGRAM_CANCELED
+    CONSOLE_CANCEL,
+    // LANGUAGE_PROGRAM_FAILED
+    CONSOLE_ERROR,
+    // LANGUAGE_PROGRAM_SUCCEEDED
+    CONSOLE_CORRECT
   };
 
   bool Language::hasISOCode(mt::CR_STR existingISOCode) {
@@ -95,34 +95,34 @@ namespace cli_menu {
     mt::CR_STR clipboardGetFailureMessage,
     mt::CR_STR clipboardLockFailureMessage,
     mt::CR_STR clipboardPastedMessage,
-    mt::CR_STR commandNotFoundMessage,
     mt::CR_STR forbiddenHiddenPasteMessage,
     mt::CR_STR middleDialogMessage,
     mt::CR_STR parameterAloneMessage,
     mt::CR_STR parameterAtLeafMessage,
     mt::CR_STR parameterAtRootMessage,
+    mt::CR_STR parameterNotFoundMessage,
     mt::CR_STR programCanceledMessage,
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
   ) {
-    messages[currentISOCode][ALREADY_SELECTING] = alreadySelectingMessage;
-    messages[currentISOCode][ARGUMENT_REQUIRED] = argumentRequiredMessage;
-    messages[currentISOCode][CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
-    messages[currentISOCode][CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
-    messages[currentISOCode][CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
-    messages[currentISOCode][CLIPBOARD_PASTED] = clipboardPastedMessage;
-    messages[currentISOCode][COMMAND_NOT_FOUND] = commandNotFoundMessage;
-    messages[currentISOCode][FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
-    messages[currentISOCode][MIDDLE_DIALOG] = middleDialogMessage;
-    messages[currentISOCode][PARAMETER_ALONE] = parameterAloneMessage;
-    messages[currentISOCode][PARAMETER_AT_LEAF] = parameterAtLeafMessage;
-    messages[currentISOCode][PARAMETER_AT_ROOT] = parameterAtRootMessage;
-    messages[currentISOCode][PROGRAM_CANCELED] = programCanceledMessage;
-    messages[currentISOCode][PROGRAM_FAILED] = programFailedMessage;
-    messages[currentISOCode][PROGRAM_SUCCEEDED] = programSucceededMessage;
+    messages[currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingMessage;
+    messages[currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredMessage;
+    messages[currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
+    messages[currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
+    messages[currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
+    messages[currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedMessage;
+    messages[currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
+    messages[currentISOCode][LANGUAGE_MIDDLE_DIALOG] = middleDialogMessage;
+    messages[currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneMessage;
+    messages[currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
+    messages[currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
+    messages[currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundMessage;
+    messages[currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledMessage;
+    messages[currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedMessage;
+    messages[currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
   }
 
-  void Language::printResponse(const CODE &responseCode) {
+  void Language::printResponse(CR_LANGUAGE_CODE responseCode) {
     Console::logResponse(
       Language::consoleCodes[responseCode],
       Language::messages[currentISOCode][responseCode]
@@ -157,7 +157,7 @@ namespace cli_menu {
     if (INTERRUPTED_CTRL_C.load()) {
 
       std::cout << std::endl;
-      printResponse(CTRL_C_SIGNAL_RECEIVED);
+      printResponse(LANGUAGE_CTRL_C_SIGNAL_RECEIVED);
       return true;
     }
 

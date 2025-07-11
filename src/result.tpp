@@ -34,7 +34,7 @@ namespace cli_menu {
       std::is_same_v<T, bool>
     ) {
       // type title
-      Console::logResponse(Console::HINT, stringifiedType + ":\n");
+      Console::logResponse(CONSOLE_HINT, stringifiedType + ":\n");
 
       for (mt::CR_PAIR2<std::string, mt::VEC<T>> keyvec : unormap) {
         int i = 0;
