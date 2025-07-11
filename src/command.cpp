@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_CPP__
 #define __CLI_MENU__COMMAND_CPP__
 
+#include <csignal>
 #include "command.hpp"
 
 namespace cli_menu {
@@ -8,29 +9,29 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in = false
+    mt::CR_BOL required_in
   ) {
     keyword = keyword_in;
     description = description_in;
     required = required_in;
   }
 
-  Command::CODE Command::match(CR_VEC_STR raws) {
-    Language::Code languageCode = Language::COMMAND_NOT_FOUND;
+  COMMAND_CODE Command::match(mt::CR_VEC_STR raws) {
+    COMMAND_CODE matchCode = COMMAND_FAILED;
 
     for (mt::CR_STR str : raws) {
       if (hyphens + keyword == str) {
-        languageCode = Language::COMMAND_FOUND;
+        matchCode = COMMAND_ONGOING;
       }
       else {
-        children.iterate(
+        getChildren()->iterate(
           mt_ds::GeneralTree::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
 
             if (static_cast<Command*>(node)->hyphens
               + static_cast<Command*>(node)->keyword == str
             ) {
-              languageCode = Language::REQUIRED_ARGUMENT;
+              matchCode = COMMAND_REQUIRED;
               return false;
             }
 
@@ -38,48 +39,48 @@ namespace cli_menu {
           }
         );
 
-        if (languageCode == Language::COMMAND_FOUND) {
+        if (matchCode == COMMAND_ONGOING) {
           pushUnormap(str);
         }
-        else if (languageCode == Language::REQUIRED_ARGUMENT) {
+        else if (matchCode == COMMAND_REQUIRED) {
           break;
         }
       }
     }
 
     // ask 'raws' to the children
-    if (languageCode == Language::REQUIRED_ARGUMENT) {
-      children.iterate(
+    if (matchCode == COMMAND_REQUIRED) {
+      getChildren()->iterate(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
-          languageCode = static_cast<Command*>(node)->match(raws);
+          matchCode = static_cast<Command*>(node)->match(raws);
           return true;
         }
       );
     }
 
-    if (languageCode == Language::COMMAND_FOUND) {
-      return COMMAND_SUCCEED;
+    if (matchCode == COMMAND_ONGOING) {
+      return COMMAND_SUCCEEDED;
     }
     else if (dialogued) {
       return dialog();
     }
-    return COMMAND_ERROR;
+    return COMMAND_FAILED;
   }
 
-  Command::CODE Command::dialog() {
+  COMMAND_CODE Command::dialog() {
     std::string input;
 
-    while (Console::cinDialogInput(input)) {
+    while (Language::cinDialogInput(input)) {
 
       if (Control::backTest(input)) {
-
-        if (parent) return parent->dialog();
-        else Language::printResponse(Language::AT_ROOT);
+        if (getParent()) {
+          return static_cast<Command*>(getParent())->dialog();
+        }
+        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
       }
       else if (Control::quitTest(input)) {
-
-        Language::printResponse(Language::PROGRAM_CANCELED);
+        Language::printResponse(LANGUAGE_PROGRAM_CANCELED);
         return COMMAND_CANCELED;
       }
       else if (Control::clipboardTest(input)) {
@@ -88,13 +89,16 @@ namespace cli_menu {
       else if (Control::enterTest(input)) {
         size_t leafCount = 0;
 
-        children->iterate(
+        // count no-children node at children's level
+        getChildren()->iterate(
           mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList* node)->bool {
 
-            if (!node->getChildren()) {
+            if (!static_cast<mt_ds::GeneralTree*>(node)->getChildren()) {
               leafCount++;
             }
+
+            return true;
           }
         );
 
@@ -118,12 +122,16 @@ namespace cli_menu {
 
       }
       else if (Control::nextTest(input)) {
-
-        if (next()) return next()->dialog();
-        else Language::printResponse();
+        if (next()) {
+          return static_cast<Command*>(next())->dialog();
+        }
+        else Language::printResponse(LANGUAGE_PARAMETER_ALONE);
       }
       else if (Control::previousTest(input)) {
-        return previous()->dialog();
+        if (prev()) {
+          return static_cast<Command*>(prev())->dialog();
+        }
+        else Language::printResponse(LANGUAGE_PARAMETER_ALONE);
       }
       else if (Control::resetTest(input)) {
 
@@ -137,7 +145,7 @@ namespace cli_menu {
       else {}
     }
 
-    return ERROR;
+    return COMMAND_FAILED;
   }
 
   void Command::run(
@@ -145,11 +153,19 @@ namespace cli_menu {
     char *argv[]
   ) {
     // register signal handler for Ctrl+C (SIGINT)
-    std::signal(SIGINT, ctrlCSignalHandler);
+    std::signal(SIGINT, Language::setInterruptedCtrlC);
 
-    CODE commandCode = match(
+    COMMAND_CODE commandCode = match(
       mt_uti::StrTools::argvToStringVector(argc, argv)
     );
+  }
+
+  void Command::printHelp() {
+    std::cout << "HELP INTERFACE:\n";
+  }
+
+  void Command::printList() {
+    std::cout << "LIST INTERFACE:\n";
   }
 }
 
