@@ -2,19 +2,19 @@
 
 int main(int argc, char *argv[]) {
 
-  cm::Word *organism = new cm::Program(
+  cm::Toggle *organism = new cm::Toggle(
     "organism",
     "Describe your lovely animals or plants",
     true
   );
 
-  cm::Parameter *animals = new cm::Parameter(
+  cm::Toggle *animals = new cm::Toggle(
     "animals",
     "Oxygen Consumers",
     true
   );
 
-  cm::Parameter *plants = new cm::Parameter(
+  cm::Toggle *plants = new cm::Toggle(
     "plants",
     "Oxygen Consumers",
     true
