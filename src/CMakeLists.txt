@@ -3,8 +3,8 @@ set (SOURCES
   console.cpp
   language.cpp
   result.cpp
-  clipboard.cpp
   control.cpp
+  clipboard.cpp
   command.cpp
   word.cpp
   number.cpp
