@@ -19,7 +19,7 @@ namespace cli_menu {
     Result::words[keyword].push_back(Clipboard::pasteText());
   }
 
-  void Word::pushUnormap(CR_STR raw) {
+  void Word::pushUnormap(mt::CR_STR raw) {
     Result::words[keyword].push_back(raw);
   }
 }

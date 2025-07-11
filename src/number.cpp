@@ -21,9 +21,9 @@ namespace cli_menu {
     );
   }
 
-  void Number::pushUnormap(CR_STR raw) {
+  void Number::pushUnormap(mt::CR_STR raw) {
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[keyword], mt_uti::Scanner<mt::LD>::parseNumbers(raw)
+      Result::numbers[keyword], mt_uti::Scanner::parseNumbers<mt::LD>(raw)
     );
   }
 }
