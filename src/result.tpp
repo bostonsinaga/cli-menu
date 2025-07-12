@@ -1,8 +1,6 @@
 #ifndef __CLI_MENU__RESULT_TPP__
 #define __CLI_MENU__RESULT_TPP__
 
-#include "result.hpp"
-
 namespace cli_menu {
 
   template <typename T>
