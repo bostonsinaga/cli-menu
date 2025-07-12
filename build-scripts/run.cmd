@@ -1,1 +1,2 @@
-"../build/test/test.exe"
+@echo off
+"../build/test/organism.exe"
