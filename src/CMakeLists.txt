@@ -11,5 +11,5 @@ set (SOURCES
   toggle.cpp
 )
 
-add_library(cli-menu STATIC ${SOURCES})
-target_link_libraries(cli-menu mini-tools)
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
+target_link_libraries(${PROJECT_NAME} mini-tools)
