@@ -22,21 +22,20 @@ namespace cli_menu {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
     static constexpr int totalSymbols = 12;
-    inline static std::string symbol = ":";
 
     inline static const std::string symbols[totalSymbols][2] = {
-      {":B", ":b"}, // back
-      {":C", ":c"}, // clipboard
-      {":E", ":e"}, // enter
-      {":H", ":h"}, // help
-      {":L", ":l"}, // list
-      {":M", ":m"}, // modify
-      {":N", ":n"}, // next
-      {":P", ":p"}, // previous
-      {":Q", ":q"}, // quit
-      {":R", ":r"}, // reset
-      {":S", ":s"}, // select
-      {":V", ":v"}  // view
+      {":b", ":B"}, // back
+      {":c", ":C"}, // clipboard
+      {":e", ":E"}, // enter
+      {":h", ":H"}, // help
+      {":l", ":L"}, // list
+      {":m", ":M"}, // modify
+      {":n", ":N"}, // next
+      {":p", ":P"}, // previous
+      {":q", ":Q"}, // quit
+      {":r", ":R"}, // reset
+      {":s", ":S"}, // select
+      {":v", ":V"}  // view
     };
 
     // find 'symbols' pattern in 'str'

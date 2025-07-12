@@ -29,7 +29,7 @@ namespace cli_menu {
       for (int j = 0; j < totalSymbols; j++) {
 
         if (input == symbols[j][i]) {
-          sharedEnum = static_cast<CONTROL_CODE>(j);
+          sharedEnum = static_cast<CONTROL_CODE>(j+1);
           return sharedEnum;
         }
       }
@@ -93,7 +93,7 @@ namespace cli_menu {
       printed = true;
 
       for (int i = 0; i < totalSymbols; i++) {
-        std::cout << "  '" << symbols[i][1] << "' = "
+        std::cout << "  '" << symbols[i][0] << "' = "
           << terms[Language::currentISOCode][i] << std::endl;
       }
     }
