@@ -15,14 +15,7 @@ namespace cli_menu {
   class Console {
   private:
     static constexpr int totalStatus = 5;
-
-    inline static Color colors[totalStatus] = {
-      Color::RED,
-      Color::YELLOW,
-      Color::BLUE,
-      Color::GREEN,
-      Color::ORANGE
-    };
+    static Color colors[totalStatus];
 
   public:
     inline static char boundaryCharacter = '-';

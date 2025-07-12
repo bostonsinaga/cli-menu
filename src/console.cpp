@@ -5,6 +5,14 @@
 
 namespace cli_menu {
 
+  Color Console::colors[Console::totalStatus] = {
+    Color::RED,
+    Color::YELLOW,
+    Color::BLUE,
+    Color::GREEN,
+    Color::ORANGE
+  };
+
   void Console::setColor(
     CR_CONSOLE_CODE code,
     CR_CLR color_in
