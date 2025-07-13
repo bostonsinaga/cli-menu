@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__CONTROL_HPP__
 #define __CLI_MENU__CONTROL_HPP__
 
+#include <atomic>
 #include "language.hpp"
 
 namespace cli_menu {
@@ -15,8 +16,6 @@ namespace cli_menu {
     CONTROL_QUIT, CONTROL_RESET,
     CONTROL_SELECT, CONTROL_VIEW
   };
-
-  typedef const CONTROL_CODE& CR_CONTROL_CODE;
 
   class Control {
   private:
@@ -44,6 +43,9 @@ namespace cli_menu {
     // multilingual features
     static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
     inline static mt_uti::Booleanizer booleanizer;
+
+    // use an atomic boolean to signal an interrupt
+    inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
   public:
     Control() = delete;
@@ -95,6 +97,17 @@ namespace cli_menu {
     );
 
     static bool booleanizerTest(mt::CR_STR raw);
+
+    /** Interrupted 'Ctrl+C' Interactions */
+
+    // decorated input interface
+    static bool cinDialogInput(std::string &buffer);
+
+    // to prevent infinite loop after pressing 'Ctrl+C'
+    static void setInterruptedCtrlC(int);
+
+    // check if interrupted before waiting for input
+    static bool isInterruptedCtrlC();
   };
 }
 

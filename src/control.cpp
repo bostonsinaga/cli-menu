@@ -183,6 +183,38 @@ namespace cli_menu {
       Language::currentISOCode, raw
     );
   }
+
+  /** Interrupted 'Ctrl+C' Interactions */
+
+  bool Control::cinDialogInput(std::string &buffer) {
+
+    // decoration string
+    std::cout << Console::listPointStyle << ' ';
+
+    if (Control::isInterruptedCtrlC()) return false; // stop loop
+
+    // user input
+    std::getline(std::cin, buffer);
+
+    if (Control::isInterruptedCtrlC()) return false; // stop loop
+
+    // loop still running
+    return true;
+  }
+
+  void Control::setInterruptedCtrlC(int) {
+    Control::INTERRUPTED_CTRL_C.store(true);
+  }
+
+  bool Control::isInterruptedCtrlC() {
+
+    // 'Ctrl+C' is detected
+    if (Control::INTERRUPTED_CTRL_C.load()) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 #endif // __CLI_MENU__CONTROL_CPP__

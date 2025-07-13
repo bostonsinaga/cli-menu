@@ -10,7 +10,7 @@ namespace cli_menu {
     // LANGUAGE_ALREADY_SELECTING
     "Already in selection mode.",
     // LANGUAGE_ARGUMENT_REQUIRED
-    "Unable to process without explicit arguments."
+    "Unable to process without explicit arguments.",
     // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
     "Failed to open clipboard.",
     // LANGUAGE_CLIPBOARD_GET_FAILURE,
@@ -19,8 +19,6 @@ namespace cli_menu {
     "Failed to lock clipboard data.",
     // LANGUAGE_CLIPBOARD_PASTED
     "Pasted from clipboard.",
-    // LANGUAGE_CTRL_C_SIGNAL_RECEIVED
-    "Interrupt signal received. Exiting program.",
     // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
     // LANGUAGE_MIDDLE_DIALOG
@@ -38,7 +36,7 @@ namespace cli_menu {
     // LANGUAGE_PROGRAM_FAILED
     "Program failed.",
     // LANGUAGE_PROGRAM_SUCCEEDED
-    "Program succeeded.",
+    "Program succeeded."
   }}};
 
   CONSOLE_CODE Language::consoleCodes[Language::totalMessages] = {
@@ -53,8 +51,6 @@ namespace cli_menu {
     // LANGUAGE_CLIPBOARD_LOCK_FAILURE
     CONSOLE_ERROR,
     // LANGUAGE_CLIPBOARD_PASTED
-    CONSOLE_HINT,
-    // LANGUAGE_CTRL_C_SIGNAL_RECEIVED
     CONSOLE_HINT,
     // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
@@ -122,46 +118,11 @@ namespace cli_menu {
     messages[currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
   }
 
-  void Language::printResponse(CR_LANGUAGE_CODE responseCode) {
+  void Language::printResponse(const LANGUAGE_CODE &responseCode) {
     Console::logResponse(
       Language::consoleCodes[responseCode],
       Language::messages[currentISOCode][responseCode]
     );
-  }
-
-  /** Interrupted Ctrl+C */
-
-  bool Language::cinDialogInput(std::string &buffer) {
-
-    // decoration string
-    std::cout << Console::listPointStyle << ' ';
-
-    if (Language::isInterruptedCtrlC()) return false; // stop loop
-
-    // user input
-    std::getline(std::cin, buffer);
-
-    if (Language::isInterruptedCtrlC()) return false; // stop loop
-
-    // loop still running
-    return true;
-  }
-
-  void Language::setInterruptedCtrlC(int) {
-    INTERRUPTED_CTRL_C.store(true);
-  }
-
-  bool Language::isInterruptedCtrlC() {
-
-    // 'Ctrl+C' is detected
-    if (INTERRUPTED_CTRL_C.load()) {
-
-      std::cout << std::endl;
-      printResponse(LANGUAGE_CTRL_C_SIGNAL_RECEIVED);
-      return true;
-    }
-
-    return false;
   }
 }
 
