@@ -17,7 +17,7 @@ namespace cli_menu {
   class Command : public mt_ds::GeneralTree {
   private:
     std::string description;
-    bool required;
+    bool required, selecting = false;
 
     inline static bool
       dialogued = true,
@@ -26,10 +26,14 @@ namespace cli_menu {
     // the program will stop if the callback returns false
     typedef std::function<bool()> CALLBACK;
     typedef const CALLBACK& CR_CALLBACK;
-    CALLBACK callback;
+    CALLBACK callback = []()->bool { return true; };
 
     COMMAND_CODE match(mt::CR_VEC_STR raws);
     COMMAND_CODE dialog();
+    COMMAND_CODE enter();
+    COMMAND_CODE goToNeighbor(mt_ds::LinkedList* neighbor);
+    COMMAND_CODE resultInput(mt::CR_STR input);
+
     void printHelp();
     void printList();
 
@@ -44,6 +48,7 @@ namespace cli_menu {
 
     virtual void copyPaste() {}
     virtual void pushUnormap(mt::CR_STR raw) {}
+    virtual void resetUnormap() {}
 
   public:
     Command() = delete;
