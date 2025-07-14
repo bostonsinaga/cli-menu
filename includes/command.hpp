@@ -25,7 +25,6 @@ namespace cli_menu {
 
     // the program will stop if the callback returns false
     typedef std::function<bool()> CALLBACK;
-    typedef const CALLBACK& CR_CALLBACK;
     CALLBACK callback = []()->bool { return true; };
 
     COMMAND_CODE match(mt::CR_VEC_STR raws);
@@ -53,18 +52,35 @@ namespace cli_menu {
   public:
     Command() = delete;
 
-    // dialogue by default
-    static void setNoDialog() { dialogued = false; }
+    /** Forbidden Base Class Methods */
 
-    // propagate by default
-    static void stopPropagation() { propagation = false; }
+    LinkedList *slice() override = delete;
+    void merge(LinkedList *outsider) override = delete;
+    void detach() override = delete;
+    void appoint(LinkedList *newStart) override = delete;
+    void join(LinkedList *insider) override = delete;
+    void accept(LinkedList *outsider) override = delete;
+    void annihilate() override = delete;
 
-    // start match and dialog
-    void run(
-      mt::CR_INT argc,
-      char *argv[]
-    );
+    void setParent(GT *object) override = delete;
+    void removeChild(GT *child) override = delete;
+    void cleanChildren() override = delete;
+
+  private:
+    /** Restricted Base Class Methods */
+
+    void addChild(GT *object) override {
+      mt_ds::GeneralTree::addChild(object);
+    }
+
+    void destroy() override {
+      mt_ds::GeneralTree::destroy();
+    }
   };
+
+  class Word;
+  class Number;
+  class Toggle;
 }
 
 #endif // __CLI_MENU__COMMAND_HPP__
