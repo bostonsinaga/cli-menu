@@ -8,9 +8,7 @@
 #include "control.hpp"
 #include "clipboard.hpp"
 #include "command.hpp"
-#include "word.hpp"
-#include "number.hpp"
-#include "toggle.hpp"
+#include "type.hpp"
 
 namespace cm = cli_menu;
 
