@@ -16,6 +16,8 @@ namespace cli_menu {
     static Color colors[totalStatus];
 
   public:
+    Console() = delete;
+
     inline static char boundaryCharacter = '-';
     inline static size_t boundaryCharactersAmount = 45;
     inline static std::string listPointStyle = ">";
