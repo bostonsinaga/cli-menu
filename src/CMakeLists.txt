@@ -6,10 +6,7 @@ set (SOURCES
   control.cpp
   clipboard.cpp
   command.cpp
-  word.cpp
-  number.cpp
-  toggle.cpp
-  program.cpp
+  type.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
