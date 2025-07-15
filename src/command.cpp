@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_CPP__
 #define __CLI_MENU__COMMAND_CPP__
 
+#include <csignal>
 #include "command.hpp"
 
 namespace cli_menu {
@@ -8,11 +9,13 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in
+    mt::CR_BOL required_in,
+    const COMMAND_CALLBACK &callback_in
   ) {
     keyword = keyword_in;
     description = description_in;
     required = required_in;
+    callback = callback_in;
   }
 
   COMMAND_CODE Command::match(mt::CR_VEC_STR raws) {
@@ -224,6 +227,44 @@ namespace cli_menu {
 
   void Command::printList() {
     std::cout << "LIST INTERFACE:\n";
+  }
+
+  void Command::run(mt::CR_INT argc, char *argv[]) {
+
+    // register signal handler for Ctrl+C (SIGINT)
+    std::signal(SIGINT, Control::setInterruptedCtrlC);
+
+    COMMAND_CODE commandCode;
+    mt::VEC_STR raws = mt_uti::StrTools::argvToStringVector(argc, argv);
+
+    if (getChildren()) {
+      commandCode = static_cast<Command*>(getChildren())->match(raws);
+    }
+    else if (dialogued && raws.empty()) {
+      commandCode = dialog();
+    }
+    else {
+      commandCode = COMMAND_SUCCEEDED;
+
+      for (mt::CR_STR input : raws) {
+        pushUnormap(input);
+      }
+    }
+
+    switch (commandCode) {
+      case COMMAND_FAILED: {
+        Language::printResponse(LANGUAGE_PROGRAM_FAILED);
+      break;}
+      case COMMAND_SUCCEEDED: {
+        Language::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
+      break;}
+      case COMMAND_CANCELED: {
+        Language::printResponse(LANGUAGE_PROGRAM_CANCELED);
+      break;}
+      default: {
+        // COMMAND_ONGOING, COMMAND_REQUIRED
+      }
+    }
   }
 }
 
