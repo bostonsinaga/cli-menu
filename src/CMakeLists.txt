@@ -9,6 +9,7 @@ set (SOURCES
   word.cpp
   number.cpp
   toggle.cpp
+  program.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
