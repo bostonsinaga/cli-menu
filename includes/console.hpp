@@ -10,8 +10,6 @@ namespace cli_menu {
     CONSOLE_HINT, CONSOLE_CORRECT, CONSOLE_CANCEL
   };
 
-  typedef const CONSOLE_CODE& CR_CONSOLE_CODE;
-
   class Console {
   private:
     static constexpr int totalStatus = 5;
@@ -25,7 +23,7 @@ namespace cli_menu {
 
     // edit the 'colors'
     static void setColor(
-      CR_CONSOLE_CODE code,
+      const CONSOLE_CODE &code,
       CR_CLR color_in
     );
 
@@ -78,7 +76,7 @@ namespace cli_menu {
     static void logBoundaryLine();
 
     static void logResponse(
-      CR_CONSOLE_CODE code,
+      const CONSOLE_CODE &code,
       mt::CR_STR reason
     );
   };
