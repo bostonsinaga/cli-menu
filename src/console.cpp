@@ -8,7 +8,8 @@ namespace cli_menu {
   Color Console::colors[Console::totalStatus] = {
     Color::RED,
     Color::YELLOW,
-    Color::BLUE,
+    Color::WHITE,
+    Color::AZURE,
     Color::GREEN,
     Color::ORANGE
   };
@@ -104,7 +105,7 @@ namespace cli_menu {
     mt::CR_STR reason
   ) {
     Console::logString(
-      "\n" + listPointStyle + ' ' + reason + '\n',
+      listPointStyle + ' ' + reason,
       Console::colors[code]
     );
   }

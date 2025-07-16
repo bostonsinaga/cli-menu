@@ -6,13 +6,13 @@
 namespace cli_menu {
 
   enum CONSOLE_CODE {
-    CONSOLE_ERROR, CONSOLE_WARNING,
+    CONSOLE_ERROR, CONSOLE_WARNING, CONSOLE_HIGHLIGHT,
     CONSOLE_HINT, CONSOLE_CORRECT, CONSOLE_CANCEL
   };
 
   class Console {
   private:
-    static constexpr int totalStatus = 5;
+    static constexpr int totalStatus = 6;
     static Color colors[totalStatus];
 
   public:
