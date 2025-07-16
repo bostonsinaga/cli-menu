@@ -29,6 +29,7 @@ namespace cli_menu {
     // dialog interactions
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
+    COMMAND_CODE callCallback();
     COMMAND_CODE goToNeighbor(mt_ds::LinkedList* neighbor);
     COMMAND_CODE resultInput(mt::CR_STR input);
 
@@ -36,17 +37,11 @@ namespace cli_menu {
     COMMAND_CODE match(mt::CR_VEC_STR raws);
 
     void printHelp();
-    void printList();
+    void printList(mt::CR_BOL needErrorMessage);
 
   protected:
     std::string hyphens, keyword;
-
-    virtual void copyPaste() {}
-    virtual void pushUnormap(mt::CR_STR raw) {}
-    virtual void resetUnormap() {}
-
-  public:
-    Command() = delete;
+    LANGUAGE_COMMAND_STRINGIFIED_TYPE stringifiedTypeIndex;
 
     Command(
       mt::CR_STR keyword_in,
@@ -54,6 +49,13 @@ namespace cli_menu {
       mt::CR_BOL required_in,
       const COMMAND_CALLBACK &callback_in
     );
+
+    virtual void copyPaste() {}
+    virtual void pushUnormap(mt::CR_STR raw) {}
+    virtual void resetUnormap() {}
+
+  public:
+    Command() = delete;
 
     // dialogue by default
     static void setNoDialog() {

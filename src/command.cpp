@@ -22,9 +22,11 @@ namespace cli_menu {
     COMMAND_CODE matchCode = COMMAND_FAILED;
 
     for (mt::CR_STR str : raws) {
-      if (hyphens + keyword == str) {
+      // the root automatically passes the keyword check
+      if (hyphens + keyword == str || !getParent()) {
         matchCode = COMMAND_ONGOING;
       }
+      // check child keyword or as argument to current node
       else {
         if (getChildren()) {
           getChildren()->iterate(
@@ -63,12 +65,15 @@ namespace cli_menu {
       );
     }
 
+    // not required
     if (matchCode == COMMAND_ONGOING) {
       return COMMAND_SUCCEEDED;
     }
-    else if (dialogued) {
+    // required but has no children
+    else if (Command::dialogued) {
       return dialog();
     }
+    // no dialogue to complete the required
     return COMMAND_FAILED;
   }
 
@@ -92,30 +97,34 @@ namespace cli_menu {
     if (requiredCount) {
       return COMMAND_ONGOING;
     }
+
     // no required nodes
-    else {
-      if (propagation) {
-        COMMAND_CODE propagatingCode;
+    return callCallback();
+  }
 
-        bubble([&](mt_ds::LinkedList *neighbor)->bool {
-          if (callback()) {
-            propagatingCode = COMMAND_SUCCEEDED;
-            return true;
-          }
+  COMMAND_CODE Command::callCallback() {
 
-          propagatingCode = COMMAND_FAILED;
-          return false;
-        });
+    if (Command::propagation) {
+      COMMAND_CODE propagatingCode;
 
-        return propagatingCode;
-      }
-      else { // not propagated
+      bubble([&](mt_ds::LinkedList *neighbor)->bool {
         if (callback()) {
-          return COMMAND_SUCCEEDED;
+          propagatingCode = COMMAND_SUCCEEDED;
+          return true;
         }
 
-        return COMMAND_FAILED;
+        propagatingCode = COMMAND_FAILED;
+        return false;
+      });
+
+      return propagatingCode;
+    }
+    else { // not propagated
+      if (callback()) {
+        return COMMAND_SUCCEEDED;
       }
+
+      return COMMAND_FAILED;
     }
   }
 
@@ -177,7 +186,7 @@ namespace cli_menu {
       }
       // LIST
       else if (Control::listTest(input)) {
-        printList();
+        printList(true);
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
@@ -222,11 +231,37 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    std::cout << "HELP INTERFACE:\n";
+
+    Console::logResponse(
+      CONSOLE_HIGHLIGHT,
+      keyword + " [" + Language::getStringifiedType(
+        stringifiedTypeIndex
+      ) + "]\n" + description + "\n\n"
+    );
+
+    printList(false);
+    std::cout << std::endl;
   }
 
-  void Command::printList() {
-    std::cout << "LIST INTERFACE:\n";
+  void Command::printList(mt::CR_BOL needErrorMessage) {
+    if (getChildren()) {
+      getChildren()->iterate(
+        mt_ds::GeneralTree::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+
+          Console::logResponse(
+            CONSOLE_HINT,
+            static_cast<Command*>(node)->keyword + " ["
+            + Language::getStringifiedType(stringifiedTypeIndex) + "]\n"
+          );
+
+          return true;
+        }
+      );
+    }
+    else if (needErrorMessage) {
+      Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+    }
   }
 
   void Command::run(mt::CR_INT argc, char *argv[]) {
@@ -234,22 +269,9 @@ namespace cli_menu {
     // register signal handler for Ctrl+C (SIGINT)
     std::signal(SIGINT, Control::setInterruptedCtrlC);
 
-    COMMAND_CODE commandCode;
-    mt::VEC_STR raws = mt_uti::StrTools::argvToStringVector(argc, argv);
-
-    if (getChildren()) {
-      commandCode = static_cast<Command*>(getChildren())->match(raws);
-    }
-    else if (dialogued && raws.empty()) {
-      commandCode = dialog();
-    }
-    else {
-      commandCode = COMMAND_SUCCEEDED;
-
-      for (mt::CR_STR input : raws) {
-        pushUnormap(input);
-      }
-    }
+    COMMAND_CODE commandCode = match(
+      mt_uti::StrTools::argvToStringVector(argc, argv)
+    );
 
     switch (commandCode) {
       case COMMAND_FAILED: {
