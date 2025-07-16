@@ -190,7 +190,8 @@ namespace cli_menu {
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
-        selecting = false;
+        if (selecting) selecting = false;
+        else Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
         return dialog();
       }
       // NEXT
@@ -213,7 +214,8 @@ namespace cli_menu {
       }
       // SELECT
       else if (Control::selectTest(input)) {
-        selecting = true;
+        if (selecting) Language::printResponse(LANGUAGE_ALREADY_SELECTING);
+        else selecting = true;
         return dialog();
       }
       // VIEW

@@ -7,6 +7,8 @@ namespace cli_menu {
 
   /** English Presets */
   mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages>> Language::messages = {{"en", {
+    // LANGUAGE_ALREADY_MODIFYING
+    "Already in edit mode.",
     // LANGUAGE_ALREADY_SELECTING
     "Already in selection mode.",
     // LANGUAGE_ARGUMENT_REQUIRED
@@ -40,6 +42,8 @@ namespace cli_menu {
   }}};
 
   CONSOLE_CODE Language::consoleCodes[Language::totalMessages] = {
+    // LANGUAGE_ALREADY_MODIFYING
+    CONSOLE_WARNING,
     // LANGUAGE_ALREADY_SELECTING
     CONSOLE_WARNING,
     // LANGUAGE_ARGUMENT_REQUIRED
@@ -78,7 +82,7 @@ namespace cli_menu {
   }}};
 
   bool Language::hasISOCode(mt::CR_STR existingISOCode) {
-    return mt::STRUNORMAP_FOUND<mt::ARR_STR<totalMessages>>(
+    return mt::STRUNORMAP_FOUND<mt::ARR_STR<Language::totalMessages>>(
       Language::messages, existingISOCode
     );
   }
@@ -90,6 +94,7 @@ namespace cli_menu {
   }
 
   void Language::setMessages(
+    mt::CR_STR alreadyModifyingMessage,
     mt::CR_STR alreadySelectingMessage,
     mt::CR_STR argumentRequiredMessage,
     mt::CR_STR clipboardOpenFailureMessage,
@@ -106,6 +111,7 @@ namespace cli_menu {
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
   ) {
+    Language::messages[Language::currentISOCode][LANGUAGE_ALREADY_MODIFYING] = alreadyModifyingMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;

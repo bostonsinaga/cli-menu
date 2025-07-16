@@ -105,7 +105,7 @@ namespace cli_menu {
     mt::CR_STR reason
   ) {
     Console::logString(
-      listPointStyle + ' ' + reason,
+      listPointStyle + ' ' + reason + '\n',
       Console::colors[code]
     );
   }

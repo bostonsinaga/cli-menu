@@ -6,6 +6,7 @@
 namespace cli_menu {
 
   enum LANGUAGE_CODE {
+    LANGUAGE_ALREADY_MODIFYING,
     LANGUAGE_ALREADY_SELECTING,
     LANGUAGE_ARGUMENT_REQUIRED,
     LANGUAGE_CLIPBOARD_OPEN_FAILURE,
@@ -32,7 +33,7 @@ namespace cli_menu {
   class Language {
   private:
     // messages
-    static constexpr int totalMessages = 15;
+    static constexpr int totalMessages = 16;
     static mt::STRUNORMAP<mt::ARR_STR<totalMessages>> messages;
     static CONSOLE_CODE consoleCodes[totalMessages];
 
@@ -55,6 +56,7 @@ namespace cli_menu {
     static void selectISOCode(mt::CR_STR existingISOCode);
 
     static void setMessages(
+      mt::CR_STR alreadyModifyingMessage,
       mt::CR_STR alreadySelectingMessage,
       mt::CR_STR argumentRequiredMessage,
       mt::CR_STR clipboardOpenFailureMessage,
