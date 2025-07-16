@@ -72,15 +72,20 @@ namespace cli_menu {
     CONSOLE_CORRECT
   };
 
+  mt::STRUNORMAP<mt::ARR_STR<Language::totalCommandTypes>>
+  Language::stringifiedCommandTypes = {{"en", {
+    "WORD", "NUMBER", "TOGGLE"
+  }}};
+
   bool Language::hasISOCode(mt::CR_STR existingISOCode) {
     return mt::STRUNORMAP_FOUND<mt::ARR_STR<totalMessages>>(
-      messages, existingISOCode
+      Language::messages, existingISOCode
     );
   }
 
   void Language::selectISOCode(mt::CR_STR existingISOCode) {
-    if (hasISOCode(existingISOCode)) {
-      currentISOCode = existingISOCode;
+    if (Language::hasISOCode(existingISOCode)) {
+      Language::currentISOCode = existingISOCode;
     }
   }
 
@@ -101,28 +106,54 @@ namespace cli_menu {
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
   ) {
-    messages[currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingMessage;
-    messages[currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredMessage;
-    messages[currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
-    messages[currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
-    messages[currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
-    messages[currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedMessage;
-    messages[currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
-    messages[currentISOCode][LANGUAGE_MIDDLE_DIALOG] = middleDialogMessage;
-    messages[currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneMessage;
-    messages[currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
-    messages[currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
-    messages[currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundMessage;
-    messages[currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledMessage;
-    messages[currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedMessage;
-    messages[currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_MIDDLE_DIALOG] = middleDialogMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
   }
 
   void Language::printResponse(const LANGUAGE_CODE &responseCode) {
     Console::logResponse(
       Language::consoleCodes[responseCode],
-      Language::messages[currentISOCode][responseCode]
+      Language::messages[Language::currentISOCode][responseCode]
     );
+  }
+
+  void Language::setStringifiedCommandTypes(
+    mt::CR_STR wordStringifiedType,
+    mt::CR_STR numberStringifiedType,
+    mt::CR_STR toggleStringifiedType
+  ) {
+    Language::stringifiedCommandTypes
+    [Language::currentISOCode]
+    [LANGUAGE_WORD_STRINGIFIED_TYPE] = wordStringifiedType;
+
+    Language::stringifiedCommandTypes
+    [Language::currentISOCode]
+    [LANGUAGE_NUMBER_STRINGIFIED_TYPE] = numberStringifiedType;
+
+    Language::stringifiedCommandTypes
+    [Language::currentISOCode]
+    [LANGUAGE_TOGGLE_STRINGIFIED_TYPE] = toggleStringifiedType;
+  }
+
+  mt::CR_STR Language::getStringifiedType(
+    const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
+  ) {
+    return Language::stringifiedCommandTypes
+    [Language::currentISOCode]
+    [stringifiedTypeIndex];
   }
 }
 

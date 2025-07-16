@@ -23,11 +23,22 @@ namespace cli_menu {
     LANGUAGE_PROGRAM_SUCCEEDED
   };
 
+  enum LANGUAGE_COMMAND_STRINGIFIED_TYPE {
+    LANGUAGE_WORD_STRINGIFIED_TYPE,
+    LANGUAGE_NUMBER_STRINGIFIED_TYPE,
+    LANGUAGE_TOGGLE_STRINGIFIED_TYPE
+  };
+
   class Language {
   private:
+    // messages
     static constexpr int totalMessages = 15;
     static mt::STRUNORMAP<mt::ARR_STR<totalMessages>> messages;
     static CONSOLE_CODE consoleCodes[totalMessages];
+
+    // command stringified types
+    static constexpr int totalCommandTypes = 3;
+    static mt::STRUNORMAP<mt::ARR_STR<totalCommandTypes>> stringifiedCommandTypes;
 
     // default english
     inline static std::string currentISOCode = "en";
@@ -62,6 +73,16 @@ namespace cli_menu {
     );
 
     static void printResponse(const LANGUAGE_CODE &responseCode);
+
+    static void setStringifiedCommandTypes(
+      mt::CR_STR wordStringifiedType,
+      mt::CR_STR numberStringifiedType,
+      mt::CR_STR toggleStringifiedType
+    );
+
+    static mt::CR_STR getStringifiedType(
+      const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
+    );
   };
 }
 
