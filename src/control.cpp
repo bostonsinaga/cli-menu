@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  /** English Presets */
+  // english presets
   mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
     "back", "clipboard", "enter", "help", "list", "modify",
     "next", "previous", "quit", "reset", "select", "view"
@@ -126,6 +126,8 @@ namespace cli_menu {
       }
     }
   }
+
+  /** Multilingual Features */
 
   void Control::addISOCode(mt::CR_STR newISOCode) {
     Language::messages[newISOCode] = {};
