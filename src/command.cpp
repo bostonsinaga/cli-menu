@@ -91,13 +91,13 @@ namespace cli_menu {
   COMMAND_CODE Command::dialog() {
     std::string input;
 
+    // outline or fill style
     Console::logStylishHeader(
       generateSequentialRootNames(),
-      selecting
+      editing
     );
 
-    while (Control::cinDialogInput(input, selecting)) {
-
+    while (Control::cinDialogInput(input, editing)) {
       // BACK
       if (Control::backTest(input)) {
         if (getParent()) {
@@ -124,8 +124,8 @@ namespace cli_menu {
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
-        if (selecting) selecting = false;
-        else Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        else editing = true;
         return dialog();
       }
       // NEXT
@@ -148,38 +148,24 @@ namespace cli_menu {
       }
       // SELECT
       else if (Control::selectTest(input)) {
-        if (selecting) Language::printResponse(LANGUAGE_ALREADY_SELECTING);
-        else selecting = true;
+        if (editing) editing = false;
+        else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
         return dialog();
       }
       // VIEW
       else if (Control::viewTest(input)) {
-        Result::printInputs(selecting);
+        Result::printInputs(editing);
       }
-      // RESULT INPUT OR MATCH IN DIALOG
+      // WILD VALUE
       else {
-        bool goDown = false;
-
-        if (getChildren()) {
-          getChildren()->iterate(
-            mt_ds::GeneralTree::RIGHT,
-            [&](mt_ds::LinkedList *node)->bool {
-
-              if (static_cast<Command*>(node)->keyword == input) {
-                goDown = true;
-                return false;
-              }
-
-              return true;
-            }
-          );
+        // edit mode
+        if (editing) {
+          required = false;
+          pushUnormap(input);
         }
-
-        if (goDown) {
-          return static_cast<Command*>(getChildren())->dialog();
-        }
+        // selection mode (can be a match in dialog)
         else {
-          COMMAND_CODE code = resultInput(input);
+          COMMAND_CODE code = goDown(input);
           if (code != COMMAND_ONGOING) return code;
         }
       }
@@ -196,7 +182,7 @@ namespace cli_menu {
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList* node)->bool {
 
-        if (!static_cast<Command*>(node)->required) {
+        if (static_cast<Command*>(node)->required) {
           requiredCount++;
         }
 
@@ -206,7 +192,12 @@ namespace cli_menu {
 
     // required nodes still exist
     if (requiredCount) {
+      Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return COMMAND_ONGOING;
+    }
+    // go to children level
+    else if (getChildren()) {
+      return static_cast<Command*>(getChildren())->dialog();
     }
 
     // no required nodes
@@ -248,25 +239,65 @@ namespace cli_menu {
     return COMMAND_ONGOING;
   }
 
-  COMMAND_CODE Command::resultInput(mt::CR_STR input) {
-    if (selecting) {
-      mt::VEC_STR raws = {""};
+  // always in selection mode
+  COMMAND_CODE Command::goDown(mt::CR_STR input) {
+    bool willGo = false;
+
+    if (getChildren()) {
+      getChildren()->iterate(
+        mt_ds::GeneralTree::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+
+          if (static_cast<Command*>(node)->keyword == input) {
+            willGo = true;
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      // go to children level
+      if (willGo) {
+        return static_cast<Command*>(getChildren())->dialog();
+      }
+
+      /**
+       * Find first whitespace to indicate that
+       * 'input' is raws for match in dialog.
+       */
       bool spaceFound = false;
 
       for (mt::CR_CH ch : input) {
-        if (!spaceFound && (
-          ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n')
-        ) {
+        if (mt_uti::StrTools::isWhitespace(ch)) {
           spaceFound = true;
-          raws.push_back("");
+          break;
         }
-        else raws.back() += ch;
       }
 
-      return match(raws);
+      // match in dialog
+      if (spaceFound) {
+        spaceFound = false;
+        mt::VEC_STR raws = {""};
+
+        for (mt::CR_CH ch : input) {
+          if (!spaceFound && mt_uti::StrTools::isWhitespace(ch)) {
+            spaceFound = true;
+            raws.push_back("");
+          }
+          else raws.back() += ch;
+        }
+
+        return match(raws);
+      }
+
+      // child not found
+      Language::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+    }
+    else { // this is a leaf
+      Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
 
-    pushUnormap(input);
     return COMMAND_ONGOING;
   }
 

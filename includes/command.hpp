@@ -17,7 +17,7 @@ namespace cli_menu {
   class Command : public mt_ds::GeneralTree {
   private:
     std::string description;
-    bool required, selecting = false;
+    bool editing = true, required;
 
     inline static bool
       dialogued = true,
@@ -37,7 +37,7 @@ namespace cli_menu {
     COMMAND_CODE enter();
     COMMAND_CODE callCallback();
     COMMAND_CODE goToNeighbor(mt_ds::LinkedList* neighbor);
-    COMMAND_CODE resultInput(mt::CR_STR input);
+    COMMAND_CODE goDown(mt::CR_STR input);
 
     void printHelp();
     void printList(mt::CR_BOL needErrorMessage);
