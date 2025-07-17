@@ -17,7 +17,10 @@ namespace cli_menu {
   class Command : public mt_ds::GeneralTree {
   private:
     std::string description;
-    bool editing = true, required;
+
+    bool editing = true,
+      required = false,
+      strict = false;
 
     inline static bool
       dialogued = true,
@@ -60,17 +63,39 @@ namespace cli_menu {
   public:
     Command() = delete;
 
-    // dialogue by default
+    /**
+     * Will not open the 'dialog' to complete the required.
+     * Directly display 'COMMAND_FAILED'.
+     */
     static void setNoDialog() {
       Command::dialogued = false;
     }
 
-    // propagate by default
+    /**
+     * Prevent 'callCallback' from bubbling
+     * callback calls to the root.
+     */
     static void stopPropagation() {
       Command::propagation = false;
     }
 
-    // start match and dialog
+    /**
+     * Arguments must be provided explicitly to make
+     * strict parent able to call the 'callCallback'.
+     */
+    void setRequired() { required = true; }
+
+    /**
+     * All the required descendants must be completed
+     * to be able to call the 'callCallback'.
+     */
+    void setStrict() { strict = true; }
+
+    /**
+     * Start match and dialog.
+     * This will not be deleted automatically.
+     * Delete it manually by calling 'destroy'.
+     */
     void run(mt::CR_INT argc, char *argv[]);
   };
 }
