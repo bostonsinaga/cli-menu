@@ -100,7 +100,7 @@ namespace cli_menu {
 
     /**
      * INTERRUPTED 'CTRL+C' INTERACTIONS
-     * The 'selecting' parameter, defined in 'Command::selecting',
+     * The 'editing' parameter, defined in 'Command::editing',
      * is used to switch between editing and selecting modes.
      * In this class, it serves to distinguish the theme.
      */
@@ -108,7 +108,7 @@ namespace cli_menu {
     // decorated input interface
     static bool cinDialogInput(
       std::string &buffer,
-      mt::CR_BOL selecting
+      mt::CR_BOL editing
     );
 
     // to prevent infinite loop after pressing 'Ctrl+C'

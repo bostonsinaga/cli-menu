@@ -92,35 +92,35 @@ namespace cli_menu {
 
   /** SPECIALS */
 
-  CR_CLR Console::chooseBoundaryColor(mt::CR_BOL selecting) {
-    return selecting ?
-    Console::boundarySelectionColor : Console::boundaryModifyColor;
+  CR_CLR Console::chooseBoundaryColor(mt::CR_BOL editing) {
+    return editing ?
+    Console::boundaryModifyColor : Console::boundarySelectionColor;
   }
 
-  void Console::logBoundaryLine(mt::CR_BOL selecting) {
+  void Console::logBoundaryLine(mt::CR_BOL editing) {
     Console::logString(
       "\n" + std::string(boundaryCharactersAmount, boundaryCharacter) + '\n',
-      chooseBoundaryColor(selecting)
+      chooseBoundaryColor(editing)
     );
   }
 
   void Console::logStylishHeader(
     mt::CR_STR title,
-    mt::CR_BOL selecting
+    mt::CR_BOL editing
   ) {
     if (Console::outlineStyle) {
-      Console::logBoundaryLine(selecting);
+      Console::logBoundaryLine(editing);
 
       Console::logString(
-        title, chooseBoundaryColor(selecting)
+        title, chooseBoundaryColor(editing)
       );
 
-      Console::logBoundaryLine(selecting);
+      Console::logBoundaryLine(editing);
     }
     else Console::logString(
       title,
-      selecting ? Console::boxSelectionColors[0] : Console::boxModifyColors[0],
-      selecting ? Console::boxSelectionColors[1] : Console::boxModifyColors[1]
+      editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
+      editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
     );
   }
 

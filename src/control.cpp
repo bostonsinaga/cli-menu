@@ -190,12 +190,12 @@ namespace cli_menu {
 
   bool Control::cinDialogInput(
     std::string &buffer,
-    mt::CR_BOL selecting
+    mt::CR_BOL editing
   ) {
     // decoration string
     Console::logString(
       Console::listPointStyle + ' ',
-      Console::chooseBoundaryColor(selecting)
+      Console::chooseBoundaryColor(editing)
     );
 
     if (Control::isInterruptedCtrlC()) return false; // stop loop

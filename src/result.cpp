@@ -38,11 +38,11 @@ namespace cli_menu {
     toggles.erase(keyword);
   }
 
-  void Result::printInputs(mt::CR_BOL selecting) {
+  void Result::printInputs(mt::CR_BOL editing) {
     printType<std::string>("std::string", words);
-    Console::logBoundaryLine(selecting);
+    Console::logBoundaryLine(editing);
     printType<mt::LD>("long double", numbers);
-    Console::logBoundaryLine(selecting);
+    Console::logBoundaryLine(editing);
     printType<bool>("bool", toggles);
   }
 }

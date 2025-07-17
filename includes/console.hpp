@@ -75,17 +75,17 @@ namespace cli_menu {
 
     /**
      * SPECIALS
-     * The 'selecting' parameter, defined in 'Command::selecting',
+     * The 'editing' parameter, defined in 'Command::editing',
      * is used to switch between editing and selecting modes.
      * In this class, it serves to distinguish the theme.
      */
 
-    static CR_CLR chooseBoundaryColor(mt::CR_BOL selecting);
-    static void logBoundaryLine(mt::CR_BOL selecting);
+    static CR_CLR chooseBoundaryColor(mt::CR_BOL editing);
+    static void logBoundaryLine(mt::CR_BOL editing);
 
     static void logStylishHeader(
       mt::CR_STR title,
-      mt::CR_BOL selecting
+      mt::CR_BOL editing
     );
 
     static void logResponse(
