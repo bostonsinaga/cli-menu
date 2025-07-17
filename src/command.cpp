@@ -173,15 +173,18 @@ namespace cli_menu {
   }
 
   COMMAND_CODE Command::enter() {
-    size_t requiredCount = 0;
+    bool neighborRequired = false;
 
-    // count required nodes (current level)
+    // check required nodes at current level
     iterate(
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList* node)->bool {
 
+        // at least 1 is required
+        if (neighborRequired) return false;
+
         if (static_cast<Command*>(node)->required) {
-          requiredCount++;
+          neighborRequired = true;
         }
 
         return true;
@@ -189,12 +192,12 @@ namespace cli_menu {
     );
 
     /**
-     * The required nodes remain present
-     * and only mandatory if parent is strict.
+     * 1. Uncompleted required neighbors with strict parent.
+     * 2. No parent or non-strict parent with this is required.
      */
-    if (getParent() &&
-      static_cast<Command*>(getParent())->strict &&
-      requiredCount
+    if ((getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) || 
+      (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
+      (!getParent() && required)
     ) {
       Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return COMMAND_ONGOING;
