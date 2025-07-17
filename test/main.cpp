@@ -7,7 +7,9 @@ int main(int argc, char *argv[]) {
     "Describe your lovely animals or plants",
     true,
     []()->bool {
-      std::cout << "Hello Organism";
+      cm::Console::logResponse(
+        cm::CONSOLE_HIGHLIGHT, "Hello Organism"
+      );
       return true;
     }
   );
@@ -17,7 +19,9 @@ int main(int argc, char *argv[]) {
     "Oxygen consumers",
     true,
     []()->bool {
-      std::cout << "Hello Animals";
+      cm::Console::logResponse(
+        cm::CONSOLE_HIGHLIGHT, "Hello Animals"
+      );
       return true;
     }
   );
@@ -27,7 +31,9 @@ int main(int argc, char *argv[]) {
     "Carbon dioxide consumers",
     true,
     []()->bool {
-      std::cout << "Hello Plants";
+      cm::Console::logResponse(
+        cm::CONSOLE_HIGHLIGHT, "Hello Plants"
+      );
       return true;
     }
   );
