@@ -18,7 +18,6 @@ namespace cli_menu {
     Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      mt::CR_BOL required_in,
       const COMMAND_CALLBACK &callback_in
     );
   };
@@ -36,7 +35,6 @@ namespace cli_menu {
     Number(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      mt::CR_BOL required_in,
       const COMMAND_CALLBACK &callback_in
     );
   };
@@ -54,7 +52,6 @@ namespace cli_menu {
     Toggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      mt::CR_BOL required_in,
       const COMMAND_CALLBACK &callback_in
     );
   };

@@ -5,7 +5,6 @@ int main(int argc, char *argv[]) {
   cm::Toggle *organism = new cm::Toggle(
     "organism",
     "Describe your lovely animals or plants",
-    true,
     []()->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HIGHLIGHT, "Hello Organism"
@@ -17,7 +16,6 @@ int main(int argc, char *argv[]) {
   cm::Toggle *animals = new cm::Toggle(
     "animals",
     "Oxygen consumers",
-    true,
     []()->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HIGHLIGHT, "Hello Animals"
@@ -26,10 +24,12 @@ int main(int argc, char *argv[]) {
     }
   );
 
+  animals->makeRequired();
+  organism->addChild(animals);
+
   cm::Toggle *plants = new cm::Toggle(
     "plants",
     "Carbon dioxide consumers",
-    true,
     []()->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HIGHLIGHT, "Hello Plants"
@@ -38,9 +38,12 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  organism->addChild(animals);
+  plants->makeRequired();
   organism->addChild(plants);
+
+  // ultimate
   organism->run(argc, argv);
+  organism->destroy();
 
   return 0;
 }

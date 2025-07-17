@@ -52,7 +52,6 @@ namespace cli_menu {
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      mt::CR_BOL required_in,
       const COMMAND_CALLBACK &callback_in
     );
 
@@ -64,16 +63,16 @@ namespace cli_menu {
     Command() = delete;
 
     /**
-     * Will not open the 'dialog' to complete the required.
+     * Will not open dialog to complete the required.
      * Directly display 'COMMAND_FAILED'.
      */
-    static void setNoDialog() {
+    static void noDialogue() {
       Command::dialogued = false;
     }
 
     /**
-     * Prevent 'callCallback' from bubbling
-     * callback calls to the root.
+     * Prevent 'callCallback' from bubbling callback calls to the root.
+     * Only call this callback.
      */
     static void stopPropagation() {
       Command::propagation = false;
@@ -83,13 +82,13 @@ namespace cli_menu {
      * Arguments must be provided explicitly to make
      * strict parent able to call the 'callCallback'.
      */
-    void setRequired() { required = true; }
+    void makeRequired() { required = true; }
 
     /**
      * All the required descendants must be completed
      * to be able to call the 'callCallback'.
      */
-    void setStrict() { strict = true; }
+    void makeStrict() { strict = true; }
 
     /**
      * Start match and dialog.

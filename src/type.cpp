@@ -10,12 +10,10 @@ namespace cli_menu {
   Word::Word(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in,
     const COMMAND_CALLBACK &callback_in
   ) : Command::Command(
     keyword_in,
     description_in,
-    required_in,
     callback_in
   ) {
     hyphens = "-";
@@ -35,12 +33,10 @@ namespace cli_menu {
   Number::Number(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in,
     const COMMAND_CALLBACK &callback_in
   ) : Command::Command(
     keyword_in,
     description_in,
-    required_in,
     callback_in
   ) {
     hyphens = "-";
@@ -64,12 +60,10 @@ namespace cli_menu {
   Toggle::Toggle(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    mt::CR_BOL required_in,
     const COMMAND_CALLBACK &callback_in
   ) : Command::Command(
     keyword_in,
     description_in,
-    required_in,
     callback_in
   ) {
     hyphens = "--";
