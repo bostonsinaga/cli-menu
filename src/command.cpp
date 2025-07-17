@@ -18,6 +18,17 @@ namespace cli_menu {
     callback = callback_in;
   }
 
+  std::string Command::generateSequentialRootNames() {
+    std::string sequentialNames;
+
+    bubble([&](mt_ds::LinkedList *neighbor)->bool {
+      sequentialNames = static_cast<Command*>(neighbor)->keyword + ' ' + sequentialNames;
+      return true;
+    });
+
+    return sequentialNames;
+  }
+
   COMMAND_CODE Command::match(mt::CR_VEC_STR raws) {
     COMMAND_CODE matchCode = COMMAND_FAILED;
 
@@ -74,6 +85,106 @@ namespace cli_menu {
       return dialog();
     }
     // no dialogue to complete the required
+    return COMMAND_FAILED;
+  }
+
+  COMMAND_CODE Command::dialog() {
+    std::string input;
+
+    Console::logStylishHeader(
+      generateSequentialRootNames(),
+      selecting
+    );
+
+    while (Control::cinDialogInput(input)) {
+
+      // BACK
+      if (Control::backTest(input)) {
+        if (getParent()) {
+          return static_cast<Command*>(getParent())->dialog();
+        }
+        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
+      }
+      // CLIPBOARD
+      else if (Control::clipboardTest(input)) {
+        copyPaste();
+      }
+      // ENTER
+      else if (Control::enterTest(input)) {
+        COMMAND_CODE code = enter();
+        if (code != COMMAND_ONGOING) return code;
+      }
+      // HELP
+      else if (Control::helpTest(input)) {
+        printHelp();
+      }
+      // LIST
+      else if (Control::listTest(input)) {
+        printList(true);
+      }
+      // MODIFY
+      else if (Control::modifyTest(input)) {
+        if (selecting) selecting = false;
+        else Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        return dialog();
+      }
+      // NEXT
+      else if (Control::nextTest(input)) {
+        COMMAND_CODE code = goToNeighbor(next());
+        if (code != COMMAND_ONGOING) return code;
+      }
+      // PREVIOUS
+      else if (Control::previousTest(input)) {
+        COMMAND_CODE code = goToNeighbor(prev());
+        if (code != COMMAND_ONGOING) return code;
+      }
+      // QUIT
+      else if (Control::quitTest(input)) {
+        return COMMAND_CANCELED;
+      }
+      // RESET
+      else if (Control::resetTest(input)) {
+        resetUnormap();
+      }
+      // SELECT
+      else if (Control::selectTest(input)) {
+        if (selecting) Language::printResponse(LANGUAGE_ALREADY_SELECTING);
+        else selecting = true;
+        return dialog();
+      }
+      // VIEW
+      else if (Control::viewTest(input)) {
+        Result::printInputs(selecting);
+      }
+      // RESULT INPUT OR MATCH IN DIALOG
+      else {
+        bool goDown = false;
+
+        if (getChildren()) {
+          getChildren()->iterate(
+            mt_ds::GeneralTree::RIGHT,
+            [&](mt_ds::LinkedList *node)->bool {
+
+              if (static_cast<Command*>(node)->keyword == input) {
+                goDown = true;
+                return false;
+              }
+
+              return true;
+            }
+          );
+        }
+
+        if (goDown) {
+          return static_cast<Command*>(getChildren())->dialog();
+        }
+        else {
+          COMMAND_CODE code = resultInput(input);
+          if (code != COMMAND_ONGOING) return code;
+        }
+      }
+    }
+
     return COMMAND_FAILED;
   }
 
@@ -157,79 +268,6 @@ namespace cli_menu {
 
     pushUnormap(input);
     return COMMAND_ONGOING;
-  }
-
-  COMMAND_CODE Command::dialog() {
-    std::string input;
-
-    while (Control::cinDialogInput(input)) {
-
-      // BACK
-      if (Control::backTest(input)) {
-        if (getParent()) {
-          return static_cast<Command*>(getParent())->dialog();
-        }
-        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
-      }
-      // CLIPBOARD
-      else if (Control::clipboardTest(input)) {
-        copyPaste();
-      }
-      // ENTER
-      else if (Control::enterTest(input)) {
-        COMMAND_CODE code = enter();
-        if (code != COMMAND_ONGOING) return code;
-      }
-      // HELP
-      else if (Control::helpTest(input)) {
-        printHelp();
-      }
-      // LIST
-      else if (Control::listTest(input)) {
-        printList(true);
-      }
-      // MODIFY
-      else if (Control::modifyTest(input)) {
-        if (selecting) selecting = false;
-        else Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
-        return dialog();
-      }
-      // NEXT
-      else if (Control::nextTest(input)) {
-        COMMAND_CODE code = goToNeighbor(next());
-        if (code != COMMAND_ONGOING) return code;
-      }
-      // PREVIOUS
-      else if (Control::previousTest(input)) {
-        COMMAND_CODE code = goToNeighbor(prev());
-        if (code != COMMAND_ONGOING) return code;
-      }
-      // QUIT
-      else if (Control::quitTest(input)) {
-        return COMMAND_CANCELED;
-      }
-      // RESET
-      else if (Control::resetTest(input)) {
-        resetUnormap();
-      }
-      // SELECT
-      else if (Control::selectTest(input)) {
-        if (selecting) Language::printResponse(LANGUAGE_ALREADY_SELECTING);
-        else selecting = true;
-        return dialog();
-      }
-      // VIEW
-      else if (Control::viewTest(input)) {
-        Result::printInputs();
-      }
-      // RESULT INPUT OR MATCH IN DIALOG
-      else {
-        COMMAND_CODE code = resultInput(input);
-        if (code != COMMAND_ONGOING) return code;
-      }
-    }
-
-    return COMMAND_FAILED;
   }
 
   void Command::printHelp() {

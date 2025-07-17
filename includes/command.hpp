@@ -26,15 +26,18 @@ namespace cli_menu {
     // return false to stop the program 
     COMMAND_CALLBACK callback = []()->bool { return true; };
 
+    // accumulate keywords up to root
+    std::string generateSequentialRootNames();
+
+    // entry point to dialog interactions
+    COMMAND_CODE match(mt::CR_VEC_STR raws);
+
     // dialog interactions
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
     COMMAND_CODE callCallback();
     COMMAND_CODE goToNeighbor(mt_ds::LinkedList* neighbor);
     COMMAND_CODE resultInput(mt::CR_STR input);
-
-    // entry point to dialog interactions
-    COMMAND_CODE match(mt::CR_VEC_STR raws);
 
     void printHelp();
     void printList(mt::CR_BOL needErrorMessage);
