@@ -98,10 +98,18 @@ namespace cli_menu {
 
     static bool booleanizerTest(mt::CR_STR raw);
 
-    /** Interrupted 'Ctrl+C' Interactions */
+    /**
+     * INTERRUPTED 'CTRL+C' INTERACTIONS
+     * The 'selecting' parameter, defined in 'Command::selecting',
+     * is used to switch between editing and selecting modes.
+     * In this class, it serves to distinguish the theme.
+     */
 
     // decorated input interface
-    static bool cinDialogInput(std::string &buffer);
+    static bool cinDialogInput(
+      std::string &buffer,
+      mt::CR_BOL selecting
+    );
 
     // to prevent infinite loop after pressing 'Ctrl+C'
     static void setInterruptedCtrlC(int);

@@ -188,10 +188,15 @@ namespace cli_menu {
 
   /** Interrupted 'Ctrl+C' Interactions */
 
-  bool Control::cinDialogInput(std::string &buffer) {
-
+  bool Control::cinDialogInput(
+    std::string &buffer,
+    mt::CR_BOL selecting
+  ) {
     // decoration string
-    std::cout << Console::listPointStyle << ' ';
+    Console::logString(
+      Console::listPointStyle + ' ',
+      Console::chooseBoundaryColor(selecting)
+    );
 
     if (Control::isInterruptedCtrlC()) return false; // stop loop
 

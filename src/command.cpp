@@ -96,7 +96,7 @@ namespace cli_menu {
       selecting
     );
 
-    while (Control::cinDialogInput(input)) {
+    while (Control::cinDialogInput(input, selecting)) {
 
       // BACK
       if (Control::backTest(input)) {

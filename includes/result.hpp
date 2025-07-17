@@ -29,7 +29,12 @@ namespace cli_menu {
     static void removeNumber(mt::CR_STR keyword);
     static void removeToggle(mt::CR_STR keyword);
 
-    static void printInputs();
+    /**
+     * The 'selecting' parameter, defined in 'Command::selecting',
+     * is used to switch between editing and selecting modes.
+     * In this class, it serves to distinguish the theme.
+     */
+    static void printInputs(mt::CR_BOL selecting);
   };
 }
 
