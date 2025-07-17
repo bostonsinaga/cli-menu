@@ -13,6 +13,9 @@ int main(int argc, char *argv[]) {
     }
   );
 
+  organism->makeRequired();
+  organism->makeStrict();
+
   cm::Toggle *animals = new cm::Toggle(
     "animals",
     "Oxygen consumers",

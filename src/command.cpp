@@ -175,7 +175,7 @@ namespace cli_menu {
   COMMAND_CODE Command::enter() {
     size_t requiredCount = 0;
 
-    // count 'required' nodes
+    // count required nodes (current level)
     iterate(
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList* node)->bool {
@@ -188,8 +188,14 @@ namespace cli_menu {
       }
     );
 
-    // required nodes still exist
-    if (requiredCount) {
+    /**
+     * The required nodes remain present
+     * and only mandatory if parent is strict.
+     */
+    if (getParent() &&
+      static_cast<Command*>(getParent())->strict &&
+      requiredCount
+    ) {
       Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return COMMAND_ONGOING;
     }
@@ -198,7 +204,7 @@ namespace cli_menu {
       return static_cast<Command*>(getChildren())->dialog();
     }
 
-    // no required nodes
+    // no required nodes (done)
     return callCallback();
   }
 

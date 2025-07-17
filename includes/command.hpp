@@ -79,8 +79,8 @@ namespace cli_menu {
     }
 
     /**
-     * Arguments must be provided explicitly to make
-     * strict parent able to call the 'callCallback'.
+     * Arguments must be provided explicitly
+     * to be able to call the 'callCallback'.
      */
     void makeRequired() { required = true; }
 
