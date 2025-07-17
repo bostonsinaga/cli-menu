@@ -13,7 +13,6 @@ namespace cli_menu {
   class Console {
   private:
     static constexpr int totalStatus = 6;
-    static Color colors[totalStatus];
 
   public:
     Console() = delete;
@@ -23,11 +22,13 @@ namespace cli_menu {
     inline static std::string listPointStyle = ">";
     inline static bool outlineStyle = true;
 
-    // edit the 'colors'
-    static void setColor(
-      const CONSOLE_CODE &code,
-      CR_CLR color_in
-    );
+    static Color messageColors[totalStatus];
+
+    static Color
+      boundaryModifyColor,
+      boundarySelectionColor,
+      boxModifyColors[2],
+      boxSelectionColors[2];
 
     /** NORMAL */
 
@@ -72,10 +73,20 @@ namespace cli_menu {
       CR_CLR background
     );
 
-    /** SPECIALS */
+    /**
+     * SPECIALS
+     * The 'selecting' parameter, defined in 'Command::selecting',
+     * is used to switch between editing and selecting modes.
+     * In this class, it serves to distinguish the theme.
+     */
 
-    // always has 2 newlines between the boundary
-    static void logBoundaryLine();
+    static CR_CLR chooseBoundaryColor(mt::CR_BOL selecting);
+    static void logBoundaryLine(mt::CR_BOL selecting);
+
+    static void logStylishHeader(
+      mt::CR_STR title,
+      mt::CR_BOL selecting
+    );
 
     static void logResponse(
       const CONSOLE_CODE &code,

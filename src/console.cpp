@@ -5,7 +5,7 @@
 
 namespace cli_menu {
 
-  Color Console::colors[Console::totalStatus] = {
+  Color Console::messageColors[Console::totalStatus] = {
     Color::RED,
     Color::YELLOW,
     Color::WHITE,
@@ -14,12 +14,10 @@ namespace cli_menu {
     Color::ORANGE
   };
 
-  void Console::setColor(
-    const CONSOLE_CODE &code,
-    CR_CLR color_in
-  ) {
-    Console::colors[code] = color_in;
-  }
+  Color Console::boundaryModifyColor = Color::WHITE,
+    Console::boundarySelectionColor = Color::SILVER,
+    Console::boxModifyColors[2] = {Color::WHITE, Color::CYAN},
+    Console::boxSelectionColors[2] = {Color::WHITE, Color::MINT};
 
   /** NORMAL */
 
@@ -94,10 +92,36 @@ namespace cli_menu {
 
   /** SPECIALS */
 
-  void Console::logBoundaryLine() {
-    std::cout << std::endl
-      << std::string(boundaryCharactersAmount, boundaryCharacter)
-      << std::endl;
+  CR_CLR Console::chooseBoundaryColor(mt::CR_BOL selecting) {
+    return selecting ?
+    Console::boundarySelectionColor : Console::boundaryModifyColor;
+  }
+
+  void Console::logBoundaryLine(mt::CR_BOL selecting) {
+    Console::logString(
+      "\n" + std::string(boundaryCharactersAmount, boundaryCharacter) + '\n',
+      chooseBoundaryColor(selecting)
+    );
+  }
+
+  void Console::logStylishHeader(
+    mt::CR_STR title,
+    mt::CR_BOL selecting
+  ) {
+    if (Console::outlineStyle) {
+      Console::logBoundaryLine(selecting);
+
+      Console::logString(
+        title, chooseBoundaryColor(selecting)
+      );
+
+      Console::logBoundaryLine(selecting);
+    }
+    else Console::logString(
+      title,
+      selecting ? Console::boxSelectionColors[0] : Console::boxModifyColors[0],
+      selecting ? Console::boxSelectionColors[1] : Console::boxModifyColors[1]
+    );
   }
 
   void Console::logResponse(
@@ -106,7 +130,7 @@ namespace cli_menu {
   ) {
     Console::logString(
       listPointStyle + ' ' + reason + '\n',
-      Console::colors[code]
+      Console::messageColors[code]
     );
   }
 }
