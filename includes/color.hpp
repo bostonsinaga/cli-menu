@@ -11,7 +11,7 @@ namespace cli_menu {
   class Color {
   private:
     int r = 0, g = 0, b = 0;
-    bool empty = true;
+    bool unset = true;
 
     static const std::string
       antidote, italic, underline;
@@ -58,13 +58,18 @@ namespace cli_menu {
       SKY_BLUE, TEAL, VIOLET, WENGE,
       WHEAT, WHITE, YELLOW;
 
+    Color() {/** For unset RGB */}
+
     Color(
-      mt::CR_INT r_in = 0,
-      mt::CR_INT g_in = 0,
-      mt::CR_INT b_in = 0
+      mt::CR_INT r_in,
+      mt::CR_INT g_in,
+      mt::CR_INT b_in
     );
 
-    const bool isEmpty() const { return empty; }
+    const bool isUnset() const { return unset; }
+    void setUnset();
+
+    /** OPENED STRINGS */
 
     static std::string start(
       CR_CLR foreground
@@ -94,6 +99,8 @@ namespace cli_menu {
     );
 
     static std::string end() { return antidote; }
+
+    /** CLOSED STRINGS */
 
     static std::string getString(
       std::string text,

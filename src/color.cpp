@@ -52,16 +52,15 @@ namespace cli_menu {
     mt::CR_INT g_in,
     mt::CR_INT b_in
   ) {
-    empty = false;
+    unset = false;
+    r = std::abs(r_in) % 256;
+    g = std::abs(g_in) % 256;
+    b = std::abs(b_in) % 256;
+  }
 
-    if (r_in < 0) r = 0;
-    else r = r_in;
-
-    if (g_in < 0) g = 0;
-    else g = g_in;
-
-    if (b_in < 0) b = 0;
-    else b = b_in;
+  void Color::setUnset() {
+    r = 0; g = 0; b = 0;
+    unset = true;
   }
 
   std::string Color::correctNewlines(
@@ -152,8 +151,6 @@ namespace cli_menu {
       + text + antidote + newlines[1];
   }
 
-  /** COLORS */
-
   std::string Color::getEscapeCode(
     mt::CR_STR styleEscapeCode,
     CR_CLR foreground,
@@ -161,7 +158,7 @@ namespace cli_menu {
   ) {
     std::string code = styleEscapeCode;
 
-    if (!foreground.empty) {
+    if (!foreground.unset) {
       code += "\x1B[38;2;"
         + std::to_string(foreground.r) + ";"
         + std::to_string(foreground.g) + ";" 
@@ -182,7 +179,7 @@ namespace cli_menu {
       styleEscapeCode, foreground, false
     );
 
-    if (!background.empty) {
+    if (!background.unset) {
       code += ";48;2;"
         + std::to_string(background.r) + ";"
         + std::to_string(background.g) + ";" 
@@ -192,6 +189,8 @@ namespace cli_menu {
 
     return code;
   }
+
+  /** OPENED STRINGS */
 
   std::string Color::start(
     CR_CLR foreground
@@ -232,7 +231,7 @@ namespace cli_menu {
     return getEscapeCode(underline, foreground, background);
   }
 
-  /** STRINGS */
+  /** CLOSED STRINGS */
 
   std::string Color::getString(
     std::string &text,
@@ -322,8 +321,9 @@ namespace cli_menu {
 
   bool Color::areEqual(CR_CLR color_1, CR_CLR color_2) {
     if (&color_1 == &color_2 || (
+      color_1.unset == color_2.unset &&
       color_1.r == color_2.r &&
-      color_1.g == color_2.g && 
+      color_1.g == color_2.g &&
       color_1.b == color_2.b
     )) { return true; }
     return false;
