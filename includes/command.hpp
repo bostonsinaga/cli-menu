@@ -39,7 +39,7 @@ namespace cli_menu {
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
     COMMAND_CODE callCallback();
-    COMMAND_CODE goToNeighbor(mt_ds::LinkedList* neighbor);
+    COMMAND_CODE goToNeighbor(mt_ds::LinkedList* node);
     COMMAND_CODE goDown(mt::CR_STR input);
 
     void printHelp();

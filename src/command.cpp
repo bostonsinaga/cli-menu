@@ -19,8 +19,8 @@ namespace cli_menu {
   std::string Command::generateSequentialRootNames() {
     std::string sequentialNames;
 
-    bubble([&](mt_ds::LinkedList *neighbor)->bool {
-      sequentialNames = static_cast<Command*>(neighbor)->keyword + ' ' + sequentialNames;
+    bubble([&](mt_ds::LinkedList *node)->bool {
+      sequentialNames = static_cast<Command*>(node)->keyword + ' ' + sequentialNames;
       return true;
     });
 
@@ -213,8 +213,9 @@ namespace cli_menu {
     if (Command::propagation) {
       COMMAND_CODE propagatingCode;
 
-      bubble([&](mt_ds::LinkedList *neighbor)->bool {
-        if (callback()) {
+      bubble([&](mt_ds::LinkedList *node)->bool {
+
+        if (static_cast<Command*>(node)->callback()) {
           propagatingCode = COMMAND_SUCCEEDED;
           return true;
         }
@@ -234,9 +235,9 @@ namespace cli_menu {
     }
   }
 
-  COMMAND_CODE Command::goToNeighbor(mt_ds::LinkedList* neighbor) {
-    if (neighbor) {
-      return static_cast<Command*>(neighbor)->dialog();
+  COMMAND_CODE Command::goToNeighbor(mt_ds::LinkedList* node) {
+    if (node) {
+      return static_cast<Command*>(node)->dialog();
     }
     else Language::printResponse(LANGUAGE_PARAMETER_ALONE);
 
