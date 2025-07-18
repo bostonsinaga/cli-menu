@@ -8,7 +8,7 @@ namespace cli_menu {
   Color Console::messageColors[Console::totalStatus] = {
     Color::RED,
     Color::YELLOW,
-    Color::WHITE,
+    Color::SKY_BLUE,
     Color::AZURE,
     Color::GREEN,
     Color::ORANGE
