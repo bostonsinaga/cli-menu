@@ -48,7 +48,12 @@ namespace cli_menu {
     // find 'symbols' pattern in 'str'
     static CONTROL_CODE whitespacesCheck(mt::CR_STR str);
 
-    // multilingual features
+    /** Multilingual Features */
+
+    static mt::STRUNORMAP_STR
+      abbreviationsTitle,
+      toggleAvailableValuesTitle;
+
     static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
     inline static mt_uti::Booleanizer booleanizer;
 
@@ -84,6 +89,9 @@ namespace cli_menu {
     // sync 'Language::currentISOCode' with 'Language::selectISOCode' manually
     static void addISOCode(mt::CR_STR newISOCode);
     static void removeISOCode(mt::CR_STR existingISOCode);
+
+    static void setAbbreviationsTitle(mt::CR_STR title);
+    static void setToggleAvailableValuesTitle(mt::CR_STR title);
 
     static void setTerms(
       mt::CR_STR helpTerm,

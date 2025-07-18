@@ -5,11 +5,18 @@
 
 namespace cli_menu {
 
-  // english presets
+  /** Unordered Maps with English Preset */
+
+  mt::STRUNORMAP_STR
+    Control::abbreviationsTitle = {{"en", "Controllers"}},
+    Control::toggleAvailableValuesTitle = {{"en", "Toggle Available Values"}};
+
   mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
     "help", "list", "enter", "back", "next", "previous", "modify",
     "select", "reset", "view", "copy", "paste", "quit"
   }}};
+
+  /** Controllers Test */
 
   CONTROL_CODE Control::whitespacesCheck(mt::CR_STR str) {
     bool prevSpaced = false;
@@ -91,44 +98,61 @@ namespace cli_menu {
   }
 
   void Control::printAbbreviations() {
-    static bool printed = false;
 
-    if (!printed) {
-      printed = true;
+    Console::logItalicString(
+      abbreviationsTitle[Language::currentISOCode] + ":\n",
+      Console::messageColors[CONSOLE_HINT]
+    );
 
-      for (int i = 0; i < totalSymbols; i++) {
-        std::cout << "  '" << symbols[i][0] << "' = "
-          << terms[Language::currentISOCode][i] << std::endl;
-      }
+    for (int i = 0; i < totalSymbols; i++) {
+      Console::logString(
+        "  " + symbols[i][0] + " = "
+        + terms[Language::currentISOCode][i] + '\n',
+        Console::messageColors[CONSOLE_HINT]
+      );
     }
+
+    // additional newline
+    std::cout << std::endl;
   }
 
   void Control::printToggleAvailableValues() {
-    static bool printed = false;
 
-    if (!printed) {
-      printed = true;
-      mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
-      mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::currentISOCode);
+    Console::logItalicString(
+      toggleAvailableValuesTitle[Language::currentISOCode] + ":\n  ",
+      Console::messageColors[CONSOLE_HINT]
+    );
 
-      for (int i = 0; i < trueTerms.size() - 1; i++) {
-        std::cout << '\'' << trueTerms[i] << "', ";
-      }
+    mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
+    mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::currentISOCode);
 
-      if (!trueTerms.empty()) {
-        std::cout << '\'' << trueTerms[trueTerms.size() - 1] << "', n != 0\n";
-      }
-
-      std::cout << std::endl;
-
-      for (int i = 0; i < falseTerms.size() - 1; i++) {
-        std::cout << '\'' << falseTerms[i] << "', ";
-      }
-
-      if (!falseTerms.empty()) {
-        std::cout << '\'' << falseTerms[falseTerms.size() - 1] << "', n == 0\n";
-      }
+    // true terms
+    for (int i = 0; i < trueTerms.size(); i++) {
+      Console::logString(
+        trueTerms[i] + ", ",
+        Console::messageColors[CONSOLE_HINT]
+      );
     }
+
+    // number is not zero
+    Console::logString(
+      "n != 0\n  ",
+      Console::messageColors[CONSOLE_HINT]
+    );
+
+    // false terms
+    for (int i = 0; i < falseTerms.size(); i++) {
+      Console::logString(
+        falseTerms[i] + ", ",
+        Console::messageColors[CONSOLE_HINT]
+      );
+    }
+
+    // number is zero
+    Console::logString(
+      "n == 0\n\n",
+      Console::messageColors[CONSOLE_HINT]
+    );
   }
 
   /** Multilingual Features */
@@ -143,6 +167,14 @@ namespace cli_menu {
     Language::messages.erase(existingISOCode);
     terms.erase(existingISOCode);
     booleanizer.removeTerms(existingISOCode);
+  }
+
+  void Control::setAbbreviationsTitle(mt::CR_STR title) {
+    abbreviationsTitle[Language::currentISOCode] = title;
+  }
+
+  void Control::setToggleAvailableValuesTitle(mt::CR_STR title) {
+    toggleAvailableValuesTitle[Language::currentISOCode] = title;
   }
 
   void Control::setTerms(
