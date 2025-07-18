@@ -88,6 +88,10 @@ namespace cli_menu {
       mt::CR_BOL editing
     );
 
+    /**
+     * Call 'logString' with 'listPointStyle' at the beginning,
+     * colored with the predefined 'messageColors'.
+     */
     static void logResponse(
       const CONSOLE_CODE &code,
       mt::CR_STR reason
