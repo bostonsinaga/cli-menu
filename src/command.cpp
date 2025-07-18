@@ -96,35 +96,25 @@ namespace cli_menu {
     );
 
     while (Control::cinDialogInput(input, editing)) {
-      // BACK
-      if (Control::backTest(input)) {
-        if (getParent()) {
-          return static_cast<Command*>(getParent())->dialog();
-        }
-        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
-      }
-      // CLIPBOARD
-      else if (Control::clipboardTest(input)) {
-        copyPaste();
-      }
-      // ENTER
-      else if (Control::enterTest(input)) {
-        COMMAND_CODE code = enter();
-        if (code != COMMAND_ONGOING) return code;
-      }
       // HELP
-      else if (Control::helpTest(input)) {
+      if (Control::helpTest(input)) {
         printHelp();
       }
       // LIST
       else if (Control::listTest(input)) {
         printList(true);
       }
-      // MODIFY
-      else if (Control::modifyTest(input)) {
-        if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
-        else editing = true;
-        return dialog();
+      // ENTER
+      else if (Control::enterTest(input)) {
+        COMMAND_CODE code = enter();
+        if (code != COMMAND_ONGOING) return code;
+      }
+      // BACK
+      else if (Control::backTest(input)) {
+        if (getParent()) {
+          return static_cast<Command*>(getParent())->dialog();
+        }
+        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
       }
       // NEXT
       else if (Control::nextTest(input)) {
@@ -136,13 +126,11 @@ namespace cli_menu {
         COMMAND_CODE code = goToNeighbor(prev());
         if (code != COMMAND_ONGOING) return code;
       }
-      // QUIT
-      else if (Control::quitTest(input)) {
-        return COMMAND_CANCELED;
-      }
-      // RESET
-      else if (Control::resetTest(input)) {
-        resetUnormap();
+      // MODIFY
+      else if (Control::modifyTest(input)) {
+        if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        else editing = true;
+        return dialog();
       }
       // SELECT
       else if (Control::selectTest(input)) {
@@ -150,9 +138,25 @@ namespace cli_menu {
         else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
         return dialog();
       }
+      // RESET
+      else if (Control::resetTest(input)) {
+        resetUnormap();
+      }
       // VIEW
       else if (Control::viewTest(input)) {
         Result::printInputs(editing);
+      }
+      // CLIPBOARD COPY
+      else if (Control::copyTest(input)) {
+        copyPaste();
+      }
+      // CLIPBOARD PASTE
+      else if (Control::pasteTest(input)) {
+        copyPaste();
+      }
+      // QUIT
+      else if (Control::quitTest(input)) {
+        return COMMAND_CANCELED;
       }
       // WILD VALUE
       else {

@@ -9,32 +9,40 @@ namespace cli_menu {
   // can be obtained after testing the input string
   enum CONTROL_CODE {
     CONTROL_UNKNOWN,
-    CONTROL_BACK, CONTROL_CLIPBOARD,
-    CONTROL_ENTER, CONTROL_HELP,
-    CONTROL_LIST, CONTROL_MODIFY,
-    CONTROL_NEXT, CONTROL_PREVIOUS,
-    CONTROL_QUIT, CONTROL_RESET,
-    CONTROL_SELECT, CONTROL_VIEW
+    CONTROL_HELP,
+    CONTROL_LIST,
+    CONTROL_ENTER,
+    CONTROL_BACK,
+    CONTROL_NEXT,
+    CONTROL_PREVIOUS,
+    CONTROL_MODIFY,
+    CONTROL_SELECT,
+    CONTROL_RESET,
+    CONTROL_VIEW,
+    CONTROL_COPY,
+    CONTROL_PASTE,
+    CONTROL_QUIT
   };
 
   class Control {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
-    static constexpr int totalSymbols = 12;
+    static constexpr int totalSymbols = 13;
 
     inline static const std::string symbols[totalSymbols][2] = {
-      {":b", ":B"}, // back
-      {":c", ":C"}, // clipboard
-      {":e", ":E"}, // enter
       {":h", ":H"}, // help
       {":l", ":L"}, // list
+      {":e", ":E"}, // enter
+      {":b", ":B"}, // back
+      {":>", ":>"}, // next
+      {":<", ":<"}, // previous
       {":m", ":M"}, // modify
-      {":n", ":N"}, // next
-      {":p", ":P"}, // previous
-      {":q", ":Q"}, // quit
-      {":r", ":R"}, // reset
       {":s", ":S"}, // select
-      {":v", ":V"}  // view
+      {":r", ":R"}, // reset
+      {":v", ":V"}, // view
+      {":c", ":C"}, // copy
+      {":p", ":P"}, // paste
+      {":q", ":Q"}  // quit
     };
 
     // find 'symbols' pattern in 'str'
@@ -50,18 +58,19 @@ namespace cli_menu {
   public:
     Control() = delete;
 
-    static bool backTest(mt::CR_STR str);
-    static bool quitTest(mt::CR_STR str);
-    static bool clipboardTest(mt::CR_STR str);
-    static bool enterTest(mt::CR_STR str);
     static bool helpTest(mt::CR_STR str);
     static bool listTest(mt::CR_STR str);
-    static bool modifyTest(mt::CR_STR str);
+    static bool enterTest(mt::CR_STR str);
+    static bool backTest(mt::CR_STR str);
     static bool nextTest(mt::CR_STR str);
     static bool previousTest(mt::CR_STR str);
-    static bool resetTest(mt::CR_STR str);
+    static bool modifyTest(mt::CR_STR str);
     static bool selectTest(mt::CR_STR str);
+    static bool resetTest(mt::CR_STR str);
     static bool viewTest(mt::CR_STR str);
+    static bool copyTest(mt::CR_STR str);
+    static bool pasteTest(mt::CR_STR str);
+    static bool quitTest(mt::CR_STR str);
 
     static void printAbbreviations();
     static void printToggleAvailableValues();
@@ -77,18 +86,19 @@ namespace cli_menu {
     static void removeISOCode(mt::CR_STR existingISOCode);
 
     static void setTerms(
-      mt::CR_STR backTerm,
-      mt::CR_STR clipboardTerm,
-      mt::CR_STR enterTerm,
       mt::CR_STR helpTerm,
       mt::CR_STR listTerm,
-      mt::CR_STR modifyTerm,
+      mt::CR_STR enterTerm,
+      mt::CR_STR backTerm,
       mt::CR_STR nextTerm,
       mt::CR_STR previousTerm,
-      mt::CR_STR quitTerm,
-      mt::CR_STR resetTerm,
+      mt::CR_STR modifyTerm,
       mt::CR_STR selectTerm,
-      mt::CR_STR viewTerm
+      mt::CR_STR resetTerm,
+      mt::CR_STR viewTerm,
+      mt::CR_STR copyTerm,
+      mt::CR_STR pasteTerm,
+      mt::CR_STR quitTerm
     );
 
     static void setBooleanizerTerms(

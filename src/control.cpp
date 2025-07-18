@@ -7,8 +7,8 @@ namespace cli_menu {
 
   // english presets
   mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
-    "back", "clipboard", "enter", "help", "list", "modify",
-    "next", "previous", "quit", "reset", "select", "view"
+    "help", "list", "enter", "back", "next", "previous", "modify",
+    "select", "reset", "view", "copy", "paste", "quit"
   }}};
 
   CONTROL_CODE Control::whitespacesCheck(mt::CR_STR str) {
@@ -38,18 +38,6 @@ namespace cli_menu {
     return CONTROL_UNKNOWN;
   }
 
-  bool Control::backTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_BACK;
-  }
-
-  bool Control::clipboardTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_CLIPBOARD;
-  }
-
-  bool Control::enterTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_ENTER;
-  }
-
   bool Control::helpTest(mt::CR_STR str) {
     return whitespacesCheck(str) == CONTROL_HELP;
   }
@@ -58,8 +46,12 @@ namespace cli_menu {
     return whitespacesCheck(str) == CONTROL_LIST;
   }
 
-  bool Control::modifyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_MODIFY;
+  bool Control::enterTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_ENTER;
+  }
+
+  bool Control::backTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_BACK;
   }
 
   bool Control::nextTest(mt::CR_STR str) {
@@ -70,20 +62,32 @@ namespace cli_menu {
     return whitespacesCheck(str) == CONTROL_PREVIOUS;
   }
 
-  bool Control::quitTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_QUIT;
-  }
-
-  bool Control::resetTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET;
+  bool Control::modifyTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_MODIFY;
   }
 
   bool Control::selectTest(mt::CR_STR str) {
     return whitespacesCheck(str) == CONTROL_SELECT;
   }
 
+  bool Control::resetTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_RESET;
+  }
+
   bool Control::viewTest(mt::CR_STR str) {
     return whitespacesCheck(str) == CONTROL_VIEW;
+  }
+
+  bool Control::copyTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_COPY;
+  }
+
+  bool Control::pasteTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_PASTE;
+  }
+
+  bool Control::quitTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_QUIT;
   }
 
   void Control::printAbbreviations() {
@@ -142,31 +146,33 @@ namespace cli_menu {
   }
 
   void Control::setTerms(
-    mt::CR_STR backTerm,
-    mt::CR_STR clipboardTerm,
-    mt::CR_STR enterTerm,
     mt::CR_STR helpTerm,
     mt::CR_STR listTerm,
-    mt::CR_STR modifyTerm,
+    mt::CR_STR enterTerm,
+    mt::CR_STR backTerm,
     mt::CR_STR nextTerm,
     mt::CR_STR previousTerm,
-    mt::CR_STR quitTerm,
-    mt::CR_STR resetTerm,
+    mt::CR_STR modifyTerm,
     mt::CR_STR selectTerm,
-    mt::CR_STR viewTerm
+    mt::CR_STR resetTerm,
+    mt::CR_STR viewTerm,
+    mt::CR_STR copyTerm,
+    mt::CR_STR pasteTerm,
+    mt::CR_STR quitTerm
   ) {
-    terms[Language::currentISOCode][CONTROL_BACK] = backTerm;
-    terms[Language::currentISOCode][CONTROL_CLIPBOARD] = clipboardTerm;
-    terms[Language::currentISOCode][CONTROL_ENTER] = enterTerm;
     terms[Language::currentISOCode][CONTROL_HELP] = helpTerm;
     terms[Language::currentISOCode][CONTROL_LIST] = listTerm;
-    terms[Language::currentISOCode][CONTROL_MODIFY] = modifyTerm;
+    terms[Language::currentISOCode][CONTROL_ENTER] = enterTerm;
+    terms[Language::currentISOCode][CONTROL_BACK] = backTerm;
     terms[Language::currentISOCode][CONTROL_NEXT] = nextTerm;
     terms[Language::currentISOCode][CONTROL_PREVIOUS] = previousTerm;
-    terms[Language::currentISOCode][CONTROL_QUIT] = quitTerm;
-    terms[Language::currentISOCode][CONTROL_RESET] = resetTerm;
+    terms[Language::currentISOCode][CONTROL_MODIFY] = modifyTerm;
     terms[Language::currentISOCode][CONTROL_SELECT] = selectTerm;
+    terms[Language::currentISOCode][CONTROL_RESET] = resetTerm;
     terms[Language::currentISOCode][CONTROL_VIEW] = viewTerm;
+    terms[Language::currentISOCode][CONTROL_COPY] = copyTerm;
+    terms[Language::currentISOCode][CONTROL_PASTE] = pasteTerm;
+    terms[Language::currentISOCode][CONTROL_QUIT] = quitTerm;
   }
 
   void Control::setBooleanizerTerms(
