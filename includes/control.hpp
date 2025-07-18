@@ -57,6 +57,11 @@ namespace cli_menu {
     static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
     inline static mt_uti::Booleanizer booleanizer;
 
+    static void limitTerm(
+      const CONTROL_CODE &code,
+      std::string &newTerm
+    );
+
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
@@ -86,28 +91,34 @@ namespace cli_menu {
 
     /** Multilingual Features */
 
+    inline static size_t maxTermLength = 16;
+
     // sync 'Language::currentISOCode' with 'Language::selectISOCode' manually
     static void addISOCode(mt::CR_STR newISOCode);
     static void removeISOCode(mt::CR_STR existingISOCode);
 
+    // titles
     static void setAbbreviationsTitle(mt::CR_STR title);
     static void setToggleAvailableValuesTitle(mt::CR_STR title);
 
+    // string length is limited to 'maxTermLength'
     static void setTerms(
-      mt::CR_STR helpTerm,
-      mt::CR_STR listTerm,
-      mt::CR_STR enterTerm,
-      mt::CR_STR backTerm,
-      mt::CR_STR nextTerm,
-      mt::CR_STR previousTerm,
-      mt::CR_STR modifyTerm,
-      mt::CR_STR selectTerm,
-      mt::CR_STR resetTerm,
-      mt::CR_STR viewTerm,
-      mt::CR_STR copyTerm,
-      mt::CR_STR pasteTerm,
-      mt::CR_STR quitTerm
+      std::string helpTerm,
+      std::string listTerm,
+      std::string enterTerm,
+      std::string backTerm,
+      std::string nextTerm,
+      std::string previousTerm,
+      std::string modifyTerm,
+      std::string selectTerm,
+      std::string resetTerm,
+      std::string viewTerm,
+      std::string copyTerm,
+      std::string pasteTerm,
+      std::string quitTerm
     );
+
+    /** Booleanizer method call wrappers */
 
     static void setBooleanizerTerms(
       mt::CR_VEC_STR existingTrueTerms,

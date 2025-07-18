@@ -8,8 +8,8 @@ namespace cli_menu {
   /** Unordered Maps with English Preset */
 
   mt::STRUNORMAP_STR
-    Control::abbreviationsTitle = {{"en", "Controllers"}},
-    Control::toggleAvailableValuesTitle = {{"en", "Toggle Available Values"}};
+    Control::abbreviationsTitle = {{"en", "Controller List"}},
+    Control::toggleAvailableValuesTitle = {{"en", "Boolean Available Values"}};
 
   mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
     "help", "list", "enter", "back", "next", "previous", "modify",
@@ -104,16 +104,32 @@ namespace cli_menu {
       Console::messageColors[CONSOLE_HIGHLIGHT]
     );
 
+    size_t leastMaxTermLength = 0;
+
+    // find the maximum term length at even indices
     for (int i = 0; i < totalSymbols; i++) {
+
+      size_t curlen = terms[Language::currentISOCode][i].length();
+
+      if (i % 2 == 0 && curlen > leastMaxTermLength) {
+        leastMaxTermLength = curlen;
+      }
+    }
+
+    // display terms with 2 columns
+    for (int i = 0; i < totalSymbols; i++) {
+      std::string curterm = terms[Language::currentISOCode][i];
+
+      // even is followed by spaces, uneven is followed by newline
       Console::logString(
-        "  " + symbols[i][0] + " = "
-        + terms[Language::currentISOCode][i] + '\n',
+        "  " + symbols[i][0] + " = " + curterm
+        + (i % 2 ? "\n" : std::string(leastMaxTermLength - curterm.length(), ' ')),
         Console::messageColors[CONSOLE_HINT]
       );
     }
 
-    // additional newline
-    std::cout << std::endl;
+    // additional newlines
+    std::cout << "\n\n";
   }
 
   void Control::printToggleAvailableValues() {
@@ -177,34 +193,46 @@ namespace cli_menu {
     toggleAvailableValuesTitle[Language::currentISOCode] = title;
   }
 
-  void Control::setTerms(
-    mt::CR_STR helpTerm,
-    mt::CR_STR listTerm,
-    mt::CR_STR enterTerm,
-    mt::CR_STR backTerm,
-    mt::CR_STR nextTerm,
-    mt::CR_STR previousTerm,
-    mt::CR_STR modifyTerm,
-    mt::CR_STR selectTerm,
-    mt::CR_STR resetTerm,
-    mt::CR_STR viewTerm,
-    mt::CR_STR copyTerm,
-    mt::CR_STR pasteTerm,
-    mt::CR_STR quitTerm
+  void Control::limitTerm(
+    const CONTROL_CODE &code,
+    std::string &newTerm
   ) {
-    terms[Language::currentISOCode][CONTROL_HELP] = helpTerm;
-    terms[Language::currentISOCode][CONTROL_LIST] = listTerm;
-    terms[Language::currentISOCode][CONTROL_ENTER] = enterTerm;
-    terms[Language::currentISOCode][CONTROL_BACK] = backTerm;
-    terms[Language::currentISOCode][CONTROL_NEXT] = nextTerm;
-    terms[Language::currentISOCode][CONTROL_PREVIOUS] = previousTerm;
-    terms[Language::currentISOCode][CONTROL_MODIFY] = modifyTerm;
-    terms[Language::currentISOCode][CONTROL_SELECT] = selectTerm;
-    terms[Language::currentISOCode][CONTROL_RESET] = resetTerm;
-    terms[Language::currentISOCode][CONTROL_VIEW] = viewTerm;
-    terms[Language::currentISOCode][CONTROL_COPY] = copyTerm;
-    terms[Language::currentISOCode][CONTROL_PASTE] = pasteTerm;
-    terms[Language::currentISOCode][CONTROL_QUIT] = quitTerm;
+    if (newTerm.length() > Control::maxTermLength) {
+      newTerm = newTerm.substr(0, Control::maxTermLength - 2);
+      newTerm += "..";
+    }
+
+    terms[Language::currentISOCode][code] = newTerm;
+  }
+
+  void Control::setTerms(
+    std::string helpTerm,
+    std::string listTerm,
+    std::string enterTerm,
+    std::string backTerm,
+    std::string nextTerm,
+    std::string previousTerm,
+    std::string modifyTerm,
+    std::string selectTerm,
+    std::string resetTerm,
+    std::string viewTerm,
+    std::string copyTerm,
+    std::string pasteTerm,
+    std::string quitTerm
+  ) {
+    Control::limitTerm(CONTROL_HELP, helpTerm);
+    Control::limitTerm(CONTROL_LIST, listTerm);
+    Control::limitTerm(CONTROL_ENTER, enterTerm);
+    Control::limitTerm(CONTROL_BACK, backTerm);
+    Control::limitTerm(CONTROL_NEXT, nextTerm);
+    Control::limitTerm(CONTROL_PREVIOUS, previousTerm);
+    Control::limitTerm(CONTROL_MODIFY, modifyTerm);
+    Control::limitTerm(CONTROL_SELECT, selectTerm);
+    Control::limitTerm(CONTROL_RESET, resetTerm);
+    Control::limitTerm(CONTROL_VIEW, viewTerm);
+    Control::limitTerm(CONTROL_COPY, copyTerm);
+    Control::limitTerm(CONTROL_PASTE, pasteTerm);
+    Control::limitTerm(CONTROL_QUIT, quitTerm);
   }
 
   void Control::setBooleanizerTerms(
