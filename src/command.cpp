@@ -87,6 +87,7 @@ namespace cli_menu {
   }
 
   COMMAND_CODE Command::dialog() {
+    static bool hinted = false;
     std::string input;
 
     // outline or fill style
@@ -94,6 +95,13 @@ namespace cli_menu {
       generateSequentialRootNames(),
       editing
     );
+
+    // hints for controllers
+    if (!hinted) {
+      hinted = true;
+      Control::printAbbreviations();
+      Control::printToggleAvailableValues();
+    }
 
     while (Control::cinDialogInput(input, editing)) {
       // HELP
