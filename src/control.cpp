@@ -101,7 +101,7 @@ namespace cli_menu {
 
     Console::logItalicString(
       abbreviationsTitle[Language::currentISOCode] + ":\n",
-      Console::messageColors[CONSOLE_HINT]
+      Console::messageColors[CONSOLE_HIGHLIGHT]
     );
 
     for (int i = 0; i < totalSymbols; i++) {
@@ -120,7 +120,7 @@ namespace cli_menu {
 
     Console::logItalicString(
       toggleAvailableValuesTitle[Language::currentISOCode] + ":\n  ",
-      Console::messageColors[CONSOLE_HINT]
+      Console::messageColors[CONSOLE_HIGHLIGHT]
     );
 
     mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
