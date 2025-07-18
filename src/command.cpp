@@ -324,16 +324,20 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
+    // keyword
+    Console::logString(
+      "\n" + keyword + " ["
+      + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
+      Console::messageColors[CONSOLE_HIGHLIGHT]
+    );
 
-    Console::logResponse(
-      CONSOLE_HIGHLIGHT,
-      keyword + " [" + Language::getStringifiedType(
-        stringifiedTypeIndex
-      ) + "]\n" + description + "\n\n"
+    // description
+    Console::logItalicString(
+      description + '\n',
+      Console::messageColors[CONSOLE_HIGHLIGHT]
     );
 
     printList(false);
-    std::cout << std::endl;
   }
 
   void Command::printList(mt::CR_BOL needErrorMessage) {
@@ -342,10 +346,10 @@ namespace cli_menu {
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          Console::logResponse(
-            CONSOLE_HINT,
-            static_cast<Command*>(node)->keyword + " ["
-            + Language::getStringifiedType(stringifiedTypeIndex) + "]\n"
+          Console::logString(
+            "  " + static_cast<Command*>(node)->keyword + " ["
+            + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
+            Console::messageColors[CONSOLE_HINT]
           );
 
           return true;
@@ -355,6 +359,8 @@ namespace cli_menu {
     else if (needErrorMessage) {
       Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
+
+    std::cout << std::endl;
   }
 
   void Command::run(mt::CR_INT argc, char *argv[]) {
