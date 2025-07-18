@@ -2,8 +2,8 @@ set (SOURCES
   color.cpp
   console.cpp
   language.cpp
-  result.cpp
   control.cpp
+  result.cpp
   clipboard.cpp
   command.cpp
   type.cpp
