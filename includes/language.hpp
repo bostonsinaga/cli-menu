@@ -19,6 +19,7 @@ namespace cli_menu {
     LANGUAGE_PARAMETER_AT_LEAF,
     LANGUAGE_PARAMETER_AT_ROOT,
     LANGUAGE_PARAMETER_NOT_FOUND,
+    LANGUAGE_PARENT_STRICT,
     LANGUAGE_PROGRAM_CANCELED,
     LANGUAGE_PROGRAM_FAILED,
     LANGUAGE_PROGRAM_SUCCEEDED
@@ -33,7 +34,7 @@ namespace cli_menu {
   class Language {
   private:
     // messages
-    static constexpr int totalMessages = 16;
+    static constexpr int totalMessages = 17;
     static mt::STRUNORMAP<mt::ARR_STR<totalMessages>> messages;
     static CONSOLE_CODE consoleCodes[totalMessages];
 
@@ -69,6 +70,7 @@ namespace cli_menu {
       mt::CR_STR parameterAtLeafMessage,
       mt::CR_STR parameterAtRootMessage,
       mt::CR_STR parameterNotFoundMessage,
+      mt::CR_STR parentStrictMessage,
       mt::CR_STR programCanceledMessage,
       mt::CR_STR programFailedMessage,
       mt::CR_STR programSucceededMessage

@@ -191,11 +191,13 @@ namespace cli_menu {
       }
     );
 
-    /**
-     * 1. Uncompleted required neighbors with strict parent.
-     * 2. No parent or non-strict parent with this is required.
-     */
-    if ((getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) || 
+    // uncompleted required neighbors with strict parent
+    if (getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) {
+      Language::printResponse(LANGUAGE_PARENT_STRICT);
+      return COMMAND_ONGOING;
+    }
+    // no parent or non-strict parent with this is required
+    else if (
       (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
       (!getParent() && required)
     ) {

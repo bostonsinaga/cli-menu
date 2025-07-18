@@ -26,13 +26,15 @@ namespace cli_menu {
     // LANGUAGE_MIDDLE_DIALOG
     "Unable to process until the rest of direct inputs are processed.",
     // LANGUAGE_PARAMETER_ALONE
-    "This parameter has no neighbors.",
+    "This node has no neighbors.",
     // LANGUAGE_PARAMETER_AT_LEAF
-    "This does not contain any parameters.",
+    "This node does not contain any children.",
     // LANGUAGE_PARAMETER_AT_ROOT
     "No more groups above.",
     // LANGUAGE_PARAMETER_NOT_FOUND
     "Parameter not found.",
+    // LANGUAGE_PARENT_STRICT
+    "Parent node needs explicit arguments for all its required children.",
     // LANGUAGE_PROGRAM_CANCELED
     "Program canceled.",
     // LANGUAGE_PROGRAM_FAILED
@@ -67,6 +69,8 @@ namespace cli_menu {
     // LANGUAGE_PARAMETER_AT_ROOT
     CONSOLE_WARNING,
     // LANGUAGE_PARAMETER_NOT_FOUND
+    CONSOLE_ERROR,
+    // LANGUAGE_PARENT_STRICT
     CONSOLE_ERROR,
     // LANGUAGE_PROGRAM_CANCELED
     CONSOLE_CANCEL,
@@ -107,6 +111,7 @@ namespace cli_menu {
     mt::CR_STR parameterAtLeafMessage,
     mt::CR_STR parameterAtRootMessage,
     mt::CR_STR parameterNotFoundMessage,
+    mt::CR_STR parentStrictMessage,
     mt::CR_STR programCanceledMessage,
     mt::CR_STR programFailedMessage,
     mt::CR_STR programSucceededMessage
@@ -124,6 +129,7 @@ namespace cli_menu {
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_PARENT_STRICT] = parentStrictMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
