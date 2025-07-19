@@ -101,7 +101,7 @@ namespace cli_menu {
 
     Console::logItalicString(
       abbreviationsTitle[Language::currentISOCode] + ":\n",
-      Console::messageColors[CONSOLE_HIGHLIGHT]
+      Console::messageColors[CONSOLE_HINT_1]
     );
 
     size_t leastMaxTermLength = 0;
@@ -124,11 +124,10 @@ namespace cli_menu {
       Console::logString(
         "  " + symbols[i][0] + " = " + curterm
         + (i % 2 ? "\n" : std::string(leastMaxTermLength - curterm.length(), ' ')),
-        Console::messageColors[CONSOLE_HINT]
+        Console::messageColors[CONSOLE_HINT_2]
       );
     }
 
-    // additional newlines
     std::cout << "\n\n";
   }
 
@@ -136,7 +135,7 @@ namespace cli_menu {
 
     Console::logItalicString(
       toggleAvailableValuesTitle[Language::currentISOCode] + ":\n  ",
-      Console::messageColors[CONSOLE_HIGHLIGHT]
+      Console::messageColors[CONSOLE_HINT_1]
     );
 
     mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
@@ -146,28 +145,28 @@ namespace cli_menu {
     for (int i = 0; i < trueTerms.size(); i++) {
       Console::logString(
         trueTerms[i] + ", ",
-        Console::messageColors[CONSOLE_HINT]
+        Console::messageColors[CONSOLE_HINT_2]
       );
     }
 
     // number is not zero
     Console::logString(
       "n != 0\n  ",
-      Console::messageColors[CONSOLE_HINT]
+      Console::messageColors[CONSOLE_HINT_2]
     );
 
     // false terms
     for (int i = 0; i < falseTerms.size(); i++) {
       Console::logString(
         falseTerms[i] + ", ",
-        Console::messageColors[CONSOLE_HINT]
+        Console::messageColors[CONSOLE_HINT_2]
       );
     }
 
     // number is zero
     Console::logString(
       "n == 0\n\n",
-      Console::messageColors[CONSOLE_HINT]
+      Console::messageColors[CONSOLE_HINT_2]
     );
   }
 
