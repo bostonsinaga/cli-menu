@@ -19,8 +19,8 @@ namespace cli_menu {
     Color::GOLD(255, 215, 0),
     Color::GRAY(128, 128, 128),
     Color::GREEN(0, 255, 0),
-    Color::LIGHT_BLUE(223, 223, 255),
-    Color::LIGHT_GREEN(223, 255, 223),
+    Color::LIGHT_BLUE(173, 216, 230),
+    Color::LIGHT_GREEN(144, 238, 144),
     Color::LIME(191, 255, 0),
     Color::MAGENTA(255, 0, 255),
     Color::MAROON(128, 0, 0),
@@ -331,7 +331,7 @@ namespace cli_menu {
 
   void Color::printPresets() {
     std::cout
-      << Color::getUnderlineString("PRESET COLORS:\n", Color::CHOCOLATE, Color::SKY_BLUE)
+      << Color::getUnderlineString("PRESET COLORS:\n", Color::WHITE, Color::GRAY)
       << Color::getString(" azure        \n", Color::AZURE, Color::WHITE)
       << Color::getString(" black        \n", Color::BLACK, Color::WHITE)
       << Color::getString(" blue         \n", Color::BLUE, Color::WHITE)
@@ -340,7 +340,7 @@ namespace cli_menu {
       << Color::getString(" chartreuse   \n", Color::CHARTREUSE, Color::GRAY)
       << Color::getString(" chocolate    \n", Color::CHOCOLATE, Color::WHITE)
       << Color::getString(" crimson      \n", Color::CRIMSON, Color::WHITE)
-      << Color::getString(" cyan         \n", Color::CYAN, Color::WHITE)
+      << Color::getString(" cyan         \n", Color::CYAN, Color::GRAY)
       << Color::getString(" forest_green \n", Color::FOREST_GREEN, Color::WHITE)
       << Color::getString(" gold         \n", Color::GOLD, Color::WHITE)
       << Color::getString(" gray         \n", Color::GRAY, Color::WHITE)
@@ -366,7 +366,7 @@ namespace cli_menu {
       << Color::getString(" wenge        \n", Color::WENGE, Color::WHITE)
       << Color::getString(" wheat        \n", Color::WHEAT, Color::GRAY)
       << Color::getString(" white        \n", Color::WHITE, Color::GRAY)
-      << Color::getString(" yellow       \n", Color::YELLOW, Color::WHITE);
+      << Color::getString(" yellow       \n", Color::YELLOW, Color::GRAY);
   }
 }
 
