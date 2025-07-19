@@ -6,13 +6,14 @@
 namespace cli_menu {
 
   enum CONSOLE_CODE {
-    CONSOLE_ERROR, CONSOLE_WARNING, CONSOLE_HIGHLIGHT,
-    CONSOLE_HINT, CONSOLE_CORRECT, CONSOLE_CANCEL
+    CONSOLE_ERROR, CONSOLE_WARNING,
+    CONSOLE_HINT_1, CONSOLE_HINT_2, CONSOLE_HINT_3,
+    CONSOLE_CORRECT, CONSOLE_CANCEL
   };
 
   class Console {
   private:
-    static constexpr int totalStatus = 6;
+    static constexpr int totalStatus = 7;
 
   public:
     Console() = delete;
