@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__RESULT_HPP__
 #define __CLI_MENU__RESULT_HPP__
 
-#include "console.hpp"
+#include "language.hpp"
 
 namespace cli_menu {
 
@@ -29,12 +29,7 @@ namespace cli_menu {
     static void removeNumber(mt::CR_STR keyword);
     static void removeToggle(mt::CR_STR keyword);
 
-    /**
-     * The 'editing' parameter, defined in 'Command::editing',
-     * is used to switch between editing and selecting modes.
-     * In this class, it serves to distinguish the theme.
-     */
-    static void printInputs(mt::CR_BOL editing);
+    static void printInputs();
   };
 }
 

@@ -38,12 +38,23 @@ namespace cli_menu {
     toggles.erase(keyword);
   }
 
-  void Result::printInputs(mt::CR_BOL editing) {
-    printType<std::string>("std::string", words);
-    Console::logBoundaryLine(editing);
-    printType<mt::LD>("long double", numbers);
-    Console::logBoundaryLine(editing);
-    printType<bool>("bool", toggles);
+  void Result::printInputs() {
+    std::cout << std::endl;
+
+    printType<std::string>(
+      Language::getStringifiedType(LANGUAGE_WORD_STRINGIFIED_TYPE),
+      words
+    );
+
+    printType<mt::LD>(
+      Language::getStringifiedType(LANGUAGE_NUMBER_STRINGIFIED_TYPE),
+      numbers
+    );
+
+    printType<bool>(
+      Language::getStringifiedType(LANGUAGE_TOGGLE_STRINGIFIED_TYPE),
+      toggles
+    );
   }
 }
 
