@@ -110,7 +110,7 @@ namespace cli_menu {
       }
       // LIST
       else if (Control::listTest(input)) {
-        printList(true);
+        printList(false);
       }
       // ENTER
       else if (Control::enterTest(input)) {
@@ -152,7 +152,7 @@ namespace cli_menu {
       }
       // VIEW
       else if (Control::viewTest(input)) {
-        Result::printInputs(editing);
+        Result::printInputs();
       }
       // CLIPBOARD COPY
       else if (Control::copyTest(input)) {
@@ -328,19 +328,19 @@ namespace cli_menu {
     Console::logString(
       "\n" + keyword + " ["
       + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
-      Console::messageColors[CONSOLE_HIGHLIGHT]
+      Console::messageColors[CONSOLE_HINT_1]
     );
 
     // description
     Console::logItalicString(
       description + '\n',
-      Console::messageColors[CONSOLE_HIGHLIGHT]
+      Console::messageColors[CONSOLE_HINT_2]
     );
 
-    printList(false);
+    printList(true);
   }
 
-  void Command::printList(mt::CR_BOL needErrorMessage) {
+  void Command::printList(mt::CR_BOL withHelp) {
     if (getChildren()) {
       getChildren()->iterate(
         mt_ds::GeneralTree::RIGHT,
@@ -349,14 +349,15 @@ namespace cli_menu {
           Console::logString(
             "  " + static_cast<Command*>(node)->keyword + " ["
             + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
-            Console::messageColors[CONSOLE_HINT]
+            Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
           );
 
           return true;
         }
       );
     }
-    else if (needErrorMessage) {
+    // print error
+    else if (!withHelp) {
       Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
 

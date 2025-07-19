@@ -43,7 +43,7 @@ namespace cli_menu {
     COMMAND_CODE goDown(mt::CR_STR input);
 
     void printHelp();
-    void printList(mt::CR_BOL needErrorMessage);
+    void printList(mt::CR_BOL withHelp);
 
   protected:
     std::string hyphens, keyword;
