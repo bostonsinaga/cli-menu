@@ -137,14 +137,18 @@ namespace cli_menu {
       // MODIFY
       else if (Control::modifyTest(input)) {
         if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
-        else editing = true;
-        return dialog();
+        else {
+          editing = true;
+          return dialog();
+        }
       }
       // SELECT
       else if (Control::selectTest(input)) {
-        if (editing) editing = false;
+        if (editing) {
+          editing = false;
+          return dialog();
+        }
         else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
-        return dialog();
       }
       // RESET
       else if (Control::resetTest(input)) {
