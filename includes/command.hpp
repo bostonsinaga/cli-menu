@@ -20,11 +20,13 @@ namespace cli_menu {
 
     bool editing = true,
       required = false,
-      strict = false;
+      strict = false,
+      localDialogued = true,
+      localPropagation = true;
 
     inline static bool
-      dialogued = true,
-      propagation = true;
+      globalDialogued = true,
+      globalPropagation = true;
 
     // return false to stop the program 
     COMMAND_CALLBACK callback = []()->bool { return true; };
@@ -66,16 +68,30 @@ namespace cli_menu {
      * Will not open dialog to complete the required.
      * Directly display 'COMMAND_FAILED'.
      */
-    static void noDialogue() {
-      Command::dialogued = false;
+
+    // local
+    void noDialogue() {
+      localDialogued = false;
+    }
+
+    // global
+    static void banDialogue() {
+      Command::globalDialogued = false;
     }
 
     /**
      * Prevent 'callCallback' from bubbling callback calls to the root.
      * Only call this callback.
      */
-    static void stopPropagation() {
-      Command::propagation = false;
+
+    // local
+    void noPropagation() {
+      localPropagation = false;
+    }
+
+    // global
+    static void banPropagation() {
+      Command::globalPropagation = false;
     }
 
     /**

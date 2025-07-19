@@ -79,7 +79,7 @@ namespace cli_menu {
       return COMMAND_SUCCEEDED;
     }
     // required but has no children
-    else if (Command::dialogued) {
+    else if (Command::globalDialogued && localDialogued) {
       return dialog();
     }
     // no dialogue to complete the required
@@ -231,7 +231,7 @@ namespace cli_menu {
 
   COMMAND_CODE Command::callCallback() {
 
-    if (Command::propagation) {
+    if (Command::globalPropagation && localPropagation) {
       COMMAND_CODE propagatingCode;
 
       bubble([&](mt_ds::LinkedList *node)->bool {
