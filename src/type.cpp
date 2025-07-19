@@ -28,6 +28,10 @@ namespace cli_menu {
     Result::words[keyword].push_back(input);
   }
 
+  void Word::resetUnormap() {
+    Result::words.clear();
+  }
+
   /** NUMBER */
 
   Number::Number(
@@ -55,6 +59,10 @@ namespace cli_menu {
     );
   }
 
+  void Number::resetUnormap() {
+    Result::numbers.clear();
+  }
+
   /** TOGGLE */
 
   Toggle::Toggle(
@@ -80,6 +88,10 @@ namespace cli_menu {
     Result::toggles[keyword].push_back(
       Control::booleanizerTest(input)
     );
+  }
+
+  void Toggle::resetUnormap() {
+    Result::toggles.clear();
   }
 }
 

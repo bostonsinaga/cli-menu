@@ -11,6 +11,7 @@ namespace cli_menu {
   protected:
     void copyPaste() override;
     void pushUnormap(mt::CR_STR input) override;
+    void resetUnormap() override;
 
   public:
     Word() = delete;
@@ -28,6 +29,7 @@ namespace cli_menu {
   protected:
     void copyPaste() override;
     void pushUnormap(mt::CR_STR input) override;
+    void resetUnormap() override;
 
   public:
     Number() = delete;
@@ -45,6 +47,7 @@ namespace cli_menu {
   protected:
     void copyPaste() override;
     void pushUnormap(mt::CR_STR input) override;
+    void resetUnormap() override;
 
   public:
     Toggle() = delete;
