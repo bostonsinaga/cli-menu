@@ -32,22 +32,35 @@ namespace cli_menu {
       std::is_same_v<T, bool>
     ) {
       // type title
-      Console::logResponse(CONSOLE_HINT, stringifiedType + ":\n");
+      Console::logString(
+        stringifiedType + ":\n",
+        Console::messageColors[CONSOLE_HINT_1]
+      );
 
       for (mt::CR_PAIR2<std::string, mt::VEC<T>> keyvec : unormap) {
-        int i = 0;
 
         // keyword with size of vector
-        std::cout << "  " << keyvec.first << '(' << keyvec.second.size() << "):\n";
+        Console::logItalicString(
+          keyvec.first + " (" + std::to_string(keyvec.second.size()) + "):\n",
+          Console::messageColors[CONSOLE_HINT_2]
+        );
 
         // members of vector
-        for (; i < keyvec.second.size() - 1; i++) {
-          std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << ",\n";
+        for (int i = 0; i < keyvec.second.size(); i++) {
+          Console::logString(
+            "  " + stringifiedVectorMember<T>(keyvec.second[i])
+            + (i == keyvec.second.size() - 1 ? "\n" : ",\n"),
+            Console::messageColors[CONSOLE_HINT_3]
+          );
         }
-
-        // the last member
-        std::cout << "    " << stringifiedVectorMember<T>(keyvec.second[i]) << std::endl;
       }
+
+      // display emptiness
+      if (unormap.empty()) {
+        Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
+      }
+
+      std::cout << std::endl;
     }
   }
 }
