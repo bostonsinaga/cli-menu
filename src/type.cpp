@@ -25,6 +25,7 @@ namespace cli_menu {
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
+    required = false;
     Result::words[keyword].push_back(input);
   }
 
@@ -54,6 +55,8 @@ namespace cli_menu {
   }
 
   void Number::pushUnormap(mt::CR_STR input) {
+    required = false;
+
     mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[keyword], mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
@@ -85,6 +88,8 @@ namespace cli_menu {
   }
 
   void Toggle::pushUnormap(mt::CR_STR input) {
+    required = false;
+
     Result::toggles[keyword].push_back(
       Control::booleanizerTest(input)
     );
