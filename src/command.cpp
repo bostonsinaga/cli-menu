@@ -27,63 +27,60 @@ namespace cli_menu {
     return sequentialNames;
   }
 
-  COMMAND_CODE Command::match(mt::CR_VEC_STR raws) {
-    COMMAND_CODE matchCode = COMMAND_FAILED;
+  COMMAND_CODE Command::match(mt::VEC_STR &raws) {
+    Command *neighbor = nullptr, *child = nullptr;
 
-    for (mt::CR_STR str : raws) {
-      // the root automatically passes the keyword check
-      if (hyphens + keyword == str || !getParent()) {
-        matchCode = COMMAND_ONGOING;
-      }
-      // check child keyword or as argument to current node
-      else {
-        if (getChildren()) {
-          getChildren()->iterate(
-            mt_ds::GeneralTree::RIGHT,
-            [&](mt_ds::LinkedList *node)->bool {
+    while (!raws.empty()) {
 
-              if (static_cast<Command*>(node)->hyphens
-                + static_cast<Command*>(node)->keyword == str
-              ) {
-                matchCode = COMMAND_REQUIRED;
-                return false;
-              }
-
-              return true;
-            }
-          );
-        }
-
-        if (matchCode == COMMAND_ONGOING) {
-          pushUnormap(str);
-        }
-        else if (matchCode == COMMAND_REQUIRED) {
-          break;
-        }
-      }
-    }
-
-    // ask 'raws' to the children
-    if (matchCode == COMMAND_REQUIRED && getChildren()) {
-      getChildren()->iterate(
-        mt_ds::GeneralTree::RIGHT,
+      // neighbors iteration
+      if (!isolated()) iterate(
+        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
-          matchCode = static_cast<Command*>(node)->match(raws);
+          if (node != this) {
+
+            if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+              neighbor = static_cast<Command*>(node);
+              return false;
+            }
+          }
+
           return true;
         }
       );
+
+      // children iteration
+      if (!neighbor && getChildren()) getChildren()->iterate(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+
+          if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+            child = static_cast<Command*>(node);
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      // push argument to 'Result'
+      if (!neighbor && !child) {
+        pushUnormap(raws.back());
+        raws.pop_back();
+      }
+      else { // go to other parameter
+        raws.pop_back();
+        if (neighbor) return neighbor->match(raws);
+        return child->match(raws);
+      }
     }
 
-    // not required
-    if (matchCode == COMMAND_ONGOING) {
-      return COMMAND_SUCCEEDED;
-    }
-    // required but has no children
-    else if (Command::globalDialogued && localDialogued) {
+    // extended runtime input
+    if (required && Command::globalDialogued && localDialogued) {
       return dialog();
     }
-    // no dialogue to complete the required
-    return COMMAND_FAILED;
+
+    // no required nodes (done)
+    return callCallback();
   }
 
   COMMAND_CODE Command::dialog() {
@@ -172,12 +169,8 @@ namespace cli_menu {
       }
       // WILD VALUE
       else {
-        // edit mode
-        if (editing) {
-          required = false;
-          pushUnormap(input);
-        }
-        // selection mode (can be a match in dialog)
+        if (editing) pushUnormap(input);
+        // selection (match in dialog)
         else {
           COMMAND_CODE code = goDown(input);
           if (code != COMMAND_ONGOING) return code;
@@ -267,15 +260,39 @@ namespace cli_menu {
 
   // always in selection mode
   COMMAND_CODE Command::goDown(mt::CR_STR input) {
-    bool willGo = false;
 
     if (getChildren()) {
+      bool spaceFound = false;
+      mt::VEC_STR raws = {""};
+
+      // split 'input' into the 'raws' using spaces as delimiters
+      for (mt::CR_CH ch : input) {
+
+        if (mt_uti::StrTools::isWhitespace(ch)) {
+          if (!spaceFound) {
+            spaceFound = true;
+            raws.push_back("");
+          }
+        }
+        else {
+          spaceFound = false;
+          raws.back() += ch;
+        }
+      }
+
+      // reverse the 'raws' order
+      std::reverse(raws.begin(), raws.end());
+
+      Command *selected = nullptr;
+
+      // find child by keyword possibility in 'raws.back()'
       getChildren()->iterate(
-        mt_ds::GeneralTree::RIGHT,
+        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->keyword == input) {
-            willGo = true;
+          if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+            selected = static_cast<Command*>(node);
+            raws.pop_back();
             return false;
           }
 
@@ -283,38 +300,10 @@ namespace cli_menu {
         }
       );
 
-      // go to children level
-      if (willGo) {
-        return static_cast<Command*>(getChildren())->dialog();
-      }
-
-      /**
-       * Find first whitespace to indicate that
-       * 'input' is raws for match in dialog.
-       */
-      bool spaceFound = false;
-
-      for (mt::CR_CH ch : input) {
-        if (mt_uti::StrTools::isWhitespace(ch)) {
-          spaceFound = true;
-          break;
-        }
-      }
-
       // match in dialog
-      if (spaceFound) {
-        spaceFound = false;
-        mt::VEC_STR raws = {""};
-
-        for (mt::CR_CH ch : input) {
-          if (!spaceFound && mt_uti::StrTools::isWhitespace(ch)) {
-            spaceFound = true;
-            raws.push_back("");
-          }
-          else raws.back() += ch;
-        }
-
-        return match(raws);
+      if (selected) {
+        COMMAND_CODE code = selected->match(raws);
+        if (code != COMMAND_ONGOING) return code;
       }
 
       // child not found
@@ -373,9 +362,19 @@ namespace cli_menu {
     // register signal handler for Ctrl+C (SIGINT)
     std::signal(SIGINT, Control::setInterruptedCtrlC);
 
-    COMMAND_CODE commandCode = match(
-      mt_uti::StrTools::argvToStringVector(argc, argv)
-    );
+    /**
+     * Reversed string vector.
+     * Accessed from behind and immediately 'pop_back()'.
+     */
+    mt::VEC_STR raws;
+
+    // skip the first 'argv' which is unpredictable executable filename
+    for (int i = argc - 1; i >= 0; i--) {
+      raws.push_back(argv[i]);
+    }
+
+    // start recursion
+    COMMAND_CODE commandCode = match(raws);
 
     switch (commandCode) {
       case COMMAND_FAILED: {

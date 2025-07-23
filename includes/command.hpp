@@ -19,7 +19,6 @@ namespace cli_menu {
     std::string description;
 
     bool editing = true,
-      required = false,
       strict = false,
       localDialogued = true,
       localPropagation = true;
@@ -34,10 +33,13 @@ namespace cli_menu {
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
-    // entry point to dialog interactions
-    COMMAND_CODE match(mt::CR_VEC_STR raws);
+    /**
+     * Entry point to dialog interactions.
+     * The 'raws' only expected as keywords or arguments.
+     */
+    COMMAND_CODE match(mt::VEC_STR &raws);
 
-    // dialog interactions
+    // dialog interactions (extended runtime input)
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
     COMMAND_CODE callCallback();
@@ -47,7 +49,12 @@ namespace cli_menu {
     void printHelp();
     void printList(mt::CR_BOL withHelp);
 
+    bool testHyphens(mt::CR_STR input) {
+      return hyphens + keyword == input;
+    }
+
   protected:
+    bool required = false;
     std::string hyphens, keyword;
     LANGUAGE_COMMAND_STRINGIFIED_TYPE stringifiedTypeIndex;
 
@@ -58,7 +65,7 @@ namespace cli_menu {
     );
 
     virtual void copyPaste() {}
-    virtual void pushUnormap(mt::CR_STR raw) {}
+    virtual void pushUnormap(mt::CR_STR input) { required = false; }
     virtual void resetUnormap() {}
 
   public:
