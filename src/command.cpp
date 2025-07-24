@@ -30,9 +30,10 @@ namespace cli_menu {
   COMMAND_CODE Command::match() {
     Command *neighbor = nullptr, *child = nullptr;
 
-    // the match will be paused until arguments are given from the dialog
-    mt::CR_BOL needDialog = required && Command::globalDialogued && localDialogued;
-
+    /**
+     * The string vector will 'pop_back()'
+     * until it is empty to stop this loop.
+     */
     while (!Command::raws.empty()) {
 
       // neighbors iteration
@@ -42,9 +43,7 @@ namespace cli_menu {
           if (node != this) {
 
             // find keyword
-            if (static_cast<Command*>(node)->testHyphens(
-              Command::raws.back()
-            )) {
+            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
               neighbor = static_cast<Command*>(node);
               return false;
             }
@@ -60,9 +59,7 @@ namespace cli_menu {
         [&](mt_ds::LinkedList *node)->bool {
 
           // find keyword
-          if (static_cast<Command*>(node)->testHyphens(
-            Command::raws.back()
-          )) {
+          if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
             child = static_cast<Command*>(node);
             return false;
           }
@@ -71,12 +68,15 @@ namespace cli_menu {
         }
       );
 
-      // keyword detected
+      // keyword is detected
       if (neighbor || child) {
-
-        // interruption dialogue
-        if (needDialog) { // the 'Command::raws' is not 'pop_back()'
+        /**
+         * The match will be paused until arguments are given from the dialog.
+         * The 'Command::raws' is not 'pop_back()'.
+         */
+        if (required && Command::globalDialogued && localDialogued) {
           Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+          Command::interruptionDialogued = true;
           return dialog();
         }
         else { // go to other node
@@ -92,19 +92,15 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (needDialog) return dialog();
+    if (required && Command::globalDialogued && localDialogued) return dialog();
 
     // no required nodes (done)
     return callCallback();
   }
 
   COMMAND_CODE Command::dialog() {
-
     static bool hinted = false;
     std::string input;
-
-    // prohibit controllers
-    bool interruptionDialogue = !Command::raws.empty();
 
     // outline or fill style
     Console::logStylishHeader(
@@ -129,22 +125,16 @@ namespace cli_menu {
         printList(false);
       }
       // ENTER
-      else if (Control::enterTest(input)) {
-        // continue the interrupted match
-        if (interruptionDialogue) {
-          return static_cast<Command*>(getChildren())->match();
-        }
-        else { // go down
-          COMMAND_CODE code = enter();
-          if (code != COMMAND_ONGOING) return code;
-        }
+      else if (Control::enterTest(input)) {        
+        COMMAND_CODE code = enter();
+        if (code != COMMAND_ONGOING) return code;
       }
       // BACK
       else if (Control::backTest(input)) {
         if (getParent()) {
           // moving is prohibited
-          if (interruptionDialogue) {
-            Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
+          if (Command::interruptionDialogued) {
+            printInterruptionDialoguedResponse();
           }
           // go to parent
           else return static_cast<Command*>(getParent())->dialog();
@@ -154,29 +144,20 @@ namespace cli_menu {
       }
       // NEXT
       else if (Control::nextTest(input)) {
-        // moving is prohibited
-        if (interruptionDialogue) {
-          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
-        }
-        else { // go to neighbor
-          COMMAND_CODE code = goToNeighbor(next());
-          if (code != COMMAND_ONGOING) return code;
-        }
+        COMMAND_CODE code = goToNeighbor(next());
+        if (code != COMMAND_ONGOING) return code;
       }
       // PREVIOUS
       else if (Control::previousTest(input)) {
-        // moving is prohibited
-        if (interruptionDialogue) {
-          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
-        }
-        else { // go to neighbor
-          COMMAND_CODE code = goToNeighbor(prev());
-          if (code != COMMAND_ONGOING) return code;
-        }
+        COMMAND_CODE code = goToNeighbor(prev());
+        if (code != COMMAND_ONGOING) return code;
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
-        if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        // cannot repeat
+        if (editing) {
+          Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+        }
         else { // switch to edit mode
           editing = true;
           return dialog();
@@ -184,11 +165,19 @@ namespace cli_menu {
       }
       // SELECT
       else if (Control::selectTest(input)) {
-        if (editing) { // switch to selection mode
-          editing = false;
-          return dialog();
+        // switching mode is prohibited
+        if (Command::interruptionDialogued) {
+          printInterruptionDialoguedResponse();
         }
-        else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
+        else {
+          // switch to selection mode
+          if (editing) {
+            editing = false;
+            return dialog();
+          }
+          // cannot repeat
+          else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
+        }
       }
       // RESET
       else if (Control::resetTest(input)) {
@@ -216,10 +205,6 @@ namespace cli_menu {
         if (editing) {
           pushUnormap(input);
         }
-        // selecting is prohibited
-        else if (interruptionDialogue) {
-          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
-        }
         // selection (match in dialog)
         else {
           COMMAND_CODE code = goDown(input);
@@ -232,40 +217,49 @@ namespace cli_menu {
   }
 
   COMMAND_CODE Command::enter() {
-    bool neighborRequired = false;
 
-    // check required nodes at current level
-    iterate(
-      mt_ds::LinkedList::RIGHT,
-      [&](mt_ds::LinkedList* node)->bool {
+    // continue the interrupted match
+    if (Command::interruptionDialogued && !required) {
+      Command::interruptionDialogued = false;
+      return match();
+    }
+    // trying to go down
+    else {
+      bool neighborRequired = false;
 
-        // at least 1 is required
-        if (neighborRequired) return false;
+      // check required nodes at current level
+      iterate(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList* node)->bool {
 
-        if (static_cast<Command*>(node)->required) {
-          neighborRequired = true;
+          // at least 1 is required
+          if (neighborRequired) return false;
+
+          if (static_cast<Command*>(node)->required) {
+            neighborRequired = true;
+          }
+
+          return true;
         }
+      );
 
-        return true;
+      // uncompleted required neighbors with strict parent
+      if (getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) {
+        Language::printResponse(LANGUAGE_PARENT_STRICT);
+        return COMMAND_ONGOING;
       }
-    );
-
-    // uncompleted required neighbors with strict parent
-    if (getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) {
-      Language::printResponse(LANGUAGE_PARENT_STRICT);
-      return COMMAND_ONGOING;
-    }
-    // no parent or non-strict parent with this is required
-    else if (
-      (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
-      (!getParent() && required)
-    ) {
-      Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
-      return COMMAND_ONGOING;
-    }
-    // go to children level
-    else if (getChildren()) {
-      return static_cast<Command*>(getChildren())->dialog();
+      // no parent or non-strict parent with this is required
+      else if (
+        (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
+        (!getParent() && required)
+      ) {
+        Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+        return COMMAND_ONGOING;
+      }
+      // go to children level
+      else if (getChildren()) {
+        return static_cast<Command*>(getChildren())->dialog();
+      }
     }
 
     // no required nodes (done)
@@ -301,8 +295,14 @@ namespace cli_menu {
 
   COMMAND_CODE Command::goToNeighbor(mt_ds::LinkedList* node) {
     if (node) {
-      return static_cast<Command*>(node)->dialog();
+      // moving is prohibited
+      if (Command::interruptionDialogued) {
+        printInterruptionDialoguedResponse();
+      }
+      // go to neighbor
+      else return static_cast<Command*>(node)->dialog();
     }
+    // has no neighbors
     else Language::printResponse(LANGUAGE_PARAMETER_ALONE);
 
     return COMMAND_ONGOING;
@@ -344,9 +344,7 @@ namespace cli_menu {
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->testHyphens(
-            Command::raws.back()
-          )) {
+          if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
             selected = static_cast<Command*>(node);
             Command::raws.pop_back();
             return false;
@@ -404,19 +402,29 @@ namespace cli_menu {
           return true;
         }
       );
+
+      std::cout << std::endl;
     }
     // print error
     else if (!withHelp) {
       Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
+  }
 
-    std::cout << std::endl;
+  void Command::printInterruptionDialoguedResponse() {
+    Language::printResponse(required?
+      LANGUAGE_ARGUMENT_REQUIRED:
+      LANGUAGE_INTERRUPTION_DIALOG
+    );
   }
 
   void Command::run(mt::CR_INT argc, char *argv[]) {
 
     // register signal handler for Ctrl+C (SIGINT)
     std::signal(SIGINT, Control::setInterruptedCtrlC);
+
+    // in case this method is called more than once
+    Command::raws.clear();
 
     // skip the first 'argv' which is unpredictable executable filename
     for (int i = argc - 1; i > 0; i--) {

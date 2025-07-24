@@ -36,6 +36,9 @@ namespace cli_menu {
      */
     inline static mt::VEC_STR raws = {};
 
+    // prohibit controllers
+    inline static bool interruptionDialogued = false;
+
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
@@ -54,6 +57,7 @@ namespace cli_menu {
 
     void printHelp();
     void printList(mt::CR_BOL withHelp);
+    void printInterruptionDialoguedResponse();
 
     bool testHyphens(mt::CR_STR input) {
       return hyphens + keyword == input;
