@@ -30,6 +30,12 @@ namespace cli_menu {
     // return false to stop the program 
     COMMAND_CALLBACK callback = []()->bool { return true; };
 
+    /**
+     * Reversed string vector.
+     * Accessed from behind and immediately 'pop_back()'.
+     */
+    inline static mt::VEC_STR raws = {};
+
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
@@ -37,7 +43,7 @@ namespace cli_menu {
      * Entry point to dialog interactions.
      * The 'raws' only expected as keywords or arguments.
      */
-    COMMAND_CODE match(mt::VEC_STR &raws);
+    COMMAND_CODE match();
 
     // dialog interactions (extended runtime input)
     COMMAND_CODE dialog();

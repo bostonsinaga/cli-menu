@@ -27,10 +27,13 @@ namespace cli_menu {
     return sequentialNames;
   }
 
-  COMMAND_CODE Command::match(mt::VEC_STR &raws) {
+  COMMAND_CODE Command::match() {
     Command *neighbor = nullptr, *child = nullptr;
 
-    while (!raws.empty()) {
+    // the match will be paused until arguments are given from the dialog
+    mt::CR_BOL needDialog = required && Command::globalDialogued && localDialogued;
+
+    while (!Command::raws.empty()) {
 
       // neighbors iteration
       if (!isolated()) iterate(
@@ -38,7 +41,10 @@ namespace cli_menu {
         [&](mt_ds::LinkedList *node)->bool {
           if (node != this) {
 
-            if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+            // find keyword
+            if (static_cast<Command*>(node)->testHyphens(
+              Command::raws.back()
+            )) {
               neighbor = static_cast<Command*>(node);
               return false;
             }
@@ -53,7 +59,10 @@ namespace cli_menu {
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+          // find keyword
+          if (static_cast<Command*>(node)->testHyphens(
+            Command::raws.back()
+          )) {
             child = static_cast<Command*>(node);
             return false;
           }
@@ -62,30 +71,40 @@ namespace cli_menu {
         }
       );
 
-      // push argument to 'Result'
-      if (!neighbor && !child) {
-        pushUnormap(raws.back());
-        raws.pop_back();
+      // keyword detected
+      if (neighbor || child) {
+
+        // interruption dialogue
+        if (needDialog) { // the 'Command::raws' is not 'pop_back()'
+          Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+          return dialog();
+        }
+        else { // go to other node
+          Command::raws.pop_back();
+          if (neighbor) return neighbor->match();
+          return child->match();
+        }
       }
-      else { // go to other parameter
-        raws.pop_back();
-        if (neighbor) return neighbor->match(raws);
-        return child->match(raws);
+      else { // push argument to 'Result'
+        pushUnormap(Command::raws.back());
+        Command::raws.pop_back();
       }
     }
 
     // extended runtime input
-    if (required && Command::globalDialogued && localDialogued) {
-      return dialog();
-    }
+    if (needDialog) return dialog();
 
     // no required nodes (done)
     return callCallback();
   }
 
   COMMAND_CODE Command::dialog() {
+
     static bool hinted = false;
     std::string input;
+
+    // prohibit controllers
+    bool interruptionDialogue = !Command::raws.empty();
 
     // outline or fill style
     Console::logStylishHeader(
@@ -111,37 +130,61 @@ namespace cli_menu {
       }
       // ENTER
       else if (Control::enterTest(input)) {
-        COMMAND_CODE code = enter();
-        if (code != COMMAND_ONGOING) return code;
+        // continue the interrupted match
+        if (interruptionDialogue) {
+          return static_cast<Command*>(getChildren())->match();
+        }
+        else { // go down
+          COMMAND_CODE code = enter();
+          if (code != COMMAND_ONGOING) return code;
+        }
       }
       // BACK
       else if (Control::backTest(input)) {
         if (getParent()) {
-          return static_cast<Command*>(getParent())->dialog();
+          // moving is prohibited
+          if (interruptionDialogue) {
+            Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
+          }
+          // go to parent
+          else return static_cast<Command*>(getParent())->dialog();
         }
+        // this is root
         else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
       }
       // NEXT
       else if (Control::nextTest(input)) {
-        COMMAND_CODE code = goToNeighbor(next());
-        if (code != COMMAND_ONGOING) return code;
+        // moving is prohibited
+        if (interruptionDialogue) {
+          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
+        }
+        else { // go to neighbor
+          COMMAND_CODE code = goToNeighbor(next());
+          if (code != COMMAND_ONGOING) return code;
+        }
       }
       // PREVIOUS
       else if (Control::previousTest(input)) {
-        COMMAND_CODE code = goToNeighbor(prev());
-        if (code != COMMAND_ONGOING) return code;
+        // moving is prohibited
+        if (interruptionDialogue) {
+          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
+        }
+        else { // go to neighbor
+          COMMAND_CODE code = goToNeighbor(prev());
+          if (code != COMMAND_ONGOING) return code;
+        }
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
         if (editing) Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
-        else {
+        else { // switch to edit mode
           editing = true;
           return dialog();
         }
       }
       // SELECT
       else if (Control::selectTest(input)) {
-        if (editing) {
+        if (editing) { // switch to selection mode
           editing = false;
           return dialog();
         }
@@ -169,7 +212,14 @@ namespace cli_menu {
       }
       // WILD VALUE
       else {
-        if (editing) pushUnormap(input);
+        // push argument to 'Result'
+        if (editing) {
+          pushUnormap(input);
+        }
+        // selecting is prohibited
+        else if (interruptionDialogue) {
+          Language::printResponse(LANGUAGE_MIDDLE_DIALOG);
+        }
         // selection (match in dialog)
         else {
           COMMAND_CODE code = goDown(input);
@@ -263,36 +313,42 @@ namespace cli_menu {
 
     if (getChildren()) {
       bool spaceFound = false;
-      mt::VEC_STR raws = {""};
 
-      // split 'input' into the 'raws' using spaces as delimiters
+      // vector refill
+      if (Command::raws.empty()) {
+        Command::raws.push_back("");
+      }
+
+      // split input into the string vector using spaces as delimiters
       for (mt::CR_CH ch : input) {
 
         if (mt_uti::StrTools::isWhitespace(ch)) {
           if (!spaceFound) {
             spaceFound = true;
-            raws.push_back("");
+            Command::raws.push_back("");
           }
         }
         else {
           spaceFound = false;
-          raws.back() += ch;
+          Command::raws.back() += ch;
         }
       }
 
-      // reverse the 'raws' order
-      std::reverse(raws.begin(), raws.end());
+      // reverse the string vector order
+      std::reverse(Command::raws.begin(), Command::raws.end());
 
       Command *selected = nullptr;
 
-      // find child by keyword possibility in 'raws.back()'
+      // find child by keyword possibility at back of string vector
       getChildren()->iterate(
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->testHyphens(raws.back())) {
+          if (static_cast<Command*>(node)->testHyphens(
+            Command::raws.back()
+          )) {
             selected = static_cast<Command*>(node);
-            raws.pop_back();
+            Command::raws.pop_back();
             return false;
           }
 
@@ -302,7 +358,7 @@ namespace cli_menu {
 
       // match in dialog
       if (selected) {
-        COMMAND_CODE code = selected->match(raws);
+        COMMAND_CODE code = selected->match();
         if (code != COMMAND_ONGOING) return code;
       }
 
@@ -362,19 +418,13 @@ namespace cli_menu {
     // register signal handler for Ctrl+C (SIGINT)
     std::signal(SIGINT, Control::setInterruptedCtrlC);
 
-    /**
-     * Reversed string vector.
-     * Accessed from behind and immediately 'pop_back()'.
-     */
-    mt::VEC_STR raws;
-
     // skip the first 'argv' which is unpredictable executable filename
-    for (int i = argc - 1; i >= 0; i--) {
-      raws.push_back(argv[i]);
+    for (int i = argc - 1; i > 0; i--) {
+      Command::raws.push_back(argv[i]);
     }
 
     // start recursion
-    COMMAND_CODE commandCode = match(raws);
+    COMMAND_CODE commandCode = match();
 
     switch (commandCode) {
       case COMMAND_FAILED: {
