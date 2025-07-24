@@ -92,7 +92,21 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (required && Command::globalDialogued && localDialogued) return dialog();
+    if (required && Command::globalDialogued && localDialogued) {
+      Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+      return dialog();
+    }
+
+    Command *firstRequiredNeighbor = getFirstRequiredNeighbor();
+
+    // uncompleted required neighbors with strict parent
+    if (getParent() &&
+      firstRequiredNeighbor &&
+      static_cast<Command*>(getParent())->strict
+    ) {
+      Language::printResponse(LANGUAGE_PARENT_STRICT);
+      return firstRequiredNeighbor->dialog();
+    }
 
     // no required nodes (done)
     return callCallback();
@@ -225,26 +239,11 @@ namespace cli_menu {
     }
     // trying to go down
     else {
-      bool neighborRequired = false;
-
-      // check required nodes at current level
-      iterate(
-        mt_ds::LinkedList::RIGHT,
-        [&](mt_ds::LinkedList* node)->bool {
-
-          // at least 1 is required
-          if (neighborRequired) return false;
-
-          if (static_cast<Command*>(node)->required) {
-            neighborRequired = true;
-          }
-
-          return true;
-        }
-      );
-
       // uncompleted required neighbors with strict parent
-      if (getParent() && static_cast<Command*>(getParent())->strict && neighborRequired) {
+      if (getParent() &&
+        static_cast<Command*>(getParent())->strict &&
+        getFirstRequiredNeighbor()
+      ) {
         Language::printResponse(LANGUAGE_PARENT_STRICT);
         return COMMAND_ONGOING;
       }
@@ -416,6 +415,28 @@ namespace cli_menu {
       LANGUAGE_ARGUMENT_REQUIRED:
       LANGUAGE_INTERRUPTION_DIALOG
     );
+  }
+
+  Command* Command::getFirstRequiredNeighbor() {
+    Command *found = nullptr;
+
+    // check required nodes at current level
+    iterate(
+      mt_ds::LinkedList::RIGHT,
+      [&](mt_ds::LinkedList* node)->bool {
+
+        // at least 1 is required
+        if (found) return false;
+
+        if (static_cast<Command*>(node)->required) {
+          found = static_cast<Command*>(node);
+        }
+
+        return true;
+      }
+    );
+
+    return found;
   }
 
   void Command::run(mt::CR_INT argc, char *argv[]) {

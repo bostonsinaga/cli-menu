@@ -59,6 +59,9 @@ namespace cli_menu {
     void printList(mt::CR_BOL withHelp);
     void printInterruptionDialoguedResponse();
 
+    // useful when parent is strict
+    Command *getFirstRequiredNeighbor();
+
     bool testHyphens(mt::CR_STR input) {
       return hyphens + keyword == input;
     }
