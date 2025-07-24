@@ -12,7 +12,7 @@ namespace cli_menu {
     // LANGUAGE_ALREADY_SELECTING
     "Already in selection mode.",
     // LANGUAGE_ARGUMENT_REQUIRED
-    "Unable to process without explicit arguments.",
+    "Prohibited without explicit arguments.",
     // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
     "Failed to open clipboard.",
     // LANGUAGE_CLIPBOARD_GET_FAILURE,
@@ -23,8 +23,8 @@ namespace cli_menu {
     "Pasted from clipboard.",
     // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
-    // LANGUAGE_MIDDLE_DIALOG
-    "Unable to process until the rest of direct inputs are processed.",
+    // LANGUAGE_INTERRUPTION_DIALOG
+    "Prohibited until the remaining direct inputs are processed.",
     // LANGUAGE_PARAMETER_ALONE
     "This node has no neighbors.",
     // LANGUAGE_PARAMETER_AT_LEAF
@@ -34,7 +34,7 @@ namespace cli_menu {
     // LANGUAGE_PARAMETER_NOT_FOUND
     "Parameter not found.",
     // LANGUAGE_PARENT_STRICT
-    "Parent node needs explicit arguments for all its required children.",
+    "Parent needs explicit arguments for all its required children.",
     // LANGUAGE_PROGRAM_CANCELED
     "Program canceled.",
     // LANGUAGE_PROGRAM_FAILED
@@ -60,7 +60,7 @@ namespace cli_menu {
     CONSOLE_HINT_1,
     // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
-    // LANGUAGE_MIDDLE_DIALOG
+    // LANGUAGE_INTERRUPTION_DIALOG
     CONSOLE_ERROR,
     // LANGUAGE_PARAMETER_ALONE
     CONSOLE_WARNING,
@@ -106,7 +106,7 @@ namespace cli_menu {
     mt::CR_STR clipboardLockFailureMessage,
     mt::CR_STR clipboardPastedMessage,
     mt::CR_STR forbiddenHiddenPasteMessage,
-    mt::CR_STR middleDialogMessage,
+    mt::CR_STR interruptionDialogMessage,
     mt::CR_STR parameterAloneMessage,
     mt::CR_STR parameterAtLeafMessage,
     mt::CR_STR parameterAtRootMessage,
@@ -124,7 +124,7 @@ namespace cli_menu {
     Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_MIDDLE_DIALOG] = middleDialogMessage;
+    Language::messages[Language::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
     Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
