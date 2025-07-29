@@ -8,8 +8,8 @@ namespace cli_menu {
   /** WORD */
 
   class Word : public Command {
-  protected:
-    void copyPaste() override;
+  private:
+    void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
 
@@ -26,8 +26,8 @@ namespace cli_menu {
   /** NUMBER */
 
   class Number : public Command {
-  protected:
-    void copyPaste() override;
+  private:
+    void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
 
@@ -44,8 +44,8 @@ namespace cli_menu {
   /** TOGGLE */
 
   class Toggle : public Command {
-  protected:
-    void copyPaste() override;
+  private:
+    void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
 

@@ -20,17 +20,18 @@ namespace cli_menu {
     stringifiedTypeIndex = LANGUAGE_WORD_STRINGIFIED_TYPE;
   }
 
-  void Word::copyPaste() {
-    Result::words[keyword].push_back(Clipboard::pasteText());
+  void Word::clipboardPaste() {
+    required = false;
+    Result::getWords(keyword).push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
     required = false;
-    Result::words[keyword].push_back(input);
+    Result::getWords(keyword).push_back(input);
   }
 
-  void Word::resetUnormap() {
-    Result::words.clear();
+  void Word::resetUnormap() {    
+    Result::getWords(keyword).clear();
   }
 
   /** NUMBER */
@@ -48,9 +49,12 @@ namespace cli_menu {
     stringifiedTypeIndex = LANGUAGE_NUMBER_STRINGIFIED_TYPE;
   }
 
-  void Number::copyPaste() {
+  void Number::clipboardPaste() {
+    required = false;
+
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[keyword], Clipboard::pasteNumbers()
+      Result::getNumbers(keyword),
+      Clipboard::pasteNumbers()
     );
   }
 
@@ -58,12 +62,13 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[keyword], mt_uti::Scanner::parseNumbers<mt::LD>(input)
+      Result::getNumbers(keyword),
+      mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
   }
 
   void Number::resetUnormap() {
-    Result::numbers.clear();
+    Result::getNumbers(keyword).clear();
   }
 
   /** TOGGLE */
@@ -81,22 +86,25 @@ namespace cli_menu {
     stringifiedTypeIndex = LANGUAGE_TOGGLE_STRINGIFIED_TYPE;
   }
 
-  void Toggle::copyPaste() {
+  void Toggle::clipboardPaste() {
+    required = false;
+
     mt_uti::VecTools<bool>::concatCopy(
-      Result::toggles[keyword], Clipboard::pasteConditions()
+      Result::getToggles(keyword),
+      Clipboard::pasteConditions()
     );
   }
 
   void Toggle::pushUnormap(mt::CR_STR input) {
     required = false;
 
-    Result::toggles[keyword].push_back(
+    Result::getToggles(keyword).push_back(
       Control::booleanizerTest(input)
     );
   }
 
   void Toggle::resetUnormap() {
-    Result::toggles.clear();
+    Result::getToggles(keyword).clear();
   }
 }
 
