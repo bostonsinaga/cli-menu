@@ -203,11 +203,11 @@ namespace cli_menu {
       }
       // CLIPBOARD COPY
       else if (Control::copyTest(input)) {
-        copyPaste();
+        clipboardCopy();
       }
       // CLIPBOARD PASTE
       else if (Control::pasteTest(input)) {
-        copyPaste();
+        clipboardPaste();
       }
       // QUIT
       else if (Control::quitTest(input)) {

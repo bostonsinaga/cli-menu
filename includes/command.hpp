@@ -77,12 +77,21 @@ namespace cli_menu {
       const COMMAND_CALLBACK &callback_in
     );
 
-    virtual void copyPaste() {}
+    // better called after callback call
+    void clipboardCopy() {
+      Clipboard::copyText(Result::getUltimate(keyword));
+    }
+
+    virtual void clipboardPaste() {}
     virtual void pushUnormap(mt::CR_STR input) { required = false; }
     virtual void resetUnormap() {}
 
   public:
     Command() = delete;
+
+    // member variable access
+    const std::string getKeyword() const { return keyword; }
+    const std::string getDescription() const { return description; }
 
     /**
      * Will not open dialog to complete the required.
