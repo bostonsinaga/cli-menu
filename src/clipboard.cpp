@@ -11,7 +11,7 @@ namespace cli_menu {
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
 
-      Language::printResponse(
+      Langu::ageMessage::printResponse(
         LANGUAGE_CLIPBOARD_OPEN_FAILURE
       );
 
@@ -23,7 +23,7 @@ namespace cli_menu {
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (!hData) {
-      Language::printResponse(
+      Langu::ageMessage::printResponse(
         LANGUAGE_CLIPBOARD_GET_FAILURE
       );
 
@@ -36,7 +36,7 @@ namespace cli_menu {
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (!pszText) {
-      Language::printResponse(
+      Langu::ageMessage::printResponse(
         LANGUAGE_CLIPBOARD_LOCK_FAILURE
       );
     }
@@ -48,7 +48,7 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    Language::printResponse(
+    Langu::ageMessage::printResponse(
       LANGUAGE_CLIPBOARD_PASTED
     );
 
@@ -109,7 +109,7 @@ namespace cli_menu {
 
     // parse booleans
     for (mt::CR_STR str : textVec) {
-      conditions.push_back(Control::booleanizerTest(str));
+      conditions.push_back(Langu::ageBooleanizer::test(str));
     }
 
     return conditions;

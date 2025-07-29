@@ -75,7 +75,7 @@ namespace cli_menu {
          * The 'Command::raws' is not 'pop_back()'.
          */
         if (required && Command::globalDialogued && localDialogued) {
-          Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+          Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
           Command::interruptionDialogued = true;
           return dialog();
         }
@@ -93,7 +93,7 @@ namespace cli_menu {
 
     // extended runtime input
     if (required && Command::globalDialogued && localDialogued) {
-      Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+      Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return dialog();
     }
 
@@ -104,7 +104,7 @@ namespace cli_menu {
       firstRequiredNeighbor &&
       static_cast<Command*>(getParent())->strict
     ) {
-      Language::printResponse(LANGUAGE_PARENT_STRICT);
+      Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
       return firstRequiredNeighbor->dialog();
     }
 
@@ -154,7 +154,7 @@ namespace cli_menu {
           else return static_cast<Command*>(getParent())->dialog();
         }
         // this is root
-        else Language::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
+        else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
       }
       // NEXT
       else if (Control::nextTest(input)) {
@@ -170,7 +170,7 @@ namespace cli_menu {
       else if (Control::modifyTest(input)) {
         // cannot repeat
         if (editing) {
-          Language::printResponse(LANGUAGE_ALREADY_MODIFYING);
+          Langu::ageMessage::printResponse(LANGUAGE_ALREADY_MODIFYING);
         }
         else { // switch to edit mode
           editing = true;
@@ -190,7 +190,7 @@ namespace cli_menu {
             return dialog();
           }
           // cannot repeat
-          else Language::printResponse(LANGUAGE_ALREADY_SELECTING);
+          else Langu::ageMessage::printResponse(LANGUAGE_ALREADY_SELECTING);
         }
       }
       // RESET
@@ -244,7 +244,7 @@ namespace cli_menu {
         static_cast<Command*>(getParent())->strict &&
         getFirstRequiredNeighbor()
       ) {
-        Language::printResponse(LANGUAGE_PARENT_STRICT);
+        Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
         return COMMAND_ONGOING;
       }
       // no parent or non-strict parent with this is required
@@ -252,7 +252,7 @@ namespace cli_menu {
         (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
         (!getParent() && required)
       ) {
-        Language::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+        Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
         return COMMAND_ONGOING;
       }
       // go to children level
@@ -302,7 +302,7 @@ namespace cli_menu {
       else return static_cast<Command*>(node)->dialog();
     }
     // has no neighbors
-    else Language::printResponse(LANGUAGE_PARAMETER_ALONE);
+    else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_ALONE);
 
     return COMMAND_ONGOING;
   }
@@ -360,10 +360,10 @@ namespace cli_menu {
       }
 
       // child not found
-      Language::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
     }
     else { // this is a leaf
-      Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
 
     return COMMAND_ONGOING;
@@ -373,7 +373,7 @@ namespace cli_menu {
     // keyword
     Console::logString(
       "\n" + keyword + " ["
-      + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
+      + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
       Console::messageColors[CONSOLE_HINT_1]
     );
 
@@ -394,7 +394,7 @@ namespace cli_menu {
 
           Console::logString(
             "  " + static_cast<Command*>(node)->keyword + " ["
-            + Language::getStringifiedType(stringifiedTypeIndex) + "]\n",
+            + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
             Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
           );
 
@@ -406,12 +406,12 @@ namespace cli_menu {
     }
     // print error
     else if (!withHelp) {
-      Language::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
     }
   }
 
   void Command::printInterruptionDialoguedResponse() {
-    Language::printResponse(required?
+    Langu::ageMessage::printResponse(required?
       LANGUAGE_ARGUMENT_REQUIRED:
       LANGUAGE_INTERRUPTION_DIALOG
     );
@@ -457,13 +457,13 @@ namespace cli_menu {
 
     switch (commandCode) {
       case COMMAND_FAILED: {
-        Language::printResponse(LANGUAGE_PROGRAM_FAILED);
+        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_FAILED);
       break;}
       case COMMAND_SUCCEEDED: {
-        Language::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
+        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
       break;}
       case COMMAND_CANCELED: {
-        Language::printResponse(LANGUAGE_PROGRAM_CANCELED);
+        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_CANCELED);
       break;}
       default: {
         // COMMAND_ONGOING, COMMAND_REQUIRED

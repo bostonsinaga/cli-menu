@@ -6,24 +6,7 @@
 
 namespace cli_menu {
 
-  // can be obtained after testing the input string
-  enum CONTROL_CODE {
-    CONTROL_UNKNOWN,
-    CONTROL_HELP,
-    CONTROL_LIST,
-    CONTROL_ENTER,
-    CONTROL_BACK,
-    CONTROL_NEXT,
-    CONTROL_PREVIOUS,
-    CONTROL_MODIFY,
-    CONTROL_SELECT,
-    CONTROL_RESET,
-    CONTROL_VIEW,
-    CONTROL_COPY,
-    CONTROL_PASTE,
-    CONTROL_QUIT
-  };
-
+  // the 'CONTROL_CODE' enum defined in 'language.hpp'
   class Control {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
@@ -48,20 +31,6 @@ namespace cli_menu {
     // find 'symbols' pattern in 'str'
     static CONTROL_CODE whitespacesCheck(mt::CR_STR str);
 
-    /** Multilingual Features */
-
-    static mt::STRUNORMAP_STR
-      abbreviationsTitle,
-      toggleAvailableValuesTitle;
-
-    static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
-    inline static mt_uti::Booleanizer booleanizer;
-
-    static void limitTerm(
-      const CONTROL_CODE &code,
-      std::string &newTerm
-    );
-
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
 
@@ -85,47 +54,9 @@ namespace cli_menu {
     static void printAbbreviations();
     static void printToggleAvailableValues();
 
-    static CONTROL_CODE getSharedEnum() {
+    static const CONTROL_CODE& getSharedEnum() {
       return sharedEnum;
     }
-
-    /** Multilingual Features */
-
-    inline static size_t maxTermLength = 16;
-
-    // sync 'Language::currentISOCode' with 'Language::selectISOCode' manually
-    static void addISOCode(mt::CR_STR newISOCode);
-    static void removeISOCode(mt::CR_STR existingISOCode);
-
-    // titles
-    static void setAbbreviationsTitle(mt::CR_STR title);
-    static void setToggleAvailableValuesTitle(mt::CR_STR title);
-
-    // string length is limited to 'maxTermLength'
-    static void setTerms(
-      std::string helpTerm,
-      std::string listTerm,
-      std::string enterTerm,
-      std::string backTerm,
-      std::string nextTerm,
-      std::string previousTerm,
-      std::string modifyTerm,
-      std::string selectTerm,
-      std::string resetTerm,
-      std::string viewTerm,
-      std::string copyTerm,
-      std::string pasteTerm,
-      std::string quitTerm
-    );
-
-    /** Booleanizer method call wrappers */
-
-    static void setBooleanizerTerms(
-      mt::CR_VEC_STR existingTrueTerms,
-      mt::CR_VEC_STR existingFalseTerms
-    );
-
-    static bool booleanizerTest(mt::CR_STR raw);
 
     /**
      * INTERRUPTED 'CTRL+C' INTERACTIONS

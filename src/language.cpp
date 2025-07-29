@@ -5,8 +5,45 @@
 
 namespace cli_menu {
 
-  /** English Presets */
-  mt::STRUNORMAP<mt::ARR_STR<Language::totalMessages>> Language::messages = {{"en", {
+  //_________|
+  // MANAGER |
+  //_________|
+
+  bool Langu::ageManager::hasISOCode(mt::CR_STR existingISOCode) {
+    return mt::STRUNORMAP_FOUND<mt::ARR_STR<Langu::xMessage::totalSentences>>(
+      Langu::xMessage::sentences, existingISOCode
+    );
+  }
+
+  void Langu::ageManager::selectISOCode(mt::CR_STR existingISOCode) {
+    if (Langu::ageManager::hasISOCode(existingISOCode)) {
+      Langu::xManager::currentISOCode = existingISOCode;
+    }
+  }
+
+  void Langu::ageManager::addISOCode(mt::CR_STR newISOCode) {
+    Langu::xMessage::sentences[newISOCode] = {};
+    Langu::xControl::terms[newISOCode] = {};
+    Langu::xControl::abbreviationsTitle[newISOCode] = {};
+    Langu::xControl::toggleAvailableValuesTitle[newISOCode] = {};
+    Langu::xBooleanizer::object.addTerms(newISOCode, {}, {});
+    Langu::xCommand::stringifiedTypes[newISOCode] = {};
+  }
+
+  void Langu::ageManager::removeISOCode(mt::CR_STR existingISOCode) {
+    Langu::xMessage::sentences.erase(existingISOCode);
+    Langu::xControl::terms.erase(existingISOCode);
+    Langu::xControl::abbreviationsTitle.erase(existingISOCode);
+    Langu::xControl::toggleAvailableValuesTitle.erase(existingISOCode);
+    Langu::xBooleanizer::object.removeTerms(existingISOCode);
+    Langu::xCommand::stringifiedTypes.erase(existingISOCode);
+  }
+
+  //_________|
+  // MESSAGE |
+  //_________|
+
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xMessage::totalSentences>> Langu::xMessage::sentences = {{"en", {
     // LANGUAGE_ALREADY_MODIFYING
     "Already in edit mode.",
     // LANGUAGE_ALREADY_SELECTING
@@ -43,7 +80,7 @@ namespace cli_menu {
     "Program succeeded."
   }}};
 
-  CONSOLE_CODE Language::consoleCodes[Language::totalMessages] = {
+  CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
     // LANGUAGE_ALREADY_MODIFYING
     CONSOLE_WARNING,
     // LANGUAGE_ALREADY_SELECTING
@@ -80,91 +117,186 @@ namespace cli_menu {
     CONSOLE_CORRECT
   };
 
-  mt::STRUNORMAP<mt::ARR_STR<Language::totalCommandTypes>>
-  Language::stringifiedCommandTypes = {{"en", {
+  void Langu::ageMessage::setSentences(
+    mt::CR_STR alreadyModifyingSentence,
+    mt::CR_STR alreadySelectingSentence,
+    mt::CR_STR argumentRequiredSentence,
+    mt::CR_STR clipboardOpenFailureSentence,
+    mt::CR_STR clipboardGetFailureSentence,
+    mt::CR_STR clipboardLockFailureSentence,
+    mt::CR_STR clipboardPastedSentence,
+    mt::CR_STR forbiddenHiddenPasteSentence,
+    mt::CR_STR interruptionDialogSentence,
+    mt::CR_STR parameterAloneSentence,
+    mt::CR_STR parameterAtLeafSentence,
+    mt::CR_STR parameterAtRootSentence,
+    mt::CR_STR parameterNotFoundSentence,
+    mt::CR_STR parentStrictSentence,
+    mt::CR_STR programCanceledSentence,
+    mt::CR_STR programFailedSentence,
+    mt::CR_STR programSucceededSentence
+  ) {
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ALREADY_MODIFYING] = alreadyModifyingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARENT_STRICT] = parentStrictSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededSentence;
+  }
+
+  void Langu::ageMessage::printResponse(const LANGUAGE_CODE &responseCode) {
+    Console::logResponse(
+      Langu::xMessage::consoleCodes[responseCode],
+      Langu::xMessage::sentences[Langu::xManager::currentISOCode][responseCode]
+    );
+  }
+
+  //_________|
+  // CONTROL |
+  //_________|
+
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalSymbols>> Langu::xControl::terms = {{"en", {
+    "help", "list", "enter", "back", "next", "previous", "modify",
+    "select", "reset", "view", "copy", "paste", "quit"
+  }}};
+
+  mt::STRUNORMAP_STR
+    Langu::xControl::abbreviationsTitle = {{"en", "Controller List"}},
+    Langu::xControl::toggleAvailableValuesTitle = {{"en", "Boolean Available Values"}};
+
+  void Langu::xControl::limitTerm(
+    const CONTROL_CODE &code,
+    std::string &newTerm
+  ) {
+    if (newTerm.length() > Langu::xControl::maxTermLength) {
+      newTerm = newTerm.substr(0, Langu::xControl::maxTermLength - 2);
+      newTerm += "..";
+    }
+
+    Langu::xControl::terms[Langu::xManager::currentISOCode][code] = newTerm;
+  }
+
+  void Langu::ageControl::setTerms(
+    std::string helpTerm,
+    std::string listTerm,
+    std::string enterTerm,
+    std::string backTerm,
+    std::string nextTerm,
+    std::string previousTerm,
+    std::string modifyTerm,
+    std::string selectTerm,
+    std::string resetTerm,
+    std::string viewTerm,
+    std::string copyTerm,
+    std::string pasteTerm,
+    std::string quitTerm
+  ) {
+    Langu::xControl::limitTerm(CONTROL_HELP, helpTerm);
+    Langu::xControl::limitTerm(CONTROL_LIST, listTerm);
+    Langu::xControl::limitTerm(CONTROL_ENTER, enterTerm);
+    Langu::xControl::limitTerm(CONTROL_BACK, backTerm);
+    Langu::xControl::limitTerm(CONTROL_NEXT, nextTerm);
+    Langu::xControl::limitTerm(CONTROL_PREVIOUS, previousTerm);
+    Langu::xControl::limitTerm(CONTROL_MODIFY, modifyTerm);
+    Langu::xControl::limitTerm(CONTROL_SELECT, selectTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET, resetTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW, viewTerm);
+    Langu::xControl::limitTerm(CONTROL_COPY, copyTerm);
+    Langu::xControl::limitTerm(CONTROL_PASTE, pasteTerm);
+    Langu::xControl::limitTerm(CONTROL_QUIT, quitTerm);
+  }
+
+  void Langu::ageControl::setAbbreviationsTitle(mt::CR_STR title) {
+    Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode] = title;
+  }
+
+  void Langu::ageControl::setToggleAvailableValuesTitle(mt::CR_STR title) {
+    Langu::xControl::toggleAvailableValuesTitle[Langu::xManager::currentISOCode] = title;
+  }
+
+  std::string Langu::ageControl::getTerm(const CONTROL_CODE &code) {
+    return Langu::xControl::terms[Langu::xManager::currentISOCode][code];
+  }
+
+  std::string Langu::ageControl::getAbbreviationsTitle() {
+    return Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode];
+  }
+
+  std::string Langu::ageControl::getToggleAvailableValuesTitle() {
+    return Langu::xControl::toggleAvailableValuesTitle[Langu::xManager::currentISOCode];
+  }
+
+  //_____________|
+  // BOOLEANIZER |
+  //_____________|
+
+  void Langu::ageBooleanizer::setTerms(
+    mt::CR_VEC_STR existingTrueTerms,
+    mt::CR_VEC_STR existingFalseTerms
+  ) {
+    Langu::xBooleanizer::object.changeTerms(
+      Langu::xManager::currentISOCode,
+      existingTrueTerms,
+      existingFalseTerms
+    );
+  }
+
+  bool Langu::ageBooleanizer::test(mt::CR_STR raw) {
+    return Langu::xBooleanizer::object.test(
+      Langu::xManager::currentISOCode, raw
+    );
+  }
+
+  mt::PAIR<mt::VEC_STR> Langu::ageBooleanizer::getTerms() {
+    return std::make_pair(
+      Langu::xBooleanizer::object.getTrueTerms(Langu::xManager::currentISOCode),
+      Langu::xBooleanizer::object.getFalseTerms(Langu::xManager::currentISOCode)
+    );
+  }
+
+  //_________|
+  // COMMAND |
+  //_________|
+
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xCommand::totalTypes>>
+  Langu::xCommand::stringifiedTypes = {{"en", {
     "WORD", "NUMBER", "TOGGLE"
   }}};
 
-  bool Language::hasISOCode(mt::CR_STR existingISOCode) {
-    return mt::STRUNORMAP_FOUND<mt::ARR_STR<Language::totalMessages>>(
-      Language::messages, existingISOCode
-    );
-  }
-
-  void Language::selectISOCode(mt::CR_STR existingISOCode) {
-    if (Language::hasISOCode(existingISOCode)) {
-      Language::currentISOCode = existingISOCode;
-    }
-  }
-
-  void Language::setMessages(
-    mt::CR_STR alreadyModifyingMessage,
-    mt::CR_STR alreadySelectingMessage,
-    mt::CR_STR argumentRequiredMessage,
-    mt::CR_STR clipboardOpenFailureMessage,
-    mt::CR_STR clipboardGetFailureMessage,
-    mt::CR_STR clipboardLockFailureMessage,
-    mt::CR_STR clipboardPastedMessage,
-    mt::CR_STR forbiddenHiddenPasteMessage,
-    mt::CR_STR interruptionDialogMessage,
-    mt::CR_STR parameterAloneMessage,
-    mt::CR_STR parameterAtLeafMessage,
-    mt::CR_STR parameterAtRootMessage,
-    mt::CR_STR parameterNotFoundMessage,
-    mt::CR_STR parentStrictMessage,
-    mt::CR_STR programCanceledMessage,
-    mt::CR_STR programFailedMessage,
-    mt::CR_STR programSucceededMessage
-  ) {
-    Language::messages[Language::currentISOCode][LANGUAGE_ALREADY_MODIFYING] = alreadyModifyingMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PARENT_STRICT] = parentStrictMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedMessage;
-    Language::messages[Language::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededMessage;
-  }
-
-  void Language::printResponse(const LANGUAGE_CODE &responseCode) {
-    Console::logResponse(
-      Language::consoleCodes[responseCode],
-      Language::messages[Language::currentISOCode][responseCode]
-    );
-  }
-
-  void Language::setStringifiedCommandTypes(
+  void Langu::ageCommand::setStringifiedTypes(
     mt::CR_STR wordStringifiedType,
     mt::CR_STR numberStringifiedType,
     mt::CR_STR toggleStringifiedType
   ) {
-    Language::stringifiedCommandTypes
-    [Language::currentISOCode]
+    Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode]
     [LANGUAGE_WORD_STRINGIFIED_TYPE] = wordStringifiedType;
 
-    Language::stringifiedCommandTypes
-    [Language::currentISOCode]
+    Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode]
     [LANGUAGE_NUMBER_STRINGIFIED_TYPE] = numberStringifiedType;
 
-    Language::stringifiedCommandTypes
-    [Language::currentISOCode]
+    Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode]
     [LANGUAGE_TOGGLE_STRINGIFIED_TYPE] = toggleStringifiedType;
   }
 
-  mt::CR_STR Language::getStringifiedType(
+  std::string Langu::ageCommand::getStringifiedType(
     const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
   ) {
-    return Language::stringifiedCommandTypes
-    [Language::currentISOCode]
+    return Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode]
     [stringifiedTypeIndex];
   }
 }

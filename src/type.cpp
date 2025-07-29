@@ -99,7 +99,7 @@ namespace cli_menu {
     required = false;
 
     Result::getToggles(keyword).push_back(
-      Control::booleanizerTest(input)
+      Langu::ageBooleanizer::test(input)
     );
   }
 

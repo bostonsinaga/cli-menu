@@ -31,62 +31,157 @@ namespace cli_menu {
     LANGUAGE_TOGGLE_STRINGIFIED_TYPE
   };
 
-  class Language {
+  /**
+   * Can be obtained after testing
+   * the input string in 'Control' class.
+   */
+  enum CONTROL_CODE {
+    CONTROL_UNKNOWN,
+    CONTROL_HELP,
+    CONTROL_LIST,
+    CONTROL_ENTER,
+    CONTROL_BACK,
+    CONTROL_NEXT,
+    CONTROL_PREVIOUS,
+    CONTROL_MODIFY,
+    CONTROL_SELECT,
+    CONTROL_RESET,
+    CONTROL_VIEW,
+    CONTROL_COPY,
+    CONTROL_PASTE,
+    CONTROL_QUIT
+  };
+
+  class Langu final {
   private:
-    // messages
-    static constexpr int totalMessages = 17;
-    static mt::STRUNORMAP<mt::ARR_STR<totalMessages>> messages;
-    static CONSOLE_CODE consoleCodes[totalMessages];
+    struct xManager {
+      // default english
+      inline static std::string currentISOCode = "en";
+    };
 
-    // command stringified types
-    static constexpr int totalCommandTypes = 3;
-    static mt::STRUNORMAP<mt::ARR_STR<totalCommandTypes>> stringifiedCommandTypes;
+    struct xMessage {
+      static constexpr int totalSentences = 17;
+      static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
+      static CONSOLE_CODE consoleCodes[totalSentences];
+    };
 
-    // default english
-    inline static std::string currentISOCode = "en";
+    struct xControl {
 
-    friend class Control;
+      static constexpr int totalSymbols = 13;
+      inline static size_t maxTermLength = 16;
+      static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
+
+      static mt::STRUNORMAP_STR
+        abbreviationsTitle,
+        toggleAvailableValuesTitle;
+
+      static void limitTerm(
+        const CONTROL_CODE &code,
+        std::string &newTerm
+      );
+    };
+
+    struct xBooleanizer {
+      inline static mt_uti::Booleanizer object;
+    };
+
+    struct xCommand {
+      static constexpr int totalTypes = 3;
+      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
+    };
 
   public:
-    Language() = delete;
+    Langu() = delete;
 
-    // ask keyword existance in 'messages'
-    static bool hasISOCode(mt::CR_STR existingISOCode);
+    struct ageManager {
+      // ask keyword existance in 'messages'
+      static bool hasISOCode(mt::CR_STR existingISOCode);
 
-    // change 'currentISOCode' value
-    static void selectISOCode(mt::CR_STR existingISOCode);
+      // change 'currentISOCode' value
+      static void selectISOCode(mt::CR_STR existingISOCode);
 
-    static void setMessages(
-      mt::CR_STR alreadyModifyingMessage,
-      mt::CR_STR alreadySelectingMessage,
-      mt::CR_STR argumentRequiredMessage,
-      mt::CR_STR clipboardOpenFailureMessage,
-      mt::CR_STR clipboardGetFailureMessage,
-      mt::CR_STR clipboardLockFailureMessage,
-      mt::CR_STR clipboardPastedMessage,
-      mt::CR_STR forbiddenHiddenPasteMessage,
-      mt::CR_STR interruptionDialogMessage,
-      mt::CR_STR parameterAloneMessage,
-      mt::CR_STR parameterAtLeafMessage,
-      mt::CR_STR parameterAtRootMessage,
-      mt::CR_STR parameterNotFoundMessage,
-      mt::CR_STR parentStrictMessage,
-      mt::CR_STR programCanceledMessage,
-      mt::CR_STR programFailedMessage,
-      mt::CR_STR programSucceededMessage
-    );
+      // sync 'currentISOCode' with 'selectISOCode()' manually
+      static void addISOCode(mt::CR_STR newISOCode);
+      static void removeISOCode(mt::CR_STR existingISOCode);
+    };
 
-    static void printResponse(const LANGUAGE_CODE &responseCode);
+    struct ageMessage {
 
-    static void setStringifiedCommandTypes(
-      mt::CR_STR wordStringifiedType,
-      mt::CR_STR numberStringifiedType,
-      mt::CR_STR toggleStringifiedType
-    );
+      static void setSentences(
+        mt::CR_STR alreadyModifyingSentence,
+        mt::CR_STR alreadySelectingSentence,
+        mt::CR_STR argumentRequiredSentence,
+        mt::CR_STR clipboardOpenFailureSentence,
+        mt::CR_STR clipboardGetFailureSentence,
+        mt::CR_STR clipboardLockFailureSentence,
+        mt::CR_STR clipboardPastedSentence,
+        mt::CR_STR forbiddenHiddenPasteSentence,
+        mt::CR_STR interruptionDialogSentence,
+        mt::CR_STR parameterAloneSentence,
+        mt::CR_STR parameterAtLeafSentence,
+        mt::CR_STR parameterAtRootSentence,
+        mt::CR_STR parameterNotFoundSentence,
+        mt::CR_STR parentStrictSentence,
+        mt::CR_STR programCanceledSentence,
+        mt::CR_STR programFailedSentence,
+        mt::CR_STR programSucceededSentence
+      );
 
-    static mt::CR_STR getStringifiedType(
-      const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
-    );
+      static void printResponse(
+        const LANGUAGE_CODE &responseCode
+      );
+    };
+
+    struct ageControl {
+
+      // string length is limited to 'maxTermLength'
+      static void setTerms(
+        std::string helpTerm,
+        std::string listTerm,
+        std::string enterTerm,
+        std::string backTerm,
+        std::string nextTerm,
+        std::string previousTerm,
+        std::string modifyTerm,
+        std::string selectTerm,
+        std::string resetTerm,
+        std::string viewTerm,
+        std::string copyTerm,
+        std::string pasteTerm,
+        std::string quitTerm
+      );
+
+      static void setAbbreviationsTitle(mt::CR_STR title);
+      static void setToggleAvailableValuesTitle(mt::CR_STR title);
+
+      static std::string getTerm(const CONTROL_CODE &code);
+      static std::string getAbbreviationsTitle();
+      static std::string getToggleAvailableValuesTitle();
+    };
+
+    struct ageBooleanizer {
+
+      static void setTerms(
+        mt::CR_VEC_STR existingTrueTerms,
+        mt::CR_VEC_STR existingFalseTerms
+      );
+
+      static bool test(mt::CR_STR raw);
+      static mt::PAIR<mt::VEC_STR> getTerms();
+    };
+
+    struct ageCommand {
+
+      static void setStringifiedTypes(
+        mt::CR_STR wordStringifiedType,
+        mt::CR_STR numberStringifiedType,
+        mt::CR_STR toggleStringifiedType
+      );
+
+      static std::string getStringifiedType(
+        const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
+      );
+    };
   };
 }
 

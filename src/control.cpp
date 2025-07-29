@@ -5,17 +5,6 @@
 
 namespace cli_menu {
 
-  /** Unordered Maps with English Preset */
-
-  mt::STRUNORMAP_STR
-    Control::abbreviationsTitle = {{"en", "Controller List"}},
-    Control::toggleAvailableValuesTitle = {{"en", "Boolean Available Values"}};
-
-  mt::STRUNORMAP<mt::ARR_STR<Control::totalSymbols>> Control::terms = {{"en", {
-    "help", "list", "enter", "back", "next", "previous", "modify",
-    "select", "reset", "view", "copy", "paste", "quit"
-  }}};
-
   /** Controllers Test */
 
   CONTROL_CODE Control::whitespacesCheck(mt::CR_STR str) {
@@ -33,7 +22,7 @@ namespace cli_menu {
 
     // find a match with pattern ' abc123 \t'
     for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < totalSymbols; j++) {
+      for (int j = 0; j < Control::totalSymbols; j++) {
 
         if (input == symbols[j][i]) {
           sharedEnum = static_cast<CONTROL_CODE>(j+1);
@@ -100,16 +89,16 @@ namespace cli_menu {
   void Control::printAbbreviations() {
 
     Console::logItalicString(
-      abbreviationsTitle[Language::currentISOCode] + ":\n",
+      Langu::ageControl::getAbbreviationsTitle() + ":\n",
       Console::messageColors[CONSOLE_HINT_1]
     );
 
     size_t leastMaxTermLength = 0;
 
     // find the maximum term length at even indices
-    for (int i = 0; i < totalSymbols; i++) {
+    for (int i = 0; i < Control::totalSymbols; i++) {
 
-      size_t curlen = terms[Language::currentISOCode][i].length();
+      size_t curlen = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i)).length();
 
       if (i % 2 == 0 && curlen > leastMaxTermLength) {
         leastMaxTermLength = curlen;
@@ -117,8 +106,8 @@ namespace cli_menu {
     }
 
     // display terms with 2 columns
-    for (int i = 0; i < totalSymbols; i++) {
-      std::string curterm = terms[Language::currentISOCode][i];
+    for (int i = 0; i < Control::totalSymbols; i++) {
+      std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
 
       // even is followed by spaces, uneven is followed by newline
       Console::logString(
@@ -134,17 +123,16 @@ namespace cli_menu {
   void Control::printToggleAvailableValues() {
 
     Console::logItalicString(
-      toggleAvailableValuesTitle[Language::currentISOCode] + ":\n  ",
+      Langu::ageControl::getToggleAvailableValuesTitle() + ":\n  ",
       Console::messageColors[CONSOLE_HINT_1]
     );
 
-    mt::VEC_STR trueTerms = booleanizer.getTrueTerms(Language::currentISOCode);
-    mt::VEC_STR falseTerms = booleanizer.getFalseTerms(Language::currentISOCode);
+    mt::CR_PAIR<mt::VEC_STR> boolTerms = Langu::ageBooleanizer::getTerms();
 
     // true terms
-    for (int i = 0; i < trueTerms.size(); i++) {
+    for (int i = 0; i < boolTerms.first.size(); i++) {
       Console::logString(
-        trueTerms[i] + ", ",
+        boolTerms.first[i] + ", ",
         Console::messageColors[CONSOLE_HINT_2]
       );
     }
@@ -156,9 +144,9 @@ namespace cli_menu {
     );
 
     // false terms
-    for (int i = 0; i < falseTerms.size(); i++) {
+    for (int i = 0; i < boolTerms.second.size(); i++) {
       Console::logString(
-        falseTerms[i] + ", ",
+        boolTerms.second[i] + ", ",
         Console::messageColors[CONSOLE_HINT_2]
       );
     }
@@ -167,87 +155,6 @@ namespace cli_menu {
     Console::logString(
       "n == 0\n\n",
       Console::messageColors[CONSOLE_HINT_2]
-    );
-  }
-
-  /** Multilingual Features */
-
-  void Control::addISOCode(mt::CR_STR newISOCode) {
-    Language::messages[newISOCode] = {};
-    terms[newISOCode] = {};
-    booleanizer.addTerms(newISOCode, {}, {});
-  }
-
-  void Control::removeISOCode(mt::CR_STR existingISOCode) {
-    Language::messages.erase(existingISOCode);
-    terms.erase(existingISOCode);
-    booleanizer.removeTerms(existingISOCode);
-  }
-
-  void Control::setAbbreviationsTitle(mt::CR_STR title) {
-    abbreviationsTitle[Language::currentISOCode] = title;
-  }
-
-  void Control::setToggleAvailableValuesTitle(mt::CR_STR title) {
-    toggleAvailableValuesTitle[Language::currentISOCode] = title;
-  }
-
-  void Control::limitTerm(
-    const CONTROL_CODE &code,
-    std::string &newTerm
-  ) {
-    if (newTerm.length() > Control::maxTermLength) {
-      newTerm = newTerm.substr(0, Control::maxTermLength - 2);
-      newTerm += "..";
-    }
-
-    terms[Language::currentISOCode][code] = newTerm;
-  }
-
-  void Control::setTerms(
-    std::string helpTerm,
-    std::string listTerm,
-    std::string enterTerm,
-    std::string backTerm,
-    std::string nextTerm,
-    std::string previousTerm,
-    std::string modifyTerm,
-    std::string selectTerm,
-    std::string resetTerm,
-    std::string viewTerm,
-    std::string copyTerm,
-    std::string pasteTerm,
-    std::string quitTerm
-  ) {
-    Control::limitTerm(CONTROL_HELP, helpTerm);
-    Control::limitTerm(CONTROL_LIST, listTerm);
-    Control::limitTerm(CONTROL_ENTER, enterTerm);
-    Control::limitTerm(CONTROL_BACK, backTerm);
-    Control::limitTerm(CONTROL_NEXT, nextTerm);
-    Control::limitTerm(CONTROL_PREVIOUS, previousTerm);
-    Control::limitTerm(CONTROL_MODIFY, modifyTerm);
-    Control::limitTerm(CONTROL_SELECT, selectTerm);
-    Control::limitTerm(CONTROL_RESET, resetTerm);
-    Control::limitTerm(CONTROL_VIEW, viewTerm);
-    Control::limitTerm(CONTROL_COPY, copyTerm);
-    Control::limitTerm(CONTROL_PASTE, pasteTerm);
-    Control::limitTerm(CONTROL_QUIT, quitTerm);
-  }
-
-  void Control::setBooleanizerTerms(
-    mt::CR_VEC_STR existingTrueTerms,
-    mt::CR_VEC_STR existingFalseTerms
-  ) {
-    booleanizer.changeTerms(
-      Language::currentISOCode,
-      existingTrueTerms,
-      existingFalseTerms
-    );
-  }
-
-  bool Control::booleanizerTest(mt::CR_STR raw) {
-    return booleanizer.test(
-      Language::currentISOCode, raw
     );
   }
 
