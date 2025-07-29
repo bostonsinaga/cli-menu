@@ -5,37 +5,86 @@
 
 namespace cli_menu {
 
-  void Result::addWord(
-    mt::CR_STR keyword,
-    mt::CR_STR input
+  bool Result::hasWords(mt::CR_STR keyword) {
+    return mt::STRUNORMAP_FOUND<mt::VEC_STR>(words, keyword);
+  }
+
+  bool Result::hasNumbers(mt::CR_STR keyword) {
+    return mt::STRUNORMAP_FOUND<mt::VEC_LD>(numbers, keyword);
+  }
+
+  bool Result::hasToggles(mt::CR_STR keyword) {
+    return mt::STRUNORMAP_FOUND<mt::VEC_BOL>(toggles, keyword);
+  }
+
+  void Result::addWords(
+    mt::CR_STR keyword, mt::CR_STR input
   ) {
-    words[keyword].push_back(input);
+    if (hasWords(keyword)) {
+      words[keyword].push_back(input);
+    }
   }
 
-  void Result::addNumber(
-    mt::CR_STR keyword,
-    mt::CR_LD input
+  void Result::addNumbers(
+    mt::CR_STR keyword, mt::CR_LD input
   ) {
-    numbers[keyword].push_back(input);
+    if (hasNumbers(keyword)) {
+      numbers[keyword].push_back(input);
+    }
   }
 
-  void Result::addToggle(
-    mt::CR_STR keyword,
-    mt::CR_BOL input
+  void Result::addToggles(
+    mt::CR_STR keyword, mt::CR_BOL input
   ) {
-    toggles[keyword].push_back(input);
+    if (hasToggles(keyword)) {
+      toggles[keyword].push_back(input);
+    }
   }
 
-  void Result::removeWord(mt::CR_STR keyword) {
-    words.erase(keyword);
+  void Result::removeWords(mt::CR_STR keyword) {
+    if (hasWords(keyword)) {
+      words.erase(keyword);
+    }
   }
 
-  void Result::removeNumber(mt::CR_STR keyword) {
-    numbers.erase(keyword);
+  void Result::removeNumbers(mt::CR_STR keyword) {
+    if (hasNumbers(keyword)) {
+      numbers.erase(keyword);
+    }
   }
 
-  void Result::removeToggle(mt::CR_STR keyword) {
-    toggles.erase(keyword);
+  void Result::removeToggles(mt::CR_STR keyword) {
+    if (hasToggles(keyword)) {
+      toggles.erase(keyword);
+    }
+  }
+
+  mt::VEC_STR &Result::getWords(mt::CR_STR keyword) {
+    if (hasWords(keyword)) {
+      return words[keyword];
+    }
+    return wordsGarbage;
+  }
+
+  mt::VEC_LD &Result::getNumbers(mt::CR_STR keyword) {
+    if (hasNumbers(keyword)) {
+      return numbers[keyword];
+    }
+    return numbersGarbage;
+  }
+
+  mt::VEC_BOL &Result::getToggles(mt::CR_STR keyword) {
+    if (hasToggles(keyword)) {
+      return toggles[keyword];
+    }
+    return togglesGarbage;
+  }
+
+  std::string &Result::getUltimate(mt::CR_STR keyword) {
+    if (mt::STRUNORMAP_STR_FOUND(ultimate, keyword)) {
+      return ultimate[keyword];
+    }
+    return ultimateGarbage;
   }
 
   void Result::printInputs() {
