@@ -55,6 +55,31 @@ namespace cli_menu {
     return pasted;
   }
 
+  void Clipboard::copyText(mt::CR_STR text) {
+    // activate clipboard
+    if (!OpenClipboard(nullptr)) return;
+
+    // empty previous data in clipboard
+    EmptyClipboard();
+
+    // allocate global memory for text
+    HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+    if (!hGlob) {
+      CloseClipboard();
+      return;
+    }
+
+    // copy text to memory
+    memcpy(GlobalLock(hGlob), text.c_str(), text.size() + 1);
+    GlobalUnlock(hGlob);
+
+    // set data to clipboard with text format
+    SetClipboardData(CF_TEXT, hGlob);
+
+    // done with clipboard
+    CloseClipboard();
+  }
+
   mt::VEC_LD Clipboard::pasteNumbers() {
     return mt_uti::Scanner::parseNumbers<mt::LD>(pasteText());
   }

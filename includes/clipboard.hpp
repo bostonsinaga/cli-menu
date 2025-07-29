@@ -17,6 +17,12 @@ namespace cli_menu {
   public:
     Clipboard() = delete;
 
+    /**
+     * Copy functionality is only supported for string data.
+     * The content added to the clipboard is considered the final output.
+     */
+    void copyText(mt::CR_STR text);
+
     static std::string pasteText();
     static mt::VEC_LD pasteNumbers();
     static mt::VEC_BOL pasteConditions();
