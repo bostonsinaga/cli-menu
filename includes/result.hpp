@@ -23,7 +23,7 @@ namespace cli_menu {
     inline static mt::STRUNORMAP<mt::VEC_LD> numbers;
     inline static mt::STRUNORMAP<mt::VEC_BOL> toggles;
 
-    // 'Command' callback generated value
+    // better set inside the 'Command' callback
     inline static mt::STRUNORMAP_STR ultimate;
 
     // return these when getters are given an unknown keyword
