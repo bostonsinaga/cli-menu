@@ -91,17 +91,17 @@ namespace cli_menu {
     std::cout << std::endl;
 
     printType<std::string>(
-      Langu::ageCommand::getStringifiedType(LANGUAGE_WORD_STRINGIFIED_TYPE),
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
       words
     );
 
     printType<mt::LD>(
-      Langu::ageCommand::getStringifiedType(LANGUAGE_NUMBER_STRINGIFIED_TYPE),
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
       numbers
     );
 
     printType<bool>(
-      Langu::ageCommand::getStringifiedType(LANGUAGE_TOGGLE_STRINGIFIED_TYPE),
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
       toggles
     );
   }

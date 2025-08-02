@@ -17,7 +17,7 @@ namespace cli_menu {
     callback_in
   ) {
     hyphens = "-";
-    stringifiedTypeIndex = LANGUAGE_WORD_STRINGIFIED_TYPE;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
   }
 
   void Word::clipboardPaste() {
@@ -46,7 +46,7 @@ namespace cli_menu {
     callback_in
   ) {
     hyphens = "-";
-    stringifiedTypeIndex = LANGUAGE_NUMBER_STRINGIFIED_TYPE;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
   }
 
   void Number::clipboardPaste() {
@@ -83,7 +83,7 @@ namespace cli_menu {
     callback_in
   ) {
     hyphens = "--";
-    stringifiedTypeIndex = LANGUAGE_TOGGLE_STRINGIFIED_TYPE;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;
   }
 
   void Toggle::clipboardPaste() {
