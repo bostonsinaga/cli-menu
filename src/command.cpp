@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__COMMAND_CPP__
 #define __CLI_MENU__COMMAND_CPP__
 
-#include <csignal>
 #include "command.hpp"
 
 namespace cli_menu {
@@ -437,38 +436,6 @@ namespace cli_menu {
     );
 
     return found;
-  }
-
-  void Command::run(mt::CR_INT argc, char *argv[]) {
-
-    // register signal handler for Ctrl+C (SIGINT)
-    std::signal(SIGINT, Control::setInterruptedCtrlC);
-
-    // in case this method is called more than once
-    Command::raws.clear();
-
-    // skip the first 'argv' which is unpredictable executable filename
-    for (int i = argc - 1; i > 0; i--) {
-      Command::raws.push_back(argv[i]);
-    }
-
-    // start recursion
-    COMMAND_CODE commandCode = match();
-
-    switch (commandCode) {
-      case COMMAND_FAILED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_FAILED);
-      break;}
-      case COMMAND_SUCCEEDED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
-      break;}
-      case COMMAND_CANCELED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_CANCELED);
-      break;}
-      default: {
-        // COMMAND_ONGOING, COMMAND_REQUIRED
-      }
-    }
   }
 }
 

@@ -30,23 +30,11 @@ namespace cli_menu {
     // return false to stop the program 
     COMMAND_CALLBACK callback = []()->bool { return true; };
 
-    /**
-     * Reversed string vector.
-     * Accessed from behind and immediately 'pop_back()'.
-     */
-    inline static mt::VEC_STR raws = {};
-
     // prohibit controllers
     inline static bool interruptionDialogued = false;
 
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
-
-    /**
-     * Entry point to dialog interactions.
-     * The 'raws' only expected as keywords or arguments.
-     */
-    COMMAND_CODE match();
 
     // dialog interactions (extended runtime input)
     COMMAND_CODE dialog();
@@ -69,13 +57,25 @@ namespace cli_menu {
   protected:
     bool required = false;
     std::string hyphens, keyword;
-    LANGUAGE_COMMAND_STRINGIFIED_TYPE stringifiedTypeIndex;
+    STRINGIFIED_TYPE_COMMAND_CODE stringifiedTypeIndex;
+
+    /**
+     * Reversed string vector.
+     * Accessed from behind and immediately 'pop_back()'.
+     */
+    inline static mt::VEC_STR raws = {};
 
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       const COMMAND_CALLBACK &callback_in
     );
+
+    /**
+     * Entry point to dialog interactions.
+     * The 'raws' only expected as keywords or arguments.
+     */
+    COMMAND_CODE match();
 
     // better called after callback call
     void clipboardCopy() {
@@ -134,13 +134,6 @@ namespace cli_menu {
      * to be able to call the 'callCallback'.
      */
     void makeStrict() { strict = true; }
-
-    /**
-     * Start match and dialog.
-     * This will not be deleted automatically.
-     * Delete it manually by calling 'destroy'.
-     */
-    void run(mt::CR_INT argc, char *argv[]);
   };
 }
 
