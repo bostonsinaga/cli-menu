@@ -25,10 +25,10 @@ namespace cli_menu {
     LANGUAGE_PROGRAM_SUCCEEDED
   };
 
-  enum LANGUAGE_COMMAND_STRINGIFIED_TYPE {
-    LANGUAGE_WORD_STRINGIFIED_TYPE,
-    LANGUAGE_NUMBER_STRINGIFIED_TYPE,
-    LANGUAGE_TOGGLE_STRINGIFIED_TYPE
+  enum STRINGIFIED_TYPE_COMMAND_CODE {
+    STRINGIFIED_TYPE_WORD,
+    STRINGIFIED_TYPE_NUMBER,
+    STRINGIFIED_TYPE_TOGGLE
   };
 
   /**
@@ -50,6 +50,12 @@ namespace cli_menu {
     CONTROL_COPY,
     CONTROL_PASTE,
     CONTROL_QUIT
+  };
+
+  enum PROGRAM_LABEL_CODE {
+    PROGRAM_LABEL_VERSION,
+    PROGRAM_LABEL_AUTHOR,
+    PROGRAM_LABEL_LINK
   };
 
   class Langu final {
@@ -88,6 +94,11 @@ namespace cli_menu {
     struct xCommand {
       static constexpr int totalTypes = 3;
       static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
+    };
+
+    struct xProgram {
+      static constexpr int totalTypes = 3;
+      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> labels;
     };
 
   public:
@@ -179,7 +190,20 @@ namespace cli_menu {
       );
 
       static std::string getStringifiedType(
-        const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
+        const STRINGIFIED_TYPE_COMMAND_CODE &code
+      );
+    };
+
+    struct ageProgram {
+
+      static void setLabels(
+        mt::CR_STR versionName,
+        mt::CR_STR authorName,
+        mt::CR_STR linkName
+      );
+
+      static std::string getLabel(
+        const PROGRAM_LABEL_CODE &code
       );
     };
   };

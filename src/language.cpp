@@ -28,6 +28,7 @@ namespace cli_menu {
     Langu::xControl::toggleAvailableValuesTitle[newISOCode] = {};
     Langu::xBooleanizer::object.addTerms(newISOCode, {}, {});
     Langu::xCommand::stringifiedTypes[newISOCode] = {};
+    Langu::xProgram::labels[newISOCode] = {};
   }
 
   void Langu::ageManager::removeISOCode(mt::CR_STR existingISOCode) {
@@ -37,6 +38,7 @@ namespace cli_menu {
     Langu::xControl::toggleAvailableValuesTitle.erase(existingISOCode);
     Langu::xBooleanizer::object.removeTerms(existingISOCode);
     Langu::xCommand::stringifiedTypes.erase(existingISOCode);
+    Langu::xProgram::labels.erase(existingISOCode);
   }
 
   //_________|
@@ -281,23 +283,56 @@ namespace cli_menu {
   ) {
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [LANGUAGE_WORD_STRINGIFIED_TYPE] = wordStringifiedType;
+    [STRINGIFIED_TYPE_WORD] = wordStringifiedType;
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [LANGUAGE_NUMBER_STRINGIFIED_TYPE] = numberStringifiedType;
+    [STRINGIFIED_TYPE_NUMBER] = numberStringifiedType;
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [LANGUAGE_TOGGLE_STRINGIFIED_TYPE] = toggleStringifiedType;
+    [STRINGIFIED_TYPE_TOGGLE] = toggleStringifiedType;
   }
 
   std::string Langu::ageCommand::getStringifiedType(
-    const LANGUAGE_COMMAND_STRINGIFIED_TYPE &stringifiedTypeIndex
+    const STRINGIFIED_TYPE_COMMAND_CODE &code
   ) {
     return Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode][code];
+  }
+
+  //_________|
+  // PROGRAM |
+  //_________|
+
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xProgram::totalTypes>>
+  Langu::xProgram::labels = {{"en", {
+    "Version", "Author", "Link"
+  }}};
+
+  void Langu::ageProgram::setLabels(
+    mt::CR_STR versionName,
+    mt::CR_STR authorName,
+    mt::CR_STR linkName
+  ) {
+    Langu::xProgram::labels
     [Langu::xManager::currentISOCode]
-    [stringifiedTypeIndex];
+    [PROGRAM_LABEL_VERSION] = versionName;
+
+    Langu::xProgram::labels
+    [Langu::xManager::currentISOCode]
+    [PROGRAM_LABEL_AUTHOR] = authorName;
+
+    Langu::xProgram::labels
+    [Langu::xManager::currentISOCode]
+    [PROGRAM_LABEL_LINK] = linkName;
+  }
+
+  std::string Langu::ageProgram::getLabel(
+    const PROGRAM_LABEL_CODE &code
+  ) {
+    return Langu::xProgram::labels
+    [Langu::xManager::currentISOCode][code];
   }
 }
 
