@@ -5,16 +5,67 @@
 
 namespace cli_menu {
 
+  Creator::Creator(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in,
+    const COMMAND_CALLBACK &callback_in
+  ) : Command(
+    keyword_in, description_in, callback_in
+  ) {}
+
+  Word *Creator::createWord(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in,
+    const COMMAND_CALLBACK &callback_in
+  ) {
+    Word *word = new Word(
+      keyword_in,
+      description_in,
+      callback_in
+    );
+
+    addChild(word);
+    return word;
+  }
+
+  Number *Creator::createNumber(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in,
+    const COMMAND_CALLBACK &callback_in
+  ) {
+    Number *number = new Number(
+      keyword_in,
+      description_in,
+      callback_in
+    );
+
+    addChild(number);
+    return number;
+  }
+
+  Toggle *Creator::createToggle(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in,
+    const COMMAND_CALLBACK &callback_in
+  ) {
+    Toggle *toggle = new Toggle(
+      keyword_in,
+      description_in,
+      callback_in
+    );
+
+    addChild(toggle);
+    return toggle;
+  }
+
   /** WORD */
 
   Word::Word(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     const COMMAND_CALLBACK &callback_in
-  ) : Command::Command(
-    keyword_in,
-    description_in,
-    callback_in
+  ) : Creator (
+    keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
@@ -40,10 +91,8 @@ namespace cli_menu {
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     const COMMAND_CALLBACK &callback_in
-  ) : Command::Command(
-    keyword_in,
-    description_in,
-    callback_in
+  ) : Creator (
+    keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
@@ -77,10 +126,8 @@ namespace cli_menu {
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     const COMMAND_CALLBACK &callback_in
-  ) : Command::Command(
-    keyword_in,
-    description_in,
-    callback_in
+  ) : Creator (
+    keyword_in, description_in, callback_in
   ) {
     hyphens = "--";
     stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;

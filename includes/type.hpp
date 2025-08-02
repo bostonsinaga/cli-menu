@@ -5,58 +5,100 @@
 
 namespace cli_menu {
 
+  class Word;
+  class Number;
+  class Toggle;
+
+  /** CREATOR */
+
+  class Creator : public Command {
+  protected:
+    Creator(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in,
+      const COMMAND_CALLBACK &callback_in
+    );
+
+  public:
+    Creator() = delete;
+
+    Word *createWord(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in,
+      const COMMAND_CALLBACK &callback_in
+    );
+
+    Number *createNumber(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in,
+      const COMMAND_CALLBACK &callback_in
+    );
+
+    Toggle *createToggle(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in,
+      const COMMAND_CALLBACK &callback_in
+    );
+  };
+
   /** WORD */
 
-  class Word : public Command {
-  private:
+  class Word : public Creator {
+  protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
-
-  public:
-    Word() = delete;
 
     Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       const COMMAND_CALLBACK &callback_in
     );
+
+    friend class Creator;
+
+  public:
+    Word() = delete;
   };
 
   /** NUMBER */
 
-  class Number : public Command {
-  private:
+  class Number : public Creator {
+  protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
-
-  public:
-    Number() = delete;
 
     Number(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       const COMMAND_CALLBACK &callback_in
     );
+
+    friend class Creator;
+
+  public:
+    Number() = delete;
   };
 
   /** TOGGLE */
 
-  class Toggle : public Command {
-  private:
+  class Toggle : public Creator {
+  protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
-
-  public:
-    Toggle() = delete;
 
     Toggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       const COMMAND_CALLBACK &callback_in
     );
+
+    friend class Creator;
+
+  public:
+    Toggle() = delete;
   };
 }
 

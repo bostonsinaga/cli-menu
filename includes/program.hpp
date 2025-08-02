@@ -23,10 +23,20 @@ namespace cli_menu {
 
   template <CommandType T>
   class Program : public T {
+  private:
+    Program(
+      mt::CR_STR keyword,
+      mt::CR_STR description,
+      const Version &version,
+      mt::CR_STR author,
+      mt::CR_STR url,
+      const COMMAND_CALLBACK &callback
+    );
+
   public:
     Program() = delete;
 
-    Program(
+    static Program *create(
       mt::CR_STR keyword,
       mt::CR_STR description,
       const Version &version,

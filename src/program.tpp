@@ -20,13 +20,26 @@ namespace cli_menu {
     Langu::ageProgram::getLabel(PROGRAM_LABEL_AUTHOR) + ": " + author + '\n' +
     Langu::ageProgram::getLabel(PROGRAM_LABEL_LINK) + ": " + url,
     callback
-  ) {}
+  ) {
+    Command::required = true;
+  }
 
-  /**
-   * Start match and dialog.
-   * This will not be deleted automatically.
-   * Delete it manually by calling 'destroy'.
-   */
+  template <CommandType T>
+  Program<T> *Program<T>::create(
+    mt::CR_STR keyword,
+    mt::CR_STR description,
+    const Version &version,
+    mt::CR_STR author,
+    mt::CR_STR url,
+    const COMMAND_CALLBACK &callback
+  ) {
+    return new Program<T>(
+      keyword, description,
+      version, author, url,
+      callback
+    );
+  }
+
   template <CommandType T>
   void Program<T>::run(mt::CR_INT argc, char *argv[]) {
 

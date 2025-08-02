@@ -2,9 +2,12 @@
 
 int main(int argc, char *argv[]) {
 
-  cm::Toggle *organism = new cm::Toggle(
+  cm::Program<cm::Toggle> *organism = cm::Program<cm::Toggle>::create(
     "organism",
     "Describe your lovely animals or plants",
+    cm::Version(1, 0, 0),
+    "Boston Sinaga",
+    "https://github.com/bostonsinaga/cli-menu",
     []()->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Organism"
@@ -13,10 +16,7 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  organism->makeRequired();
-  organism->makeStrict();
-
-  cm::Toggle *animals = new cm::Toggle(
+  cm::Toggle *animals = organism->createToggle(
     "animals",
     "Oxygen consumers",
     []()->bool {
@@ -27,10 +27,7 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  animals->makeRequired();
-  organism->addChild(animals);
-
-  cm::Toggle *plants = new cm::Toggle(
+  cm::Toggle *plants = organism->createToggle(
     "plants",
     "Carbon dioxide consumers",
     []()->bool {
@@ -41,10 +38,10 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  plants->makeRequired();
-  organism->addChild(plants);
-
   // ultimate
+  organism->makeStrict();
+  animals->makeRequired();
+  plants->makeRequired();
   organism->run(argc, argv);
   organism->destroy();
 
