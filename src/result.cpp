@@ -59,28 +59,28 @@ namespace cli_menu {
     }
   }
 
-  mt::VEC_STR &Result::getWords(mt::CR_STR keyword) {
+  mt::VEC_STR &Result::useWords(mt::CR_STR keyword) {
     if (hasWords(keyword)) {
       return words[keyword];
     }
     return wordsGarbage;
   }
 
-  mt::VEC_LD &Result::getNumbers(mt::CR_STR keyword) {
+  mt::VEC_LD &Result::useNumbers(mt::CR_STR keyword) {
     if (hasNumbers(keyword)) {
       return numbers[keyword];
     }
     return numbersGarbage;
   }
 
-  mt::VEC_BOL &Result::getToggles(mt::CR_STR keyword) {
+  mt::VEC_BOL &Result::useToggles(mt::CR_STR keyword) {
     if (hasToggles(keyword)) {
       return toggles[keyword];
     }
     return togglesGarbage;
   }
 
-  std::string &Result::getUltimate(mt::CR_STR keyword) {
+  std::string &Result::useUltimate(mt::CR_STR keyword) {
     if (mt::STRUNORMAP_STR_FOUND(ultimate, keyword)) {
       return ultimate[keyword];
     }

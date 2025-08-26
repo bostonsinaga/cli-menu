@@ -52,11 +52,11 @@ namespace cli_menu {
 
     /** Direct access to 'std::unordered_map' values */
 
-    static mt::VEC_STR &getWords(mt::CR_STR keyword);
-    static mt::VEC_LD &getNumbers(mt::CR_STR keyword);
-    static mt::VEC_BOL &getToggles(mt::CR_STR keyword);
+    static mt::VEC_STR &useWords(mt::CR_STR keyword);
+    static mt::VEC_LD &useNumbers(mt::CR_STR keyword);
+    static mt::VEC_BOL &useToggles(mt::CR_STR keyword);
 
-    static std::string &getUltimate(mt::CR_STR keyword);
+    static std::string &useUltimate(mt::CR_STR keyword);
 
     // display all arguments
     static void printInputs();
