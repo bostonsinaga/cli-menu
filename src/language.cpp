@@ -305,33 +305,72 @@ namespace cli_menu {
   // PROGRAM |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xProgram::totalTypes>>
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xProgram::totalLabels>>
   Langu::xProgram::labels = {{"en", {
     "Version", "Author", "Link"
   }}};
 
   void Langu::ageProgram::setLabels(
-    mt::CR_STR versionName,
-    mt::CR_STR authorName,
-    mt::CR_STR linkName
+    mt::CR_STR versionLabel,
+    mt::CR_STR authorLabel,
+    mt::CR_STR linkLabel
   ) {
     Langu::xProgram::labels
     [Langu::xManager::currentISOCode]
-    [PROGRAM_LABEL_VERSION] = versionName;
+    [PROGRAM_LABEL_VERSION] = versionLabel;
 
     Langu::xProgram::labels
     [Langu::xManager::currentISOCode]
-    [PROGRAM_LABEL_AUTHOR] = authorName;
+    [PROGRAM_LABEL_AUTHOR] = authorLabel;
 
     Langu::xProgram::labels
     [Langu::xManager::currentISOCode]
-    [PROGRAM_LABEL_LINK] = linkName;
+    [PROGRAM_LABEL_LINK] = linkLabel;
   }
 
   std::string Langu::ageProgram::getLabel(
     const PROGRAM_LABEL_CODE &code
   ) {
     return Langu::xProgram::labels
+    [Langu::xManager::currentISOCode][code];
+  }
+
+  //________|
+  // PRESET |
+  //________|
+
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xPreset::totalKeywords>>
+  Langu::xPreset::keywords = {{"en", {
+    "in", "out", "help", "list"
+  }}};
+
+  void Lange::agePreset::setKeywords(
+    mt::CR_STR inKeyword,
+    mt::CR_STR outKeyword,
+    mt::CR_STR helpKeyword,
+    mt::CR_STR listKeyword
+  ) {
+    Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_IN] = inKeyword;
+
+    Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_OUT] = outKeyword;
+
+    Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_HELP] = helpKeyword;
+
+    Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_LIST] = listKeyword;
+  }
+
+  std::string Lange::agePreset::getKeyword(
+    const PRESET_KEYWORD_CODE &code
+  ) {
+    return Langu::xPreset::keywords
     [Langu::xManager::currentISOCode][code];
   }
 }

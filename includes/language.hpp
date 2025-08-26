@@ -58,6 +58,13 @@ namespace cli_menu {
     PROGRAM_LABEL_LINK
   };
 
+  enum PRESET_KEYWORD_CODE {
+    PRESET_KEYWORD_IN,
+    PRESET_KEYWORD_OUT,
+    PRESET_KEYWORD_HELP,
+    PRESET_KEYWORD_LIST
+  };
+
   class Langu final {
   private:
     struct xManager {
@@ -93,12 +100,17 @@ namespace cli_menu {
 
     struct xCommand {
       static constexpr int totalTypes = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
+      static mt::STRUNORMAP<mt::ARR_STR<total>> stringifiedTypes;
     };
 
     struct xProgram {
-      static constexpr int totalTypes = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> labels;
+      static constexpr int totalLabels = 3;
+      static mt::STRUNORMAP<mt::ARR_STR<total>> labels;
+    };
+
+    struct xPreset {
+      static constexpr int totalKeywords = 3;
+      static mt::STRUNORMAP<mt::ARR_STR<total>> keywords;
     };
 
   public:
@@ -197,13 +209,27 @@ namespace cli_menu {
     struct ageProgram {
 
       static void setLabels(
-        mt::CR_STR versionName,
-        mt::CR_STR authorName,
-        mt::CR_STR linkName
+        mt::CR_STR versionLabel,
+        mt::CR_STR authorLabel,
+        mt::CR_STR linkLabel
       );
 
       static std::string getLabel(
         const PROGRAM_LABEL_CODE &code
+      );
+    };
+
+    struct agePreset {
+
+      static void setKeywords(
+        mt::CR_STR inKeyword,
+        mt::CR_STR outKeyword,
+        mt::CR_STR helpKeyword,
+        mt::CR_STR listKeyword
+      );
+
+      static std::string getKeyword(
+        const PRESET_KEYWORD_CODE &code
       );
     };
   };
