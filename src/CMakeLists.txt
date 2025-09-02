@@ -7,6 +7,7 @@ set (SOURCES
   clipboard.cpp
   command.cpp
   type.cpp
+  preset.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
