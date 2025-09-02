@@ -13,6 +13,31 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {}
 
+  void Creator::replaceExistingKeyword(Command *newCommand) {
+    if (!sterilized) {
+      Creator *willDestroyed = nullptr;
+
+      if (getChildren()) getChildren()->iterate(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+
+          // find keyword
+          if (static_cast<Creator*>(node)->keyword
+            == static_cast<Creator*>(newCommand)->keyword
+          ) {
+            willDestroyed = static_cast<Creator*>(node);
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      if (willDestroyed) willDestroyed->destroy();
+      addChild(newCommand);
+    }
+  }
+
   Word *Creator::createWord(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
@@ -24,7 +49,8 @@ namespace cli_menu {
       callback_in
     );
 
-    addChild(word);
+    replaceExistingKeyword(word);
+    setPresetHelpList();
     return word;
   }
 
@@ -39,7 +65,8 @@ namespace cli_menu {
       callback_in
     );
 
-    addChild(number);
+    replaceExistingKeyword(number);
+    setPresetHelpList();
     return number;
   }
 
@@ -54,7 +81,8 @@ namespace cli_menu {
       callback_in
     );
 
-    addChild(toggle);
+    replaceExistingKeyword(toggle);
+    setPresetHelpList();
     return toggle;
   }
 
@@ -73,16 +101,16 @@ namespace cli_menu {
 
   void Word::clipboardPaste() {
     required = false;
-    Result::getWords(keyword).push_back(Clipboard::pasteText());
+    Result::useWords(keyword).push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
     required = false;
-    Result::getWords(keyword).push_back(input);
+    Result::useWords(keyword).push_back(input);
   }
 
   void Word::resetUnormap() {    
-    Result::getWords(keyword).clear();
+    Result::useWords(keyword).clear();
   }
 
   /** NUMBER */
@@ -102,7 +130,7 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::getNumbers(keyword),
+      Result::useNumbers(keyword),
       Clipboard::pasteNumbers()
     );
   }
@@ -111,13 +139,13 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::getNumbers(keyword),
+      Result::useNumbers(keyword),
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
   }
 
   void Number::resetUnormap() {
-    Result::getNumbers(keyword).clear();
+    Result::useNumbers(keyword).clear();
   }
 
   /** TOGGLE */
@@ -137,7 +165,7 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<bool>::concatCopy(
-      Result::getToggles(keyword),
+      Result::useToggles(keyword),
       Clipboard::pasteConditions()
     );
   }
@@ -145,13 +173,13 @@ namespace cli_menu {
   void Toggle::pushUnormap(mt::CR_STR input) {
     required = false;
 
-    Result::getToggles(keyword).push_back(
+    Result::useToggles(keyword).push_back(
       Langu::ageBooleanizer::test(input)
     );
   }
 
   void Toggle::resetUnormap() {
-    Result::getToggles(keyword).clear();
+    Result::useToggles(keyword).clear();
   }
 }
 

@@ -12,6 +12,15 @@ namespace cli_menu {
   /** CREATOR */
 
   class Creator : public Command {
+  private:
+    // avoid keyword duplication (will destroy the command)
+    void replaceExistingKeyword(Command *newCommand);
+
+    // add '--help' and '--list' toggles for each command
+    void setPresetHelpList();
+
+    friend class Preset;
+
   protected:
     Creator(
       mt::CR_STR keyword_in,
@@ -56,6 +65,7 @@ namespace cli_menu {
     );
 
     friend class Creator;
+    friend class Preset;
 
   public:
     Word() = delete;
@@ -76,6 +86,7 @@ namespace cli_menu {
     );
 
     friend class Creator;
+    friend class Preset;
 
   public:
     Number() = delete;
@@ -96,9 +107,14 @@ namespace cli_menu {
     );
 
     friend class Creator;
+    friend class Preset;
 
   public:
     Toggle() = delete;
+
+    static bool instantBooleanize() {
+      return true;
+    }
   };
 }
 
