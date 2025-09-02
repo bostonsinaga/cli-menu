@@ -10,6 +10,7 @@
 #include "command.hpp"
 #include "type.hpp"
 #include "program.hpp"
+#include "preset.hpp"
 
 namespace cm = cli_menu;
 
