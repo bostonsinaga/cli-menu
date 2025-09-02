@@ -42,6 +42,8 @@ int main(int argc, char *argv[]) {
   organism->makeStrict();
   animals->makeRequired();
   plants->makeRequired();
+  cm::Preset::applyFile(animals);
+  cm::Preset::applyFile(plants);
   organism->run(argc, argv);
   organism->destroy();
 
