@@ -17,6 +17,10 @@ namespace cli_menu {
     return mt::STRUNORMAP_FOUND<mt::VEC_BOL>(toggles, keyword);
   }
 
+  bool Result::hasUltimates(mt::CR_STR keyword) {
+    return mt::STRUNORMAP_FOUND<mt::VEC_STR>(ultimates, keyword);
+  }
+
   void Result::addWords(
     mt::CR_STR keyword, mt::CR_STR input
   ) {
@@ -80,11 +84,88 @@ namespace cli_menu {
     return togglesGarbage;
   }
 
-  std::string &Result::useUltimate(mt::CR_STR keyword) {
-    if (mt::STRUNORMAP_STR_FOUND(ultimate, keyword)) {
-      return ultimate[keyword];
+  mt::VEC_STR &Result::useUltimates(mt::CR_STR keyword) {
+    if (hasUltimates(keyword)) {
+      return ultimates[keyword];
     }
-    return ultimateGarbage;
+    return ultimatesGarbage;
+  }
+
+  std::string Result::getFirstWord(mt::CR_STR keyword) {
+    if (hasWords(keyword)) {
+      if (words[keyword].empty()) return "";
+      return words[keyword].front();
+    }
+    return "";
+  }
+
+  mt::LD Result::getFirstNumber(mt::CR_STR keyword) {
+    if (hasNumbers(keyword)) {
+      if (numbers[keyword].empty()) return 0;
+      return numbers[keyword].front();
+    }
+    return 0;
+  }
+
+  bool Result::getFirstToggle(mt::CR_STR keyword) {
+    if (hasToggles(keyword)) {
+      if (toggles[keyword].empty()) return "";
+      return toggles[keyword].front();
+    }
+    return "";
+  }
+
+  std::string Result::getFirstUltimate(mt::CR_STR keyword) {
+    if (hasUltimates(keyword)) {
+      if (ultimates[keyword].empty()) return "";
+      return ultimates[keyword].front();
+    }
+    return "";
+  }
+
+  std::string Result::getLastWord(mt::CR_STR keyword) {
+    if (hasWords(keyword)) {
+      if (words[keyword].empty()) return "";
+      return words[keyword].back();
+    }
+    return "";
+  }
+
+  mt::LD Result::getLastNumber(mt::CR_STR keyword) {
+    if (hasNumbers(keyword)) {
+      if (numbers[keyword].empty()) return 0;
+      return numbers[keyword].back();
+    }
+    return 0;
+  }
+
+  bool Result::getLastToggle(mt::CR_STR keyword) {
+    if (hasToggles(keyword)) {
+      if (toggles[keyword].empty()) return "";
+      return toggles[keyword].back();
+    }
+    return "";
+  }
+
+  std::string Result::getLastUltimate(mt::CR_STR keyword) {
+    if (hasUltimates(keyword)) {
+      if (ultimates[keyword].empty()) return "";
+      return ultimates[keyword].back();
+    }
+    return "";
+  }
+
+  std::string Result::concatUltimates(
+    mt::CR_STR keyword,
+    mt::CR_STR separator
+  ) {
+    std::string data;
+
+    for (mt::CR_STR str : Result::useUltimates(keyword)) {
+      data += str + separator;
+    }
+
+    return data;
   }
 
   void Result::printInputs() {

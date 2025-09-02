@@ -24,18 +24,22 @@ namespace cli_menu {
     inline static mt::STRUNORMAP<mt::VEC_BOL> toggles;
 
     // better set inside the 'Command' callback
-    inline static mt::STRUNORMAP_STR ultimate;
+    inline static mt::STRUNORMAP<mt::VEC_STR> ultimates;
 
-    // return these when getters are given an unknown keyword
+    /**
+     * Return these when direct access getters
+     * are given an unknown keyword.
+     */
     inline static mt::VEC_STR wordsGarbage;
     inline static mt::VEC_LD numbersGarbage;
     inline static mt::VEC_BOL togglesGarbage;
-    inline static std::string ultimateGarbage;
+    inline static mt::VEC_STR ultimatesGarbage;
 
     // 'std::unordered_map' existence checkers
     static bool hasWords(mt::CR_STR keyword);
     static bool hasNumbers(mt::CR_STR keyword);
     static bool hasToggles(mt::CR_STR keyword);
+    static bool hasUltimates(mt::CR_STR keyword);
 
     friend class Word;
     friend class Number;
@@ -55,8 +59,25 @@ namespace cli_menu {
     static mt::VEC_STR &useWords(mt::CR_STR keyword);
     static mt::VEC_LD &useNumbers(mt::CR_STR keyword);
     static mt::VEC_BOL &useToggles(mt::CR_STR keyword);
+    static mt::VEC_STR &useUltimates(mt::CR_STR keyword);
 
-    static std::string &useUltimate(mt::CR_STR keyword);
+    /** Get a copy of 'std::unordered_map' value */
+
+    static std::string getFirstWord(mt::CR_STR keyword);
+    static mt::LD getFirstNumber(mt::CR_STR keyword);
+    static bool getFirstToggle(mt::CR_STR keyword);
+    static std::string getFirstUltimate(mt::CR_STR keyword);
+
+    static std::string getLastWord(mt::CR_STR keyword);
+    static mt::LD getLastNumber(mt::CR_STR keyword);
+    static bool getLastToggle(mt::CR_STR keyword);
+    static std::string getLastUltimate(mt::CR_STR keyword);
+
+    // concatenate string vector into a string
+    static std::string concatUltimates(
+      mt::CR_STR keyword,
+      mt::CR_STR separator = "\n"
+    );
 
     // display all arguments
     static void printInputs();
