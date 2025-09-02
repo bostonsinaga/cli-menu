@@ -58,11 +58,11 @@ namespace cli_menu {
     PROGRAM_LABEL_LINK
   };
 
-  enum PRESET_KEYWORD_CODE {
-    PRESET_KEYWORD_IN,
-    PRESET_KEYWORD_OUT,
-    PRESET_KEYWORD_HELP,
-    PRESET_KEYWORD_LIST
+  enum PRESET_CODE {
+    PRESET_IN,
+    PRESET_OUT,
+    PRESET_HELP,
+    PRESET_LIST
   };
 
   class Langu final {
@@ -100,17 +100,17 @@ namespace cli_menu {
 
     struct xCommand {
       static constexpr int totalTypes = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<total>> stringifiedTypes;
+      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
     };
 
     struct xProgram {
       static constexpr int totalLabels = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<total>> labels;
+      static mt::STRUNORMAP<mt::ARR_STR<totalLabels>> labels;
     };
 
     struct xPreset {
-      static constexpr int totalKeywords = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<total>> keywords;
+      static constexpr int totalKeywords = 4;
+      static mt::STRUNORMAP<mt::ARR_STR<totalKeywords>> keywords, descriptions;
     };
 
   public:
@@ -228,8 +228,19 @@ namespace cli_menu {
         mt::CR_STR listKeyword
       );
 
+      static void setDescription(
+        mt::CR_STR inDescription,
+        mt::CR_STR outDescription,
+        mt::CR_STR helpDescription,
+        mt::CR_STR listDescription
+      );
+
       static std::string getKeyword(
-        const PRESET_KEYWORD_CODE &code
+        const PRESET_CODE &code
+      );
+
+      static std::string getDescription(
+        const PRESET_CODE &code
       );
     };
   };

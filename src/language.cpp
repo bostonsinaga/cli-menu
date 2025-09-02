@@ -342,9 +342,14 @@ namespace cli_menu {
   mt::STRUNORMAP<mt::ARR_STR<Langu::xPreset::totalKeywords>>
   Langu::xPreset::keywords = {{"en", {
     "in", "out", "help", "list"
+  }}},
+  Langu::xPreset::descriptions = {{"en", {
+    "Enter input filename",
+    "Enter output filename",
+    "", ""
   }}};
 
-  void Lange::agePreset::setKeywords(
+  void Langu::agePreset::setKeywords(
     mt::CR_STR inKeyword,
     mt::CR_STR outKeyword,
     mt::CR_STR helpKeyword,
@@ -352,25 +357,55 @@ namespace cli_menu {
   ) {
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_KEYWORD_IN] = inKeyword;
+    [PRESET_IN] = inKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_KEYWORD_OUT] = outKeyword;
+    [PRESET_OUT] = outKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_KEYWORD_HELP] = helpKeyword;
+    [PRESET_HELP] = helpKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_KEYWORD_LIST] = listKeyword;
+    [PRESET_LIST] = listKeyword;
   }
 
-  std::string Lange::agePreset::getKeyword(
-    const PRESET_KEYWORD_CODE &code
+  void Langu::agePreset::setDescription(
+    mt::CR_STR inDescription,
+    mt::CR_STR outDescription,
+    mt::CR_STR helpDescription,
+    mt::CR_STR listDescription
+  ) {
+    Langu::xPreset::descriptions
+    [Langu::xManager::currentISOCode]
+    [PRESET_IN] = inDescription;
+
+    Langu::xPreset::descriptions
+    [Langu::xManager::currentISOCode]
+    [PRESET_OUT] = outDescription;
+
+    Langu::xPreset::descriptions
+    [Langu::xManager::currentISOCode]
+    [PRESET_HELP] = helpDescription;
+
+    Langu::xPreset::descriptions
+    [Langu::xManager::currentISOCode]
+    [PRESET_LIST] = listDescription;
+  }
+
+  std::string Langu::agePreset::getKeyword(
+    const PRESET_CODE &code
   ) {
     return Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode][code];
+  }
+
+  std::string Langu::agePreset::getDescription(
+    const PRESET_CODE &code
+  ) {
+    return Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode][code];
   }
 }
