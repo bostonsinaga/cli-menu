@@ -437,6 +437,17 @@ namespace cli_menu {
 
     return found;
   }
+
+  void Command::sterilize(
+    mt::CR_BOL condition,
+    mt::CR_BOL willDestroy
+  ) {
+    if (condition && willDestroy && getChildren()) {
+      getChildren()->destroy();
+    }
+
+    sterilized = condition;
+  }
 }
 
 #endif // __CLI_MENU__COMMAND_CPP__

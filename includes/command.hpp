@@ -43,8 +43,7 @@ namespace cli_menu {
     COMMAND_CODE goToNeighbor(mt_ds::LinkedList* node);
     COMMAND_CODE goDown(mt::CR_STR input);
 
-    void printHelp();
-    void printList(mt::CR_BOL withHelp);
+    // an error message in dialog when switching mode / moving position
     void printInterruptionDialoguedResponse();
 
     // useful when parent is strict
@@ -55,7 +54,7 @@ namespace cli_menu {
     }
 
   protected:
-    bool required = false;
+    bool required = false, sterilized = false;
     std::string hyphens, keyword;
     STRINGIFIED_TYPE_COMMAND_CODE stringifiedTypeIndex;
 
@@ -79,12 +78,16 @@ namespace cli_menu {
 
     // better called after callback call
     void clipboardCopy() {
-      Clipboard::copyText(Result::getUltimate(keyword));
+      Clipboard::copyText(Result::concatUltimates(keyword));
     }
 
     virtual void clipboardPaste() {}
     virtual void pushUnormap(mt::CR_STR input) { required = false; }
     virtual void resetUnormap() {}
+
+    // '--help' and '--list'
+    void printHelp();
+    void printList(mt::CR_BOL withHelp);
 
   public:
     Command() = delete;
@@ -99,13 +102,13 @@ namespace cli_menu {
      */
 
     // local
-    void noDialogue() {
-      localDialogued = false;
+    void noDialogue(mt::CR_BOL condition = true) {
+      localDialogued = !condition;
     }
 
     // global
-    static void banDialogue() {
-      Command::globalDialogued = false;
+    static void banDialogue(mt::CR_BOL condition = true) {
+      Command::globalDialogued = !condition;
     }
 
     /**
@@ -114,26 +117,39 @@ namespace cli_menu {
      */
 
     // local
-    void noPropagation() {
-      localPropagation = false;
+    void noPropagation(mt::CR_BOL condition = true) {
+      localPropagation = !condition;
     }
 
     // global
-    static void banPropagation() {
-      Command::globalPropagation = false;
+    static void banPropagation(mt::CR_BOL condition = true) {
+      Command::globalPropagation = !condition;
     }
 
     /**
      * Arguments must be provided explicitly
      * to be able to call the 'callCallback'.
      */
-    void makeRequired() { required = true; }
+    void makeRequired(mt::CR_BOL condition = true) {
+      required = condition;
+    }
 
     /**
      * All the required descendants must be completed
      * to be able to call the 'callCallback'.
      */
-    void makeStrict() { strict = true; }
+    void makeStrict(mt::CR_BOL condition = true) {
+      strict = condition;
+    }
+
+    /**
+     * Set whether or not this can have children.
+     * Existing children can be deleted.
+     */
+    void sterilize(
+      mt::CR_BOL condition = true,
+      mt::CR_BOL willDestroy = false
+    );
   };
 }
 
