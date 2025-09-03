@@ -13,7 +13,13 @@ namespace cli_menu {
 
   class Creator : public Command {
   private:
-    // avoid keyword duplication (will destroy the command)
+    /**
+     * Avoid keyword duplication (will destroy the existing command
+     * if the keyword is equal to 'newCommand' keyword).
+     * 
+     * If this is 'sterilized', the 'newCommand' cannot replace
+     * the same keyword or even be added as a child.
+     */
     void replaceExistingKeyword(Command *newCommand);
 
     // add '--help' and '--list' toggles for each command
