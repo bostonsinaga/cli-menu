@@ -98,7 +98,7 @@ namespace cli_menu {
   }
 
   void Preset::applyHelp(Creator *owner) {
-    Toggle *in = new Toggle(
+    Toggle *help = new Toggle(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
       [](Command *current)->bool {
@@ -107,14 +107,14 @@ namespace cli_menu {
       }
     );
 
-    in->sterilize();
-    in->makePseudo();
-    in->makeRequired();
-    owner->replaceExistingKeyword(in);
+    owner->replaceExistingKeyword(help);
+    help->sterilize();
+    help->makePseudo();
+    help->makeRequired();
   }
 
   void Preset::applyList(Creator *owner) {
-    Toggle *out = new Toggle(
+    Toggle *list = new Toggle(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
       [](Command *current)->bool {
@@ -123,10 +123,10 @@ namespace cli_menu {
       }
     );
 
-    out->sterilize();
-    out->makePseudo();
-    out->makeRequired();
-    owner->replaceExistingKeyword(out);
+    owner->replaceExistingKeyword(list);
+    list->sterilize();
+    list->makePseudo();
+    list->makeRequired();
   }
 
   void Creator::setPresetHelpList() {
