@@ -8,7 +8,7 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    const COMMAND_CALLBACK &callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     keyword = keyword_in;
     description = description_in;
@@ -271,7 +271,9 @@ namespace cli_menu {
 
       bubble([&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->callback()) {
+        if (static_cast<Command*>(node)->callback(
+          static_cast<Command*>(node)
+        )) {
           propagatingCode = COMMAND_SUCCEEDED;
           return true;
         }
@@ -283,7 +285,7 @@ namespace cli_menu {
       return propagatingCode;
     }
     else { // not propagated
-      if (callback()) {
+      if (callback(this)) {
         return COMMAND_SUCCEEDED;
       }
 
@@ -307,64 +309,78 @@ namespace cli_menu {
   }
 
   // always in selection mode
-  COMMAND_CODE Command::goDown(mt::CR_STR input) {
+  COMMAND_CODE Command::goDown(mt::CR_STR input) {    
+    bool spaceFound = false;
 
-    if (getChildren()) {
-      bool spaceFound = false;
+    // vector refill
+    if (Command::raws.empty()) {
+      Command::raws.push_back("");
+    }
 
-      // vector refill
-      if (Command::raws.empty()) {
-        Command::raws.push_back("");
-      }
+    // split input into the string vector using spaces as delimiters
+    for (mt::CR_CH ch : input) {
 
-      // split input into the string vector using spaces as delimiters
-      for (mt::CR_CH ch : input) {
-
-        if (mt_uti::StrTools::isWhitespace(ch)) {
-          if (!spaceFound) {
-            spaceFound = true;
-            Command::raws.push_back("");
-          }
-        }
-        else {
-          spaceFound = false;
-          Command::raws.back() += ch;
+      if (mt_uti::StrTools::isWhitespace(ch)) {
+        if (!spaceFound) {
+          spaceFound = true;
+          Command::raws.push_back("");
         }
       }
+      else {
+        spaceFound = false;
+        Command::raws.back() += ch;
+      }
+    }
 
-      // reverse the string vector order
-      std::reverse(Command::raws.begin(), Command::raws.end());
+    // reverse the string vector order
+    std::reverse(Command::raws.begin(), Command::raws.end());
 
-      Command *selected = nullptr;
+    Command *selected = nullptr;
 
-      // find child by keyword possibility at back of string vector
-      getChildren()->iterate(
-        mt_ds::LinkedList::RIGHT,
-        [&](mt_ds::LinkedList *node)->bool {
+    // find child by keyword possibility at back of string vector
+    getChildren()->iterate(
+      mt_ds::LinkedList::RIGHT,
+      [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-            selected = static_cast<Command*>(node);
-            Command::raws.pop_back();
-            return false;
-          }
-
-          return true;
+        if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
+          selected = static_cast<Command*>(node);
+          Command::raws.pop_back();
+          return false;
         }
-      );
 
-      // match in dialog
-      if (selected) {
+        return true;
+      }
+    );
+
+    // match in dialog
+    if (selected) {
+      if (selected->pseudo) { // still on the current node
+        selected->callback(this);
+      }
+      else { // move to child
         COMMAND_CODE code = selected->match();
-        if (code != COMMAND_ONGOING) return code;
+
+        if (code != COMMAND_ONGOING) {
+          Command::raws.clear();
+          return code;
+        }
       }
-
+    }
+    /**
+     * The number of children is reduced by 2 for
+     * ignoring default '--help' and '--list' commands.
+     */
+    else {
       // child not found
-      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
-    }
-    else { // this is a leaf
-      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      if (numberOfChildren() - 2) {
+        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+      }
+      else { // this is a leaf
+        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      }
     }
 
+    Command::raws.clear();
     return COMMAND_ONGOING;
   }
 
@@ -391,11 +407,13 @@ namespace cli_menu {
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
-          Console::logString(
-            "  " + static_cast<Command*>(node)->keyword + " ["
-            + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
-            Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
-          );
+          if (!static_cast<Command*>(node)->pseudo) {
+            Console::logString(
+              "  " + static_cast<Command*>(node)->keyword + " ["
+              + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
+              Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
+            );
+          }
 
           return true;
         }

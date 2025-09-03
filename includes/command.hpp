@@ -12,13 +12,15 @@ namespace cli_menu {
     COMMAND_REQUIRED, COMMAND_SUCCEEDED, COMMAND_CANCELED
   };
 
-  typedef std::function<bool()> COMMAND_CALLBACK;
+  class Command;
+  typedef std::function<bool(Command*)> COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   private:
     std::string description;
 
     bool editing = true,
+      pseudo = false,
       strict = false,
       localDialogued = true,
       localPropagation = true;
@@ -28,7 +30,7 @@ namespace cli_menu {
       globalPropagation = true;
 
     // return false to stop the program 
-    COMMAND_CALLBACK callback = []()->bool { return true; };
+    COMMAND_CALLBACK callback = [](Command *current)->bool { return true; };
 
     // prohibit controllers
     inline static bool interruptionDialogued = false;
@@ -67,7 +69,7 @@ namespace cli_menu {
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     /**
@@ -82,10 +84,10 @@ namespace cli_menu {
     }
 
     virtual void clipboardPaste() {}
-    virtual void pushUnormap(mt::CR_STR input) { required = false; }
+    virtual void pushUnormap(mt::CR_STR input) {}
     virtual void resetUnormap() {}
 
-    // '--help' and '--list'
+    // display help with list or just list
     void printHelp();
     void printList(mt::CR_BOL withHelp);
 
@@ -124,6 +126,15 @@ namespace cli_menu {
     // global
     static void banPropagation(mt::CR_BOL condition = true) {
       Command::globalPropagation = !condition;
+    }
+
+    /**
+     * Make this will not appeared in help and list controls.
+     * On command selection in parent dialog, will make this
+     * invoke its callback without moving from the parent to itself.
+     */
+    void makePseudo(mt::CR_BOL condition = true) {
+      pseudo = condition;
     }
 
     /**
