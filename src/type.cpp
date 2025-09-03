@@ -50,7 +50,7 @@ namespace cli_menu {
     );
 
     replaceExistingKeyword(word);
-    setPresetHelpList();
+    word->setPresetHelpList();
     return word;
   }
 
@@ -66,7 +66,7 @@ namespace cli_menu {
     );
 
     replaceExistingKeyword(number);
-    setPresetHelpList();
+    number->setPresetHelpList();
     return number;
   }
 
@@ -82,7 +82,7 @@ namespace cli_menu {
     );
 
     replaceExistingKeyword(toggle);
-    setPresetHelpList();
+    toggle->setPresetHelpList();
     return toggle;
   }
 
