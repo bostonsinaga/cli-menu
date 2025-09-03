@@ -414,13 +414,15 @@ namespace cli_menu {
           return true;
         }
       );
-
-      std::cout << std::endl;
     }
     // print error
     else if (!withHelp) {
       Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      return;
     }
+
+    // additional newline for 'withHelp'
+    std::cout << std::endl;
   }
 
   void Command::printInterruptionDialoguedResponse() {
