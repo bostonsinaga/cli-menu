@@ -7,7 +7,7 @@ namespace cli_menu {
 
   void Preset::applyFileIn(
     Creator *owner,
-    const COMMAND_CALLBACK &customCallback
+    COMMAND_CALLBACK customCallback
   ) {
     Word *in = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_IN),
@@ -21,7 +21,7 @@ namespace cli_menu {
 
   void Preset::applyFileOut(
     Creator *owner,
-    const COMMAND_CALLBACK &customCallback
+    COMMAND_CALLBACK customCallback
   ) {
     Word *out = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_OUT),
@@ -36,7 +36,7 @@ namespace cli_menu {
   void Preset::applyFileIn(Creator *owner) {
     applyFileIn(
       owner,
-      [&]()->bool {
+      [](Command *current)->bool {
         bool found = false;
 
         mt::VEC_STR filenames = Result::useWords(
@@ -47,7 +47,7 @@ namespace cli_menu {
           if (mt_uti::Scanner::isFileExist(filenames[i])) {
             found = true;
 
-            Result::useUltimates(owner->keyword).push_back(
+            Result::useUltimates(current->getKeyword()).push_back(
               mt_uti::Scanner::readFileString(filenames[i])
             );
           }
@@ -62,7 +62,7 @@ namespace cli_menu {
   void Preset::applyFileOut(Creator *owner) {
     applyFileOut(
       owner,
-      [&]()->bool {
+      [](Command *current)->bool {
         std::string filename = Result::getLastWord(
           Langu::agePreset::getKeyword(PRESET_OUT)
         );
@@ -82,7 +82,7 @@ namespace cli_menu {
         }
 
         mt_uti::Printer::write(
-          Result::concatUltimates(owner->keyword),
+          Result::concatUltimates(current->getKeyword()),
           filename,
           false
         );
@@ -101,13 +101,14 @@ namespace cli_menu {
     Toggle *in = new Toggle(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
-      [&]()->bool {
-        owner->printHelp();
+      [](Command *current)->bool {
+        static_cast<Creator*>(current)->printHelp();
         return true;
       }
     );
 
     in->sterilize();
+    in->makePseudo();
     in->makeRequired();
     owner->replaceExistingKeyword(in);
   }
@@ -116,13 +117,14 @@ namespace cli_menu {
     Toggle *out = new Toggle(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
-      [&]()->bool {
-        owner->printList(false);
+      [](Command *current)->bool {
+        static_cast<Creator*>(current)->printList(false);
         return true;
       }
     );
 
     out->sterilize();
+    out->makePseudo();
     out->makeRequired();
     owner->replaceExistingKeyword(out);
   }

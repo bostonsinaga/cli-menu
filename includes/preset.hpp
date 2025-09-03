@@ -11,12 +11,12 @@ namespace cli_menu {
 
     static void applyFileIn(
       Creator *owner,
-      const COMMAND_CALLBACK &customCallback
+      COMMAND_CALLBACK customCallback
     );
 
     static void applyFileOut(
       Creator *owner,
-      const COMMAND_CALLBACK &customCallback
+      COMMAND_CALLBACK customCallback
     );
 
     /** Read/write text file with default handler */
