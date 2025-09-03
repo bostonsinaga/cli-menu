@@ -25,7 +25,7 @@ namespace cli_menu {
     Creator(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
   public:
@@ -34,19 +34,19 @@ namespace cli_menu {
     Word *createWord(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Number *createNumber(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Toggle *createToggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
   };
 
@@ -61,7 +61,7 @@ namespace cli_menu {
     Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     friend class Creator;
@@ -82,7 +82,7 @@ namespace cli_menu {
     Number(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     friend class Creator;
@@ -103,7 +103,7 @@ namespace cli_menu {
     Toggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      const COMMAND_CALLBACK &callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     friend class Creator;

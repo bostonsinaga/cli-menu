@@ -12,7 +12,7 @@ namespace cli_menu {
     const Version &version,
     mt::CR_STR author,
     mt::CR_STR url,
-    const COMMAND_CALLBACK &callback
+    COMMAND_CALLBACK callback
   ) : T(
     keyword,
     description + '\n' +
@@ -31,7 +31,7 @@ namespace cli_menu {
     const Version &version,
     mt::CR_STR author,
     mt::CR_STR url,
-    const COMMAND_CALLBACK &callback
+    COMMAND_CALLBACK callback
   ) {
     return new Program<T>(
       keyword, description,

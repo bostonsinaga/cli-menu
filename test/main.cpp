@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
     cm::Version(1, 0, 0),
     "Boston Sinaga",
     "https://github.com/bostonsinaga/cli-menu",
-    []()->bool {
+    [](cm::Command *current)->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Organism"
       );
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   cm::Toggle *animals = organism->createToggle(
     "animals",
     "Oxygen consumers",
-    []()->bool {
+    [](cm::Command *current)->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Animals"
       );
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   cm::Toggle *plants = organism->createToggle(
     "plants",
     "Carbon dioxide consumers",
-    []()->bool {
+    [](cm::Command *current)->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Plants"
       );
