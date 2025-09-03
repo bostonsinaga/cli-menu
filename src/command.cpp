@@ -255,7 +255,7 @@ namespace cli_menu {
         return COMMAND_ONGOING;
       }
       // go to children level
-      else if (getChildren()) {
+      else if (hasChildren()) {
         return static_cast<Command*>(getChildren())->dialog();
       }
     }
@@ -366,13 +366,9 @@ namespace cli_menu {
         }
       }
     }
-    /**
-     * The number of children is reduced by 2 for
-     * ignoring default '--help' and '--list' commands.
-     */
     else {
       // child not found
-      if (numberOfChildren() - 2) {
+      if (hasChildren()) {
         Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
       }
       else { // this is a leaf
@@ -402,7 +398,7 @@ namespace cli_menu {
   }
 
   void Command::printList(mt::CR_BOL withHelp) {
-    if (getChildren()) {
+    if (hasChildren()) {
       getChildren()->iterate(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
@@ -454,6 +450,13 @@ namespace cli_menu {
     );
 
     return found;
+  }
+
+  void Command::makePseudo(mt::CR_BOL condition) {
+    if (getParent()) {
+      pseudo = condition;
+      static_cast<Command*>(getParent())->pseudosCount += 1 - !condition * 2;
+    }
   }
 
   void Command::sterilize(

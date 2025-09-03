@@ -18,6 +18,7 @@ namespace cli_menu {
   class Command : public mt_ds::GeneralTree {
   private:
     std::string description;
+    int pseudosCount = 0;
 
     bool editing = true,
       pseudo = false,
@@ -51,8 +52,17 @@ namespace cli_menu {
     // useful when parent is strict
     Command *getFirstRequiredNeighbor();
 
+    // input is expected as e.g. '--foo' or '-goo'
     bool testHyphens(mt::CR_STR input) {
       return hyphens + keyword == input;
+    }
+
+    /**
+     * The number of children is reduced by the
+     * number of pseudo commands to ignoring them.
+     */
+    bool hasChildren() {
+      return numberOfChildren() - pseudosCount > 0;
     }
 
   protected:
@@ -132,10 +142,9 @@ namespace cli_menu {
      * Make this will not appeared in help and list controls.
      * On command selection in parent dialog, will make this
      * invoke its callback without moving from the parent to itself.
+     * Does not apply to the root.
      */
-    void makePseudo(mt::CR_BOL condition = true) {
-      pseudo = condition;
-    }
+    void makePseudo(mt::CR_BOL condition = true);
 
     /**
      * Arguments must be provided explicitly
