@@ -16,7 +16,6 @@ namespace cli_menu {
     );
 
     in->makeRequired();
-    owner->replaceExistingKeyword(in);
   }
 
   void Preset::applyFileOut(
@@ -30,7 +29,6 @@ namespace cli_menu {
     );
 
     out->makeRequired();
-    owner->replaceExistingKeyword(out);
   }
 
   void Preset::applyFileIn(Creator *owner) {
@@ -108,9 +106,8 @@ namespace cli_menu {
     );
 
     owner->replaceExistingKeyword(help);
-    help->sterilize();
     help->makePseudo();
-    help->makeRequired();
+    help->makeSterilized();
   }
 
   void Preset::applyList(Creator *owner) {
@@ -124,9 +121,8 @@ namespace cli_menu {
     );
 
     owner->replaceExistingKeyword(list);
-    list->sterilize();
     list->makePseudo();
-    list->makeRequired();
+    list->makeSterilized();
   }
 
   void Creator::setPresetHelpList() {
