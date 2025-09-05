@@ -43,14 +43,17 @@ namespace cli_menu {
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
     COMMAND_CODE callCallback();
-    COMMAND_CODE goToNeighbor(mt_ds::LinkedList* node);
     COMMAND_CODE goDown(mt::CR_STR input);
+    COMMAND_CODE goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
 
     // an error message in dialog when switching mode / moving position
     void printInterruptionDialoguedResponse();
 
-    // useful when parent is strict
-    Command *getFirstRequiredNeighbor();
+    /**
+     * Check whether strict parent has incomplete required child.
+     * If so, print error and return the first found.
+     */
+    Command *strictParentHasRequired(mt::CR_BOL onlyOrtho);
 
     // input is expected as e.g. '--foo' or '-goo'
     bool testHyphens(mt::CR_STR input) {
@@ -142,12 +145,16 @@ namespace cli_menu {
      * Make this will not appeared in help and list controls.
      * On command selection in parent dialog, will make this
      * invoke its callback without moving from the parent to itself.
-     * Does not apply to the root.
+     * 
+     * Make this also cannot entered with 'enterTest',
+     * 'nextTest', or 'previousTest' in dialog.
+     * 
+     * DOES NOT APPLY TO THE ROOT.
      */
     void makePseudo(mt::CR_BOL condition = true);
 
     /**
-     * Arguments must be provided explicitly
+     * Make arguments must be provided explicitly
      * to be able to call the 'callCallback'.
      */
     void makeRequired(mt::CR_BOL condition = true) {
@@ -155,18 +162,18 @@ namespace cli_menu {
     }
 
     /**
-     * All the required descendants must be completed
-     * to be able to call the 'callCallback'.
+     * Make all the required descendants must be
+     * completed to be able to call the 'callCallback'.
      */
     void makeStrict(mt::CR_BOL condition = true) {
       strict = condition;
     }
 
     /**
-     * Set whether or not this can have children.
-     * Existing children can be deleted.
+     * Make this cannot have children
+     * and the existing can be deleted.
      */
-    void sterilize(
+    void makeSterilized(
       mt::CR_BOL condition = true,
       mt::CR_BOL willDestroy = false
     );

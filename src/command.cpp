@@ -27,7 +27,11 @@ namespace cli_menu {
   }
 
   COMMAND_CODE Command::match() {
-    Command *neighbor = nullptr, *child = nullptr;
+    Command *firstNeighbor = nullptr,
+      *firstChild = nullptr;
+
+    bool isRequiredWithDialogued
+      = required && Command::globalDialogued && localDialogued;
 
     /**
      * The string vector will 'pop_back()'
@@ -35,53 +39,56 @@ namespace cli_menu {
      */
     while (!Command::raws.empty()) {
 
-      // neighbors iteration
-      if (!isolated()) iterate(
-        mt_ds::LinkedList::RIGHT,
-        [&](mt_ds::LinkedList *node)->bool {
-          if (node != this) {
+      // find first neighbor of the same keyword with 'raws.back()'
+      if (!isolated()) {
+        iterate(
+          mt_ds::LinkedList::RIGHT,
+          [&](mt_ds::LinkedList *node)->bool {
 
-            // find keyword
-            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-              neighbor = static_cast<Command*>(node);
+            if (node != this &&
+              static_cast<Command*>(node)->testHyphens(Command::raws.back())
+            ) {
+              firstNeighbor = static_cast<Command*>(node);
               return false;
             }
+
+            return true;
           }
+        );
+      }
 
-          return true;
-        }
-      );
+      // find first child of the same keyword with 'raws.back()'
+      if (!firstNeighbor && getChildren()) {
+        static_cast<Command*>(getChildren())->iterate(
+          mt_ds::LinkedList::RIGHT,
+          [&](mt_ds::LinkedList *node)->bool {
 
-      // children iteration
-      if (!neighbor && getChildren()) getChildren()->iterate(
-        mt_ds::LinkedList::RIGHT,
-        [&](mt_ds::LinkedList *node)->bool {
+            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
+              firstChild = static_cast<Command*>(node);
+              return false;
+            }
 
-          // find keyword
-          if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-            child = static_cast<Command*>(node);
-            return false;
+            return true;
           }
-
-          return true;
-        }
-      );
+        );
+      }
 
       // keyword is detected
-      if (neighbor || child) {
+      if (firstNeighbor || firstChild) {
+        Command::raws.pop_back();
+
         /**
          * The match will be paused until arguments are given from the dialog.
          * The 'Command::raws' is not 'pop_back()'.
          */
-        if (required && Command::globalDialogued && localDialogued) {
+        if (isRequiredWithDialogued) {
           Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
           Command::interruptionDialogued = true;
           return dialog();
         }
         else { // go to other node
-          Command::raws.pop_back();
-          if (neighbor) return neighbor->match();
-          return child->match();
+          if (firstNeighbor) return firstNeighbor->match();
+          return firstChild->match();
         }
       }
       else { // push argument to 'Result'
@@ -91,23 +98,18 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (required && Command::globalDialogued && localDialogued) {
+    if (isRequiredWithDialogued) {
       Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return dialog();
     }
 
-    Command *firstRequiredNeighbor = getFirstRequiredNeighbor();
+    Command *firstRequiredNeighbor = strictParentHasRequired(false);
 
     // uncompleted required neighbors with strict parent
-    if (getParent() &&
-      firstRequiredNeighbor &&
-      static_cast<Command*>(getParent())->strict
-    ) {
-      Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
+    if (firstRequiredNeighbor) {
       return firstRequiredNeighbor->dialog();
     }
-
-    // no required nodes (done)
+    // completed required neighbors / non-strict parent
     return callCallback();
   }
 
@@ -157,12 +159,12 @@ namespace cli_menu {
       }
       // NEXT
       else if (Control::nextTest(input)) {
-        COMMAND_CODE code = goToNeighbor(next());
+        COMMAND_CODE code = goToNeighbor(mt_ds::GeneralTree::RIGHT);
         if (code != COMMAND_ONGOING) return code;
       }
       // PREVIOUS
       else if (Control::previousTest(input)) {
-        COMMAND_CODE code = goToNeighbor(prev());
+        COMMAND_CODE code = goToNeighbor(mt_ds::GeneralTree::LEFT);
         if (code != COMMAND_ONGOING) return code;
       }
       // MODIFY
@@ -238,16 +240,10 @@ namespace cli_menu {
     }
     // trying to go down
     else {
-      // uncompleted required neighbors with strict parent
-      if (getParent() &&
-        static_cast<Command*>(getParent())->strict &&
-        getFirstRequiredNeighbor()
-      ) {
-        Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
-        return COMMAND_ONGOING;
-      }
+      Command *firstRequiredNeighbor = strictParentHasRequired(true);
+
       // no parent or non-strict parent with this is required
-      else if (
+      if (!firstRequiredNeighbor &&
         (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
         (!getParent() && required)
       ) {
@@ -256,7 +252,27 @@ namespace cli_menu {
       }
       // go to children level
       else if (hasChildren()) {
-        return static_cast<Command*>(getChildren())->dialog();
+        Command *firsOrthoChild = nullptr;
+
+        // find first ortho child
+        getChildren()->iterate(
+          mt_ds::GeneralTree::RIGHT,
+          [&](mt_ds::LinkedList *node)->bool {
+
+            if (!static_cast<Command*>(node)->pseudo) {
+              firsOrthoChild = static_cast<Command*>(node);
+              return false;
+            }
+
+            return true;
+          }
+        );
+
+        if (firsOrthoChild) return firsOrthoChild->dialog();
+      }
+      // completed required neighbors / non-strict parent
+      else if (firstRequiredNeighbor) {
+        return COMMAND_ONGOING;
       }
     }
 
@@ -293,29 +309,10 @@ namespace cli_menu {
     }
   }
 
-  COMMAND_CODE Command::goToNeighbor(mt_ds::LinkedList* node) {
-    if (node) {
-      // moving is prohibited
-      if (Command::interruptionDialogued) {
-        printInterruptionDialoguedResponse();
-      }
-      // go to neighbor
-      else return static_cast<Command*>(node)->dialog();
-    }
-    // has no neighbors
-    else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_ALONE);
-
-    return COMMAND_ONGOING;
-  }
-
   // always in selection mode
-  COMMAND_CODE Command::goDown(mt::CR_STR input) {    
+  COMMAND_CODE Command::goDown(mt::CR_STR input) {
     bool spaceFound = false;
-
-    // vector refill
-    if (Command::raws.empty()) {
-      Command::raws.push_back("");
-    }
+    mt::VEC_STR additionalRaws = {""};
 
     // split input into the string vector using spaces as delimiters
     for (mt::CR_CH ch : input) {
@@ -323,28 +320,34 @@ namespace cli_menu {
       if (mt_uti::StrTools::isWhitespace(ch)) {
         if (!spaceFound) {
           spaceFound = true;
-          Command::raws.push_back("");
+          additionalRaws.push_back("");
         }
       }
       else {
         spaceFound = false;
-        Command::raws.back() += ch;
+        additionalRaws.back() += ch;
       }
     }
 
-    // reverse the string vector order
-    std::reverse(Command::raws.begin(), Command::raws.end());
+    // reverse additional raws order
+    std::reverse(additionalRaws.begin(), additionalRaws.end());
 
-    Command *selected = nullptr;
+    // insert to back of main raws
+    mt_uti::VecTools<std::string>::concatCopy(
+      Command::raws, additionalRaws
+    );
 
-    // find child by keyword possibility at back of string vector
-    getChildren()->iterate(
+    // find first child by keyword possibility at back of string vector
+    Command *firstSelected = nullptr;
+
+    if (getChildren()) getChildren()->iterate(
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-          selected = static_cast<Command*>(node);
-          Command::raws.pop_back();
+        if (static_cast<Command*>(node)->testHyphens(
+          Command::raws.back()
+        )) {
+          firstSelected = static_cast<Command*>(node);
           return false;
         }
 
@@ -353,30 +356,71 @@ namespace cli_menu {
     );
 
     // match in dialog
-    if (selected) {
-      if (selected->pseudo) { // still on the current node
-        selected->callback(this);
+    if (!strictParentHasRequired(false)) {
+      if (firstSelected) {
+        if (firstSelected->pseudo) { // still on the current node
+          firstSelected->callback(this);
+        }
+        else { // move to child
+          COMMAND_CODE code = firstSelected->match();
+          if (code != COMMAND_ONGOING) return code;
+        }
       }
-      else { // move to child
-        COMMAND_CODE code = selected->match();
-
-        if (code != COMMAND_ONGOING) {
-          Command::raws.clear();
-          return code;
+      else {
+        // child not found
+        if (hasChildren()) {
+          Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+        }
+        else { // this is a leaf
+          Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
         }
       }
     }
-    else {
-      // child not found
-      if (hasChildren()) {
-        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+  
+    // remove the recently added strings
+    mt_uti::VecTools<std::string>::eraseIntervalStable(
+      Command::raws,
+      {
+        Command::raws.size() - additionalRaws.size(),
+        Command::raws.size() - 1
       }
-      else { // this is a leaf
-        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
-      }
-    }
+    );
 
-    Command::raws.clear();
+    return COMMAND_ONGOING;
+  }
+
+  COMMAND_CODE Command::goToNeighbor(
+    const mt_ds::GeneralTree::DIRECTION &direction
+  ) {
+    Command *firstOrthoNeighbor = nullptr;
+
+    // find first ortho neighbor
+    iterate(
+      direction,
+      [&](mt_ds::LinkedList *node)->bool {
+
+        if (node != this &&
+          !static_cast<Command*>(node)->pseudo
+        ) {
+          firstOrthoNeighbor = static_cast<Command*>(node);
+          return false;
+        }
+
+        return true;
+      }
+    );
+
+    if (firstOrthoNeighbor) {
+      // moving is prohibited
+      if (Command::interruptionDialogued) {
+        printInterruptionDialoguedResponse();
+      }
+      // go to neighbor
+      else return static_cast<Command*>(firstOrthoNeighbor)->dialog();
+    }
+    // has no neighbors
+    else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_ALONE);
+
     return COMMAND_ONGOING;
   }
 
@@ -406,7 +450,9 @@ namespace cli_menu {
           if (!static_cast<Command*>(node)->pseudo) {
             Console::logString(
               "  " + static_cast<Command*>(node)->keyword + " ["
-              + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
+              + Langu::ageCommand::getStringifiedType(
+                static_cast<Command*>(node)->stringifiedTypeIndex
+              ) + "]\n",
               Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
             );
           }
@@ -432,25 +478,36 @@ namespace cli_menu {
     );
   }
 
-  Command* Command::getFirstRequiredNeighbor() {
+  Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
     Command *found = nullptr;
 
-    // check required nodes at current level
     iterate(
       mt_ds::LinkedList::RIGHT,
-      [&](mt_ds::LinkedList* node)->bool {
+      [&](mt_ds::LinkedList *node)->bool {
 
-        // at least 1 is required
-        if (found) return false;
-
-        if (static_cast<Command*>(node)->required) {
+        if (static_cast<Command*>(node)->required &&
+          (!onlyOrtho || (onlyOrtho && !static_cast<Command*>(node)->pseudo))
+        ) {
           found = static_cast<Command*>(node);
+          return false;
         }
 
         return true;
       }
     );
 
+    // strict parent disallowed
+    if (getParent() &&
+      found &&
+      static_cast<Command*>(getParent())->strict
+    ) {
+      Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
+    }
+
+    /**
+     * If 'found' is nullptr it means
+     * strict parent allowed or parent is non-strict.
+     */
     return found;
   }
 
@@ -461,7 +518,7 @@ namespace cli_menu {
     }
   }
 
-  void Command::sterilize(
+  void Command::makeSterilized(
     mt::CR_BOL condition,
     mt::CR_BOL willDestroy
   ) {
