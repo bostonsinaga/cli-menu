@@ -21,7 +21,7 @@ namespace cli_menu {
     return mt::STRUNORMAP_FOUND<mt::VEC_STR>(ultimates, keyword);
   }
 
-  void Result::addWords(
+  void Result::addWord(
     mt::CR_STR keyword, mt::CR_STR input
   ) {
     if (hasWords(keyword)) {
@@ -29,7 +29,7 @@ namespace cli_menu {
     }
   }
 
-  void Result::addNumbers(
+  void Result::addNumber(
     mt::CR_STR keyword, mt::CR_LD input
   ) {
     if (hasNumbers(keyword)) {
@@ -37,11 +37,17 @@ namespace cli_menu {
     }
   }
 
-  void Result::addToggles(
+  void Result::addToggle(
     mt::CR_STR keyword, mt::CR_BOL input
   ) {
     if (hasToggles(keyword)) {
       toggles[keyword].push_back(input);
+    }
+  }
+
+  void Result::addUltimate(mt::CR_STR keyword, mt::CR_STR input) {
+    if (hasUltimates(keyword)) {
+      ultimates[keyword].push_back(input);
     }
   }
 
@@ -63,32 +69,74 @@ namespace cli_menu {
     }
   }
 
-  mt::VEC_STR &Result::useWords(mt::CR_STR keyword) {
-    if (hasWords(keyword)) {
-      return words[keyword];
-    }
-    return wordsGarbage;
-  }
-
-  mt::VEC_LD &Result::useNumbers(mt::CR_STR keyword) {
-    if (hasNumbers(keyword)) {
-      return numbers[keyword];
-    }
-    return numbersGarbage;
-  }
-
-  mt::VEC_BOL &Result::useToggles(mt::CR_STR keyword) {
-    if (hasToggles(keyword)) {
-      return toggles[keyword];
-    }
-    return togglesGarbage;
-  }
-
-  mt::VEC_STR &Result::useUltimates(mt::CR_STR keyword) {
+  void Result::removeUltimate(mt::CR_STR keyword) {
     if (hasUltimates(keyword)) {
-      return ultimates[keyword];
+      ultimates.erase(keyword);
     }
-    return ultimatesGarbage;
+  }
+
+  size_t Result::numberOfWords(mt::CR_STR keyword) {
+    if (hasWords(keyword)) {
+      return words[keyword].size();
+    }
+    return 0;
+  }
+
+  size_t Result::numberOfNumbers(mt::CR_STR keyword) {
+    if (hasNumbers(keyword)) {
+      return numbers[keyword].size();
+    }
+    return 0;
+  }
+
+  size_t Result::numberOfToggles(mt::CR_STR keyword) {
+    if (hasToggles(keyword)) {
+      return toggles[keyword].size();
+    }
+    return 0;
+  }
+
+  size_t Result::numberOfUltimates(mt::CR_STR keyword) {
+    if (hasUltimates(keyword)) {
+      return ultimates[keyword].size();
+    }
+    return 0;
+  }
+
+  std::string Result::getWordAt(mt::CR_STR keyword, mt::CR_SZ index) {
+    if (hasWords(keyword) &&
+      index < words[keyword].size()
+    ) {
+      return words[keyword][index];
+    }
+    return "";
+  }
+
+  mt::LD Result::getNumberAt(mt::CR_STR keyword, mt::CR_SZ index) {
+    if (hasNumbers(keyword) &&
+      index < numbers[keyword].size()
+    ) {
+      return numbers[keyword][index];
+    }
+    return 0;
+  }
+
+  bool Result::getToggleAt(mt::CR_STR keyword, mt::CR_SZ index) {
+    if (hasToggles(keyword) &&
+      index < toggles[keyword].size()
+    ) {
+      return toggles[keyword][index];
+    }
+    return false;
+  }
+
+  std::string Result::getUltimateAt(mt::CR_STR keyword, mt::CR_SZ index) {
+    if (hasUltimates(keyword) &&
+      index < ultimates[keyword].size()
+    ) {
+      return ultimates[keyword][index];
+    }
+    return "";
   }
 
   std::string Result::getFirstWord(mt::CR_STR keyword) {
@@ -109,10 +157,10 @@ namespace cli_menu {
 
   bool Result::getFirstToggle(mt::CR_STR keyword) {
     if (hasToggles(keyword)) {
-      if (toggles[keyword].empty()) return "";
+      if (toggles[keyword].empty()) return false;
       return toggles[keyword].front();
     }
-    return "";
+    return false;
   }
 
   std::string Result::getFirstUltimate(mt::CR_STR keyword) {
@@ -141,10 +189,10 @@ namespace cli_menu {
 
   bool Result::getLastToggle(mt::CR_STR keyword) {
     if (hasToggles(keyword)) {
-      if (toggles[keyword].empty()) return "";
+      if (toggles[keyword].empty()) return false;
       return toggles[keyword].back();
     }
-    return "";
+    return false;
   }
 
   std::string Result::getLastUltimate(mt::CR_STR keyword) {
@@ -159,13 +207,13 @@ namespace cli_menu {
     mt::CR_STR keyword,
     mt::CR_STR separator
   ) {
-    std::string data;
+    std::string text;
 
-    for (mt::CR_STR str : Result::useUltimates(keyword)) {
-      data += str + separator;
+    for (mt::CR_STR str : ultimates[keyword]) {
+      text += str + separator;
     }
 
-    return data;
+    return text;
   }
 
   void Result::printInputs() {

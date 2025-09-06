@@ -27,8 +27,6 @@ namespace cli_menu {
       Langu::agePreset::getDescription(PRESET_OUT),
       customCallback
     );
-
-    out->makeRequired();
   }
 
   void Preset::applyFileIn(Creator *owner) {
@@ -37,19 +35,21 @@ namespace cli_menu {
       [](Command *current)->bool {
         bool found = false;
 
-        mt::VEC_STR filenames = Result::useWords(
-          Langu::agePreset::getKeyword(PRESET_IN)
-        );
+        std::string filename,
+          keyword = Langu::agePreset::getKeyword(PRESET_IN);
 
-        for (int i = 0; i < filenames.size(); i++) {
-          if (mt_uti::Scanner::isFileExist(filenames[i])) {
+        for (int i = 0; i < Result::numberOfWords(keyword); i++) {
+          filename = Result::getWordAt(keyword, i);
+
+          if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
-            Result::useUltimates(current->getKeyword()).push_back(
-              mt_uti::Scanner::readFileString(filenames[i])
+            Result::addUltimate(
+              current->getKeyword(),
+              mt_uti::Scanner::readFileString(filename)
             );
           }
-          else std::cout << "'" << filenames[i] << "' IS NOT FOUND!\n";
+          else std::cout << "'" << filename << "' IS NOT FOUND!\n";
         }
 
         return found;
