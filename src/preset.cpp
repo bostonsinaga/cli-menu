@@ -49,7 +49,10 @@ namespace cli_menu {
               mt_uti::Scanner::readFileString(filename)
             );
           }
-          else std::cout << "'" << filename << "' IS NOT FOUND!\n";
+          else Langu::ageMessage::printTemplateResponse(
+            LANGUAGE_KEYWORD_NOT_FOUND,
+            filename
+          );
         }
 
         return found;
