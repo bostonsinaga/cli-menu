@@ -33,11 +33,14 @@ namespace cli_menu {
     mt::CR_STR url,
     COMMAND_CALLBACK callback
   ) {
-    return new Program<T>(
+    Program<T> *program = new Program<T>(
       keyword, description,
       version, author, url,
       callback
     );
+
+    program->setPresetHelpList();
+    return program;
   }
 
   template <CommandType T>
