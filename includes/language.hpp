@@ -15,6 +15,7 @@ namespace cli_menu {
     LANGUAGE_CLIPBOARD_PASTED,
     LANGUAGE_FORBIDDEN_HIDDEN_PASTE,
     LANGUAGE_INTERRUPTION_DIALOG,
+    LANGUAGE_KEYWORD_NOT_FOUND,
     LANGUAGE_PARAMETER_ALONE,
     LANGUAGE_PARAMETER_AT_LEAF,
     LANGUAGE_PARAMETER_AT_ROOT,
@@ -68,12 +69,15 @@ namespace cli_menu {
   class Langu final {
   private:
     struct xManager {
-      // default english
-      inline static std::string currentISOCode = "en";
+      inline static std::string
+        // default english
+        currentISOCode = "en",
+        // will be replaced with text
+        placeholder = "$";
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 17;
+      static constexpr int totalSentences = 18;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -126,6 +130,11 @@ namespace cli_menu {
       // sync 'currentISOCode' with 'selectISOCode()' manually
       static void addISOCode(mt::CR_STR newISOCode);
       static void removeISOCode(mt::CR_STR existingISOCode);
+
+      // it is recommended to use special characters
+      static void changePlaceholder(mt::CR_STR newPlaceholder) {
+        xManager::placeholder = newPlaceholder;
+      }
     };
 
     struct ageMessage {
@@ -140,6 +149,7 @@ namespace cli_menu {
         mt::CR_STR clipboardPastedSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
+        mt::CR_STR keywordNotFoundSentence,
         mt::CR_STR parameterAloneSentence,
         mt::CR_STR parameterAtLeafSentence,
         mt::CR_STR parameterAtRootSentence,
@@ -152,6 +162,11 @@ namespace cli_menu {
 
       static void printResponse(
         const LANGUAGE_CODE &responseCode
+      );
+
+      static void printTemplateResponse(
+        const LANGUAGE_CODE &responseCode,
+        mt::CR_STR replacementText
       );
     };
 

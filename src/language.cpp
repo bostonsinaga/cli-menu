@@ -64,6 +64,8 @@ namespace cli_menu {
     "Hidden text pasting is only available on insertion.",
     // LANGUAGE_INTERRUPTION_DIALOG
     "Prohibited until the remaining direct inputs are processed.",
+    // LANGUAGE_KEYWORD_NOT_FOUND
+    "'$' not found.",
     // LANGUAGE_PARAMETER_ALONE
     "This node has no neighbors.",
     // LANGUAGE_PARAMETER_AT_LEAF
@@ -101,6 +103,8 @@ namespace cli_menu {
     CONSOLE_WARNING,
     // LANGUAGE_INTERRUPTION_DIALOG
     CONSOLE_ERROR,
+    // LANGUAGE_KEYWORD_NOT_FOUND
+    CONSOLE_ERROR,
     // LANGUAGE_PARAMETER_ALONE
     CONSOLE_WARNING,
     // LANGUAGE_PARAMETER_AT_LEAF
@@ -129,6 +133,7 @@ namespace cli_menu {
     mt::CR_STR clipboardPastedSentence,
     mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
+    mt::CR_STR keywordNotFoundSentence,
     mt::CR_STR parameterAloneSentence,
     mt::CR_STR parameterAtLeafSentence,
     mt::CR_STR parameterAtRootSentence,
@@ -147,6 +152,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
@@ -161,6 +167,25 @@ namespace cli_menu {
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
       Langu::xMessage::sentences[Langu::xManager::currentISOCode][responseCode]
+    );
+  }
+
+  void Langu::ageMessage::printTemplateResponse(
+    const LANGUAGE_CODE &responseCode,
+    mt::CR_STR replacementText
+  ) {
+    std::string templateString = Langu::xMessage::sentences
+      [Langu::xManager::currentISOCode][responseCode];
+
+    size_t foundIndex = templateString.find(xManager::placeholder);
+
+    // insert 'replacementText' into placeholder
+    templateString = templateString.substr(0, foundIndex) + replacementText
+      + templateString.substr(foundIndex + xManager::placeholder.length() + replacementText.length());
+
+    Console::logResponse(
+      Langu::xMessage::consoleCodes[responseCode],
+      templateString
     );
   }
 
