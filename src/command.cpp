@@ -242,16 +242,8 @@ namespace cli_menu {
     else {
       Command *firstRequiredNeighbor = strictParentHasRequired(true);
 
-      // no parent or non-strict parent with this is required
-      if (!firstRequiredNeighbor &&
-        (getParent() && !static_cast<Command*>(getParent())->strict && required) ||
-        (!getParent() && required)
-      ) {
-        Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
-        return COMMAND_ONGOING;
-      }
       // go to children level
-      else if (hasChildren()) {
+      if (!firstRequiredNeighbor && hasChildren()) {
         Command *firsOrthoChild = nullptr;
 
         // find first ortho child
@@ -270,7 +262,7 @@ namespace cli_menu {
 
         if (firsOrthoChild) return firsOrthoChild->dialog();
       }
-      // completed required neighbors / non-strict parent
+      // uncompleted required neighbors with strict parent
       else if (firstRequiredNeighbor) {
         return COMMAND_ONGOING;
       }
@@ -356,27 +348,27 @@ namespace cli_menu {
     );
 
     // match in dialog
-    if (!strictParentHasRequired(false)) {
-      if (firstSelected) {
-        if (firstSelected->pseudo) { // still on the current node
-          firstSelected->callback(this);
-        }
-        else { // move to child
-          COMMAND_CODE code = firstSelected->match();
-          if (code != COMMAND_ONGOING) return code;
-        }
+    if (firstSelected) {
+      // still on the current node
+      if (firstSelected->pseudo) {
+        firstSelected->callback(this);
       }
-      else {
-        // child not found
-        if (hasChildren()) {
-          Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
-        }
-        else { // this is a leaf
-          Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
-        }
+      // move to child
+      else if (!strictParentHasRequired(false)) {
+        COMMAND_CODE code = firstSelected->match();
+        if (code != COMMAND_ONGOING) return code;
       }
     }
-  
+    else {
+      // child not found
+      if (hasChildren()) {
+        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+      }
+      else { // this is a leaf
+        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      }
+    }
+
     // remove the recently added strings
     mt_uti::VecTools<std::string>::eraseIntervalStable(
       Command::raws,
@@ -496,12 +488,19 @@ namespace cli_menu {
       }
     );
 
-    // strict parent disallowed
-    if (getParent() &&
-      found &&
-      static_cast<Command*>(getParent())->strict
-    ) {
-      Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
+    if (found) {
+      // strict parent disallowed
+      if (getParent() &&
+        static_cast<Command*>(getParent())->strict
+      ) {
+        Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
+      }
+      // root or non-strict parent with this is required
+      else if (!getParent() || (
+        getParent() && !static_cast<Command*>(getParent())->strict
+      )) {
+        Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+      }
     }
 
     /**
