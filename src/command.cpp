@@ -30,17 +30,30 @@ namespace cli_menu {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
 
-    bool isRequiredWithDialogued
-      = required && Command::globalDialogued && localDialogued;
-
     /**
      * The string vector will 'pop_back()'
      * until it is empty to stop this loop.
      */
     while (!Command::raws.empty()) {
 
+      // find first child of the same keyword with 'raws.back()'
+      if (getChildren()) {
+        static_cast<Command*>(getChildren())->iterate(
+          mt_ds::LinkedList::RIGHT,
+          [&](mt_ds::LinkedList *node)->bool {
+
+            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
+              firstChild = static_cast<Command*>(node);
+              return false;
+            }
+
+            return true;
+          }
+        );
+      }
+
       // find first neighbor of the same keyword with 'raws.back()'
-      if (!isolated()) {
+      if (!firstChild) {
         iterate(
           mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
@@ -57,38 +70,36 @@ namespace cli_menu {
         );
       }
 
-      // find first child of the same keyword with 'raws.back()'
-      if (!firstNeighbor && getChildren()) {
-        static_cast<Command*>(getChildren())->iterate(
-          mt_ds::LinkedList::RIGHT,
-          [&](mt_ds::LinkedList *node)->bool {
-
-            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-              firstChild = static_cast<Command*>(node);
-              return false;
-            }
-
-            return true;
-          }
-        );
-      }
-
       // keyword is detected
-      if (firstNeighbor || firstChild) {
+      if (firstChild || firstNeighbor) {
         Command::raws.pop_back();
 
+        // pseudo-child callback and program termination
+        if (firstChild && firstChild->pseudo) {
+          firstChild->callback(this);
+          return COMMAND_CANCELED;
+        }
         /**
          * The match will be paused until arguments are given from the dialog.
          * The 'Command::raws' is not 'pop_back()'.
          */
-        if (isRequiredWithDialogued) {
+        else if (
+          required && Command::globalDialogued && localDialogued &&
+          stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
+        ) {
           Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
           Command::interruptionDialogued = true;
           return dialog();
         }
         else { // go to other node
-          if (firstNeighbor) return firstNeighbor->match();
-          return firstChild->match();
+
+          // the required toggle automatically has value 'true'
+          if (required && stringifiedTypeIndex == STRINGIFIED_TYPE_TOGGLE) {
+            pushUnormap("1");
+          }
+
+          if (firstChild) return firstChild->match();
+          return firstNeighbor->match();
         }
       }
       else { // push argument to 'Result'
@@ -98,7 +109,7 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (isRequiredWithDialogued) {
+    if (required && Command::globalDialogued && localDialogued) {
       Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       return dialog();
     }
