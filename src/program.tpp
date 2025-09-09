@@ -67,12 +67,9 @@ namespace cli_menu {
       case COMMAND_SUCCEEDED: {
         Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
       break;}
-      case COMMAND_CANCELED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_CANCELED);
+      case COMMAND_TERMINATED: {
+        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_TERMINATED);
       break;}
-      default: {
-        // COMMAND_ONGOING, COMMAND_REQUIRED
-      }
     }
   }
 }

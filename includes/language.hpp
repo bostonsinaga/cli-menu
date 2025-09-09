@@ -21,7 +21,7 @@ namespace cli_menu {
     LANGUAGE_PARAMETER_AT_ROOT,
     LANGUAGE_PARAMETER_NOT_FOUND,
     LANGUAGE_PARENT_STRICT,
-    LANGUAGE_PROGRAM_CANCELED,
+    LANGUAGE_PROGRAM_TERMINATED,
     LANGUAGE_PROGRAM_FAILED,
     LANGUAGE_PROGRAM_SUCCEEDED
   };
@@ -155,7 +155,7 @@ namespace cli_menu {
         mt::CR_STR parameterAtRootSentence,
         mt::CR_STR parameterNotFoundSentence,
         mt::CR_STR parentStrictSentence,
-        mt::CR_STR programCanceledSentence,
+        mt::CR_STR programTerminatedSentence,
         mt::CR_STR programFailedSentence,
         mt::CR_STR programSucceededSentence
       );

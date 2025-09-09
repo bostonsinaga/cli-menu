@@ -76,8 +76,8 @@ namespace cli_menu {
     "Parameter not found.",
     // LANGUAGE_PARENT_STRICT
     "Parent needs explicit arguments for all its required children.",
-    // LANGUAGE_PROGRAM_CANCELED
-    "Program canceled.",
+    // LANGUAGE_PROGRAM_TERMINATED
+    "Program terminated.",
     // LANGUAGE_PROGRAM_FAILED
     "Program failed.",
     // LANGUAGE_PROGRAM_SUCCEEDED
@@ -115,7 +115,7 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // LANGUAGE_PARENT_STRICT
     CONSOLE_ERROR,
-    // LANGUAGE_PROGRAM_CANCELED
+    // LANGUAGE_PROGRAM_TERMINATED
     CONSOLE_CANCEL,
     // LANGUAGE_PROGRAM_FAILED
     CONSOLE_ERROR,
@@ -139,7 +139,7 @@ namespace cli_menu {
     mt::CR_STR parameterAtRootSentence,
     mt::CR_STR parameterNotFoundSentence,
     mt::CR_STR parentStrictSentence,
-    mt::CR_STR programCanceledSentence,
+    mt::CR_STR programTerminatedSentence,
     mt::CR_STR programFailedSentence,
     mt::CR_STR programSucceededSentence
   ) {
@@ -158,7 +158,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARENT_STRICT] = parentStrictSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_CANCELED] = programCanceledSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_TERMINATED] = programTerminatedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededSentence;
   }
