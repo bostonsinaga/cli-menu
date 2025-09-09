@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
   );
 
   // ultimate
-  organism->makeStrict();
   animals->makeRequired();
   plants->makeRequired();
   cm::Preset::applyFile(animals);
