@@ -181,7 +181,7 @@ namespace cli_menu {
 
     // insert 'replacementText' into placeholder
     templateString = templateString.substr(0, foundIndex) + replacementText
-      + templateString.substr(foundIndex + xManager::placeholder.length() + replacementText.length());
+      + templateString.substr(foundIndex + xManager::placeholder.length());
 
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
