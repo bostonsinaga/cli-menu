@@ -40,6 +40,8 @@ namespace cli_menu {
 
       // find first child of the same keyword with 'raws.back()'
       if (getChildren()) {
+        resetPointer();
+
         static_cast<Command*>(getChildren())->iterate(
           mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
@@ -259,6 +261,7 @@ namespace cli_menu {
       // go to children level
       if (!firstRequiredNeighbor && hasChildren()) {
         Command *firsOrthoChild = nullptr;
+        resetPointer();
 
         // find first ortho child
         getChildren()->iterate(
@@ -346,20 +349,24 @@ namespace cli_menu {
     // find first child by keyword possibility at back of string vector
     Command *firstSelected = nullptr;
 
-    if (getChildren()) getChildren()->iterate(
-      mt_ds::LinkedList::RIGHT,
-      [&](mt_ds::LinkedList *node)->bool {
+    if (getChildren()) {
+      resetPointer();
+      
+      getChildren()->iterate(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->testHyphens(
-          Command::raws.back()
-        )) {
-          firstSelected = static_cast<Command*>(node);
-          return false;
+          if (static_cast<Command*>(node)->testHyphens(
+            Command::raws.back()
+          )) {
+            firstSelected = static_cast<Command*>(node);
+            return false;
+          }
+
+          return true;
         }
-
-        return true;
-      }
-    );
+      );
+    }
 
     // match in dialog
     if (firstSelected) {
@@ -449,6 +456,8 @@ namespace cli_menu {
 
   void Command::printList(mt::CR_BOL withHelp) {
     if (hasChildren()) {
+      resetPointer();
+
       getChildren()->iterate(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
