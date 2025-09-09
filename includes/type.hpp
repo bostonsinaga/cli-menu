@@ -30,7 +30,7 @@ namespace cli_menu {
     );
 
     // add '--help' and '--list' toggles for each command
-    void setPresetHelpList();
+    void setPresetHelpList(); // defined at 'preset.cpp'
 
     friend class Preset;
 

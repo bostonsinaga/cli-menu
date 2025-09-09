@@ -101,16 +101,16 @@ namespace cli_menu {
 
   void Word::clipboardPaste() {
     required = false;
-    Result::words[keyword].push_back(Clipboard::pasteText());
+    Result::words[this].push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
     required = false;
-    Result::words[keyword].push_back(input);
+    Result::words[this].push_back(input);
   }
 
   void Word::resetUnormap() {    
-    Result::words[keyword].clear();
+    Result::words[this].clear();
   }
 
   /** NUMBER */
@@ -130,7 +130,7 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[keyword],
+      Result::numbers[this],
       Clipboard::pasteNumbers()
     );
   }
@@ -139,13 +139,13 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[keyword],
+      Result::numbers[this],
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
   }
 
   void Number::resetUnormap() {
-    Result::numbers[keyword].clear();
+    Result::numbers[this].clear();
   }
 
   /** TOGGLE */
@@ -165,7 +165,7 @@ namespace cli_menu {
     required = false;
 
     mt_uti::VecTools<bool>::concatCopy(
-      Result::toggles[keyword],
+      Result::toggles[this],
       Clipboard::pasteConditions()
     );
   }
@@ -173,13 +173,13 @@ namespace cli_menu {
   void Toggle::pushUnormap(mt::CR_STR input) {
     required = false;
 
-    Result::toggles[keyword].push_back(
+    Result::toggles[this].push_back(
       Langu::ageBooleanizer::test(input)
     );
   }
 
   void Toggle::resetUnormap() {
-    Result::toggles[keyword].clear();
+    Result::toggles[this].clear();
   }
 }
 

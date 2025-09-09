@@ -5,234 +5,215 @@
 
 namespace cli_menu {
 
-  bool Result::hasWords(mt::CR_STR keyword) {
-    return mt::STRUNORMAP_FOUND<mt::VEC_STR>(words, keyword);
+  bool Result::hasWords(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(words, node);
   }
 
-  bool Result::hasNumbers(mt::CR_STR keyword) {
-    return mt::STRUNORMAP_FOUND<mt::VEC_LD>(numbers, keyword);
+  bool Result::hasNumbers(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_LD>(numbers, node);
   }
 
-  bool Result::hasToggles(mt::CR_STR keyword) {
-    return mt::STRUNORMAP_FOUND<mt::VEC_BOL>(toggles, keyword);
+  bool Result::hasToggles(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(toggles, node);
   }
 
-  bool Result::hasUltimates(mt::CR_STR keyword) {
-    return mt::STRUNORMAP_FOUND<mt::VEC_STR>(ultimates, keyword);
+  bool Result::hasUltimates(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(ultimates, node);
   }
 
   void Result::addWord(
-    mt::CR_STR keyword, mt::CR_STR input
+    Command *node, mt::CR_STR input
   ) {
-    if (hasWords(keyword)) {
-      words[keyword].push_back(input);
+    if (hasWords(node)) {
+      words[node].push_back(input);
     }
   }
 
   void Result::addNumber(
-    mt::CR_STR keyword, mt::CR_LD input
+    Command *node, mt::CR_LD input
   ) {
-    if (hasNumbers(keyword)) {
-      numbers[keyword].push_back(input);
+    if (hasNumbers(node)) {
+      numbers[node].push_back(input);
     }
   }
 
   void Result::addToggle(
-    mt::CR_STR keyword, mt::CR_BOL input
+    Command *node, mt::CR_BOL input
   ) {
-    if (hasToggles(keyword)) {
-      toggles[keyword].push_back(input);
+    if (hasToggles(node)) {
+      toggles[node].push_back(input);
     }
   }
 
-  void Result::addUltimate(mt::CR_STR keyword, mt::CR_STR input) {
-    if (hasUltimates(keyword)) {
-      ultimates[keyword].push_back(input);
+  void Result::addUltimate(Command *node, mt::CR_STR input) {
+    if (hasUltimates(node)) {
+      ultimates[node].push_back(input);
     }
   }
 
-  void Result::removeWords(mt::CR_STR keyword) {
-    if (hasWords(keyword)) {
-      words.erase(keyword);
+  void Result::removeWords(Command *node) {
+    if (hasWords(node)) {
+      words.erase(node);
     }
   }
 
-  void Result::removeNumbers(mt::CR_STR keyword) {
-    if (hasNumbers(keyword)) {
-      numbers.erase(keyword);
+  void Result::removeNumbers(Command *node) {
+    if (hasNumbers(node)) {
+      numbers.erase(node);
     }
   }
 
-  void Result::removeToggles(mt::CR_STR keyword) {
-    if (hasToggles(keyword)) {
-      toggles.erase(keyword);
+  void Result::removeToggles(Command *node) {
+    if (hasToggles(node)) {
+      toggles.erase(node);
     }
   }
 
-  void Result::removeUltimate(mt::CR_STR keyword) {
-    if (hasUltimates(keyword)) {
-      ultimates.erase(keyword);
+  void Result::removeUltimate(Command *node) {
+    if (hasUltimates(node)) {
+      ultimates.erase(node);
     }
   }
 
-  size_t Result::numberOfWords(mt::CR_STR keyword) {
-    if (hasWords(keyword)) {
-      return words[keyword].size();
-    }
-    return 0;
-  }
-
-  size_t Result::numberOfNumbers(mt::CR_STR keyword) {
-    if (hasNumbers(keyword)) {
-      return numbers[keyword].size();
+  size_t Result::numberOfWords(Command *node) {
+    if (hasWords(node)) {
+      return words[node].size();
     }
     return 0;
   }
 
-  size_t Result::numberOfToggles(mt::CR_STR keyword) {
-    if (hasToggles(keyword)) {
-      return toggles[keyword].size();
+  size_t Result::numberOfNumbers(Command *node) {
+    if (hasNumbers(node)) {
+      return numbers[node].size();
     }
     return 0;
   }
 
-  size_t Result::numberOfUltimates(mt::CR_STR keyword) {
-    if (hasUltimates(keyword)) {
-      return ultimates[keyword].size();
+  size_t Result::numberOfToggles(Command *node) {
+    if (hasToggles(node)) {
+      return toggles[node].size();
     }
     return 0;
   }
 
-  std::string Result::getWordAt(mt::CR_STR keyword, mt::CR_SZ index) {
-    if (hasWords(keyword) &&
-      index < words[keyword].size()
+  size_t Result::numberOfUltimates(Command *node) {
+    if (hasUltimates(node)) {
+      return ultimates[node].size();
+    }
+    return 0;
+  }
+
+  std::string Result::getWordAt(Command *node, mt::CR_SZ index) {
+    if (hasWords(node) &&
+      index < words[node].size()
     ) {
-      return words[keyword][index];
+      return words[node][index];
     }
     return "";
   }
 
-  mt::LD Result::getNumberAt(mt::CR_STR keyword, mt::CR_SZ index) {
-    if (hasNumbers(keyword) &&
-      index < numbers[keyword].size()
+  mt::LD Result::getNumberAt(Command *node, mt::CR_SZ index) {
+    if (hasNumbers(node) &&
+      index < numbers[node].size()
     ) {
-      return numbers[keyword][index];
+      return numbers[node][index];
     }
     return 0;
   }
 
-  bool Result::getToggleAt(mt::CR_STR keyword, mt::CR_SZ index) {
-    if (hasToggles(keyword) &&
-      index < toggles[keyword].size()
+  bool Result::getToggleAt(Command *node, mt::CR_SZ index) {
+    if (hasToggles(node) &&
+      index < toggles[node].size()
     ) {
-      return toggles[keyword][index];
+      return toggles[node][index];
     }
     return false;
   }
 
-  std::string Result::getUltimateAt(mt::CR_STR keyword, mt::CR_SZ index) {
-    if (hasUltimates(keyword) &&
-      index < ultimates[keyword].size()
+  std::string Result::getUltimateAt(Command *node, mt::CR_SZ index) {
+    if (hasUltimates(node) &&
+      index < ultimates[node].size()
     ) {
-      return ultimates[keyword][index];
+      return ultimates[node][index];
     }
     return "";
   }
 
-  std::string Result::getFirstWord(mt::CR_STR keyword) {
-    if (hasWords(keyword)) {
-      if (words[keyword].empty()) return "";
-      return words[keyword].front();
+  std::string Result::getFirstWord(Command *node) {
+    if (hasWords(node)) {
+      if (words[node].empty()) return "";
+      return words[node].front();
     }
     return "";
   }
 
-  mt::LD Result::getFirstNumber(mt::CR_STR keyword) {
-    if (hasNumbers(keyword)) {
-      if (numbers[keyword].empty()) return 0;
-      return numbers[keyword].front();
+  mt::LD Result::getFirstNumber(Command *node) {
+    if (hasNumbers(node)) {
+      if (numbers[node].empty()) return 0;
+      return numbers[node].front();
     }
     return 0;
   }
 
-  bool Result::getFirstToggle(mt::CR_STR keyword) {
-    if (hasToggles(keyword)) {
-      if (toggles[keyword].empty()) return false;
-      return toggles[keyword].front();
+  bool Result::getFirstToggle(Command *node) {
+    if (hasToggles(node)) {
+      if (toggles[node].empty()) return false;
+      return toggles[node].front();
     }
     return false;
   }
 
-  std::string Result::getFirstUltimate(mt::CR_STR keyword) {
-    if (hasUltimates(keyword)) {
-      if (ultimates[keyword].empty()) return "";
-      return ultimates[keyword].front();
+  std::string Result::getFirstUltimate(Command *node) {
+    if (hasUltimates(node)) {
+      if (ultimates[node].empty()) return "";
+      return ultimates[node].front();
     }
     return "";
   }
 
-  std::string Result::getLastWord(mt::CR_STR keyword) {
-    if (hasWords(keyword)) {
-      if (words[keyword].empty()) return "";
-      return words[keyword].back();
+  std::string Result::getLastWord(Command *node) {
+    if (hasWords(node)) {
+      if (words[node].empty()) return "";
+      return words[node].back();
     }
     return "";
   }
 
-  mt::LD Result::getLastNumber(mt::CR_STR keyword) {
-    if (hasNumbers(keyword)) {
-      if (numbers[keyword].empty()) return 0;
-      return numbers[keyword].back();
+  mt::LD Result::getLastNumber(Command *node) {
+    if (hasNumbers(node)) {
+      if (numbers[node].empty()) return 0;
+      return numbers[node].back();
     }
     return 0;
   }
 
-  bool Result::getLastToggle(mt::CR_STR keyword) {
-    if (hasToggles(keyword)) {
-      if (toggles[keyword].empty()) return false;
-      return toggles[keyword].back();
+  bool Result::getLastToggle(Command *node) {
+    if (hasToggles(node)) {
+      if (toggles[node].empty()) return false;
+      return toggles[node].back();
     }
     return false;
   }
 
-  std::string Result::getLastUltimate(mt::CR_STR keyword) {
-    if (hasUltimates(keyword)) {
-      if (ultimates[keyword].empty()) return "";
-      return ultimates[keyword].back();
+  std::string Result::getLastUltimate(Command *node) {
+    if (hasUltimates(node)) {
+      if (ultimates[node].empty()) return "";
+      return ultimates[node].back();
     }
     return "";
   }
 
   std::string Result::concatUltimates(
-    mt::CR_STR keyword,
+    Command *node,
     mt::CR_STR separator
   ) {
     std::string text;
 
-    for (mt::CR_STR str : ultimates[keyword]) {
+    for (mt::CR_STR str : ultimates[node]) {
       text += str + separator;
     }
 
     return text;
-  }
-
-  void Result::printInputs() {
-    std::cout << std::endl;
-
-    printType<std::string>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
-      words
-    );
-
-    printType<mt::LD>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
-      numbers
-    );
-
-    printType<bool>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
-      toggles
-    );
   }
 }
 

@@ -32,21 +32,18 @@ namespace cli_menu {
   void Preset::applyFileIn(Creator *owner) {
     applyFileIn(
       owner,
-      [](Command *current)->bool {
+      [](Command *node)->bool {
         bool found = false;
+        std::string filename;
 
-        std::string filename,
-          keyword = Langu::agePreset::getKeyword(PRESET_IN);
-
-        for (int i = 0; i < Result::numberOfWords(keyword); i++) {
-          filename = Result::getWordAt(keyword, i);
+        for (int i = 0; i < Result::numberOfWords(node); i++) {
+          filename = Result::getWordAt(node, i);
 
           if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
             Result::addUltimate(
-              current->getKeyword(),
-              mt_uti::Scanner::readFileString(filename)
+              node, mt_uti::Scanner::readFileString(filename)
             );
           }
           else Langu::ageMessage::printTemplateResponse(
@@ -63,10 +60,8 @@ namespace cli_menu {
   void Preset::applyFileOut(Creator *owner) {
     applyFileOut(
       owner,
-      [](Command *current)->bool {
-        std::string filename = Result::getLastWord(
-          Langu::agePreset::getKeyword(PRESET_OUT)
-        );
+      [](Command *node)->bool {
+        std::string filename = Result::getLastWord(node);
 
         if (mt_uti::Scanner::isFileExist(filename) &&
           !Toggle::instantBooleanize()
@@ -83,7 +78,7 @@ namespace cli_menu {
         }
 
         mt_uti::Printer::write(
-          Result::concatUltimates(current->getKeyword()),
+          Result::concatUltimates(node),
           filename,
           false
         );
@@ -102,8 +97,8 @@ namespace cli_menu {
     Toggle *help = new Toggle(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
-      [](Command *current)->bool {
-        static_cast<Creator*>(current)->printHelp();
+      [](Command *node)->bool {
+        static_cast<Creator*>(node)->printHelp();
         return true;
       }
     );
@@ -117,8 +112,8 @@ namespace cli_menu {
     Toggle *list = new Toggle(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
-      [](Command *current)->bool {
-        static_cast<Creator*>(current)->printList(false);
+      [](Command *node)->bool {
+        static_cast<Creator*>(node)->printList(false);
         return true;
       }
     );

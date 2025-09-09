@@ -5,6 +5,11 @@
 
 namespace cli_menu {
 
+  class Command;
+
+  template <typename T>
+  using COMUNORMAP = mt::UNORMAP<Command*, T>;
+
   class Result {
   private:
     template <typename T>
@@ -13,18 +18,18 @@ namespace cli_menu {
     template <typename T>
     static void printType(
       mt::CR_STR stringifiedType,
-      mt::STRUNORMAP<mt::VEC<T>> &unormap
+      COMUNORMAP<mt::VEC<T>> &unormap
     );
 
-    /** Access the data via 'Command' keyword */
+    /** Access the data via 'Command' address */
 
     // parameters arguments
-    inline static mt::STRUNORMAP<mt::VEC_STR> words;
-    inline static mt::STRUNORMAP<mt::VEC_LD> numbers;
-    inline static mt::STRUNORMAP<mt::VEC_BOL> toggles;
+    inline static COMUNORMAP<mt::VEC_STR> words;
+    inline static COMUNORMAP<mt::VEC_LD> numbers;
+    inline static COMUNORMAP<mt::VEC_BOL> toggles;
 
     // better set inside the 'Command' callback
-    inline static mt::STRUNORMAP<mt::VEC_STR> ultimates;
+    inline static COMUNORMAP<mt::VEC_STR> ultimates;
 
     friend class Word;
     friend class Number;
@@ -33,58 +38,57 @@ namespace cli_menu {
   public:
     /** Setters */
 
-    static void addWord(mt::CR_STR keyword, mt::CR_STR input);
-    static void addNumber(mt::CR_STR keyword, mt::CR_LD input);
-    static void addToggle(mt::CR_STR keyword, mt::CR_BOL input);
-    static void addUltimate(mt::CR_STR keyword, mt::CR_STR input);
+    static void addWord(Command *node, mt::CR_STR input);
+    static void addNumber(Command *node, mt::CR_LD input);
+    static void addToggle(Command *node, mt::CR_BOL input);
+    static void addUltimate(Command *node, mt::CR_STR input);
 
-    static void removeWords(mt::CR_STR keyword);
-    static void removeNumbers(mt::CR_STR keyword);
-    static void removeToggles(mt::CR_STR keyword);
-    static void removeUltimate(mt::CR_STR keyword);
+    static void removeWords(Command *node);
+    static void removeNumbers(Command *node);
+    static void removeToggles(Command *node);
+    static void removeUltimate(Command *node);
 
     /** Getters */
 
     // 'std::unordered_map' existence checkers
-    static bool hasWords(mt::CR_STR keyword);
-    static bool hasNumbers(mt::CR_STR keyword);
-    static bool hasToggles(mt::CR_STR keyword);
-    static bool hasUltimates(mt::CR_STR keyword);
+    static bool hasWords(Command *node);
+    static bool hasNumbers(Command *node);
+    static bool hasToggles(Command *node);
+    static bool hasUltimates(Command *node);
 
-    // return 0 for unknown keyword
-    static size_t numberOfWords(mt::CR_STR keyword);
-    static size_t numberOfNumbers(mt::CR_STR keyword);
-    static size_t numberOfToggles(mt::CR_STR keyword);
-    static size_t numberOfUltimates(mt::CR_STR keyword);
+    // return 0 for unknown id
+    static size_t numberOfWords(Command *node);
+    static size_t numberOfNumbers(Command *node);
+    static size_t numberOfToggles(Command *node);
+    static size_t numberOfUltimates(Command *node);
 
     // get with index
-    static std::string getWordAt(mt::CR_STR keyword, mt::CR_SZ index);
-    static mt::LD getNumberAt(mt::CR_STR keyword, mt::CR_SZ index);
-    static bool getToggleAt(mt::CR_STR keyword, mt::CR_SZ index);
-    static std::string getUltimateAt(mt::CR_STR keyword, mt::CR_SZ index);
+    static std::string getWordAt(Command *node, mt::CR_SZ index);
+    static mt::LD getNumberAt(Command *node, mt::CR_SZ index);
+    static bool getToggleAt(Command *node, mt::CR_SZ index);
+    static std::string getUltimateAt(Command *node, mt::CR_SZ index);
 
     // get at front
-    static std::string getFirstWord(mt::CR_STR keyword);
-    static mt::LD getFirstNumber(mt::CR_STR keyword);
-    static bool getFirstToggle(mt::CR_STR keyword);
-    static std::string getFirstUltimate(mt::CR_STR keyword);
+    static std::string getFirstWord(Command *node);
+    static mt::LD getFirstNumber(Command *node);
+    static bool getFirstToggle(Command *node);
+    static std::string getFirstUltimate(Command *node);
 
     // get at back
-    static std::string getLastWord(mt::CR_STR keyword);
-    static mt::LD getLastNumber(mt::CR_STR keyword);
-    static bool getLastToggle(mt::CR_STR keyword);
-    static std::string getLastUltimate(mt::CR_STR keyword);
+    static std::string getLastWord(Command *node);
+    static mt::LD getLastNumber(Command *node);
+    static bool getLastToggle(Command *node);
+    static std::string getLastUltimate(Command *node);
 
     // concatenate string vector into a string
     static std::string concatUltimates(
-      mt::CR_STR keyword,
+      Command *node,
       mt::CR_STR separator = "\n"
     );
 
-    // display all arguments
+    // display all arguments (defined at 'command.cpp')
     static void printInputs();
   };
 }
 
-#include "result.tpp"
 #endif // __CLI_MENU__RESULT_HPP__

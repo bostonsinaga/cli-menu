@@ -13,7 +13,6 @@ namespace cli_menu {
     COMMAND_ENDED // silent exit
   };
 
-  class Command;
   typedef std::function<bool(Command*)> COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
@@ -95,7 +94,7 @@ namespace cli_menu {
 
     // better called after callback call
     void clipboardCopy() {
-      Clipboard::copyText(Result::concatUltimates(keyword));
+      Clipboard::copyText(Result::concatUltimates(this));
     }
 
     virtual void clipboardPaste() {}
@@ -182,4 +181,5 @@ namespace cli_menu {
   };
 }
 
+#include "result.tpp"
 #endif // __CLI_MENU__COMMAND_HPP__

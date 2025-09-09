@@ -552,6 +552,27 @@ namespace cli_menu {
 
     sterilized = condition;
   }
+
+  /** From class 'Result' */
+
+  void Result::printInputs() {
+    std::cout << std::endl;
+
+    printType<std::string>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
+      words
+    );
+
+    printType<mt::LD>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
+      numbers
+    );
+
+    printType<bool>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
+      toggles
+    );
+  }
 }
 
 #endif // __CLI_MENU__COMMAND_CPP__

@@ -24,7 +24,7 @@ namespace cli_menu {
   template <typename T>
   void Result::printType(
     mt::CR_STR stringifiedType,
-    mt::STRUNORMAP<mt::VEC<T>> &unormap
+    COMUNORMAP<mt::VEC<T>> &unormap
   ) {
     if constexpr (
       std::is_same_v<T, std::string> ||
@@ -37,11 +37,11 @@ namespace cli_menu {
         Console::messageColors[CONSOLE_HINT_1]
       );
 
-      for (mt::CR_PAIR2<std::string, mt::VEC<T>> keyvec : unormap) {
+      for (mt::CR_PAIR2<Command*, mt::VEC<T>> keyvec : unormap) {
 
         // keyword with size of vector
         Console::logItalicString(
-          keyvec.first + " (" + std::to_string(keyvec.second.size()) + "):\n",
+          keyvec.first->getKeyword() + " (" + std::to_string(keyvec.second.size()) + "):\n",
           Console::messageColors[CONSOLE_HINT_2]
         );
 
