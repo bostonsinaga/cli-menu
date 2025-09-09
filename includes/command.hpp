@@ -9,7 +9,8 @@ namespace cli_menu {
   // final status codes
   enum COMMAND_CODE {
     COMMAND_FAILED, COMMAND_ONGOING,
-    COMMAND_REQUIRED, COMMAND_SUCCEEDED, COMMAND_CANCELED
+    COMMAND_SUCCEEDED, COMMAND_TERMINATED,
+    COMMAND_ENDED // silent exit
   };
 
   class Command;
@@ -27,13 +28,14 @@ namespace cli_menu {
       localPropagation = true;
 
     inline static bool
+      matching = true,
       globalDialogued = true,
       globalPropagation = true;
 
     // return false to stop the program 
     COMMAND_CALLBACK callback = [](Command *current)->bool { return true; };
 
-    // prohibit controllers
+    // prohibit controllers after match
     inline static bool interruptionDialogued = false;
 
     // accumulate keywords up to root
@@ -62,7 +64,7 @@ namespace cli_menu {
 
     /**
      * The number of children is reduced by the
-     * number of pseudo commands to ignoring them.
+     * number of pseudo-commands to ignoring them.
      */
     bool hasChildren() {
       return numberOfChildren() - pseudosCount > 0;

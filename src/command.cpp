@@ -30,6 +30,8 @@ namespace cli_menu {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
 
+    Command::matching = true;
+
     /**
      * The string vector will 'pop_back()'
      * until it is empty to stop this loop.
@@ -74,10 +76,10 @@ namespace cli_menu {
       if (firstChild || firstNeighbor) {
         Command::raws.pop_back();
 
-        // pseudo-child callback and program termination
+        // pseudo-child callback and program end
         if (firstChild && firstChild->pseudo) {
           firstChild->callback(this);
-          return COMMAND_CANCELED;
+          return COMMAND_ENDED;
         }
         /**
          * The match will be paused until arguments are given from the dialog.
@@ -127,6 +129,7 @@ namespace cli_menu {
   COMMAND_CODE Command::dialog() {
     static bool hinted = false;
     std::string input;
+    Command::matching = false;
 
     // outline or fill style
     Console::logStylishHeader(
@@ -223,7 +226,7 @@ namespace cli_menu {
       }
       // QUIT
       else if (Control::quitTest(input)) {
-        return COMMAND_CANCELED;
+        return COMMAND_TERMINATED;
       }
       // WILD VALUE
       else {
@@ -430,7 +433,7 @@ namespace cli_menu {
   void Command::printHelp() {
     // keyword
     Console::logString(
-      "\n" + keyword + " ["
+      keyword + " ["
       + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
       Console::messageColors[CONSOLE_HINT_1]
     );
@@ -452,7 +455,7 @@ namespace cli_menu {
 
           if (!static_cast<Command*>(node)->pseudo) {
             Console::logString(
-              "  " + static_cast<Command*>(node)->keyword + " ["
+              (withHelp ? "  " : "") + static_cast<Command*>(node)->keyword + " ["
               + Langu::ageCommand::getStringifiedType(
                 static_cast<Command*>(node)->stringifiedTypeIndex
               ) + "]\n",
@@ -470,8 +473,10 @@ namespace cli_menu {
       return;
     }
 
-    // additional newline for 'withHelp'
-    std::cout << std::endl;
+    // additional newline only in dialog
+    if (!Command::matching) {
+      std::cout << std::endl;
+    }
   }
 
   void Command::printInterruptionDialoguedResponse() {
