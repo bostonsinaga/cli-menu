@@ -111,14 +111,12 @@ namespace cli_menu {
     Result::words.clear();
   }
 
-  void Word::printInput() {
-    for (int i = 0; i < Result::numberOfWords(this); i++) {
-      Console::logString(
-        Result::stringifiedVectorMember<std::string>(Result::words[this][i])
-        + (i == Result::words[this].size() - 1 ? "\n" : ",\n"),
-        Console::messageColors[CONSOLE_HINT_3]
-      );
+  bool Word::printInput() {
+    if (Result::numberOfWords(this)) {
+      Result::printInput<std::string>(Result::words[this], false);
+      return true;
     }
+    return false;
   }
 
   /** NUMBER */
@@ -152,14 +150,12 @@ namespace cli_menu {
     Result::numbers.clear();
   }
 
-  void Number::printInput() {
-    for (int i = 0; i < Result::numberOfNumbers(this); i++) {
-      Console::logString(
-        Result::stringifiedVectorMember<mt::LD>(Result::numbers[this][i])
-        + (i == Result::numbers[this].size() - 1 ? "\n" : ",\n"),
-        Console::messageColors[CONSOLE_HINT_3]
-      );
+  bool Number::printInput() {
+    if (Result::numberOfNumbers(this)) {
+      Result::printInput<mt::LD>(Result::numbers[this], false);
+      return true;
     }
+    return false;
   }
 
   /** TOGGLE */
@@ -192,14 +188,12 @@ namespace cli_menu {
     Result::toggles.clear();
   }
 
-  void Toggle::printInput() {
-    for (int i = 0; i < Result::numberOfToggles(this); i++) {
-      Console::logString(
-        Result::stringifiedVectorMember<bool>(Result::toggles[this][i])
-        + (i == Result::toggles[this].size() - 1 ? "\n" : ",\n"),
-        Console::messageColors[CONSOLE_HINT_2]
-      );
+  bool Toggle::printInput() {
+    if (Result::numberOfToggles(this)) {
+      Result::printInput<bool>(Result::toggles[this], false);
+      return true;
     }
+    return false;
   }
 }
 

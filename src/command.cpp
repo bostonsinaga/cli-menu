@@ -569,20 +569,24 @@ namespace cli_menu {
 
   void Result::printInputs(Command *onlyThis) {
     if (onlyThis) {
-      onlyThis->printInput();
+      if (!onlyThis->printInput()) {
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_SINGLE_VIEW);
+      }
     }
     else {
-      std::cout << std::endl;
-
       printType<std::string>(
         Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
         words
       );
 
+      std::cout << std::endl;
+
       printType<mt::LD>(
         Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
         numbers
       );
+
+      std::cout << std::endl;
 
       printType<bool>(
         Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),

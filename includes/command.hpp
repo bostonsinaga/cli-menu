@@ -180,7 +180,7 @@ namespace cli_menu {
     );
 
     // print unordered map values associated with this
-    virtual void printInput() {}
+    virtual bool printInput() { return false; }
   };
 }
 
