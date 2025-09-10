@@ -56,6 +56,8 @@ namespace cli_menu {
     "Operation result is empty.",
     // LANGUAGE_CLIPBOARD_COPIED_SUCCEED
     "Copied to clipboard.",
+    // LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE
+    "Hidden text pasting is only available on insertion.",
     // LANGUAGE_CLIPBOARD_GET_FAILURE,
     "Failed to get clipboard data.",
     // LANGUAGE_CLIPBOARD_LOCK_FAILURE
@@ -66,8 +68,6 @@ namespace cli_menu {
     "Failed to open clipboard.",
     // LANGUAGE_CLIPBOARD_PASTED
     "Pasted from clipboard.",
-    // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
-    "Hidden text pasting is only available on insertion.",
     // LANGUAGE_INTERRUPTION_DIALOG
     "Prohibited until the remaining direct inputs are processed.",
     // LANGUAGE_KEYWORD_NOT_FOUND
@@ -101,6 +101,8 @@ namespace cli_menu {
     CONSOLE_WARNING,
     // LANGUAGE_CLIPBOARD_COPIED_SUCCEED
     CONSOLE_HINT_1,
+    // LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE
+    CONSOLE_WARNING,
     // LANGUAGE_CLIPBOARD_GET_FAILURE,
     CONSOLE_ERROR,
     // LANGUAGE_CLIPBOARD_LOCK_FAILURE
@@ -111,8 +113,6 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // LANGUAGE_CLIPBOARD_PASTED
     CONSOLE_HINT_1,
-    // LANGUAGE_FORBIDDEN_HIDDEN_PASTE
-    CONSOLE_WARNING,
     // LANGUAGE_INTERRUPTION_DIALOG
     CONSOLE_ERROR,
     // LANGUAGE_KEYWORD_NOT_FOUND
@@ -141,12 +141,12 @@ namespace cli_menu {
     mt::CR_STR argumentRequiredSentence,
     mt::CR_STR clipboardCopiedFailureSentence,
     mt::CR_STR clipboardCopiedSucceedSentence,
+    mt::CR_STR clipboardForbiddenHiddenPasteSentence,
     mt::CR_STR clipboardGetFailureSentence,
     mt::CR_STR clipboardLockFailureSentence,
     mt::CR_STR clipboardMemoryAllocationFailureSentence,
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPastedSentence,
-    mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
     mt::CR_STR parameterAloneSentence,
@@ -163,12 +163,12 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_COPIED_FAILURE] = clipboardCopiedFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_COPIED_SUCCEED] = clipboardCopiedSucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE] = clipboardForbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneSentence;

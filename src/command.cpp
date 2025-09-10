@@ -230,7 +230,11 @@ namespace cli_menu {
       }
       // CLIPBOARD PASTE
       else if (Control::pasteTest(input)) {
-        clipboardPaste();
+        if (editing) {
+          required = false;
+          clipboardPaste();
+        }
+        else Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE);
       }
       // QUIT
       else if (Control::quitTest(input)) {
@@ -240,6 +244,7 @@ namespace cli_menu {
       else {
         // push argument to 'Result'
         if (editing) {
+          required = false;
           pushUnormap(input);
         }
         // selection (match in dialog)

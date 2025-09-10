@@ -100,12 +100,10 @@ namespace cli_menu {
   }
 
   void Word::clipboardPaste() {
-    required = false;
     Result::words[this].push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
-    required = false;
     Result::words[this].push_back(input);
   }
 
@@ -137,8 +135,6 @@ namespace cli_menu {
   }
 
   void Number::clipboardPaste() {
-    required = false;
-
     mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[this],
       Clipboard::pasteNumbers()
@@ -146,8 +142,6 @@ namespace cli_menu {
   }
 
   void Number::pushUnormap(mt::CR_STR input) {
-    required = false;
-
     mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[this],
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
@@ -182,8 +176,6 @@ namespace cli_menu {
   }
 
   void Toggle::clipboardPaste() {
-    required = false;
-
     mt_uti::VecTools<bool>::concatCopy(
       Result::toggles[this],
       Clipboard::pasteConditions()
@@ -191,8 +183,6 @@ namespace cli_menu {
   }
 
   void Toggle::pushUnormap(mt::CR_STR input) {
-    required = false;
-
     Result::toggles[this].push_back(
       Langu::ageBooleanizer::test(input)
     );
