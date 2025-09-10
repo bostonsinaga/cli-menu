@@ -21,58 +21,99 @@ namespace cli_menu {
     return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(ultimates, node);
   }
 
-  void Result::addWord(
-    Command *node, mt::CR_STR input
-  ) {
+  void Result::pushWord(Command *node, mt::CR_STR input) {
     if (hasWords(node)) {
       words[node].push_back(input);
     }
   }
 
-  void Result::addNumber(
-    Command *node, mt::CR_LD input
-  ) {
+  void Result::pushNumber(Command *node, mt::CR_LD input) {
     if (hasNumbers(node)) {
       numbers[node].push_back(input);
     }
   }
 
-  void Result::addToggle(
-    Command *node, mt::CR_BOL input
-  ) {
+  void Result::pushToggle(Command *node, mt::CR_BOL input) {
     if (hasToggles(node)) {
       toggles[node].push_back(input);
     }
   }
 
-  void Result::addUltimate(Command *node, mt::CR_STR input) {
+  void Result::pushUltimate(Command *node, mt::CR_STR input) {
     if (hasUltimates(node)) {
       ultimates[node].push_back(input);
     }
   }
 
-  void Result::removeWords(Command *node) {
+  void Result::popWord(Command *node) {
+    if (hasWords(node)) {
+      words[node].pop_back();
+    }
+  }
+
+  void Result::popNumber(Command *node) {
+    if (hasNumbers(node)) {
+      numbers[node].pop_back();
+    }
+  }
+
+  void Result::popToggle(Command *node) {
+    if (hasToggles(node)) {
+      toggles[node].pop_back();
+    }
+  }
+
+  void Result::popUltimate(Command *node) {
+    if (hasUltimates(node)) {
+      ultimates[node].pop_back();
+    }
+  }
+
+  void Result::eraseWords(Command *node) {
     if (hasWords(node)) {
       words.erase(node);
     }
   }
 
-  void Result::removeNumbers(Command *node) {
+  void Result::eraseNumbers(Command *node) {
     if (hasNumbers(node)) {
       numbers.erase(node);
     }
   }
 
-  void Result::removeToggles(Command *node) {
+  void Result::eraseToggles(Command *node) {
     if (hasToggles(node)) {
       toggles.erase(node);
     }
   }
 
-  void Result::removeUltimate(Command *node) {
+  void Result::eraseUltimates(Command *node) {
     if (hasUltimates(node)) {
       ultimates.erase(node);
     }
+  }
+
+  void Result::clearWords() {
+    words.clear();
+  }
+
+  void Result::clearNumbers() {
+    numbers.clear();
+  }
+
+  void Result::clearToggles() {
+    toggles.clear();
+  }
+
+  void Result::clearUltimates() {
+    ultimates.clear();
+  }
+
+  void Result::clearAll() {
+    words.clear();
+    numbers.clear();
+    toggles.clear();
+    ultimates.clear();
   }
 
   size_t Result::numberOfWords(Command *node) {

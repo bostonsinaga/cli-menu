@@ -38,15 +38,26 @@ namespace cli_menu {
   public:
     /** Setters */
 
-    static void addWord(Command *node, mt::CR_STR input);
-    static void addNumber(Command *node, mt::CR_LD input);
-    static void addToggle(Command *node, mt::CR_BOL input);
-    static void addUltimate(Command *node, mt::CR_STR input);
+    static void pushWord(Command *node, mt::CR_STR input);
+    static void pushNumber(Command *node, mt::CR_LD input);
+    static void pushToggle(Command *node, mt::CR_BOL input);
+    static void pushUltimate(Command *node, mt::CR_STR input);
 
-    static void removeWords(Command *node);
-    static void removeNumbers(Command *node);
-    static void removeToggles(Command *node);
-    static void removeUltimate(Command *node);
+    void popWord(Command *node);
+    void popNumber(Command *node);
+    void popToggle(Command *node);
+    void popUltimate(Command *node);
+
+    static void eraseWords(Command *node);
+    static void eraseNumbers(Command *node);
+    static void eraseToggles(Command *node);
+    static void eraseUltimates(Command *node);
+
+    static void clearWords();
+    static void clearNumbers();
+    static void clearToggles();
+    static void clearUltimates();
+    static void clearAll();
 
     /** Getters */
 
@@ -86,8 +97,8 @@ namespace cli_menu {
       mt::CR_STR separator = "\n"
     );
 
-    // display all arguments (defined at 'command.cpp')
-    static void printInputs();
+    // display all visited nodes or current node arguments
+    static void printInputs(Command *onlyThis); // defined at 'command.cpp'
   };
 }
 

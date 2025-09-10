@@ -42,7 +42,7 @@ namespace cli_menu {
           if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
-            Result::addUltimate(
+            Result::pushUltimate(
               node, mt_uti::Scanner::readFileString(filename)
             );
           }
