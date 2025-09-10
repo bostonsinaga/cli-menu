@@ -97,7 +97,11 @@ namespace cli_menu {
       mt::CR_STR separator = "\n"
     );
 
-    // display all visited nodes or current node arguments
+    // display current node arguments
+    template <typename T>
+    static void printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent);
+
+    // display all visited nodes arguments
     static void printInputs(Command *onlyThis); // defined at 'command.cpp'
   };
 }

@@ -22,6 +22,20 @@ namespace cli_menu {
   }
 
   template <typename T>
+  void Result::printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
+
+    for (int i = 0; i < vec.size(); i++) {
+      Console::logString(
+        (withIndent ? "  " : "") + Result::stringifiedVectorMember<T>(vec[i])
+        + (i == vec.size() - 1 ? "\n" : ",\n"),
+        Console::messageColors[withIndent ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
+      );
+    }
+
+    std::cout << std::endl;
+  }
+
+  template <typename T>
   void Result::printType(
     mt::CR_STR stringifiedType,
     COMUNORMAP<mt::VEC<T>> &unormap
@@ -46,21 +60,13 @@ namespace cli_menu {
         );
 
         // members of vector
-        for (int i = 0; i < keyvec.second.size(); i++) {
-          Console::logString(
-            "  " + stringifiedVectorMember<T>(keyvec.second[i])
-            + (i == keyvec.second.size() - 1 ? "\n" : ",\n"),
-            Console::messageColors[CONSOLE_HINT_3]
-          );
-        }
+        printInput<T>(keyvec.second, true);
       }
 
       // display emptiness
       if (unormap.empty()) {
         Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
       }
-
-      std::cout << std::endl;
     }
   }
 }
