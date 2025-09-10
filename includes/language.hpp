@@ -9,9 +9,12 @@ namespace cli_menu {
     LANGUAGE_ALREADY_MODIFYING,
     LANGUAGE_ALREADY_SELECTING,
     LANGUAGE_ARGUMENT_REQUIRED,
-    LANGUAGE_CLIPBOARD_OPEN_FAILURE,
+    LANGUAGE_CLIPBOARD_COPIED_FAILURE,
+    LANGUAGE_CLIPBOARD_COPIED_SUCCEED,
     LANGUAGE_CLIPBOARD_GET_FAILURE,
     LANGUAGE_CLIPBOARD_LOCK_FAILURE,
+    LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
+    LANGUAGE_CLIPBOARD_OPEN_FAILURE,
     LANGUAGE_CLIPBOARD_PASTED,
     LANGUAGE_FORBIDDEN_HIDDEN_PASTE,
     LANGUAGE_INTERRUPTION_DIALOG,
@@ -79,7 +82,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 18;
+      static constexpr int totalSentences = 21;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -145,9 +148,12 @@ namespace cli_menu {
         mt::CR_STR alreadyModifyingSentence,
         mt::CR_STR alreadySelectingSentence,
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR clipboardOpenFailureSentence,
+        mt::CR_STR clipboardCopiedFailureSentence,
+        mt::CR_STR clipboardCopiedSucceedSentence,
         mt::CR_STR clipboardGetFailureSentence,
         mt::CR_STR clipboardLockFailureSentence,
+        mt::CR_STR clipboardMemoryAllocationFailureSentence,
+        mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPastedSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,

@@ -10,11 +10,7 @@ namespace cli_menu {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
-
-      Langu::ageMessage::printResponse(
-        LANGUAGE_CLIPBOARD_OPEN_FAILURE
-      );
-
+      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_OPEN_FAILURE);
       return "";
     }
 
@@ -23,10 +19,7 @@ namespace cli_menu {
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (!hData) {
-      Langu::ageMessage::printResponse(
-        LANGUAGE_CLIPBOARD_GET_FAILURE
-      );
-
+      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_GET_FAILURE);
       CloseClipboard();
       return "";
     }
@@ -36,9 +29,7 @@ namespace cli_menu {
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (!pszText) {
-      Langu::ageMessage::printResponse(
-        LANGUAGE_CLIPBOARD_LOCK_FAILURE
-      );
+      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_LOCK_FAILURE);
     }
     else GlobalUnlock(hData);
 
@@ -48,36 +39,44 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    Langu::ageMessage::printResponse(
-      LANGUAGE_CLIPBOARD_PASTED
-    );
-
+    Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_PASTED);
     return pasted;
   }
 
   void Clipboard::copyText(mt::CR_STR text) {
-    // activate clipboard
-    if (!OpenClipboard(nullptr)) return;
-
-    // empty previous data in clipboard
-    EmptyClipboard();
-
-    // allocate global memory for text
-    HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
-    if (!hGlob) {
-      CloseClipboard();
-      return;
+    if (text.empty()) {
+      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_COPIED_FAILURE);
     }
+    else {
+      // activate clipboard
+      if (!OpenClipboard(nullptr)) {
+        Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_OPEN_FAILURE);
+        return;
+      }
 
-    // copy text to memory
-    memcpy(GlobalLock(hGlob), text.c_str(), text.size() + 1);
-    GlobalUnlock(hGlob);
+      // empty previous data in clipboard
+      EmptyClipboard();
 
-    // set data to clipboard with text format
-    SetClipboardData(CF_TEXT, hGlob);
+      // allocate global memory for text
+      HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
 
-    // done with clipboard
-    CloseClipboard();
+      if (!hGlob) {
+        Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE);
+        CloseClipboard();
+        return;
+      }
+
+      // copy text to memory
+      memcpy(GlobalLock(hGlob), text.c_str(), text.size() + 1);
+      GlobalUnlock(hGlob);
+
+      // set data to clipboard with text format
+      SetClipboardData(CF_TEXT, hGlob);
+
+      // done with clipboard
+      CloseClipboard();
+      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_COPIED_SUCCEED);
+    }
   }
 
   mt::VEC_LD Clipboard::pasteNumbers() {
