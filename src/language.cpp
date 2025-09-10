@@ -66,6 +66,8 @@ namespace cli_menu {
     "Failed to open clipboard.",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "Pasted from clipboard.",
+    // SENTENCE_EMPTY_SINGLE_VIEW
+    "Input is empty",
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
     // SENTENCE_INTERRUPTION_DIALOG
@@ -111,6 +113,8 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
+    // SENTENCE_EMPTY_SINGLE_VIEW
+    CONSOLE_WARNING,
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
     // SENTENCE_INTERRUPTION_DIALOG
@@ -146,6 +150,7 @@ namespace cli_menu {
     mt::CR_STR clipboardMemoryAllocationFailureSentence,
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
+    mt::CR_STR emptySingleViewSentence,
     mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
@@ -168,6 +173,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_SINGLE_VIEW] = emptySingleViewSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;

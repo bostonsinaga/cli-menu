@@ -16,6 +16,7 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
+    SENTENCE_EMPTY_SINGLE_VIEW,
     SENTENCE_FORBIDDEN_HIDDEN_PASTE,
     SENTENCE_INTERRUPTION_DIALOG,
     SENTENCE_KEYWORD_NOT_FOUND,
@@ -82,7 +83,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 21;
+      static constexpr int totalSentences = 22;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -155,6 +156,7 @@ namespace cli_menu {
         mt::CR_STR clipboardMemoryAllocationFailureSentence,
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
+        mt::CR_STR emptySingleViewSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
         mt::CR_STR keywordNotFoundSentence,
