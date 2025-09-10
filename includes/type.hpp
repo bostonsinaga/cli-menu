@@ -63,6 +63,7 @@ namespace cli_menu {
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
+    void printInput() override;
 
     Word(
       mt::CR_STR keyword_in,
@@ -84,6 +85,7 @@ namespace cli_menu {
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
+    void printInput() override;
 
     Number(
       mt::CR_STR keyword_in,
@@ -105,6 +107,7 @@ namespace cli_menu {
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
+    void printInput() override;
 
     Toggle(
       mt::CR_STR keyword_in,

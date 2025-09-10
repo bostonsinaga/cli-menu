@@ -109,8 +109,18 @@ namespace cli_menu {
     Result::words[this].push_back(input);
   }
 
-  void Word::resetUnormap() {    
-    Result::words[this].clear();
+  void Word::resetUnormap() {
+    Result::words.clear();
+  }
+
+  void Word::printInput() {
+    for (int i = 0; i < Result::numberOfWords(this); i++) {
+      Console::logString(
+        Result::stringifiedVectorMember<std::string>(Result::words[this][i])
+        + (i == Result::words[this].size() - 1 ? "\n" : ",\n"),
+        Console::messageColors[CONSOLE_HINT_3]
+      );
+    }
   }
 
   /** NUMBER */
@@ -145,7 +155,17 @@ namespace cli_menu {
   }
 
   void Number::resetUnormap() {
-    Result::numbers[this].clear();
+    Result::numbers.clear();
+  }
+
+  void Number::printInput() {
+    for (int i = 0; i < Result::numberOfNumbers(this); i++) {
+      Console::logString(
+        Result::stringifiedVectorMember<mt::LD>(Result::numbers[this][i])
+        + (i == Result::numbers[this].size() - 1 ? "\n" : ",\n"),
+        Console::messageColors[CONSOLE_HINT_3]
+      );
+    }
   }
 
   /** TOGGLE */
@@ -179,7 +199,17 @@ namespace cli_menu {
   }
 
   void Toggle::resetUnormap() {
-    Result::toggles[this].clear();
+    Result::toggles.clear();
+  }
+
+  void Toggle::printInput() {
+    for (int i = 0; i < Result::numberOfToggles(this); i++) {
+      Console::logString(
+        Result::stringifiedVectorMember<bool>(Result::toggles[this][i])
+        + (i == Result::toggles[this].size() - 1 ? "\n" : ",\n"),
+        Console::messageColors[CONSOLE_HINT_2]
+      );
+    }
   }
 }
 
