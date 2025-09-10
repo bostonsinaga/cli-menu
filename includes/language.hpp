@@ -46,8 +46,10 @@ namespace cli_menu {
     CONTROL_PREVIOUS,
     CONTROL_MODIFY,
     CONTROL_SELECT,
-    CONTROL_RESET,
-    CONTROL_VIEW,
+    CONTROL_RESET_THIS,
+    CONTROL_VIEW_THIS,
+    CONTROL_RESET_ALL,
+    CONTROL_VIEW_ALL,
     CONTROL_COPY,
     CONTROL_PASTE,
     CONTROL_QUIT
@@ -84,7 +86,7 @@ namespace cli_menu {
 
     struct xControl {
 
-      static constexpr int totalSymbols = 13;
+      static constexpr int totalSymbols = 15;
       inline static size_t maxTermLength = 16;
       static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
 
@@ -182,8 +184,10 @@ namespace cli_menu {
         std::string previousTerm,
         std::string modifyTerm,
         std::string selectTerm,
-        std::string resetTerm,
-        std::string viewTerm,
+        std::string resetThisTerm,
+        std::string viewThisTerm,
+        std::string resetAllTerm,
+        std::string viewAllTerm,
         std::string copyTerm,
         std::string pasteTerm,
         std::string quitTerm

@@ -194,8 +194,8 @@ namespace cli_menu {
   //_________|
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalSymbols>> Langu::xControl::terms = {{"en", {
-    "help", "list", "enter", "back", "next", "previous", "modify",
-    "select", "reset", "view", "copy", "paste", "quit"
+    "help", "list", "enter", "back", "next", "previous", "modify", "select",
+    "reset this", "view this", "reset all", "view all", "copy", "paste", "quit"
   }}};
 
   mt::STRUNORMAP_STR
@@ -223,8 +223,10 @@ namespace cli_menu {
     std::string previousTerm,
     std::string modifyTerm,
     std::string selectTerm,
-    std::string resetTerm,
-    std::string viewTerm,
+    std::string resetThisTerm,
+    std::string viewThisTerm,
+    std::string resetAllTerm,
+    std::string viewAllTerm,
     std::string copyTerm,
     std::string pasteTerm,
     std::string quitTerm
@@ -237,8 +239,10 @@ namespace cli_menu {
     Langu::xControl::limitTerm(CONTROL_PREVIOUS, previousTerm);
     Langu::xControl::limitTerm(CONTROL_MODIFY, modifyTerm);
     Langu::xControl::limitTerm(CONTROL_SELECT, selectTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET, resetTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW, viewTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_THIS, resetThisTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_THIS, viewThisTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_ALL, resetAllTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_ALL, viewAllTerm);
     Langu::xControl::limitTerm(CONTROL_COPY, copyTerm);
     Langu::xControl::limitTerm(CONTROL_PASTE, pasteTerm);
     Langu::xControl::limitTerm(CONTROL_QUIT, quitTerm);

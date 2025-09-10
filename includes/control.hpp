@@ -10,7 +10,7 @@ namespace cli_menu {
   class Control {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
-    static constexpr int totalSymbols = 13;
+    static constexpr int totalSymbols = 15;
 
     inline static const std::string symbols[totalSymbols][2] = {
       {":h", ":H"}, // help
@@ -21,8 +21,10 @@ namespace cli_menu {
       {":<", ":<"}, // previous
       {":m", ":M"}, // modify
       {":s", ":S"}, // select
-      {":r", ":R"}, // reset
-      {":v", ":V"}, // view
+      {":r", ":R"}, // reset this
+      {":v", ":V"}, // view this
+      {":x", ":X"}, // reset all
+      {":w", ":W"}, // view all
       {":c", ":C"}, // copy
       {":p", ":P"}, // paste
       {":q", ":Q"}  // quit
@@ -45,8 +47,10 @@ namespace cli_menu {
     static bool previousTest(mt::CR_STR str);
     static bool modifyTest(mt::CR_STR str);
     static bool selectTest(mt::CR_STR str);
-    static bool resetTest(mt::CR_STR str);
-    static bool viewTest(mt::CR_STR str);
+    static bool resetThisTest(mt::CR_STR str);
+    static bool viewThisTest(mt::CR_STR str);
+    static bool resetAllTest(mt::CR_STR str);
+    static bool viewAllTest(mt::CR_STR str);
     static bool copyTest(mt::CR_STR str);
     static bool pasteTest(mt::CR_STR str);
     static bool quitTest(mt::CR_STR str);
