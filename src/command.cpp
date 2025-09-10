@@ -521,11 +521,12 @@ namespace cli_menu {
         Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
       }
       // root or non-strict parent with this is required
-      else if (!getParent() || (
+      else if (found == this && (!getParent() || (
         getParent() && !static_cast<Command*>(getParent())->strict
-      )) {
+      ))) {
         Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
       }
+      else found = nullptr;
     }
 
     /**
