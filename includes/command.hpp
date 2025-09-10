@@ -178,6 +178,9 @@ namespace cli_menu {
       mt::CR_BOL condition = true,
       mt::CR_BOL willDestroy = false
     );
+
+    // print unordered map values associated with this
+    virtual void printInput() {}
   };
 }
 

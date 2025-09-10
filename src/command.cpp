@@ -211,12 +211,18 @@ namespace cli_menu {
         }
       }
       // RESET
-      else if (Control::resetTest(input)) {
+      else if (Control::resetThisTest(input)) {
         resetUnormap();
       }
+      else if (Control::resetAllTest(input)) {
+        Result::clearAll();
+      }
       // VIEW
-      else if (Control::viewTest(input)) {
-        Result::printInputs();
+      else if (Control::viewThisTest(input)) {
+        Result::printInputs(this);
+      }
+      else if (Control::viewAllTest(input)) {
+        Result::printInputs(nullptr);
       }
       // CLIPBOARD COPY
       else if (Control::copyTest(input)) {
@@ -556,23 +562,28 @@ namespace cli_menu {
 
   /** From class 'Result' */
 
-  void Result::printInputs() {
-    std::cout << std::endl;
+  void Result::printInputs(Command *onlyThis) {
+    if (onlyThis) {
+      onlyThis->printInput();
+    }
+    else {
+      std::cout << std::endl;
 
-    printType<std::string>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
-      words
-    );
+      printType<std::string>(
+        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
+        words
+      );
 
-    printType<mt::LD>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
-      numbers
-    );
+      printType<mt::LD>(
+        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
+        numbers
+      );
 
-    printType<bool>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
-      toggles
-    );
+      printType<bool>(
+        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
+        toggles
+      );
+    }
   }
 }
 
