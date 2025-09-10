@@ -10,7 +10,7 @@ namespace cli_menu {
 
     // activate clipboard
     if (!OpenClipboard(nullptr)) {
-      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_OPEN_FAILURE);
+      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
       return "";
     }
 
@@ -19,7 +19,7 @@ namespace cli_menu {
     HANDLE hData = GetClipboardData(CF_TEXT);
 
     if (!hData) {
-      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_GET_FAILURE);
+      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GET_FAILURE);
       CloseClipboard();
       return "";
     }
@@ -29,7 +29,7 @@ namespace cli_menu {
     char *pszText = static_cast<char*>(GlobalLock(hData));
 
     if (!pszText) {
-      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_LOCK_FAILURE);
+      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_LOCK_FAILURE);
     }
     else GlobalUnlock(hData);
 
@@ -39,18 +39,18 @@ namespace cli_menu {
     // done with clipboard
     CloseClipboard();
 
-    Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_PASTED);
+    Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_PASTE_SUCCEED);
     return pasted;
   }
 
   void Clipboard::copyText(mt::CR_STR text) {
     if (text.empty()) {
-      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_COPIED_FAILURE);
+      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_COPY_FAILURE);
     }
     else {
       // activate clipboard
       if (!OpenClipboard(nullptr)) {
-        Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_OPEN_FAILURE);
+        Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
         return;
       }
 
@@ -61,7 +61,7 @@ namespace cli_menu {
       HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
 
       if (!hGlob) {
-        Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE);
+        Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE);
         CloseClipboard();
         return;
       }
@@ -75,7 +75,7 @@ namespace cli_menu {
 
       // done with clipboard
       CloseClipboard();
-      Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_COPIED_SUCCEED);
+      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_COPY_SUCCEED);
     }
   }
 

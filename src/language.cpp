@@ -46,92 +46,92 @@ namespace cli_menu {
   //_________|
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xMessage::totalSentences>> Langu::xMessage::sentences = {{"en", {
-    // LANGUAGE_ALREADY_MODIFYING
+    // SENTENCE_ALREADY_MODIFYING
     "Already in edit mode.",
-    // LANGUAGE_ALREADY_SELECTING
+    // SENTENCE_ALREADY_SELECTING
     "Already in selection mode.",
-    // LANGUAGE_ARGUMENT_REQUIRED
+    // SENTENCE_ARGUMENT_REQUIRED
     "Prohibited without explicit arguments.",
-    // LANGUAGE_CLIPBOARD_COPIED_FAILURE
+    // SENTENCE_CLIPBOARD_COPY_FAILURE
     "Operation result is empty.",
-    // LANGUAGE_CLIPBOARD_COPIED_SUCCEED
+    // SENTENCE_CLIPBOARD_COPY_SUCCEED
     "Copied to clipboard.",
-    // LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE
-    "Hidden text pasting is only available on insertion.",
-    // LANGUAGE_CLIPBOARD_GET_FAILURE,
+    // SENTENCE_CLIPBOARD_GET_FAILURE,
     "Failed to get clipboard data.",
-    // LANGUAGE_CLIPBOARD_LOCK_FAILURE
+    // SENTENCE_CLIPBOARD_LOCK_FAILURE
     "Failed to lock clipboard data.",
-    // LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE
+    // SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE
     "Failed to allocate memory for clipboard operation.",
-    // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
+    // SENTENCE_CLIPBOARD_OPEN_FAILURE,
     "Failed to open clipboard.",
-    // LANGUAGE_CLIPBOARD_PASTED
+    // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "Pasted from clipboard.",
-    // LANGUAGE_INTERRUPTION_DIALOG
+    // SENTENCE_FORBIDDEN_HIDDEN_PASTE
+    "Hidden text pasting is only available on insertion.",
+    // SENTENCE_INTERRUPTION_DIALOG
     "Prohibited until the remaining direct inputs are processed.",
-    // LANGUAGE_KEYWORD_NOT_FOUND
+    // SENTENCE_KEYWORD_NOT_FOUND
     "'$' not found.",
-    // LANGUAGE_PARAMETER_ALONE
+    // SENTENCE_PARAMETER_ALONE
     "This node has no neighbors.",
-    // LANGUAGE_PARAMETER_AT_LEAF
+    // SENTENCE_PARAMETER_AT_LEAF
     "This node does not contain any children.",
-    // LANGUAGE_PARAMETER_AT_ROOT
+    // SENTENCE_PARAMETER_AT_ROOT
     "No more groups above.",
-    // LANGUAGE_PARAMETER_NOT_FOUND
+    // SENTENCE_PARAMETER_NOT_FOUND
     "Parameter not found.",
-    // LANGUAGE_PARENT_STRICT
+    // SENTENCE_PARENT_STRICT
     "Parent needs explicit arguments for all its required children.",
-    // LANGUAGE_PROGRAM_TERMINATED
+    // SENTENCE_PROGRAM_TERMINATED
     "Program terminated.",
-    // LANGUAGE_PROGRAM_FAILED
+    // SENTENCE_PROGRAM_FAILED
     "Program failed.",
-    // LANGUAGE_PROGRAM_SUCCEEDED
+    // SENTENCE_PROGRAM_SUCCEEDED
     "Program succeeded."
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
-    // LANGUAGE_ALREADY_MODIFYING
+    // SENTENCE_ALREADY_MODIFYING
     CONSOLE_WARNING,
-    // LANGUAGE_ALREADY_SELECTING
+    // SENTENCE_ALREADY_SELECTING
     CONSOLE_WARNING,
-    // LANGUAGE_ARGUMENT_REQUIRED
+    // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
-    // LANGUAGE_CLIPBOARD_COPIED_FAILURE
+    // SENTENCE_CLIPBOARD_COPY_FAILURE
     CONSOLE_WARNING,
-    // LANGUAGE_CLIPBOARD_COPIED_SUCCEED
+    // SENTENCE_CLIPBOARD_COPY_SUCCEED
     CONSOLE_HINT_1,
-    // LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE
-    CONSOLE_WARNING,
-    // LANGUAGE_CLIPBOARD_GET_FAILURE,
+    // SENTENCE_CLIPBOARD_GET_FAILURE,
     CONSOLE_ERROR,
-    // LANGUAGE_CLIPBOARD_LOCK_FAILURE
+    // SENTENCE_CLIPBOARD_LOCK_FAILURE
     CONSOLE_ERROR,
-    // LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE
+    // SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE
     CONSOLE_ERROR,
-    // LANGUAGE_CLIPBOARD_OPEN_FAILURE,
+    // SENTENCE_CLIPBOARD_OPEN_FAILURE,
     CONSOLE_ERROR,
-    // LANGUAGE_CLIPBOARD_PASTED
+    // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
-    // LANGUAGE_INTERRUPTION_DIALOG
-    CONSOLE_ERROR,
-    // LANGUAGE_KEYWORD_NOT_FOUND
-    CONSOLE_ERROR,
-    // LANGUAGE_PARAMETER_ALONE
+    // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
-    // LANGUAGE_PARAMETER_AT_LEAF
-    CONSOLE_WARNING,
-    // LANGUAGE_PARAMETER_AT_ROOT
-    CONSOLE_WARNING,
-    // LANGUAGE_PARAMETER_NOT_FOUND
+    // SENTENCE_INTERRUPTION_DIALOG
     CONSOLE_ERROR,
-    // LANGUAGE_PARENT_STRICT
+    // SENTENCE_KEYWORD_NOT_FOUND
     CONSOLE_ERROR,
-    // LANGUAGE_PROGRAM_TERMINATED
+    // SENTENCE_PARAMETER_ALONE
+    CONSOLE_WARNING,
+    // SENTENCE_PARAMETER_AT_LEAF
+    CONSOLE_WARNING,
+    // SENTENCE_PARAMETER_AT_ROOT
+    CONSOLE_WARNING,
+    // SENTENCE_PARAMETER_NOT_FOUND
+    CONSOLE_ERROR,
+    // SENTENCE_PARENT_STRICT
+    CONSOLE_ERROR,
+    // SENTENCE_PROGRAM_TERMINATED
     CONSOLE_CANCEL,
-    // LANGUAGE_PROGRAM_FAILED
+    // SENTENCE_PROGRAM_FAILED
     CONSOLE_ERROR,
-    // LANGUAGE_PROGRAM_SUCCEEDED
+    // SENTENCE_PROGRAM_SUCCEEDED
     CONSOLE_CORRECT
   };
 
@@ -139,14 +139,14 @@ namespace cli_menu {
     mt::CR_STR alreadyModifyingSentence,
     mt::CR_STR alreadySelectingSentence,
     mt::CR_STR argumentRequiredSentence,
-    mt::CR_STR clipboardCopiedFailureSentence,
-    mt::CR_STR clipboardCopiedSucceedSentence,
-    mt::CR_STR clipboardForbiddenHiddenPasteSentence,
+    mt::CR_STR clipboardCopyFailureSentence,
+    mt::CR_STR clipboardCopySucceedSentence,
     mt::CR_STR clipboardGetFailureSentence,
     mt::CR_STR clipboardLockFailureSentence,
     mt::CR_STR clipboardMemoryAllocationFailureSentence,
     mt::CR_STR clipboardOpenFailureSentence,
-    mt::CR_STR clipboardPastedSentence,
+    mt::CR_STR clipboardPasteSucceedSentence,
+    mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
     mt::CR_STR parameterAloneSentence,
@@ -158,30 +158,30 @@ namespace cli_menu {
     mt::CR_STR programFailedSentence,
     mt::CR_STR programSucceededSentence
   ) {
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ALREADY_MODIFYING] = alreadyModifyingSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ALREADY_SELECTING] = alreadySelectingSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_COPIED_FAILURE] = clipboardCopiedFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_COPIED_SUCCEED] = clipboardCopiedSucceedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE] = clipboardForbiddenHiddenPasteSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_CLIPBOARD_PASTED] = clipboardPastedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_ALONE] = parameterAloneSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PARENT_STRICT] = parentStrictSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_TERMINATED] = programTerminatedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_FAILED] = programFailedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][LANGUAGE_PROGRAM_SUCCEEDED] = programSucceededSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ALREADY_MODIFYING] = alreadyModifyingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ALREADY_SELECTING] = alreadySelectingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_FAILURE] = clipboardCopyFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedSentence;    
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_ALONE] = parameterAloneSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARENT_STRICT] = parentStrictSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_TERMINATED] = programTerminatedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
   }
 
-  void Langu::ageMessage::printResponse(const LANGUAGE_CODE &responseCode) {
+  void Langu::ageMessage::printResponse(const SENTENCE_CODE &responseCode) {
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
       Langu::xMessage::sentences[Langu::xManager::currentISOCode][responseCode]
@@ -189,7 +189,7 @@ namespace cli_menu {
   }
 
   void Langu::ageMessage::printTemplateResponse(
-    const LANGUAGE_CODE &responseCode,
+    const SENTENCE_CODE &responseCode,
     mt::CR_STR replacementText
   ) {
     std::string templateString = Langu::xMessage::sentences

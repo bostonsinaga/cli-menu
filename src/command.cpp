@@ -91,7 +91,7 @@ namespace cli_menu {
           required && Command::globalDialogued && localDialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
         ) {
-          Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+          Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
           Command::interruptionDialogued = true;
           return dialog();
         }
@@ -114,7 +114,7 @@ namespace cli_menu {
 
     // extended runtime input
     if (required && Command::globalDialogued && localDialogued) {
-      Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+      Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
       return dialog();
     }
 
@@ -171,7 +171,7 @@ namespace cli_menu {
           else return static_cast<Command*>(getParent())->dialog();
         }
         // this is root
-        else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_ROOT);
+        else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
       }
       // NEXT
       else if (Control::nextTest(input)) {
@@ -187,7 +187,7 @@ namespace cli_menu {
       else if (Control::modifyTest(input)) {
         // cannot repeat
         if (editing) {
-          Langu::ageMessage::printResponse(LANGUAGE_ALREADY_MODIFYING);
+          Langu::ageMessage::printResponse(SENTENCE_ALREADY_MODIFYING);
         }
         else { // switch to edit mode
           editing = true;
@@ -207,7 +207,7 @@ namespace cli_menu {
             return dialog();
           }
           // cannot repeat
-          else Langu::ageMessage::printResponse(LANGUAGE_ALREADY_SELECTING);
+          else Langu::ageMessage::printResponse(SENTENCE_ALREADY_SELECTING);
         }
       }
       // RESET
@@ -234,7 +234,7 @@ namespace cli_menu {
           required = false;
           clipboardPaste();
         }
-        else Langu::ageMessage::printResponse(LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE);
+        else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
       // QUIT
       else if (Control::quitTest(input)) {
@@ -394,10 +394,10 @@ namespace cli_menu {
     else {
       // child not found
       if (hasChildren()) {
-        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_NOT_FOUND);
+        Langu::ageMessage::printResponse(SENTENCE_PARAMETER_NOT_FOUND);
       }
       else { // this is a leaf
-        Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+        Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
       }
     }
 
@@ -443,7 +443,7 @@ namespace cli_menu {
       else return static_cast<Command*>(firstOrthoNeighbor)->dialog();
     }
     // has no neighbors
-    else Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_ALONE);
+    else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_ALONE);
 
     return COMMAND_ONGOING;
   }
@@ -489,7 +489,7 @@ namespace cli_menu {
     }
     // print error
     else if (!withHelp) {
-      Langu::ageMessage::printResponse(LANGUAGE_PARAMETER_AT_LEAF);
+      Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
       return;
     }
 
@@ -501,8 +501,8 @@ namespace cli_menu {
 
   void Command::printInterruptionDialoguedResponse() {
     Langu::ageMessage::printResponse(required?
-      LANGUAGE_ARGUMENT_REQUIRED:
-      LANGUAGE_INTERRUPTION_DIALOG
+      SENTENCE_ARGUMENT_REQUIRED:
+      SENTENCE_INTERRUPTION_DIALOG
     );
   }
 
@@ -529,13 +529,13 @@ namespace cli_menu {
       if (getParent() &&
         static_cast<Command*>(getParent())->strict
       ) {
-        Langu::ageMessage::printResponse(LANGUAGE_PARENT_STRICT);
+        Langu::ageMessage::printResponse(SENTENCE_PARENT_STRICT);
       }
       // root or non-strict parent with this is required
       else if (found == this && (!getParent() || (
         getParent() && !static_cast<Command*>(getParent())->strict
       ))) {
-        Langu::ageMessage::printResponse(LANGUAGE_ARGUMENT_REQUIRED);
+        Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
       }
       else found = nullptr;
     }

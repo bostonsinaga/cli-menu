@@ -47,7 +47,7 @@ namespace cli_menu {
             );
           }
           else Langu::ageMessage::printTemplateResponse(
-            LANGUAGE_KEYWORD_NOT_FOUND,
+            SENTENCE_KEYWORD_NOT_FOUND,
             filename
           );
         }

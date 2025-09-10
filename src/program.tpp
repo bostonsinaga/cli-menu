@@ -62,13 +62,13 @@ namespace cli_menu {
 
     switch (commandCode) {
       case COMMAND_FAILED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_FAILED);
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
       break;}
       case COMMAND_SUCCEEDED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_SUCCEEDED);
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_SUCCEEDED);
       break;}
       case COMMAND_TERMINATED: {
-        Langu::ageMessage::printResponse(LANGUAGE_PROGRAM_TERMINATED);
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_TERMINATED);
       break;}
     }
   }

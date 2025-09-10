@@ -5,28 +5,28 @@
 
 namespace cli_menu {
 
-  enum LANGUAGE_CODE {
-    LANGUAGE_ALREADY_MODIFYING,
-    LANGUAGE_ALREADY_SELECTING,
-    LANGUAGE_ARGUMENT_REQUIRED,
-    LANGUAGE_CLIPBOARD_COPIED_FAILURE,
-    LANGUAGE_CLIPBOARD_COPIED_SUCCEED,
-    LANGUAGE_CLIPBOARD_FORBIDDEN_HIDDEN_PASTE,
-    LANGUAGE_CLIPBOARD_GET_FAILURE,
-    LANGUAGE_CLIPBOARD_LOCK_FAILURE,
-    LANGUAGE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
-    LANGUAGE_CLIPBOARD_OPEN_FAILURE,
-    LANGUAGE_CLIPBOARD_PASTED,
-    LANGUAGE_INTERRUPTION_DIALOG,
-    LANGUAGE_KEYWORD_NOT_FOUND,
-    LANGUAGE_PARAMETER_ALONE,
-    LANGUAGE_PARAMETER_AT_LEAF,
-    LANGUAGE_PARAMETER_AT_ROOT,
-    LANGUAGE_PARAMETER_NOT_FOUND,
-    LANGUAGE_PARENT_STRICT,
-    LANGUAGE_PROGRAM_TERMINATED,
-    LANGUAGE_PROGRAM_FAILED,
-    LANGUAGE_PROGRAM_SUCCEEDED
+  enum SENTENCE_CODE {
+    SENTENCE_ALREADY_MODIFYING,
+    SENTENCE_ALREADY_SELECTING,
+    SENTENCE_ARGUMENT_REQUIRED,
+    SENTENCE_CLIPBOARD_COPY_FAILURE,
+    SENTENCE_CLIPBOARD_COPY_SUCCEED,
+    SENTENCE_CLIPBOARD_GET_FAILURE,
+    SENTENCE_CLIPBOARD_LOCK_FAILURE,
+    SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
+    SENTENCE_CLIPBOARD_OPEN_FAILURE,
+    SENTENCE_CLIPBOARD_PASTE_SUCCEED,
+    SENTENCE_FORBIDDEN_HIDDEN_PASTE,
+    SENTENCE_INTERRUPTION_DIALOG,
+    SENTENCE_KEYWORD_NOT_FOUND,
+    SENTENCE_PARAMETER_ALONE,
+    SENTENCE_PARAMETER_AT_LEAF,
+    SENTENCE_PARAMETER_AT_ROOT,
+    SENTENCE_PARAMETER_NOT_FOUND,
+    SENTENCE_PARENT_STRICT,
+    SENTENCE_PROGRAM_TERMINATED,
+    SENTENCE_PROGRAM_FAILED,
+    SENTENCE_PROGRAM_SUCCEEDED
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -148,14 +148,14 @@ namespace cli_menu {
         mt::CR_STR alreadyModifyingSentence,
         mt::CR_STR alreadySelectingSentence,
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR clipboardCopiedFailureSentence,
-        mt::CR_STR clipboardCopiedSucceedSentence,
-        mt::CR_STR clipboardForbiddenHiddenPasteSentence,
+        mt::CR_STR clipboardCopyFailureSentence,
+        mt::CR_STR clipboardCopySucceedSentence,        
         mt::CR_STR clipboardGetFailureSentence,
         mt::CR_STR clipboardLockFailureSentence,
         mt::CR_STR clipboardMemoryAllocationFailureSentence,
         mt::CR_STR clipboardOpenFailureSentence,
-        mt::CR_STR clipboardPastedSentence,        
+        mt::CR_STR clipboardPasteSucceedSentence,
+        mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
         mt::CR_STR keywordNotFoundSentence,
         mt::CR_STR parameterAloneSentence,
@@ -169,11 +169,11 @@ namespace cli_menu {
       );
 
       static void printResponse(
-        const LANGUAGE_CODE &responseCode
+        const SENTENCE_CODE &responseCode
       );
 
       static void printTemplateResponse(
-        const LANGUAGE_CODE &responseCode,
+        const SENTENCE_CODE &responseCode,
         mt::CR_STR replacementText
       );
     };
