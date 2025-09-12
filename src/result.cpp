@@ -17,32 +17,24 @@ namespace cli_menu {
     return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(toggles, node);
   }
 
-  bool Result::hasUltimates(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(ultimates, node);
+  bool Result::hasOutputs(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(outputs, node);
   }
 
   void Result::pushWord(Command *node, mt::CR_STR input) {
-    if (hasWords(node)) {
-      words[node].push_back(input);
-    }
+    words[node].push_back(input);
   }
 
   void Result::pushNumber(Command *node, mt::CR_LD input) {
-    if (hasNumbers(node)) {
-      numbers[node].push_back(input);
-    }
+    numbers[node].push_back(input);
   }
 
   void Result::pushToggle(Command *node, mt::CR_BOL input) {
-    if (hasToggles(node)) {
-      toggles[node].push_back(input);
-    }
+    toggles[node].push_back(input);
   }
 
-  void Result::pushUltimate(Command *node, mt::CR_STR input) {
-    if (hasUltimates(node)) {
-      ultimates[node].push_back(input);
-    }
+  void Result::pushOutput(Command *node, mt::CR_STR input) {
+    outputs[node].push_back(input);
   }
 
   void Result::popWord(Command *node) {
@@ -63,9 +55,9 @@ namespace cli_menu {
     }
   }
 
-  void Result::popUltimate(Command *node) {
-    if (hasUltimates(node)) {
-      ultimates[node].pop_back();
+  void Result::popOutput(Command *node) {
+    if (hasOutputs(node)) {
+      outputs[node].pop_back();
     }
   }
 
@@ -87,9 +79,9 @@ namespace cli_menu {
     }
   }
 
-  void Result::eraseUltimates(Command *node) {
-    if (hasUltimates(node)) {
-      ultimates.erase(node);
+  void Result::eraseOutputs(Command *node) {
+    if (hasOutputs(node)) {
+      outputs.erase(node);
     }
   }
 
@@ -105,15 +97,15 @@ namespace cli_menu {
     toggles.clear();
   }
 
-  void Result::clearUltimates() {
-    ultimates.clear();
+  void Result::clearOutputs() {
+    outputs.clear();
   }
 
   void Result::clearAll() {
     words.clear();
     numbers.clear();
     toggles.clear();
-    ultimates.clear();
+    outputs.clear();
   }
 
   size_t Result::numberOfWords(Command *node) {
@@ -137,9 +129,9 @@ namespace cli_menu {
     return 0;
   }
 
-  size_t Result::numberOfUltimates(Command *node) {
-    if (hasUltimates(node)) {
-      return ultimates[node].size();
+  size_t Result::numberOfOutputs(Command *node) {
+    if (hasOutputs(node)) {
+      return outputs[node].size();
     }
     return 0;
   }
@@ -171,11 +163,11 @@ namespace cli_menu {
     return false;
   }
 
-  std::string Result::getUltimateAt(Command *node, mt::CR_SZ index) {
-    if (hasUltimates(node) &&
-      index < ultimates[node].size()
+  std::string Result::getOutputAt(Command *node, mt::CR_SZ index) {
+    if (hasOutputs(node) &&
+      index < outputs[node].size()
     ) {
-      return ultimates[node][index];
+      return outputs[node][index];
     }
     return "";
   }
@@ -204,10 +196,10 @@ namespace cli_menu {
     return false;
   }
 
-  std::string Result::getFirstUltimate(Command *node) {
-    if (hasUltimates(node)) {
-      if (ultimates[node].empty()) return "";
-      return ultimates[node].front();
+  std::string Result::getFirstOutput(Command *node) {
+    if (hasOutputs(node)) {
+      if (outputs[node].empty()) return "";
+      return outputs[node].front();
     }
     return "";
   }
@@ -236,22 +228,26 @@ namespace cli_menu {
     return false;
   }
 
-  std::string Result::getLastUltimate(Command *node) {
-    if (hasUltimates(node)) {
-      if (ultimates[node].empty()) return "";
-      return ultimates[node].back();
+  std::string Result::getLastOutput(Command *node) {
+    if (hasOutputs(node)) {
+      if (outputs[node].empty()) return "";
+      return outputs[node].back();
     }
     return "";
   }
 
-  std::string Result::concatUltimates(
+  std::string Result::concatOutputs(
     Command *node,
     mt::CR_STR separator
   ) {
     std::string text;
 
-    for (mt::CR_STR str : ultimates[node]) {
-      text += str + separator;
+    for (int i = 0; i < outputs[node].size() - 1; i++) {
+      text += outputs[node][i] + separator;
+    }
+
+    if (!outputs[node].empty()) {
+      text += outputs[node].back();
     }
 
     return text;

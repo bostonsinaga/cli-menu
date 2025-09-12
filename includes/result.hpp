@@ -29,8 +29,13 @@ namespace cli_menu {
     inline static COMUNORMAP<mt::VEC_BOL> toggles;
 
     // better set inside the 'Command' callback
-    inline static COMUNORMAP<mt::VEC_STR> ultimates;
+    inline static COMUNORMAP<mt::VEC_STR> outputs;
 
+    // display current node arguments
+    template <typename T>
+    static void printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent);
+
+    // friend classes
     friend class Word;
     friend class Number;
     friend class Toggle;
@@ -41,22 +46,22 @@ namespace cli_menu {
     static void pushWord(Command *node, mt::CR_STR input);
     static void pushNumber(Command *node, mt::CR_LD input);
     static void pushToggle(Command *node, mt::CR_BOL input);
-    static void pushUltimate(Command *node, mt::CR_STR input);
+    static void pushOutput(Command *node, mt::CR_STR input);
 
     void popWord(Command *node);
     void popNumber(Command *node);
     void popToggle(Command *node);
-    void popUltimate(Command *node);
+    void popOutput(Command *node);
 
     static void eraseWords(Command *node);
     static void eraseNumbers(Command *node);
     static void eraseToggles(Command *node);
-    static void eraseUltimates(Command *node);
+    static void eraseOutputs(Command *node);
 
     static void clearWords();
     static void clearNumbers();
     static void clearToggles();
-    static void clearUltimates();
+    static void clearOutputs();
     static void clearAll();
 
     /** Getters */
@@ -65,41 +70,41 @@ namespace cli_menu {
     static bool hasWords(Command *node);
     static bool hasNumbers(Command *node);
     static bool hasToggles(Command *node);
-    static bool hasUltimates(Command *node);
+    static bool hasOutputs(Command *node);
 
     // return 0 for unknown id
     static size_t numberOfWords(Command *node);
     static size_t numberOfNumbers(Command *node);
     static size_t numberOfToggles(Command *node);
-    static size_t numberOfUltimates(Command *node);
+    static size_t numberOfOutputs(Command *node);
 
     // get with index
     static std::string getWordAt(Command *node, mt::CR_SZ index);
     static mt::LD getNumberAt(Command *node, mt::CR_SZ index);
     static bool getToggleAt(Command *node, mt::CR_SZ index);
-    static std::string getUltimateAt(Command *node, mt::CR_SZ index);
+    static std::string getOutputAt(Command *node, mt::CR_SZ index);
 
     // get at front
     static std::string getFirstWord(Command *node);
     static mt::LD getFirstNumber(Command *node);
     static bool getFirstToggle(Command *node);
-    static std::string getFirstUltimate(Command *node);
+    static std::string getFirstOutput(Command *node);
 
     // get at back
     static std::string getLastWord(Command *node);
     static mt::LD getLastNumber(Command *node);
     static bool getLastToggle(Command *node);
-    static std::string getLastUltimate(Command *node);
+    static std::string getLastOutput(Command *node);
 
     // concatenate string vector into a string
-    static std::string concatUltimates(
+    static std::string concatOutputs(
       Command *node,
       mt::CR_STR separator = "\n"
     );
 
     // display current node arguments
     template <typename T>
-    static void printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent);
+    static void printInput(Command *node, mt::CR_BOL withIndent);
 
     // display all visited nodes arguments
     static void printInputs(Command *onlyThis); // defined at 'command.cpp'

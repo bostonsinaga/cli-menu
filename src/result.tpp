@@ -36,6 +36,20 @@ namespace cli_menu {
   }
 
   template <typename T>
+  void Result::printInput(Command *node, mt::CR_BOL withIndent) {
+
+    if constexpr (std::is_same_v<T, std::string>) {
+      Result::printInput<std::string>(words[node], withIndent);
+    }
+    else if constexpr (std::is_same_v<T, mt::LD>) {
+      Result::printInput<mt::LD>(numbers[node], withIndent);
+    }
+    else if constexpr (std::is_same_v<T, bool>) {
+      Result::printInput<bool>(toggles[node], withIndent);
+    }
+  }
+
+  template <typename T>
   void Result::printType(
     mt::CR_STR stringifiedType,
     COMUNORMAP<mt::VEC<T>> &unormap
@@ -60,7 +74,7 @@ namespace cli_menu {
         );
 
         // members of vector
-        printInput<T>(keyvec.second, true);
+        Result::printInput<T>(keyvec.second, true);
       }
 
       // display emptiness

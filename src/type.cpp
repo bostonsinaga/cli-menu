@@ -180,7 +180,7 @@ namespace cli_menu {
 
   bool Word::printInput() {
     if (Result::numberOfWords(this)) {
-      Result::printInput<std::string>(Result::words[this], false);
+      Result::printInput<std::string>(this, false);
       return true;
     }
     return false;
@@ -233,7 +233,7 @@ namespace cli_menu {
 
   bool Number::printInput() {
     if (Result::numberOfNumbers(this)) {
-      Result::printInput<mt::LD>(Result::numbers[this], false);
+      Result::printInput<mt::LD>(this, false);
       return true;
     }
     return false;
@@ -285,7 +285,7 @@ namespace cli_menu {
 
   bool Toggle::printInput() {
     if (Result::numberOfToggles(this)) {
-      Result::printInput<bool>(Result::toggles[this], false);
+      Result::printInput<bool>(this, false);
       return true;
     }
     return false;
