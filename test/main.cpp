@@ -4,10 +4,12 @@ int main(int argc, char *argv[]) {
 
   cm::Program<cm::Toggle> *organism = cm::Program<cm::Toggle>::create(
     "organism",
-    "Describe your lovely animals or plants",
-    cm::Version(1, 0, 0),
-    "Boston Sinaga",
-    "https://github.com/bostonsinaga/cli-menu",
+    cm::ProgramAbout(
+      "Describe your lovely animals or plants",
+      "Boston Sinaga",
+      "https://github.com/bostonsinaga/cli-menu",
+      cm::ProgramVersion(1, 0, 0)
+    ),
     [](cm::Command *current)->bool {
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Organism"

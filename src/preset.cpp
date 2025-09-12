@@ -7,7 +7,7 @@ namespace cli_menu {
 
   void Preset::applyFileIn(
     Creator *owner,
-    COMMAND_CALLBACK customCallback
+    CR_COMMAND_CALLBACK customCallback
   ) {
     Word *in = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_IN),
@@ -20,7 +20,7 @@ namespace cli_menu {
 
   void Preset::applyFileOut(
     Creator *owner,
-    COMMAND_CALLBACK customCallback
+    CR_COMMAND_CALLBACK customCallback
   ) {
     Word *out = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_OUT),

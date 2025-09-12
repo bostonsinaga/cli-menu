@@ -26,8 +26,17 @@ namespace cli_menu {
     Creator(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
     );
+
+    Creator(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
+    );
+
+    Word *returnWord(Word *constructed);
+    Number *returnNumber(Number *constructed);
+    Toggle *returnToggle(Toggle *constructed);
 
     // add '--help' and '--list' toggles for each command
     void setPresetHelpList(); // defined at 'preset.cpp'
@@ -40,19 +49,34 @@ namespace cli_menu {
     Word *createWord(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Word *createWord(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     Number *createNumber(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Number *createNumber(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     Toggle *createToggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Toggle *createToggle(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
   };
 
@@ -64,11 +88,17 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
+    void setup();
 
     Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Word(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     friend class Creator;
@@ -86,11 +116,17 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
+    void setup();
 
     Number(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Number(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     friend class Creator;
@@ -108,11 +144,17 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
+    void setup();
 
     Toggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Toggle(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     friend class Creator;
