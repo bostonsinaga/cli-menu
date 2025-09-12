@@ -75,7 +75,10 @@ namespace cli_menu {
     }
 
   protected:
-    bool required = false, sterilized = false;
+    // changeable and initial reference
+    mt::PAIR_BOL required = {false, false};
+
+    bool sterilized = false;
     std::string hyphens, keyword;
     STRINGIFIED_TYPE_COMMAND_CODE stringifiedTypeIndex;
 
@@ -182,7 +185,7 @@ namespace cli_menu {
      * to be able to call the 'igniteCallbacks'.
      */
     void makeRequired(mt::CR_BOL condition = true) {
-      required = condition;
+      required = {condition, condition};
     }
 
     /**

@@ -49,9 +49,7 @@ namespace cli_menu {
     keyword_in,
     about_in.stringify(),
     callback_in
-  ) {
-    Command::required = true;
-  }
+  ) { Command::makeRequired(); }
 
   template <CommandType T>
   Program<T>::Program(
@@ -60,9 +58,7 @@ namespace cli_menu {
   ) : T(
     keyword_in,
     about_in.stringify()
-  ) {
-    Command::required = true;
-  }
+  ) { Command::makeRequired(); }
 
   template <CommandType T>
   Program<T> *Program<T>::create(

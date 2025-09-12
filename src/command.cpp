@@ -102,7 +102,7 @@ namespace cli_menu {
          * The 'Command::raws' is not 'pop_back()'.
          */
         else if (
-          required && Command::globalDialogued && localDialogued &&
+          required.first && Command::globalDialogued && localDialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
         ) {
           Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
@@ -112,7 +112,7 @@ namespace cli_menu {
         else { // go to other node
 
           // the required toggle automatically has value 'true'
-          if (required && stringifiedTypeIndex == STRINGIFIED_TYPE_TOGGLE) {
+          if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_TOGGLE) {
             pushUnormap("1");
           }
 
@@ -127,7 +127,7 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (required && Command::globalDialogued && localDialogued) {
+    if (required.first && Command::globalDialogued && localDialogued) {
       Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
       return dialog();
     }
@@ -244,10 +244,7 @@ namespace cli_menu {
       }
       // CLIPBOARD PASTE
       else if (Control::pasteTest(input)) {
-        if (editing) {
-          required = false;
-          clipboardPaste();
-        }
+        if (editing) clipboardPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
       // QUIT
@@ -258,7 +255,6 @@ namespace cli_menu {
       else {
         // push argument to 'Result'
         if (editing) {
-          required = false;
           pushUnormap(input);
         }
         // selection (match in dialog)
@@ -275,7 +271,7 @@ namespace cli_menu {
   COMMAND_CODE Command::enter() {
 
     // continue the interrupted match
-    if (Command::interruptionDialogued && !required) {
+    if (Command::interruptionDialogued && !required.first) {
       Command::interruptionDialogued = false;
       return match();
     }
@@ -320,7 +316,7 @@ namespace cli_menu {
       anyOutput = false;
 
     for (CR_COMMAND_CALLBACK cb : inputCallbacks) {
-      if (cb(node)) anyInput = true;
+      if (cb && cb(node)) anyInput = true;
     }
 
     if ((anyInput || inputCallbacks.empty()) &&
@@ -329,7 +325,7 @@ namespace cli_menu {
       isProcess = true;
 
       for (CR_COMMAND_CALLBACK cb : outputCallbacks) {
-        if (cb(node)) anyOutput = true;
+        if (cb && cb(node)) anyOutput = true;
       }
     }
 
@@ -569,7 +565,7 @@ namespace cli_menu {
   }
 
   void Command::printInterruptionDialoguedResponse() {
-    Langu::ageMessage::printResponse(required?
+    Langu::ageMessage::printResponse(required.first?
       SENTENCE_ARGUMENT_REQUIRED:
       SENTENCE_INTERRUPTION_DIALOG
     );
@@ -582,7 +578,7 @@ namespace cli_menu {
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->required &&
+        if (static_cast<Command*>(node)->required.first &&
           (!onlyOrtho || (onlyOrtho && !static_cast<Command*>(node)->pseudo))
         ) {
           found = static_cast<Command*>(node);

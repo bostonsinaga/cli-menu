@@ -164,14 +164,17 @@ namespace cli_menu {
   }
 
   void Word::clipboardPaste() {
+    required.first = false;
     Result::words[this].push_back(Clipboard::pasteText());
   }
 
   void Word::pushUnormap(mt::CR_STR input) {
+    required.first = false;
     Result::words[this].push_back(input);
   }
 
   void Word::resetUnormap() {
+    if (required.second) required.first = true;
     Result::words.clear();
   }
 
@@ -206,6 +209,8 @@ namespace cli_menu {
   }
 
   void Number::clipboardPaste() {
+    required.first = false;
+
     mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[this],
       Clipboard::pasteNumbers()
@@ -213,6 +218,8 @@ namespace cli_menu {
   }
 
   void Number::pushUnormap(mt::CR_STR input) {
+    required.first = false;
+
     mt_uti::VecTools<mt::LD>::concatCopy(
       Result::numbers[this],
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
@@ -220,6 +227,7 @@ namespace cli_menu {
   }
 
   void Number::resetUnormap() {
+    if (required.second) required.first = true;
     Result::numbers.clear();
   }
 
@@ -254,6 +262,8 @@ namespace cli_menu {
   }
 
   void Toggle::clipboardPaste() {
+    required.first = false;
+
     mt_uti::VecTools<bool>::concatCopy(
       Result::toggles[this],
       Clipboard::pasteConditions()
@@ -261,12 +271,15 @@ namespace cli_menu {
   }
 
   void Toggle::pushUnormap(mt::CR_STR input) {
+    required.first = false;
+
     Result::toggles[this].push_back(
       Langu::ageBooleanizer::test(input)
     );
   }
 
   void Toggle::resetUnormap() {
+    if (required.second) required.first = true;
     Result::toggles.clear();
   }
 
