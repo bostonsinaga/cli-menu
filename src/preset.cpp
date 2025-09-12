@@ -11,11 +11,11 @@ namespace cli_menu {
   ) {
     Word *in = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_IN),
-      Langu::agePreset::getDescription(PRESET_IN),
-      customCallback
+      Langu::agePreset::getDescription(PRESET_IN)
     );
 
     in->makeRequired();
+    owner->pushInputCallbacks(customCallback, in);
   }
 
   void Preset::applyFileOut(
@@ -24,15 +24,16 @@ namespace cli_menu {
   ) {
     Word *out = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_OUT),
-      Langu::agePreset::getDescription(PRESET_OUT),
-      customCallback
+      Langu::agePreset::getDescription(PRESET_OUT)
     );
+
+    owner->pushOutputCallbacks(customCallback, out);
   }
 
   void Preset::applyFileIn(Creator *owner) {
     applyFileIn(
       owner,
-      [](Command *node)->bool {
+      [&](Command *node)->bool {
         bool found = false;
         std::string filename;
 
@@ -42,8 +43,8 @@ namespace cli_menu {
           if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
-            Result::pushUltimate(
-              node, mt_uti::Scanner::readFileString(filename)
+            Result::pushOutput(
+              owner, mt_uti::Scanner::readFileString(filename)
             );
           }
           else Langu::ageMessage::printTemplateResponse(
@@ -60,7 +61,7 @@ namespace cli_menu {
   void Preset::applyFileOut(Creator *owner) {
     applyFileOut(
       owner,
-      [](Command *node)->bool {
+      [&](Command *node)->bool {
         std::string filename = Result::getLastWord(node);
 
         if (mt_uti::Scanner::isFileExist(filename) &&
@@ -78,7 +79,7 @@ namespace cli_menu {
         }
 
         mt_uti::Printer::write(
-          Result::concatUltimates(node),
+          Result::concatOutputs(owner),
           filename,
           false
         );
