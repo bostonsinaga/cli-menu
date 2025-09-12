@@ -8,11 +8,25 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
+    CR_COMMAND_CALLBACK callback_in
+  ) {
+    setup(keyword_in, description_in);
+    processCallback = callback_in;
+  }
+
+  Command::Command(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in
+  ) {
+    setup(keyword_in, description_in);
+  }
+
+  void Command::setup(
+    mt::CR_STR keyword_in,
+    mt::CR_STR description_in
   ) {
     keyword = keyword_in;
     description = description_in;
-    callback = callback_in;
   }
 
   std::string Command::generateSequentialRootNames() {
@@ -78,9 +92,9 @@ namespace cli_menu {
       if (firstChild || firstNeighbor) {
         Command::raws.pop_back();
 
-        // pseudo-child callback and program end
+        // pseudo-child callbacks and program end
         if (firstChild && firstChild->pseudo) {
-          firstChild->callback(this);
+          firstChild->triggerCallbacks(this);
           return COMMAND_ENDED;
         }
         /**
@@ -125,7 +139,7 @@ namespace cli_menu {
       return firstRequiredNeighbor->dialog();
     }
     // completed required neighbors / non-strict parent
-    return callCallback();
+    return igniteCallbacks();
   }
 
   COMMAND_CODE Command::dialog() {
@@ -297,17 +311,40 @@ namespace cli_menu {
     }
 
     // no required nodes (done)
-    return callCallback();
+    return igniteCallbacks();
   }
 
-  COMMAND_CODE Command::callCallback() {
+  bool Command::triggerCallbacks(Command *node) {
+    bool anyInput = false,
+      isProcess = false,
+      anyOutput = false;
+
+    for (CR_COMMAND_CALLBACK cb : inputCallbacks) {
+      if (cb(node)) anyInput = true;
+    }
+
+    if ((anyInput || inputCallbacks.empty()) &&
+      processCallback && processCallback(node)
+    ) {
+      isProcess = true;
+
+      for (CR_COMMAND_CALLBACK cb : outputCallbacks) {
+        if (cb(node)) anyOutput = true;
+      }
+    }
+
+    return (isProcess || !processCallback) &&
+      (anyOutput || outputCallbacks.empty());
+  }
+
+  COMMAND_CODE Command::igniteCallbacks() {
 
     if (Command::globalPropagation && localPropagation) {
       COMMAND_CODE propagatingCode;
 
       bubble([&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->callback(
+        if (static_cast<Command*>(node)->triggerCallbacks(
           static_cast<Command*>(node)
         )) {
           propagatingCode = COMMAND_SUCCEEDED;
@@ -321,12 +358,44 @@ namespace cli_menu {
       return propagatingCode;
     }
     else { // not propagated
-      if (callback(this)) {
+      if (triggerCallbacks(this)) {
         return COMMAND_SUCCEEDED;
       }
 
       return COMMAND_FAILED;
     }
+  }
+
+  void Command::pushInputCallbacks(CR_COMMAND_CALLBACK callback_in) {
+    if (processCallback) {
+      inputCallbacks.push_back(callback_in);
+    }
+  }
+
+  void Command::pushOutputCallbacks(CR_COMMAND_CALLBACK callback_in) {
+    if (processCallback) {
+      outputCallbacks.push_back(callback_in);
+    }
+  }
+
+  void Command::popInputCallbacks() {
+    if (!inputCallbacks.empty()) {
+      inputCallbacks.pop_back();
+    }
+  }
+
+  void Command::popOutputCallbacks() {
+    if (!outputCallbacks.empty()) {
+      outputCallbacks.pop_back();
+    }
+  }
+
+  void Command::clearInputCallbacks() {
+    inputCallbacks.clear();
+  }
+
+  void Command::clearOutputCallbacks() {
+    outputCallbacks.clear();
   }
 
   // always in selection mode
@@ -383,7 +452,7 @@ namespace cli_menu {
     if (firstSelected) {
       // still on the current node
       if (firstSelected->pseudo) {
-        firstSelected->callback(this);
+        firstSelected->igniteCallbacks();
       }
       // move to child
       else if (!strictParentHasRequired(false)) {

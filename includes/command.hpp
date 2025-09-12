@@ -14,6 +14,7 @@ namespace cli_menu {
   };
 
   typedef std::function<bool(Command*)> COMMAND_CALLBACK;
+  typedef const COMMAND_CALLBACK& CR_COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   private:
@@ -32,7 +33,8 @@ namespace cli_menu {
       globalPropagation = true;
 
     // return false to stop the program 
-    COMMAND_CALLBACK callback = [](Command *current)->bool { return true; };
+    COMMAND_CALLBACK processCallback;
+    std::vector<COMMAND_CALLBACK> inputCallbacks, outputCallbacks;
 
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
@@ -40,10 +42,13 @@ namespace cli_menu {
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
+    // call input-process-output callbacks
+    bool triggerCallbacks(Command *node);
+
     // dialog interactions (extended runtime input)
     COMMAND_CODE dialog();
     COMMAND_CODE enter();
-    COMMAND_CODE callCallback();
+    COMMAND_CODE igniteCallbacks();
     COMMAND_CODE goDown(mt::CR_STR input);
     COMMAND_CODE goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
 
@@ -83,7 +88,17 @@ namespace cli_menu {
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Command(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
+    );
+
+    void setup(
+      mt::CR_STR keyword_in,
+      mt::CR_STR description_in
     );
 
     /**
@@ -92,7 +107,7 @@ namespace cli_menu {
      */
     COMMAND_CODE match();
 
-    // better called after callback call
+    // better called after callbacks call
     void clipboardCopy() {
       Clipboard::copyText(Result::concatUltimates(this));
     }
@@ -107,6 +122,14 @@ namespace cli_menu {
 
   public:
     Command() = delete;
+
+    // input-output callbacks modifiers
+    void pushInputCallbacks(CR_COMMAND_CALLBACK callback_in);
+    void pushOutputCallbacks(CR_COMMAND_CALLBACK callback_in);
+    void popInputCallbacks();
+    void popOutputCallbacks();
+    void clearInputCallbacks();
+    void clearOutputCallbacks();
 
     // member variable access
     const std::string getKeyword() const { return keyword; }
@@ -128,8 +151,8 @@ namespace cli_menu {
     }
 
     /**
-     * Prevent 'callCallback' from bubbling callback calls to the root.
-     * Only call this callback.
+     * Prevent 'igniteCallbacks' from bubbling callbacks to the root.
+     * Make this will only call its own callbacks.
      */
 
     // local
@@ -145,7 +168,7 @@ namespace cli_menu {
     /**
      * Make this will not appeared in help and list controls.
      * On command selection in parent dialog, will make this
-     * invoke its callback without moving from the parent to itself.
+     * invoke its callbacks without moving from the parent to itself.
      * 
      * Make this also cannot entered with 'enterTest',
      * 'nextTest', or 'previousTest' in dialog.
@@ -156,7 +179,7 @@ namespace cli_menu {
 
     /**
      * Make arguments must be provided explicitly
-     * to be able to call the 'callCallback'.
+     * to be able to call the 'igniteCallbacks'.
      */
     void makeRequired(mt::CR_BOL condition = true) {
       required = condition;
@@ -164,7 +187,7 @@ namespace cli_menu {
 
     /**
      * Make all the required descendants must be
-     * completed to be able to call the 'callCallback'.
+     * completed to be able to call the 'igniteCallbacks'.
      */
     void makeStrict(mt::CR_BOL condition = true) {
       strict = condition;
