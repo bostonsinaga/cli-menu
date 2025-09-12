@@ -5,44 +5,72 @@
 
 namespace cli_menu {
 
-  struct Version {
-    int major = 0, minor = 0, patch = 0;
-
-    std::string stringify() const {
-      return std::to_string(major) + '.'
-      + std::to_string(minor) + '.'
-      + std::to_string(patch);
-    }
-  };
-
   template <typename T>
   concept CommandType =
     std::is_same_v<T, Word> ||
     std::is_same_v<T, Number> ||
     std::is_same_v<T, Toggle>;
 
+  class ProgramVersion final {
+  private:
+    int major = 0, minor = 0, patch = 0;
+
+  public:
+    ProgramVersion() {}
+
+    ProgramVersion(
+      mt::CR_INT major_in,
+      mt::CR_INT minor_in,
+      mt::CR_INT patch_in
+    );
+
+    std::string stringify() const;
+  };
+
+  class ProgramAbout final {
+  private:
+    std::string description, author, url;
+    ProgramVersion version;
+
+  public:
+    ProgramAbout() {}
+
+    ProgramAbout(
+      mt::CR_STR description_in,
+      mt::CR_STR author_in,
+      mt::CR_STR url_in,
+      const ProgramVersion &version_in
+    );
+
+    std::string stringify() const;
+  };
+
   template <CommandType T>
   class Program : public T {
   private:
     Program(
-      mt::CR_STR keyword,
-      mt::CR_STR description,
-      const Version &version,
-      mt::CR_STR author,
-      mt::CR_STR url,
-      COMMAND_CALLBACK callback
+      mt::CR_STR keyword_in,
+      const ProgramAbout &about_in,
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    Program(
+      mt::CR_STR keyword_in,
+      const ProgramAbout &about_in
     );
 
   public:
     Program() = delete;
 
     static Program *create(
-      mt::CR_STR keyword,
-      mt::CR_STR description,
-      const Version &version,
-      mt::CR_STR author,
-      mt::CR_STR url,
-      COMMAND_CALLBACK callback
+      mt::CR_STR keyword_in,
+      const ProgramAbout &about_in,
+      CR_COMMAND_CALLBACK callback_in
+    );
+
+    static Program *create(
+      mt::CR_STR keyword_in,
+      const ProgramAbout &about_in
     );
 
     /**
