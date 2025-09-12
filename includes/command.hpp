@@ -34,7 +34,16 @@ namespace cli_menu {
 
     // return false to stop the program 
     COMMAND_CALLBACK processCallback;
-    std::vector<COMMAND_CALLBACK> inputCallbacks, outputCallbacks;
+
+    /**
+     * The vector only contains if 'processCallback' exists.
+     * The 'Command' will be passed to the callback.
+     * 
+     * This node can be said to be the 'Ultimate Command'
+     * if one of these vectors contains the pair.
+     */
+    std::vector<mt::PAIR2<COMMAND_CALLBACK, Command*>>
+      inputCallbacks, outputCallbacks;
 
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
@@ -112,7 +121,7 @@ namespace cli_menu {
 
     // better called after callbacks call
     void clipboardCopy() {
-      Clipboard::copyText(Result::concatUltimates(this));
+      Clipboard::copyText(Result::concatOutputs(this));
     }
 
     virtual void clipboardPaste() {}
@@ -126,9 +135,23 @@ namespace cli_menu {
   public:
     Command() = delete;
 
-    // input-output callbacks modifiers
-    void pushInputCallbacks(CR_COMMAND_CALLBACK callback_in);
-    void pushOutputCallbacks(CR_COMMAND_CALLBACK callback_in);
+    /**
+     * Input-output callbacks modifiers.
+     * The 'processCallback' and the 'node'
+     * must exist to be accepted by the vector.
+     */
+
+    void pushInputCallbacks(
+      CR_COMMAND_CALLBACK callback_in,
+      Command* node
+    );
+
+    void pushOutputCallbacks(
+      CR_COMMAND_CALLBACK callback_in,
+      Command* node
+    );
+
+    // removers
     void popInputCallbacks();
     void popOutputCallbacks();
     void clearInputCallbacks();

@@ -315,8 +315,10 @@ namespace cli_menu {
       isProcess = false,
       anyOutput = false;
 
-    for (CR_COMMAND_CALLBACK cb : inputCallbacks) {
-      if (cb && cb(node)) anyInput = true;
+    for (mt::CR_PAIR2<COMMAND_CALLBACK, Command*> cbnode : inputCallbacks) {
+      if (cbnode.first && cbnode.first(cbnode.second)) {
+        anyInput = true;
+      }
     }
 
     if ((anyInput || inputCallbacks.empty()) &&
@@ -324,8 +326,10 @@ namespace cli_menu {
     ) {
       isProcess = true;
 
-      for (CR_COMMAND_CALLBACK cb : outputCallbacks) {
-        if (cb && cb(node)) anyOutput = true;
+      for (mt::CR_PAIR2<COMMAND_CALLBACK, Command*> cbnode : outputCallbacks) {
+        if (cbnode.first && cbnode.first(cbnode.second)) {
+          anyOutput = true;
+        }
       }
     }
 
@@ -362,15 +366,21 @@ namespace cli_menu {
     }
   }
 
-  void Command::pushInputCallbacks(CR_COMMAND_CALLBACK callback_in) {
-    if (processCallback) {
-      inputCallbacks.push_back(callback_in);
+  void Command::pushInputCallbacks(
+    CR_COMMAND_CALLBACK callback_in,
+    Command *node
+  ) {
+    if (processCallback && node) {
+      inputCallbacks.push_back({callback_in, node});
     }
   }
 
-  void Command::pushOutputCallbacks(CR_COMMAND_CALLBACK callback_in) {
-    if (processCallback) {
-      outputCallbacks.push_back(callback_in);
+  void Command::pushOutputCallbacks(
+    CR_COMMAND_CALLBACK callback_in,
+    Command *node
+  ) {
+    if (processCallback && node) {
+      outputCallbacks.push_back({callback_in, node});
     }
   }
 
