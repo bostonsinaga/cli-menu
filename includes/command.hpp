@@ -108,11 +108,6 @@ namespace cli_menu {
       mt::CR_STR description_in
     );
 
-    void setup(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
-    );
-
     /**
      * Entry point to dialog interactions.
      * The 'raws' only expected as keywords or arguments.
@@ -127,10 +122,6 @@ namespace cli_menu {
     virtual void clipboardPaste() {}
     virtual void pushUnormap(mt::CR_STR input) {}
     virtual void resetUnormap() {}
-
-    // display help with list or just list
-    void printHelp();
-    void printList(mt::CR_BOL withHelp);
 
   public:
     Command() = delete;
@@ -227,6 +218,10 @@ namespace cli_menu {
       mt::CR_BOL condition = true,
       mt::CR_BOL willDestroy = false
     );
+
+    // display help with list or just list
+    void printHelp();
+    void printList(mt::CR_BOL withHelp);
 
     // print unordered map values associated with this
     virtual bool printInput() { return false; }

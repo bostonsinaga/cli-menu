@@ -10,18 +10,12 @@ namespace cli_menu {
     mt::CR_STR description_in,
     CR_COMMAND_CALLBACK callback_in
   ) {
-    setup(keyword_in, description_in);
+    keyword = keyword_in;
+    description = description_in;
     processCallback = callback_in;
   }
 
   Command::Command(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) {
-    setup(keyword_in, description_in);
-  }
-
-  void Command::setup(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) {

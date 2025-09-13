@@ -34,10 +34,6 @@ namespace cli_menu {
       mt::CR_STR description_in
     );
 
-    Word *returnWord(Word *constructed);
-    Number *returnNumber(Number *constructed);
-    Toggle *returnToggle(Toggle *constructed);
-
     // add '--help' and '--list' toggles for each command
     void setPresetHelpList(); // defined at 'preset.cpp'
 
@@ -88,7 +84,6 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
-    void setup();
 
     Word(
       mt::CR_STR keyword_in,
@@ -116,7 +111,6 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
-    void setup();
 
     Number(
       mt::CR_STR keyword_in,
@@ -144,7 +138,6 @@ namespace cli_menu {
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
-    void setup();
 
     Toggle(
       mt::CR_STR keyword_in,

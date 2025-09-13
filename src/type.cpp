@@ -56,7 +56,9 @@ namespace cli_menu {
       callback_in
     );
 
-    return returnWord(word);
+    replaceExistingKeyword(word);
+    word->setPresetHelpList();
+    return word;
   }
 
   Word *Creator::createWord(
@@ -68,7 +70,9 @@ namespace cli_menu {
       description_in
     );
 
-    return returnWord(word);
+    replaceExistingKeyword(word);
+    word->setPresetHelpList();
+    return word;
   }
 
   Number *Creator::createNumber(
@@ -82,7 +86,9 @@ namespace cli_menu {
       callback_in
     );
 
-    return returnNumber(number);
+    replaceExistingKeyword(number);
+    number->setPresetHelpList();
+    return number;
   }
 
   Number *Creator::createNumber(
@@ -94,7 +100,9 @@ namespace cli_menu {
       description_in
     );
 
-    return returnNumber(number);
+    replaceExistingKeyword(number);
+    number->setPresetHelpList();
+    return number;
   }
 
   Toggle *Creator::createToggle(
@@ -108,7 +116,9 @@ namespace cli_menu {
       callback_in
     );
 
-    return returnToggle(toggle);
+    replaceExistingKeyword(toggle);
+    toggle->setPresetHelpList();
+    return toggle;
   }
 
   Toggle *Creator::createToggle(
@@ -120,25 +130,9 @@ namespace cli_menu {
       description_in
     );
 
-    return returnToggle(toggle);
-  }
-
-  Word *Creator::returnWord(Word *constructed) {
-    replaceExistingKeyword(constructed);
-    constructed->setPresetHelpList();
-    return constructed;
-  }
-
-  Number *Creator::returnNumber(Number *constructed) {
-    replaceExistingKeyword(constructed);
-    constructed->setPresetHelpList();
-    return constructed;
-  }
-
-  Toggle *Creator::returnToggle(Toggle *constructed) {
-    replaceExistingKeyword(constructed);
-    constructed->setPresetHelpList();
-    return constructed;
+    replaceExistingKeyword(toggle);
+    toggle->setPresetHelpList();
+    return toggle;
   }
 
   /** WORD */
@@ -149,16 +143,17 @@ namespace cli_menu {
     CR_COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) { setup(); }
+  ) {
+    hyphens = "-";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
+  }
 
   Word::Word(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) : Creator (
     keyword_in, description_in
-  ) { setup(); }
-
-  void Word::setup() {
+  ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
   }
@@ -194,16 +189,17 @@ namespace cli_menu {
     CR_COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) { setup(); }
+  ) {
+    hyphens = "-";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
+  }
 
   Number::Number(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) : Creator (
     keyword_in, description_in
-  ) { setup(); }
-
-  void Number::setup() {
+  ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
   }
@@ -247,16 +243,17 @@ namespace cli_menu {
     CR_COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) { setup(); }
+  ) {
+    hyphens = "--";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;
+  }
 
   Toggle::Toggle(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) : Creator (
     keyword_in, description_in
-  ) { setup(); }
-
-  void Toggle::setup() {
+  ) {
     hyphens = "--";
     stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;
   }
