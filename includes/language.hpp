@@ -262,6 +262,9 @@ namespace cli_menu {
 
     struct agePreset {
 
+      static std::string fileOutDefaultExtension;
+      static mt::PAIR_STR fileOutBracketsForNumbering;
+
       static void setKeywords(
         mt::CR_STR inKeyword,
         mt::CR_STR outKeyword,

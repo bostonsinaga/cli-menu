@@ -441,6 +441,9 @@ namespace cli_menu {
     "", ""
   }}};
 
+  std::string Langu::agePreset::fileOutDefaultExtension = ".txt";
+  mt::PAIR_STR Langu::agePreset::fileOutBracketsForNumbering = {"[", "]"};
+
   void Langu::agePreset::setKeywords(
     mt::CR_STR inKeyword,
     mt::CR_STR outKeyword,
