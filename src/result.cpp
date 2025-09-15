@@ -242,12 +242,14 @@ namespace cli_menu {
   ) {
     std::string text;
 
-    for (int i = 0; i < outputs[node].size() - 1; i++) {
-      text += outputs[node][i] + separator;
-    }
+    if (hasOutputs(node)) {
+      for (int i = 0; i < outputs[node].size() - 1; i++) {
+        text += outputs[node][i] + separator;
+      }
 
-    if (!outputs[node].empty()) {
-      text += outputs[node].back();
+      if (!outputs[node].empty()) {
+        text += outputs[node].back();
+      }
     }
 
     return text;
