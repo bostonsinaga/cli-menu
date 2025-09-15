@@ -17,6 +17,9 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
     SENTENCE_EMPTY_SINGLE_VIEW,
+    SENTENCE_FILE_OVERWRITE_QUESTION,
+    SENTENCE_FILE_WRITE_FAILURE,
+    SENTENCE_FILE_WRITE_SUCCEED,
     SENTENCE_FORBIDDEN_HIDDEN_PASTE,
     SENTENCE_INTERRUPTION_DIALOG,
     SENTENCE_KEYWORD_NOT_FOUND,
@@ -83,7 +86,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 22;
+      static constexpr int totalSentences = 25;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -106,6 +109,7 @@ namespace cli_menu {
 
     struct xBooleanizer {
       inline static mt_uti::Booleanizer object;
+      static mt::STRUNORMAP<std::string> yesOrNoLabel;
     };
 
     struct xCommand {
@@ -157,6 +161,9 @@ namespace cli_menu {
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
         mt::CR_STR emptySingleViewSentence,
+        mt::CR_STR fileOverwriteQuestionSentence,
+        mt::CR_STR fileWriteFailureSentence,
+        mt::CR_STR fileWriteSucceedSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
         mt::CR_STR keywordNotFoundSentence,
@@ -171,12 +178,14 @@ namespace cli_menu {
       );
 
       static void printResponse(
-        const SENTENCE_CODE &responseCode
+        const SENTENCE_CODE &responseCode,
+        mt::CR_BOL withYesOrNoLabel = false
       );
 
       static void printTemplateResponse(
         const SENTENCE_CODE &responseCode,
-        mt::CR_STR replacementText
+        mt::CR_STR replacementText,
+        mt::CR_BOL withYesOrNoLabel = false
       );
     };
 
@@ -216,8 +225,13 @@ namespace cli_menu {
         mt::CR_VEC_STR existingFalseTerms
       );
 
+      static void setYesOrNoLabel(
+        mt::CR_STR existingYesOrNoLabel
+      );
+
       static bool test(mt::CR_STR raw);
       static mt::PAIR<mt::VEC_STR> getTerms();
+      static std::string getYesOrNoLabel();
     };
 
     struct ageCommand {

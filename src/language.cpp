@@ -68,6 +68,12 @@ namespace cli_menu {
     "Pasted from clipboard.",
     // SENTENCE_EMPTY_SINGLE_VIEW
     "Input is empty",
+    // SENTENCE_FILE_OVERWRITE_QUESTION
+    "Are you sure you want to overwrite '$'?",
+    // SENTENCE_FILE_WRITE_FAILURE
+    "Cannot write file because the path or filename is invalid, permission is not granted, or the disk is full.",
+    // SENTENCE_FILE_WRITE_SUCCEED
+    "Output is written to '$'.",
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     "Hidden text pasting is only available on insertion.",
     // SENTENCE_INTERRUPTION_DIALOG
@@ -115,6 +121,12 @@ namespace cli_menu {
     CONSOLE_HINT_1,
     // SENTENCE_EMPTY_SINGLE_VIEW
     CONSOLE_WARNING,
+    // SENTENCE_FILE_OVERWRITE_QUESTION
+    CONSOLE_WARNING,
+    // SENTENCE_FILE_WRITE_FAILURE
+    CONSOLE_ERROR,
+    // SENTENCE_FILE_WRITE_SUCCEED
+    CONSOLE_HINT_1,
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
     // SENTENCE_INTERRUPTION_DIALOG
@@ -151,6 +163,9 @@ namespace cli_menu {
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
     mt::CR_STR emptySingleViewSentence,
+    mt::CR_STR fileOverwriteQuestionSentence,
+    mt::CR_STR fileWriteFailureSentence,
+    mt::CR_STR fileWriteSucceedSentence,
     mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
@@ -174,6 +189,9 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_SINGLE_VIEW] = emptySingleViewSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
@@ -187,16 +205,21 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
   }
 
-  void Langu::ageMessage::printResponse(const SENTENCE_CODE &responseCode) {
+  void Langu::ageMessage::printResponse(
+    const SENTENCE_CODE &responseCode,
+    mt::CR_BOL withYesOrNoLabel
+  ) {
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
       Langu::xMessage::sentences[Langu::xManager::currentISOCode][responseCode]
+      + (withYesOrNoLabel ? " " + Langu::ageBooleanizer::getYesOrNoLabel() : "")
     );
   }
 
   void Langu::ageMessage::printTemplateResponse(
     const SENTENCE_CODE &responseCode,
-    mt::CR_STR replacementText
+    mt::CR_STR replacementText,
+    mt::CR_BOL withYesOrNoLabel
   ) {
     std::string templateString = Langu::xMessage::sentences
       [Langu::xManager::currentISOCode][responseCode];
@@ -204,12 +227,14 @@ namespace cli_menu {
     size_t foundIndex = templateString.find(xManager::placeholder);
 
     // insert 'replacementText' into placeholder
-    templateString = templateString.substr(0, foundIndex) + replacementText
-      + templateString.substr(foundIndex + xManager::placeholder.length());
+    if (foundIndex != std::string::npos) {
+      templateString = templateString.substr(0, foundIndex) + replacementText
+        + templateString.substr(foundIndex + xManager::placeholder.length());
+    }
 
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
-      templateString
+      templateString + (withYesOrNoLabel ? " " + Langu::ageBooleanizer::getYesOrNoLabel() : "")
     );
   }
 
@@ -296,6 +321,8 @@ namespace cli_menu {
   // BOOLEANIZER |
   //_____________|
 
+  mt::STRUNORMAP<std::string> Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
+
   void Langu::ageBooleanizer::setTerms(
     mt::CR_VEC_STR existingTrueTerms,
     mt::CR_VEC_STR existingFalseTerms
@@ -305,6 +332,14 @@ namespace cli_menu {
       existingTrueTerms,
       existingFalseTerms
     );
+  }
+
+  void Langu::ageBooleanizer::setYesOrNoLabel(
+    mt::CR_STR existingYesOrNoLabel
+  ) {
+    Langu::xBooleanizer::yesOrNoLabel[
+      Langu::xManager::currentISOCode
+    ] = existingYesOrNoLabel;
   }
 
   bool Langu::ageBooleanizer::test(mt::CR_STR raw) {
@@ -318,6 +353,10 @@ namespace cli_menu {
       Langu::xBooleanizer::object.getTrueTerms(Langu::xManager::currentISOCode),
       Langu::xBooleanizer::object.getFalseTerms(Langu::xManager::currentISOCode)
     );
+  }
+
+  std::string Langu::ageBooleanizer::getYesOrNoLabel() {
+    return Langu::xBooleanizer::yesOrNoLabel[Langu::xManager::currentISOCode];
   }
 
   //_________|
