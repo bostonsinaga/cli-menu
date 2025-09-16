@@ -99,7 +99,11 @@ namespace cli_menu {
           required.first && Command::globalDialogued && localDialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
         ) {
-          Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
+          Langu::ageMessage::printTemplateResponse(
+            SENTENCE_PARAMETER_REQUIRED,
+            keyword
+          );
+
           Command::interruptionDialogued = true;
           return dialog();
         }
@@ -122,7 +126,12 @@ namespace cli_menu {
 
     // extended runtime input
     if (required.first && Command::globalDialogued && localDialogued) {
-      Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
+
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_PARAMETER_REQUIRED,
+        keyword
+      );
+
       return dialog();
     }
 
@@ -132,6 +141,37 @@ namespace cli_menu {
     if (firstRequiredNeighbor) {
       return firstRequiredNeighbor->dialog();
     }
+    // parent may not be strict, but at least one required child must be completed
+    else if (hasChildren()) {
+
+      Command *firstRequiredChild = nullptr;
+      resetPointer();
+
+      // find first required child
+      getChildren()->iterate(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+
+          if (static_cast<Command*>(node)->required.first) {
+            firstRequiredChild = static_cast<Command*>(node);
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      // go to first required child
+      if (firstRequiredChild) {
+        Langu::ageMessage::printTemplateResponse(
+          SENTENCE_PARAMETER_REQUIRED,
+          firstRequiredChild->keyword
+        );
+
+        return firstRequiredChild->dialog();
+      }
+    }
+
     // completed required neighbors / non-strict parent
     return igniteCallbacks();
   }
@@ -241,12 +281,8 @@ namespace cli_menu {
         if (editing) clipboardPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
-      // QUIT
-      else if (Control::quitTest(input)) {
-        return COMMAND_TERMINATED;
-      }
       // WILD VALUE
-      else {
+      else if (!Control::quitTest(input)) {
         // push argument to 'Result'
         if (editing) {
           pushUnormap(input);
@@ -259,7 +295,8 @@ namespace cli_menu {
       }
     }
 
-    return COMMAND_FAILED;
+    // QUIT
+    return COMMAND_TERMINATED;
   }
 
   COMMAND_CODE Command::enter() {
@@ -604,6 +641,7 @@ namespace cli_menu {
       else if (found == this && (!getParent() || (
         getParent() && !static_cast<Command*>(getParent())->strict
       ))) {
+        // displayed at match in dialog
         Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_REQUIRED);
       }
       else found = nullptr;
