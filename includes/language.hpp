@@ -27,6 +27,7 @@ namespace cli_menu {
     SENTENCE_PARAMETER_AT_LEAF,
     SENTENCE_PARAMETER_AT_ROOT,
     SENTENCE_PARAMETER_NOT_FOUND,
+    SENTENCE_PARAMETER_REQUIRED,
     SENTENCE_PARENT_STRICT,
     SENTENCE_PROGRAM_TERMINATED,
     SENTENCE_PROGRAM_FAILED,
@@ -86,7 +87,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 25;
+      static constexpr int totalSentences = 26;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -171,6 +172,7 @@ namespace cli_menu {
         mt::CR_STR parameterAtLeafSentence,
         mt::CR_STR parameterAtRootSentence,
         mt::CR_STR parameterNotFoundSentence,
+        mt::CR_STR parameterRequiredSentence,
         mt::CR_STR parentStrictSentence,
         mt::CR_STR programTerminatedSentence,
         mt::CR_STR programFailedSentence,

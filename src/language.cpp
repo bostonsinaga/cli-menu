@@ -88,6 +88,8 @@ namespace cli_menu {
     "No more groups above.",
     // SENTENCE_PARAMETER_NOT_FOUND
     "Parameter not found.",
+    // SENTENCE_PARAMETER_REQUIRED
+    "'$' needs explicit arguments.",
     // SENTENCE_PARENT_STRICT
     "Parent needs explicit arguments for all its required children.",
     // SENTENCE_PROGRAM_TERMINATED
@@ -141,6 +143,8 @@ namespace cli_menu {
     CONSOLE_WARNING,
     // SENTENCE_PARAMETER_NOT_FOUND
     CONSOLE_ERROR,
+    // SENTENCE_PARAMETER_REQUIRED
+    CONSOLE_ERROR,
     // SENTENCE_PARENT_STRICT
     CONSOLE_ERROR,
     // SENTENCE_PROGRAM_TERMINATED
@@ -173,6 +177,7 @@ namespace cli_menu {
     mt::CR_STR parameterAtLeafSentence,
     mt::CR_STR parameterAtRootSentence,
     mt::CR_STR parameterNotFoundSentence,
+    mt::CR_STR parameterRequiredSentence,
     mt::CR_STR parentStrictSentence,
     mt::CR_STR programTerminatedSentence,
     mt::CR_STR programFailedSentence,
@@ -199,6 +204,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_REQUIRED] = parameterRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARENT_STRICT] = parentStrictSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_TERMINATED] = programTerminatedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
@@ -442,7 +448,7 @@ namespace cli_menu {
   }}};
 
   std::string Langu::agePreset::fileOutDefaultExtension = ".txt";
-  mt::PAIR_STR Langu::agePreset::fileOutBracketsForNumbering = {"[", "]"};
+  mt::PAIR_STR Langu::agePreset::fileOutBracketsForNumbering = {"(", ")"};
 
   void Langu::agePreset::setKeywords(
     mt::CR_STR inKeyword,
