@@ -16,7 +16,8 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
-    SENTENCE_EMPTY_SINGLE_VIEW,
+    SENTENCE_EMPTY_OUTPUT,
+    SENTENCE_EMPTY_SINGLE_VIEW_INPUT,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -87,7 +88,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 26;
+      static constexpr int totalSentences = 27;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
     };
@@ -161,7 +162,8 @@ namespace cli_menu {
         mt::CR_STR clipboardMemoryAllocationFailureSentence,
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
-        mt::CR_STR emptySingleViewSentence,
+        mt::CR_STR emptyOutputSentence,
+        mt::CR_STR emptySingleViewInputSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,

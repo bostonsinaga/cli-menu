@@ -66,8 +66,10 @@ namespace cli_menu {
     "Failed to open clipboard.",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "Pasted from clipboard.",
-    // SENTENCE_EMPTY_SINGLE_VIEW
-    "Input is empty",
+    // SENTENCE_EMPTY_OUTPUT
+    "Output inside '$' is empty.",
+    // SENTENCE_EMPTY_SINGLE_VIEW_INPUT
+    "Input is empty.",
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "Are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
@@ -121,7 +123,9 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
-    // SENTENCE_EMPTY_SINGLE_VIEW
+    // SENTENCE_EMPTY_OUTPUT
+    CONSOLE_WARNING,
+    // SENTENCE_EMPTY_SINGLE_VIEW_INPUT
     CONSOLE_WARNING,
     // SENTENCE_FILE_OVERWRITE_QUESTION
     CONSOLE_WARNING,
@@ -166,7 +170,8 @@ namespace cli_menu {
     mt::CR_STR clipboardMemoryAllocationFailureSentence,
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
-    mt::CR_STR emptySingleViewSentence,
+    mt::CR_STR emptyOutputSentence,
+    mt::CR_STR emptySingleViewInputSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
@@ -193,7 +198,8 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_SINGLE_VIEW] = emptySingleViewSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT] = emptyOutputSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_SINGLE_VIEW_INPUT] = emptySingleViewInputSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
