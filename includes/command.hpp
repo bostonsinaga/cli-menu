@@ -17,7 +17,6 @@ namespace cli_menu {
 
   class Command : public mt_ds::GeneralTree {
   private:
-    std::string description;
     int pseudosCount = 0;
 
     bool editing = true,
@@ -87,7 +86,7 @@ namespace cli_menu {
     mt::PAIR_BOL required = {false, false};
 
     bool sterilized = false;
-    std::string hyphens, keyword;
+    std::string hyphens, keyword, description;
     STRINGIFIED_TYPE_COMMAND_CODE stringifiedTypeIndex;
 
     /**
@@ -110,6 +109,7 @@ namespace cli_menu {
     /**
      * Entry point to dialog interactions.
      * The 'raws' only expected as keywords or arguments.
+     * Note that the 'keyword' is not case sensitive.
      */
     COMMAND_CODE match();
 
@@ -220,7 +220,8 @@ namespace cli_menu {
       mt::CR_BOL willDestroy = false
     );
 
-    // display help with list or just list
+    // display information about this
+    void printWelcome();
     void printHelp();
     void printList(mt::CR_BOL withHelp);
 

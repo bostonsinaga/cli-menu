@@ -99,6 +99,8 @@ namespace cli_menu {
           required.first && Command::globalDialogued && localDialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
         ) {
+          printWelcome();
+
           Langu::ageMessage::printTemplateResponse(
             SENTENCE_PARAMETER_REQUIRED,
             keyword
@@ -109,7 +111,7 @@ namespace cli_menu {
         }
         else { // go to other node
 
-          // the required toggle automatically has value 'true'
+          // the required boolean automatically has value 'true'
           if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_TOGGLE) {
             pushUnormap("1");
           }
@@ -126,6 +128,7 @@ namespace cli_menu {
 
     // extended runtime input
     if (required.first && Command::globalDialogued && localDialogued) {
+      printWelcome();
 
       Langu::ageMessage::printTemplateResponse(
         SENTENCE_PARAMETER_REQUIRED,
@@ -281,8 +284,12 @@ namespace cli_menu {
         if (editing) clipboardPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
+      // QUIT
+      if (Control::quitTest(input)) {
+        break;
+      }
       // WILD VALUE
-      else if (!Control::quitTest(input)) {
+      else {
         // push argument to 'Result'
         if (editing) {
           pushUnormap(input);
@@ -295,7 +302,6 @@ namespace cli_menu {
       }
     }
 
-    // QUIT
     return COMMAND_TERMINATED;
   }
 
@@ -552,6 +558,26 @@ namespace cli_menu {
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_ALONE);
 
     return COMMAND_ONGOING;
+  }
+
+  void Command::printWelcome() {
+    static bool displayed = false;
+
+    if (!displayed && !getParent()) {
+      displayed = true;
+
+      // keyword
+      Console::logString(
+        mt_uti::StrTools::copyStringToUppercase(keyword) + '\n',
+        Console::messageColors[CONSOLE_HINT_1]
+      );
+
+      // description
+      Console::logItalicString(
+        Command::description + "\n\n",
+        Console::messageColors[CONSOLE_HINT_2]
+      );
+    }
   }
 
   void Command::printHelp() {
