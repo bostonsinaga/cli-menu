@@ -285,7 +285,7 @@ namespace cli_menu {
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
       // QUIT
-      if (Control::quitTest(input)) {
+      else if (Control::quitTest(input)) {
         break;
       }
       // WILD VALUE
@@ -712,14 +712,10 @@ namespace cli_menu {
         words
       );
 
-      std::cout << std::endl;
-
       printType<mt::LD>(
         Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
         numbers
       );
-
-      std::cout << std::endl;
 
       printType<bool>(
         Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_BOOLEAN),

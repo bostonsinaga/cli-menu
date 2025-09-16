@@ -31,8 +31,6 @@ namespace cli_menu {
         Console::messageColors[withIndent ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
       );
     }
-
-    std::cout << std::endl;
   }
 
   template <typename T>
@@ -81,6 +79,8 @@ namespace cli_menu {
       if (unormap.empty()) {
         Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
       }
+
+      std::cout << std::endl;
     }
   }
 }
