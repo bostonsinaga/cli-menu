@@ -7,7 +7,7 @@ namespace cli_menu {
 
   class Word;
   class Number;
-  class Toggle;
+  class Boolean;
 
   /** CREATOR */
 
@@ -34,7 +34,7 @@ namespace cli_menu {
       mt::CR_STR description_in
     );
 
-    // add '--help' and '--list' toggles for each command
+    // add '--help' and '--list' booleans for each command
     void setPresetHelpList(); // defined at 'preset.cpp'
 
     friend class Preset;
@@ -64,13 +64,13 @@ namespace cli_menu {
       mt::CR_STR description_in
     );
 
-    Toggle *createToggle(
+    Boolean *createBoolean(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
     );
 
-    Toggle *createToggle(
+    Boolean *createBoolean(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in
     );
@@ -130,22 +130,22 @@ namespace cli_menu {
     Number() = delete;
   };
 
-  /** TOGGLE */
+  /** BOOLEAN */
 
-  class Toggle : public Creator {
+  class Boolean : public Creator {
   protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
     void resetUnormap() override;
     bool printInput() override;
 
-    Toggle(
+    Boolean(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
     );
 
-    Toggle(
+    Boolean(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in
     );
@@ -154,10 +154,10 @@ namespace cli_menu {
     friend class Preset;
 
   public:
-    Toggle() = delete;
+    Boolean() = delete;
 
-    // ask 'yes/no'
-    static bool instantBooleanize(
+    // ask yes or no
+    static bool instantQuestion(
       const SENTENCE_CODE &responseCode,  // The 'xMessage::sentences[responseCode]' is expected
       mt::CR_STR replacementText          // to have 'xManager::placeholder' that will be replaced by 'replacementText'.
     );

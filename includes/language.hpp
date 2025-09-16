@@ -38,7 +38,7 @@ namespace cli_menu {
   enum STRINGIFIED_TYPE_COMMAND_CODE {
     STRINGIFIED_TYPE_WORD,
     STRINGIFIED_TYPE_NUMBER,
-    STRINGIFIED_TYPE_TOGGLE
+    STRINGIFIED_TYPE_BOOLEAN
   };
 
   /**
@@ -101,7 +101,7 @@ namespace cli_menu {
 
       static mt::STRUNORMAP_STR
         abbreviationsTitle,
-        toggleAvailableValuesTitle;
+        booleanAvailableValuesTitle;
 
       static void limitTerm(
         const CONTROL_CODE &code,
@@ -215,11 +215,11 @@ namespace cli_menu {
       );
 
       static void setAbbreviationsTitle(mt::CR_STR title);
-      static void setToggleAvailableValuesTitle(mt::CR_STR title);
+      static void setBooleanAvailableValuesTitle(mt::CR_STR title);
 
       static std::string getTerm(const CONTROL_CODE &code);
       static std::string getAbbreviationsTitle();
-      static std::string getToggleAvailableValuesTitle();
+      static std::string getBooleanAvailableValuesTitle();
     };
 
     struct ageBooleanizer {
@@ -243,7 +243,7 @@ namespace cli_menu {
       static void setStringifiedTypes(
         mt::CR_STR wordStringifiedType,
         mt::CR_STR numberStringifiedType,
-        mt::CR_STR toggleStringifiedType
+        mt::CR_STR booleanStringifiedType
       );
 
       static std::string getStringifiedType(

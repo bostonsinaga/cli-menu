@@ -26,7 +26,7 @@ namespace cli_menu {
     // parameters arguments
     inline static COMUNORMAP<mt::VEC_STR> words;
     inline static COMUNORMAP<mt::VEC_LD> numbers;
-    inline static COMUNORMAP<mt::VEC_BOL> toggles;
+    inline static COMUNORMAP<mt::VEC_BOL> booleans;
 
     // better set inside the 'Command' callback
     inline static COMUNORMAP<mt::VEC_STR> outputs;
@@ -38,29 +38,29 @@ namespace cli_menu {
     // friend classes
     friend class Word;
     friend class Number;
-    friend class Toggle;
+    friend class Boolean;
 
   public:
     /** Setters */
 
     static void pushWord(Command *node, mt::CR_STR input);
     static void pushNumber(Command *node, mt::CR_LD input);
-    static void pushToggle(Command *node, mt::CR_BOL input);
+    static void pushBoolean(Command *node, mt::CR_BOL input);
     static void pushOutput(Command *node, mt::CR_STR input);
 
     static void popWord(Command *node);
     static void popNumber(Command *node);
-    static void popToggle(Command *node);
+    static void popBoolean(Command *node);
     static void popOutput(Command *node);
 
     static void eraseWords(Command *node);
     static void eraseNumbers(Command *node);
-    static void eraseToggles(Command *node);
+    static void eraseBooleans(Command *node);
     static void eraseOutputs(Command *node);
 
     static void clearWords();
     static void clearNumbers();
-    static void clearToggles();
+    static void clearBooleans();
     static void clearOutputs();
     static void clearAll();
 
@@ -69,31 +69,31 @@ namespace cli_menu {
     // 'std::unordered_map' existence checkers
     static bool hasWords(Command *node);
     static bool hasNumbers(Command *node);
-    static bool hasToggles(Command *node);
+    static bool hasBooleans(Command *node);
     static bool hasOutputs(Command *node);
 
     // return 0 for unknown id
     static size_t numberOfWords(Command *node);
     static size_t numberOfNumbers(Command *node);
-    static size_t numberOfToggles(Command *node);
+    static size_t numberOfBooleans(Command *node);
     static size_t numberOfOutputs(Command *node);
 
     // get with index
     static std::string getWordAt(Command *node, mt::CR_SZ index);
     static mt::LD getNumberAt(Command *node, mt::CR_SZ index);
-    static bool getToggleAt(Command *node, mt::CR_SZ index);
+    static bool getBooleanAt(Command *node, mt::CR_SZ index);
     static std::string getOutputAt(Command *node, mt::CR_SZ index);
 
     // get at front
     static std::string getFirstWord(Command *node);
     static mt::LD getFirstNumber(Command *node);
-    static bool getFirstToggle(Command *node);
+    static bool getFirstBoolean(Command *node);
     static std::string getFirstOutput(Command *node);
 
     // get at back
     static std::string getLastWord(Command *node);
     static mt::LD getLastNumber(Command *node);
-    static bool getLastToggle(Command *node);
+    static bool getLastBoolean(Command *node);
     static std::string getLastOutput(Command *node);
 
     // concatenate string vector into a string

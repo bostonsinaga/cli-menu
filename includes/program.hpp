@@ -9,7 +9,7 @@ namespace cli_menu {
   concept CommandType =
     std::is_same_v<T, Word> ||
     std::is_same_v<T, Number> ||
-    std::is_same_v<T, Toggle>;
+    std::is_same_v<T, Boolean>;
 
   class ProgramVersion final {
   private:

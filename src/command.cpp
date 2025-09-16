@@ -97,7 +97,7 @@ namespace cli_menu {
          */
         else if (
           required.first && Command::globalDialogued && localDialogued &&
-          stringifiedTypeIndex != STRINGIFIED_TYPE_TOGGLE
+          stringifiedTypeIndex != STRINGIFIED_TYPE_BOOLEAN
         ) {
           printWelcome();
 
@@ -112,7 +112,7 @@ namespace cli_menu {
         else { // go to other node
 
           // the required boolean automatically has value 'true'
-          if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_TOGGLE) {
+          if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_BOOLEAN) {
             pushUnormap("1");
           }
 
@@ -194,7 +194,7 @@ namespace cli_menu {
     if (!hinted) {
       hinted = true;
       Control::printAbbreviations();
-      Control::printToggleAvailableValues();
+      Control::printBooleanAvailableValues();
     }
 
     while (Control::cinDialogInput(input, editing)) {
@@ -722,8 +722,8 @@ namespace cli_menu {
       std::cout << std::endl;
 
       printType<bool>(
-        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_TOGGLE),
-        toggles
+        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_BOOLEAN),
+        booleans
       );
     }
   }

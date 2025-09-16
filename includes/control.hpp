@@ -56,7 +56,7 @@ namespace cli_menu {
     static bool quitTest(mt::CR_STR str);
 
     static void printAbbreviations();
-    static void printToggleAvailableValues();
+    static void printBooleanAvailableValues();
 
     static const CONTROL_CODE& getSharedEnum() {
       return sharedEnum;

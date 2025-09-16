@@ -105,34 +105,34 @@ namespace cli_menu {
     return number;
   }
 
-  Toggle *Creator::createToggle(
+  Boolean *Creator::createBoolean(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     COMMAND_CALLBACK callback_in
   ) {
-    Toggle *toggle = new Toggle(
+    Boolean *boolean = new Boolean(
       keyword_in,
       description_in,
       callback_in
     );
 
-    replaceExistingKeyword(toggle);
-    toggle->setPresetHelpList();
-    return toggle;
+    replaceExistingKeyword(boolean);
+    boolean->setPresetHelpList();
+    return boolean;
   }
 
-  Toggle *Creator::createToggle(
+  Boolean *Creator::createBoolean(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) {
-    Toggle *toggle = new Toggle(
+    Boolean *boolean = new Boolean(
       keyword_in,
       description_in
     );
 
-    replaceExistingKeyword(toggle);
-    toggle->setPresetHelpList();
-    return toggle;
+    replaceExistingKeyword(boolean);
+    boolean->setPresetHelpList();
+    return boolean;
   }
 
   /** WORD */
@@ -235,9 +235,9 @@ namespace cli_menu {
     return false;
   }
 
-  /** TOGGLE */
+  /** BOOLEAN */
 
-  Toggle::Toggle(
+  Boolean::Boolean(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     COMMAND_CALLBACK callback_in
@@ -245,50 +245,50 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {
     hyphens = "--";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_BOOLEAN;
   }
 
-  Toggle::Toggle(
+  Boolean::Boolean(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in
   ) : Creator (
     keyword_in, description_in
   ) {
     hyphens = "--";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_TOGGLE;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_BOOLEAN;
   }
 
-  void Toggle::clipboardPaste() {
+  void Boolean::clipboardPaste() {
     required.first = false;
 
     mt_uti::VecTools<bool>::concatCopy(
-      Result::toggles[this],
+      Result::booleans[this],
       Clipboard::pasteConditions()
     );
   }
 
-  void Toggle::pushUnormap(mt::CR_STR input) {
+  void Boolean::pushUnormap(mt::CR_STR input) {
     required.first = false;
 
-    Result::toggles[this].push_back(
+    Result::booleans[this].push_back(
       Langu::ageBooleanizer::test(input)
     );
   }
 
-  void Toggle::resetUnormap() {
+  void Boolean::resetUnormap() {
     if (required.second) required.first = true;
-    Result::toggles.clear();
+    Result::booleans.clear();
   }
 
-  bool Toggle::printInput() {
-    if (Result::numberOfToggles(this)) {
+  bool Boolean::printInput() {
+    if (Result::numberOfBooleans(this)) {
       Result::printInput<bool>(this, false);
       return true;
     }
     return false;
   }
 
-  bool Toggle::instantBooleanize(
+  bool Boolean::instantQuestion(
     const SENTENCE_CODE &responseCode,
     mt::CR_STR replacementText
   ) {

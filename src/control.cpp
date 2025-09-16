@@ -128,10 +128,10 @@ namespace cli_menu {
     std::cout << "\n\n";
   }
 
-  void Control::printToggleAvailableValues() {
+  void Control::printBooleanAvailableValues() {
 
     Console::logItalicString(
-      Langu::ageControl::getToggleAvailableValuesTitle() + ":\n  ",
+      Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n  ",
       Console::messageColors[CONSOLE_HINT_1]
     );
 

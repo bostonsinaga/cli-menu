@@ -45,7 +45,7 @@ namespace cli_menu {
       Result::printInput<mt::LD>(numbers[node], withIndent);
     }
     else if constexpr (std::is_same_v<T, bool>) {
-      Result::printInput<bool>(toggles[node], withIndent);
+      Result::printInput<bool>(booleans[node], withIndent);
     }
   }
 

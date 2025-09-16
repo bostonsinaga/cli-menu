@@ -123,7 +123,7 @@ namespace cli_menu {
 
         // existing file require verification to be overwritten
         if (mt_uti::Scanner::isFileExist(filename) &&
-          !Toggle::instantBooleanize(
+          !Boolean::instantQuestion(
             SENTENCE_FILE_OVERWRITE_QUESTION,
             filename
           )
@@ -228,7 +228,7 @@ namespace cli_menu {
   }
 
   void Preset::applyHelp(Creator *owner) {
-    Toggle *help = new Toggle(
+    Boolean *help = new Boolean(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
       [](Command *node)->bool {
@@ -243,7 +243,7 @@ namespace cli_menu {
   }
 
   void Preset::applyList(Creator *owner) {
-    Toggle *list = new Toggle(
+    Boolean *list = new Boolean(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
       [](Command *node)->bool {

@@ -13,8 +13,8 @@ namespace cli_menu {
     return mt::UNORMAP_FOUND<Command*, mt::VEC_LD>(numbers, node);
   }
 
-  bool Result::hasToggles(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(toggles, node);
+  bool Result::hasBooleans(Command *node) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(booleans, node);
   }
 
   bool Result::hasOutputs(Command *node) {
@@ -29,8 +29,8 @@ namespace cli_menu {
     numbers[node].push_back(input);
   }
 
-  void Result::pushToggle(Command *node, mt::CR_BOL input) {
-    toggles[node].push_back(input);
+  void Result::pushBoolean(Command *node, mt::CR_BOL input) {
+    booleans[node].push_back(input);
   }
 
   void Result::pushOutput(Command *node, mt::CR_STR input) {
@@ -49,9 +49,9 @@ namespace cli_menu {
     }
   }
 
-  void Result::popToggle(Command *node) {
-    if (hasToggles(node)) {
-      toggles[node].pop_back();
+  void Result::popBoolean(Command *node) {
+    if (hasBooleans(node)) {
+      booleans[node].pop_back();
     }
   }
 
@@ -73,9 +73,9 @@ namespace cli_menu {
     }
   }
 
-  void Result::eraseToggles(Command *node) {
-    if (hasToggles(node)) {
-      toggles.erase(node);
+  void Result::eraseBooleans(Command *node) {
+    if (hasBooleans(node)) {
+      booleans.erase(node);
     }
   }
 
@@ -93,8 +93,8 @@ namespace cli_menu {
     numbers.clear();
   }
 
-  void Result::clearToggles() {
-    toggles.clear();
+  void Result::clearBooleans() {
+    booleans.clear();
   }
 
   void Result::clearOutputs() {
@@ -104,7 +104,7 @@ namespace cli_menu {
   void Result::clearAll() {
     words.clear();
     numbers.clear();
-    toggles.clear();
+    booleans.clear();
     outputs.clear();
   }
 
@@ -122,9 +122,9 @@ namespace cli_menu {
     return 0;
   }
 
-  size_t Result::numberOfToggles(Command *node) {
-    if (hasToggles(node)) {
-      return toggles[node].size();
+  size_t Result::numberOfBooleans(Command *node) {
+    if (hasBooleans(node)) {
+      return booleans[node].size();
     }
     return 0;
   }
@@ -154,11 +154,11 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Result::getToggleAt(Command *node, mt::CR_SZ index) {
-    if (hasToggles(node) &&
-      index < toggles[node].size()
+  bool Result::getBooleanAt(Command *node, mt::CR_SZ index) {
+    if (hasBooleans(node) &&
+      index < booleans[node].size()
     ) {
-      return toggles[node][index];
+      return booleans[node][index];
     }
     return false;
   }
@@ -188,10 +188,10 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Result::getFirstToggle(Command *node) {
-    if (hasToggles(node)) {
-      if (toggles[node].empty()) return false;
-      return toggles[node].front();
+  bool Result::getFirstBoolean(Command *node) {
+    if (hasBooleans(node)) {
+      if (booleans[node].empty()) return false;
+      return booleans[node].front();
     }
     return false;
   }
@@ -220,10 +220,10 @@ namespace cli_menu {
     return 0;
   }
 
-  bool Result::getLastToggle(Command *node) {
-    if (hasToggles(node)) {
-      if (toggles[node].empty()) return false;
-      return toggles[node].back();
+  bool Result::getLastBoolean(Command *node) {
+    if (hasBooleans(node)) {
+      if (booleans[node].empty()) return false;
+      return booleans[node].back();
     }
     return false;
   }

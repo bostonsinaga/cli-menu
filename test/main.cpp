@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[]) {
 
-  cm::Program<cm::Toggle> *users = cm::Program<cm::Toggle>::create(
+  cm::Program<cm::Boolean> *users = cm::Program<cm::Boolean>::create(
     "users",
     cm::ProgramAbout(
       "Describe your loyalty users",
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  cm::Toggle *men = users->createToggle(
+  cm::Boolean *men = users->createBoolean(
     "men",
     "Born to fight",
     [](cm::Command *current)->bool {
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  cm::Toggle *women = users->createToggle(
+  cm::Boolean *women = users->createBoolean(
     "women",
     "Beutiful and smart",
     [](cm::Command *current)->bool {

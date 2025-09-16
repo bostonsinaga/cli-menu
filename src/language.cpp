@@ -25,7 +25,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[newISOCode] = {};
     Langu::xControl::terms[newISOCode] = {};
     Langu::xControl::abbreviationsTitle[newISOCode] = {};
-    Langu::xControl::toggleAvailableValuesTitle[newISOCode] = {};
+    Langu::xControl::booleanAvailableValuesTitle[newISOCode] = {};
     Langu::xBooleanizer::object.addTerms(newISOCode, {}, {});
     Langu::xCommand::stringifiedTypes[newISOCode] = {};
     Langu::xProgram::labels[newISOCode] = {};
@@ -35,7 +35,7 @@ namespace cli_menu {
     Langu::xMessage::sentences.erase(existingISOCode);
     Langu::xControl::terms.erase(existingISOCode);
     Langu::xControl::abbreviationsTitle.erase(existingISOCode);
-    Langu::xControl::toggleAvailableValuesTitle.erase(existingISOCode);
+    Langu::xControl::booleanAvailableValuesTitle.erase(existingISOCode);
     Langu::xBooleanizer::object.removeTerms(existingISOCode);
     Langu::xCommand::stringifiedTypes.erase(existingISOCode);
     Langu::xProgram::labels.erase(existingISOCode);
@@ -261,7 +261,7 @@ namespace cli_menu {
 
   mt::STRUNORMAP_STR
     Langu::xControl::abbreviationsTitle = {{"en", "Controller List"}},
-    Langu::xControl::toggleAvailableValuesTitle = {{"en", "Boolean Available Values"}};
+    Langu::xControl::booleanAvailableValuesTitle = {{"en", "Boolean Available Values"}};
 
   void Langu::xControl::limitTerm(
     const CONTROL_CODE &code,
@@ -313,8 +313,8 @@ namespace cli_menu {
     Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode] = title;
   }
 
-  void Langu::ageControl::setToggleAvailableValuesTitle(mt::CR_STR title) {
-    Langu::xControl::toggleAvailableValuesTitle[Langu::xManager::currentISOCode] = title;
+  void Langu::ageControl::setBooleanAvailableValuesTitle(mt::CR_STR title) {
+    Langu::xControl::booleanAvailableValuesTitle[Langu::xManager::currentISOCode] = title;
   }
 
   std::string Langu::ageControl::getTerm(const CONTROL_CODE &code) {
@@ -325,8 +325,8 @@ namespace cli_menu {
     return Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode];
   }
 
-  std::string Langu::ageControl::getToggleAvailableValuesTitle() {
-    return Langu::xControl::toggleAvailableValuesTitle[Langu::xManager::currentISOCode];
+  std::string Langu::ageControl::getBooleanAvailableValuesTitle() {
+    return Langu::xControl::booleanAvailableValuesTitle[Langu::xManager::currentISOCode];
   }
 
   //_____________|
@@ -377,13 +377,13 @@ namespace cli_menu {
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xCommand::totalTypes>>
   Langu::xCommand::stringifiedTypes = {{"en", {
-    "WORD", "NUMBER", "TOGGLE"
+    "WORD", "NUMBER", "BOOLEAN"
   }}};
 
   void Langu::ageCommand::setStringifiedTypes(
     mt::CR_STR wordStringifiedType,
     mt::CR_STR numberStringifiedType,
-    mt::CR_STR toggleStringifiedType
+    mt::CR_STR booleanStringifiedType
   ) {
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
@@ -395,7 +395,7 @@ namespace cli_menu {
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [STRINGIFIED_TYPE_TOGGLE] = toggleStringifiedType;
+    [STRINGIFIED_TYPE_BOOLEAN] = booleanStringifiedType;
   }
 
   std::string Langu::ageCommand::getStringifiedType(
