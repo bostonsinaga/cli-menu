@@ -48,10 +48,10 @@ namespace cli_menu {
     static void pushToggle(Command *node, mt::CR_BOL input);
     static void pushOutput(Command *node, mt::CR_STR input);
 
-    void popWord(Command *node);
-    void popNumber(Command *node);
-    void popToggle(Command *node);
-    void popOutput(Command *node);
+    static void popWord(Command *node);
+    static void popNumber(Command *node);
+    static void popToggle(Command *node);
+    static void popOutput(Command *node);
 
     static void eraseWords(Command *node);
     static void eraseNumbers(Command *node);
