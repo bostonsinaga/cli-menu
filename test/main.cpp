@@ -18,17 +18,6 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  cm::Toggle *women = users->createToggle(
-    "women",
-    "Beutiful and smart",
-    [](cm::Command *current)->bool {
-      cm::Console::logResponse(
-        cm::CONSOLE_HINT_1, "Hello Women"
-      );
-      return true;
-    }
-  );
-
   cm::Toggle *men = users->createToggle(
     "men",
     "Born to fight",
@@ -40,13 +29,24 @@ int main(int argc, char *argv[]) {
     }
   );
 
+  cm::Toggle *women = users->createToggle(
+    "women",
+    "Beutiful and smart",
+    [](cm::Command *current)->bool {
+      cm::Console::logResponse(
+        cm::CONSOLE_HINT_1, "Hello Women"
+      );
+      return true;
+    }
+  );
+
   // connect and run
-  women->makeRequired();
   men->makeRequired();
-  cm::Preset::applyFileIn(women, true);
-  cm::Preset::applyFileOutFallback(women, true);
+  women->makeRequired();
   cm::Preset::applyFileIn(men, true);
   cm::Preset::applyFileOutFallback(men, true);
+  cm::Preset::applyFileIn(women, true);
+  cm::Preset::applyFileOutFallback(women, true);
   users->run(argc, argv);
   users->destroy();
 
