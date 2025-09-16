@@ -220,10 +220,22 @@ namespace cli_menu {
       mt::CR_BOL willDestroy = false
     );
 
-    // display information about this
+    /** Display information about this node */
+
     void printWelcome();
     void printHelp();
-    void printList(mt::CR_BOL withHelp);
+
+    // display '*' for required node
+    void printKeyword(
+      const CONSOLE_CODE &consoleCode,
+      mt::CR_SZ numberOfIndents
+    );
+
+    void printList(
+      const CONSOLE_CODE &consoleCode,
+      mt::CR_SZ numberOfIndents,
+      mt::CR_BOL displayAtLeafWarning
+    );
 
     // print unordered map values associated with this
     virtual bool printInput() { return false; }

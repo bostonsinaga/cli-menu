@@ -27,7 +27,11 @@ namespace cli_menu {
     std::string sequentialNames;
 
     bubble([&](mt_ds::LinkedList *node)->bool {
-      sequentialNames = static_cast<Command*>(node)->keyword + ' ' + sequentialNames;
+
+      sequentialNames = (static_cast<Command*>(node)->getParent() ?
+        static_cast<Command*>(node)->hyphens : ""
+      ) + static_cast<Command*>(node)->keyword + ' ' + sequentialNames;
+
       return true;
     });
 
@@ -204,7 +208,7 @@ namespace cli_menu {
       }
       // LIST
       else if (Control::listTest(input)) {
-        printList(false);
+        printList(CONSOLE_HINT_2, 0, true);
       }
       // ENTER
       else if (Control::enterTest(input)) {        
@@ -580,12 +584,7 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    // keyword
-    Console::logString(
-      keyword + " ["
-      + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex) + "]\n",
-      Console::messageColors[CONSOLE_HINT_1]
-    );
+    printKeyword(CONSOLE_HINT_1, 0);
 
     // description
     Console::logItalicString(
@@ -593,24 +592,37 @@ namespace cli_menu {
       Console::messageColors[CONSOLE_HINT_2]
     );
 
-    printList(true);
+    printList(CONSOLE_HINT_3, 2, false);
   }
 
-  void Command::printList(mt::CR_BOL withHelp) {
+  void Command::printKeyword(
+    const CONSOLE_CODE &consoleCode,
+    mt::CR_SZ numberOfIndents
+  ) {
+    Console::logString(
+      std::string(numberOfIndents, ' ') + keyword + " ["
+      + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex)
+      + ']' + (required.first ? '*' : '\0') + '\n',
+      Console::messageColors[consoleCode]
+    );
+  }
+
+  void Command::printList(
+    const CONSOLE_CODE &consoleCode,
+    mt::CR_SZ numberOfIndents,
+    mt::CR_BOL displayAtLeafWarning
+  ) {
     if (hasChildren()) {
       resetPointer();
 
+      // print children keyword
       getChildren()->iterate(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
           if (!static_cast<Command*>(node)->pseudo) {
-            Console::logString(
-              (withHelp ? "  " : "") + static_cast<Command*>(node)->keyword + " ["
-              + Langu::ageCommand::getStringifiedType(
-                static_cast<Command*>(node)->stringifiedTypeIndex
-              ) + "]\n",
-              Console::messageColors[withHelp ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
+            static_cast<Command*>(node)->printKeyword(
+              consoleCode, numberOfIndents
             );
           }
 
@@ -618,8 +630,8 @@ namespace cli_menu {
         }
       );
     }
-    // print error
-    else if (!withHelp) {
+    // print warning
+    else if (displayAtLeafWarning) {
       Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
       return;
     }

@@ -247,7 +247,9 @@ namespace cli_menu {
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
       [](Command *current)->bool {
-        static_cast<Creator*>(current->getParent())->printList(false);
+        static_cast<Creator*>(current->getParent())->printList(
+          CONSOLE_HINT_2, 0, true
+        );
         return true;
       }
     );
