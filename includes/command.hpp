@@ -50,7 +50,7 @@ namespace cli_menu {
     std::string generateSequentialRootNames();
 
     // call input-process-output callbacks
-    bool triggerCallbacks(Command *node);
+    bool triggerCallbacks();
 
     // dialog interactions (extended runtime input)
     COMMAND_CODE dialog();

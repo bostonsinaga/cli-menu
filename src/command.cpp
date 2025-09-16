@@ -88,7 +88,7 @@ namespace cli_menu {
 
         // pseudo-child callbacks and program end
         if (firstChild && firstChild->pseudo) {
-          firstChild->triggerCallbacks(this);
+          firstChild->triggerCallbacks();
           return COMMAND_ENDED;
         }
         /**
@@ -347,7 +347,7 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  bool Command::triggerCallbacks(Command *node) {
+  bool Command::triggerCallbacks() {
     bool anyInput = false,
       isProcess = false,
       anyOutput = false;
@@ -359,7 +359,7 @@ namespace cli_menu {
     }
 
     if ((anyInput || inputCallbacks.empty()) &&
-      processCallback && processCallback(node)
+      processCallback && processCallback(this)
     ) {
       isProcess = true;
 
@@ -381,9 +381,7 @@ namespace cli_menu {
 
       bubble([&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->triggerCallbacks(
-          static_cast<Command*>(node)
-        )) {
+        if (static_cast<Command*>(node)->triggerCallbacks()) {
           propagatingCode = COMMAND_SUCCEEDED;
           return true;
         }
@@ -395,7 +393,7 @@ namespace cli_menu {
       return propagatingCode;
     }
     else { // not propagated
-      if (triggerCallbacks(this)) {
+      if (triggerCallbacks()) {
         return COMMAND_SUCCEEDED;
       }
 
@@ -684,6 +682,7 @@ namespace cli_menu {
   void Command::makePseudo(mt::CR_BOL condition) {
     if (getParent()) {
       pseudo = condition;
+      localPropagation = !condition;
       static_cast<Command*>(getParent())->pseudosCount += 1 - !condition * 2;
     }
   }

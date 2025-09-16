@@ -232,7 +232,7 @@ namespace cli_menu {
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
       [](Command *node)->bool {
-        static_cast<Creator*>(node)->printHelp();
+        static_cast<Creator*>(node->getParent())->printHelp();
         return true;
       }
     );
@@ -247,7 +247,7 @@ namespace cli_menu {
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
       [](Command *node)->bool {
-        static_cast<Creator*>(node)->printList(false);
+        static_cast<Creator*>(node->getParent())->printList(false);
         return true;
       }
     );
