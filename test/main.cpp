@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
   // ultimate
   animals->makeRequired();
   plants->makeRequired();
-  cm::Preset::applyFile(animals);
-  cm::Preset::applyFile(plants);
+  cm::Preset::applyFileFull(animals);
+  cm::Preset::applyFileFull(plants);
   organism->run(argc, argv);
   organism->destroy();
 
