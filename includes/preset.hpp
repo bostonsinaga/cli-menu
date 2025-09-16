@@ -67,7 +67,7 @@ namespace cli_menu {
      * 
      * The node will not be required.
      */
-    void applyFileOutOptional(Creator *owner);
+    static void applyFileOutOptional(Creator *owner);
 
     // these are owned by all commands by default
     static void applyHelp(Creator *owner);
