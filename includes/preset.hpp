@@ -53,16 +53,21 @@ namespace cli_menu {
      * If it not provided ('isRequired' is false), the last argument of 'PRESET_IN' will be used.
      * If still not provided, the program keyword will be used as the filename
      * with 'fileOutDefaultExtension' as its extension.
-     * 
-     * If 'isOptional' is true and filename is not provided,
-     * the callback will return true without creating file
-     * and without displaying error message.
      */
-    static void applyFileOut(
+    static void applyFileOutFallback(
       Creator *owner,
-      mt::CR_BOL isRequired,
-      mt::CR_BOL isOptional
+      mt::CR_BOL isRequired
     );
+
+    /**
+     * Text file writer preset.
+     * 
+     * If filename is not provided, the callback will return true
+     * without creating file and without displaying error message.
+     * 
+     * The node will not be required.
+     */
+    void applyFileOutOptional(Creator *owner);
 
     // these are owned by all commands by default
     static void applyHelp(Creator *owner);

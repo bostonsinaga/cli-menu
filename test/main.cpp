@@ -44,9 +44,9 @@ int main(int argc, char *argv[]) {
   women->makeRequired();
   men->makeRequired();
   cm::Preset::applyFileIn(women, true);
-  cm::Preset::applyFileOut(women, true, false);
+  cm::Preset::applyFileOutFallback(women, true);
   cm::Preset::applyFileIn(men, true);
-  cm::Preset::applyFileOut(men, true, false);
+  cm::Preset::applyFileOutFallback(men, true);
   users->run(argc, argv);
   users->destroy();
 

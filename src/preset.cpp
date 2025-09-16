@@ -171,19 +171,12 @@ namespace cli_menu {
     return false;
   }
 
-  void Preset::applyFileOut(
+  void Preset::applyFileOutFallback(
     Creator *owner,
-    mt::CR_BOL isRequired,
-    mt::CR_BOL isOptional
+    mt::CR_BOL isRequired
   ) {
     applyFileOut(
       owner, isRequired,
-      isOptional ?
-      [](Command *node)->bool {
-        std::string filename = Result::getLastWord(node);
-        setFileOut(node, filename);
-        return true;
-      } :
       [](Command *node)->bool {
         std::string filename = Result::getLastWord(node);
 
@@ -218,6 +211,17 @@ namespace cli_menu {
           return false;
         }
 
+        return true;
+      }
+    );
+  }
+
+  void Preset::applyFileOutOptional(Creator *owner) {
+    applyFileOut(
+      owner, false,
+      [](Command *node)->bool {
+        std::string filename = Result::getLastWord(node);
+        setFileOut(node, filename);
         return true;
       }
     );
