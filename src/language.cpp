@@ -250,6 +250,12 @@ namespace cli_menu {
     );
   }
 
+  mt::STRUNORMAP_STR Langu::xMessage::welcomeToString = {{"en", "Welcome to "}};
+
+  std::string Langu::ageMessage::getWelcomeToString() {
+    return Langu::xMessage::welcomeToString[Langu::xManager::currentISOCode];
+  }
+
   //_________|
   // CONTROL |
   //_________|
@@ -333,7 +339,7 @@ namespace cli_menu {
   // BOOLEANIZER |
   //_____________|
 
-  mt::STRUNORMAP<std::string> Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
+  mt::STRUNORMAP_STR Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
 
   void Langu::ageBooleanizer::setTerms(
     mt::CR_VEC_STR existingTrueTerms,

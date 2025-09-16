@@ -568,6 +568,7 @@ namespace cli_menu {
 
       // keyword
       Console::logString(
+        Langu::ageMessage::getWelcomeToString() +
         mt_uti::StrTools::copyStringToUppercase(keyword) + '\n',
         Console::messageColors[CONSOLE_HINT_1]
       );

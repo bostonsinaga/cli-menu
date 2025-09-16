@@ -91,6 +91,7 @@ namespace cli_menu {
       static constexpr int totalSentences = 27;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
+      static mt::STRUNORMAP_STR welcomeToString;
     };
 
     struct xControl {
@@ -111,7 +112,7 @@ namespace cli_menu {
 
     struct xBooleanizer {
       inline static mt_uti::Booleanizer object;
-      static mt::STRUNORMAP<std::string> yesOrNoLabel;
+      static mt::STRUNORMAP_STR yesOrNoLabel;
     };
 
     struct xCommand {
@@ -191,6 +192,8 @@ namespace cli_menu {
         mt::CR_STR replacementText,
         mt::CR_BOL withYesOrNoLabel = false
       );
+
+      static std::string getWelcomeToString();
     };
 
     struct ageControl {
