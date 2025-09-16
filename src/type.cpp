@@ -8,7 +8,7 @@ namespace cli_menu {
   Creator::Creator(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) : Command(
     keyword_in, description_in, callback_in
   ) {}
@@ -48,7 +48,7 @@ namespace cli_menu {
   Word *Creator::createWord(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     Word *word = new Word(
       keyword_in,
@@ -78,7 +78,7 @@ namespace cli_menu {
   Number *Creator::createNumber(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     Number *number = new Number(
       keyword_in,
@@ -108,7 +108,7 @@ namespace cli_menu {
   Toggle *Creator::createToggle(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     Toggle *toggle = new Toggle(
       keyword_in,
@@ -140,7 +140,7 @@ namespace cli_menu {
   Word::Word(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
   ) {
@@ -186,7 +186,7 @@ namespace cli_menu {
   Number::Number(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
   ) {
@@ -240,7 +240,7 @@ namespace cli_menu {
   Toggle::Toggle(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
   ) {
@@ -286,6 +286,20 @@ namespace cli_menu {
       return true;
     }
     return false;
+  }
+
+  bool Toggle::instantBooleanize(
+    const SENTENCE_CODE &responseCode,
+    mt::CR_STR replacementText
+  ) {
+    std::string input;
+
+    Langu::ageMessage::printTemplateResponse(
+      responseCode, replacementText, true
+    );
+
+    return Control::cinDialogInput(input, true) &&
+      Langu::ageBooleanizer::test(input);
   }
 }
 

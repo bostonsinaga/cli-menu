@@ -639,7 +639,7 @@ namespace cli_menu {
   void Result::printInputs(Command *onlyThis) {
     if (onlyThis) {
       if (!onlyThis->printInput()) {
-        Langu::ageMessage::printResponse(SENTENCE_EMPTY_SINGLE_VIEW);
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_SINGLE_VIEW_INPUT);
       }
     }
     else {

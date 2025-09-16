@@ -51,7 +51,7 @@ namespace cli_menu {
     Program(
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Program(
@@ -65,7 +65,7 @@ namespace cli_menu {
     static Program *create(
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     static Program *create(

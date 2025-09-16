@@ -44,7 +44,7 @@ namespace cli_menu {
   Program<T>::Program(
     mt::CR_STR keyword_in,
     const ProgramAbout &about_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) : T(
     keyword_in,
     about_in.stringify(),
@@ -64,7 +64,7 @@ namespace cli_menu {
   Program<T> *Program<T>::create(
     mt::CR_STR keyword_in,
     const ProgramAbout &about_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     Program<T> *program = new Program<T>(
       keyword_in, about_in, callback_in

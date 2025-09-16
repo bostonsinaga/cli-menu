@@ -13,7 +13,7 @@ namespace cli_menu {
     COMMAND_ENDED // silent exit
   };
 
-  typedef std::function<bool(Command*)> COMMAND_CALLBACK;
+  using COMMAND_CALLBACK = bool(*)(Command*);
 
   class Command : public mt_ds::GeneralTree {
   private:
@@ -148,6 +148,7 @@ namespace cli_menu {
     void clearOutputCallbacks();
 
     // member variable access
+    const bool isRequired() const { return required.first; }
     const std::string getHyphens() const { return hyphens; }
     const std::string getKeyword() const { return keyword; }
     const std::string getDescription() const { return description; }

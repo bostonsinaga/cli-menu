@@ -26,7 +26,7 @@ namespace cli_menu {
     Creator(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Creator(
@@ -45,7 +45,7 @@ namespace cli_menu {
     Word *createWord(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Word *createWord(
@@ -56,7 +56,7 @@ namespace cli_menu {
     Number *createNumber(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Number *createNumber(
@@ -67,7 +67,7 @@ namespace cli_menu {
     Toggle *createToggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Toggle *createToggle(
@@ -88,7 +88,7 @@ namespace cli_menu {
     Word(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Word(
@@ -115,7 +115,7 @@ namespace cli_menu {
     Number(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Number(
@@ -142,7 +142,7 @@ namespace cli_menu {
     Toggle(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Toggle(
@@ -156,9 +156,11 @@ namespace cli_menu {
   public:
     Toggle() = delete;
 
-    static bool instantBooleanize() {
-      return true;
-    }
+    // ask 'yes/no'
+    static bool instantBooleanize(
+      const SENTENCE_CODE &responseCode,  // The 'xMessage::sentences[responseCode]' is expected
+      mt::CR_STR replacementText          // to have 'xManager::placeholder' that will be replaced by 'replacementText'.
+    );
   };
 }
 
