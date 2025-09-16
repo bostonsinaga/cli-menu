@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  // ultimate
+  // connect and run
   women->makeRequired();
   men->makeRequired();
   cm::Preset::applyFileIn(women, true);

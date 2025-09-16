@@ -13,7 +13,7 @@ namespace cli_menu {
     COMMAND_ENDED // silent exit
   };
 
-  using COMMAND_CALLBACK = bool(*)(Command*);
+  typedef std::function<bool(Command*)> COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   private:
