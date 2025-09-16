@@ -8,7 +8,7 @@ namespace cli_menu {
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    CR_COMMAND_CALLBACK callback_in
+    COMMAND_CALLBACK callback_in
   ) {
     keyword = keyword_in;
     description = description_in;
@@ -309,7 +309,7 @@ namespace cli_menu {
       isProcess = false,
       anyOutput = false;
 
-    for (mt::CR_PAIR2<COMMAND_CALLBACK, Command*> cbnode : inputCallbacks) {
+    for (mt::PAIR2<COMMAND_CALLBACK, Command*> &cbnode : inputCallbacks) {
       if (cbnode.first && cbnode.first(cbnode.second)) {
         anyInput = true;
       }
@@ -320,7 +320,7 @@ namespace cli_menu {
     ) {
       isProcess = true;
 
-      for (mt::CR_PAIR2<COMMAND_CALLBACK, Command*> cbnode : outputCallbacks) {
+      for (mt::PAIR2<COMMAND_CALLBACK, Command*> &cbnode : outputCallbacks) {
         if (cbnode.first && cbnode.first(cbnode.second)) {
           anyOutput = true;
         }
@@ -361,7 +361,7 @@ namespace cli_menu {
   }
 
   void Command::pushInputCallbacks(
-    CR_COMMAND_CALLBACK callback_in,
+    COMMAND_CALLBACK callback_in,
     Command *node
   ) {
     if (processCallback && node) {
@@ -370,7 +370,7 @@ namespace cli_menu {
   }
 
   void Command::pushOutputCallbacks(
-    CR_COMMAND_CALLBACK callback_in,
+    COMMAND_CALLBACK callback_in,
     Command *node
   ) {
     if (processCallback && node) {

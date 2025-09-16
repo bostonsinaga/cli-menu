@@ -14,7 +14,6 @@ namespace cli_menu {
   };
 
   typedef std::function<bool(Command*)> COMMAND_CALLBACK;
-  typedef const COMMAND_CALLBACK& CR_COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   private:
@@ -100,7 +99,7 @@ namespace cli_menu {
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      CR_COMMAND_CALLBACK callback_in
+      COMMAND_CALLBACK callback_in
     );
 
     Command(
@@ -133,12 +132,12 @@ namespace cli_menu {
      */
 
     void pushInputCallbacks(
-      CR_COMMAND_CALLBACK callback_in,
+      COMMAND_CALLBACK callback_in,
       Command* node
     );
 
     void pushOutputCallbacks(
-      CR_COMMAND_CALLBACK callback_in,
+      COMMAND_CALLBACK callback_in,
       Command* node
     );
 
@@ -149,6 +148,7 @@ namespace cli_menu {
     void clearOutputCallbacks();
 
     // member variable access
+    const std::string getHyphens() const { return hyphens; }
     const std::string getKeyword() const { return keyword; }
     const std::string getDescription() const { return description; }
 
