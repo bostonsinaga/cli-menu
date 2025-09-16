@@ -80,21 +80,21 @@ namespace cli_menu {
   ) {
     applyFileIn(
       owner, isRequired,
-      [](Command *node)->bool {
+      [](Command *current)->bool {
         bool found = false;
         std::string filename;
-        completeFileInWildcards(node);
+        completeFileInWildcards(current);
 
         // read multiple files
-        for (int i = 0; i < Result::numberOfWords(node); i++) {
-          filename = Result::getWordAt(node, i);
+        for (int i = 0; i < Result::numberOfWords(current); i++) {
+          filename = Result::getWordAt(current, i);
 
           if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
             // read file content
             Result::pushOutput(
-              static_cast<Command*>(node->getParent()),
+              static_cast<Command*>(current->getParent()),
               mt_uti::Scanner::readFileString(filename)
             );
           }
@@ -104,7 +104,7 @@ namespace cli_menu {
           );
         }
 
-        return found || !Result::numberOfWords(node);
+        return found || !Result::numberOfWords(current);
       }
     );
   }
@@ -177,20 +177,20 @@ namespace cli_menu {
   ) {
     applyFileOut(
       owner, isRequired,
-      [](Command *node)->bool {
-        std::string filename = Result::getLastWord(node);
+      [](Command *current)->bool {
+        std::string filename = Result::getLastWord(current);
 
         if (filename.empty()) {
 
           // set filename with file-in last argument
-          node->iterate(
+          current->iterate(
             mt_ds::GeneralTree::RIGHT,
-            [&](mt_ds::LinkedList *linkedList)->bool {
+            [&](mt_ds::LinkedList *node)->bool {
 
-              if (static_cast<Command*>(linkedList)->getKeyword()
+              if (static_cast<Command*>(node)->getKeyword()
                 == Langu::agePreset::getKeyword(PRESET_IN)
               ) {
-                filename = Result::getLastWord(static_cast<Command*>(linkedList));
+                filename = Result::getLastWord(static_cast<Command*>(node));
                 return false;
               }
 
@@ -200,13 +200,13 @@ namespace cli_menu {
 
           // set filename with program keyword
           if (filename.empty()) {
-            filename = static_cast<Command*>(node->getRoot())->getKeyword()
+            filename = static_cast<Command*>(current->getRoot())->getKeyword()
               + Langu::agePreset::fileOutDefaultExtension;
           }
         }
 
         // file write failed
-        if (!setFileOut(node, filename)) {
+        if (!setFileOut(current, filename)) {
           Langu::ageMessage::printResponse(SENTENCE_FILE_WRITE_FAILURE);
           return false;
         }
@@ -219,9 +219,9 @@ namespace cli_menu {
   void Preset::applyFileOutOptional(Creator *owner) {
     applyFileOut(
       owner, false,
-      [](Command *node)->bool {
-        std::string filename = Result::getLastWord(node);
-        setFileOut(node, filename);
+      [](Command *current)->bool {
+        std::string filename = Result::getLastWord(current);
+        setFileOut(current, filename);
         return true;
       }
     );
@@ -231,8 +231,8 @@ namespace cli_menu {
     Boolean *help = new Boolean(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
-      [](Command *node)->bool {
-        static_cast<Creator*>(node->getParent())->printHelp();
+      [](Command *current)->bool {
+        static_cast<Creator*>(current->getParent())->printHelp();
         return true;
       }
     );
@@ -246,8 +246,8 @@ namespace cli_menu {
     Boolean *list = new Boolean(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
-      [](Command *node)->bool {
-        static_cast<Creator*>(node->getParent())->printList(false);
+      [](Command *current)->bool {
+        static_cast<Creator*>(current->getParent())->printList(false);
         return true;
       }
     );
