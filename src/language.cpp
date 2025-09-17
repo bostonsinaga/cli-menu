@@ -95,11 +95,11 @@ namespace cli_menu {
     // SENTENCE_PARENT_STRICT
     "Parent needs explicit arguments for all its required children.",
     // SENTENCE_PROGRAM_TERMINATED
-    "Program terminated.",
+    "TERMINATED",
     // SENTENCE_PROGRAM_FAILED
-    "Program failed.",
+    "FAILED",
     // SENTENCE_PROGRAM_SUCCEEDED
-    "Program succeeded."
+    "SUCCEEDED"
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
