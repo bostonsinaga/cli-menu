@@ -6,11 +6,18 @@
 
 namespace cli_menu {
 
-  // final status codes
+  // status codes
   enum COMMAND_CODE {
     COMMAND_FAILED, COMMAND_ONGOING,
     COMMAND_SUCCEEDED, COMMAND_TERMINATED,
-    COMMAND_ENDED // silent exit
+    COMMAND_PSEUDO_ENDED
+  };
+
+  // phase codes
+  enum COMMAND_PHASE_CODE {
+    COMMAND_PHASE_MATCH,
+    COMMAND_PHASE_DIALOG,
+    COMMAND_PHASE_MATCH_IN_DIALOG
   };
 
   typedef std::function<bool(Command*)> COMMAND_CALLBACK;
@@ -26,9 +33,13 @@ namespace cli_menu {
       localPropagation = true;
 
     inline static bool
-      matching = true,
       globalDialogued = true,
       globalPropagation = true;
+
+    inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
+
+    // always set this code before moving to another node
+    COMMAND_CODE statusCode = COMMAND_ONGOING;
 
     // return false to stop the program 
     COMMAND_CALLBACK processCallback;
@@ -52,12 +63,14 @@ namespace cli_menu {
     // call input-process-output callbacks
     bool triggerCallbacks();
 
-    // dialog interactions (extended runtime input)
-    COMMAND_CODE dialog();
-    COMMAND_CODE enter();
-    COMMAND_CODE igniteCallbacks();
-    COMMAND_CODE goDown(mt::CR_STR input);
-    COMMAND_CODE goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
+    // return this node with its status set
+    Command *setStatus(const COMMAND_CODE &code);
+
+    // after dialog interactions
+    Command *enter();
+    Command *igniteCallbacks();
+    Command *goDown(mt::CR_STR input);
+    Command *goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
 
     // an error message in dialog when switching mode / moving position
     void printInterruptionDialoguedResponse();
@@ -106,24 +119,28 @@ namespace cli_menu {
       mt::CR_STR description_in
     );
 
-    /**
-     * Entry point to dialog interactions.
-     * The 'raws' only expected as keywords or arguments.
-     * Note that the 'keyword' is not case sensitive.
-     */
-    COMMAND_CODE match();
-
     // better called after callbacks call
     void clipboardCopy() {
       Clipboard::copyText(Result::concatOutputs(this));
     }
 
+    // modify the 'Result' values
     virtual void clipboardPaste() {}
     virtual void pushUnormap(mt::CR_STR input) {}
     virtual void resetUnormap() {}
 
   public:
     Command() = delete;
+
+    /**
+     * Entry point to dialog interactions.
+     * The 'raws' only expected as keywords or arguments.
+     * Note that the 'keyword' is not case sensitive.
+     */
+    Command *match();
+
+    // extended runtime input
+    Command *dialog();
 
     /**
      * Input-output callbacks modifiers.
@@ -152,6 +169,7 @@ namespace cli_menu {
     const std::string getHyphens() const { return hyphens; }
     const std::string getKeyword() const { return keyword; }
     const std::string getDescription() const { return description; }
+    const COMMAND_CODE getStatusCode() const { return statusCode; }
 
     /**
      * Will not open dialog to complete the required.
@@ -168,6 +186,11 @@ namespace cli_menu {
       Command::globalDialogued = !condition;
     }
 
+    // ask both
+    bool isDialogued() {
+      return Command::globalDialogued && localDialogued;
+    }
+
     /**
      * Prevent 'igniteCallbacks' from bubbling callbacks to the root.
      * Make this will only call its own callbacks.
@@ -181,6 +204,11 @@ namespace cli_menu {
     // global
     static void banPropagation(mt::CR_BOL condition = true) {
       Command::globalPropagation = !condition;
+    }
+
+    // ask both
+    bool isPropagated() {
+      return Command::globalPropagation && localPropagation;
     }
 
     /**

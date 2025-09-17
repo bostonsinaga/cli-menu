@@ -38,11 +38,9 @@ namespace cli_menu {
     return sequentialNames;
   }
 
-  COMMAND_CODE Command::match() {
+  Command *Command::match() {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
-
-    Command::matching = true;
 
     /**
      * The string vector will 'pop_back()'
@@ -90,17 +88,17 @@ namespace cli_menu {
       if (firstChild || firstNeighbor) {
         Command::raws.pop_back();
 
-        // pseudo-child callbacks and program end
+        // pseudo-child callbacks and program ends at initial match
         if (firstChild && firstChild->pseudo) {
           firstChild->triggerCallbacks();
-          return COMMAND_ENDED;
+          return setStatus(COMMAND_PSEUDO_ENDED);
         }
         /**
          * The match will be paused until arguments are given from the dialog.
          * The 'Command::raws' is not 'pop_back()'.
          */
         else if (
-          required.first && Command::globalDialogued && localDialogued &&
+          required.first && isDialogued() &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_BOOLEAN
         ) {
           printWelcome();
@@ -131,7 +129,7 @@ namespace cli_menu {
     }
 
     // extended runtime input
-    if (required.first && Command::globalDialogued && localDialogued) {
+    if (required.first && isDialogued()) {
       printWelcome();
 
       Langu::ageMessage::printTemplateResponse(
@@ -183,10 +181,15 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  COMMAND_CODE Command::dialog() {
+  Command *Command::setStatus(const COMMAND_CODE & code) {
+    statusCode = code;
+    return this;
+  }
+
+  Command *Command::dialog() {
+    Command::phaseCode = COMMAND_PHASE_DIALOG;
     static bool hinted = false;
     std::string input;
-    Command::matching = false;
 
     // outline or fill style
     Console::logStylishHeader(
@@ -212,8 +215,8 @@ namespace cli_menu {
       }
       // ENTER
       else if (Control::enterTest(input)) {        
-        COMMAND_CODE code = enter();
-        if (code != COMMAND_ONGOING) return code;
+        Command *lastNode = enter();
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
       // BACK
       else if (Control::backTest(input)) {
@@ -230,13 +233,13 @@ namespace cli_menu {
       }
       // NEXT
       else if (Control::nextTest(input)) {
-        COMMAND_CODE code = goToNeighbor(mt_ds::GeneralTree::RIGHT);
-        if (code != COMMAND_ONGOING) return code;
+        Command *lastNode = goToNeighbor(mt_ds::GeneralTree::RIGHT);
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
       // PREVIOUS
       else if (Control::previousTest(input)) {
-        COMMAND_CODE code = goToNeighbor(mt_ds::GeneralTree::LEFT);
-        if (code != COMMAND_ONGOING) return code;
+        Command *lastNode = goToNeighbor(mt_ds::GeneralTree::LEFT);
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
       // MODIFY
       else if (Control::modifyTest(input)) {
@@ -300,16 +303,16 @@ namespace cli_menu {
         }
         // selection (match in dialog)
         else {
-          COMMAND_CODE code = goDown(input);
-          if (code != COMMAND_ONGOING) return code;
+          Command *lastNode = goDown(input);
+          if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
         }
       }
     }
 
-    return COMMAND_TERMINATED;
+    return setStatus(COMMAND_TERMINATED);
   }
 
-  COMMAND_CODE Command::enter() {
+  Command *Command::enter() {
 
     // continue the interrupted match
     if (Command::interruptionDialogued && !required.first) {
@@ -343,7 +346,7 @@ namespace cli_menu {
       }
       // uncompleted required neighbors with strict parent
       else if (firstRequiredNeighbor) {
-        return COMMAND_ONGOING;
+        return setStatus(COMMAND_ONGOING);
       }
     }
 
@@ -378,30 +381,30 @@ namespace cli_menu {
       (anyOutput || outputCallbacks.empty());
   }
 
-  COMMAND_CODE Command::igniteCallbacks() {
+  Command *Command::igniteCallbacks() {
 
-    if (Command::globalPropagation && localPropagation) {
+    if (isPropagated()) {
       COMMAND_CODE propagatingCode;
 
       bubble([&](mt_ds::LinkedList *node)->bool {
 
         if (static_cast<Command*>(node)->triggerCallbacks()) {
           propagatingCode = COMMAND_SUCCEEDED;
-          return true;
+          return static_cast<Command*>(node)->localPropagation;
         }
 
         propagatingCode = COMMAND_FAILED;
         return false;
       });
 
-      return propagatingCode;
+      return setStatus(propagatingCode);
     }
     else { // not propagated
       if (triggerCallbacks()) {
-        return COMMAND_SUCCEEDED;
+        return setStatus(COMMAND_SUCCEEDED);
       }
 
-      return COMMAND_FAILED;
+      return setStatus(COMMAND_FAILED);
     }
   }
 
@@ -444,9 +447,11 @@ namespace cli_menu {
   }
 
   // always in selection mode
-  COMMAND_CODE Command::goDown(mt::CR_STR input) {
+  Command *Command::goDown(mt::CR_STR input) {
+
     bool spaceFound = false;
     mt::VEC_STR additionalRaws = {""};
+    Command::phaseCode = COMMAND_PHASE_MATCH_IN_DIALOG;
 
     // split input into the string vector using spaces as delimiters
     for (mt::CR_CH ch : input) {
@@ -501,8 +506,15 @@ namespace cli_menu {
       }
       // move to child
       else if (!strictParentHasRequired(false)) {
-        COMMAND_CODE code = firstSelected->match();
-        if (code != COMMAND_ONGOING) return code;
+        Command *lastNode = firstSelected->match();
+
+        /**
+         * Exclude the return of 'COMMAND_PSEUDO_ENDED' to prevent the program
+         * from terminating when selecting a node followed by its pseudo-child.
+         */
+        if (lastNode->statusCode != COMMAND_ONGOING &&
+          lastNode->statusCode != COMMAND_PSEUDO_ENDED
+        ) return lastNode;
       }
     }
     else {
@@ -516,18 +528,20 @@ namespace cli_menu {
     }
 
     // remove the recently added strings
-    mt_uti::VecTools<std::string>::eraseIntervalStable(
-      Command::raws,
-      {
-        Command::raws.size() - additionalRaws.size(),
-        Command::raws.size() - 1
-      }
-    );
+    if (!Command::raws.empty()) {
+      mt_uti::VecTools<std::string>::eraseIntervalStable(
+        Command::raws,
+        {
+          Command::raws.size() - additionalRaws.size(),
+          Command::raws.size() - 1
+        }
+      );
+    }
 
-    return COMMAND_ONGOING;
+    return setStatus(COMMAND_ONGOING);
   }
 
-  COMMAND_CODE Command::goToNeighbor(
+  Command *Command::goToNeighbor(
     const mt_ds::GeneralTree::DIRECTION &direction
   ) {
     Command *firstOrthoNeighbor = nullptr;
@@ -559,7 +573,7 @@ namespace cli_menu {
     // has no neighbors
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_ALONE);
 
-    return COMMAND_ONGOING;
+    return setStatus(COMMAND_ONGOING);
   }
 
   void Command::printWelcome() {
@@ -636,8 +650,10 @@ namespace cli_menu {
       return;
     }
 
-    // additional newline only in dialog
-    if (!Command::matching) {
+    // additional newline only at runtime
+    if (Command::phaseCode == COMMAND_PHASE_DIALOG ||
+      Command::phaseCode == COMMAND_PHASE_MATCH_IN_DIALOG
+    ) {
       std::cout << std::endl;
     }
   }
