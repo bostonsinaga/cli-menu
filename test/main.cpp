@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
   cm::Program<cm::Boolean> *users = cm::Program<cm::Boolean>::create(
     "users",
     cm::ProgramAbout(
-      "Describe your loyalty users",
+      "Describe your loyalty users.",
       "Boston Sinaga",
       "https://github.com/bostonsinaga/cli-menu",
       cm::ProgramVersion(1, 0, 0)
@@ -29,6 +29,10 @@ int main(int argc, char *argv[]) {
     }
   );
 
+  men->makeRequired();
+  cm::Preset::applyFileIn(men, true);
+  cm::Preset::applyFileOutFallback(men, true);
+
   cm::Boolean *women = users->createBoolean(
     "women",
     "Beutiful and smart",
@@ -40,13 +44,11 @@ int main(int argc, char *argv[]) {
     }
   );
 
-  // connect and run
-  men->makeRequired();
   women->makeRequired();
-  cm::Preset::applyFileIn(men, true);
-  cm::Preset::applyFileOutFallback(men, true);
   cm::Preset::applyFileIn(women, true);
   cm::Preset::applyFileOutFallback(women, true);
+
+  // run and destroy
   users->run(argc, argv);
   users->destroy();
 
