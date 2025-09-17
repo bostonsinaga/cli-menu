@@ -77,9 +77,6 @@ namespace cli_menu {
 
     // to prevent infinite loop after pressing 'Ctrl+C'
     static void setInterruptedCtrlC(int);
-
-    // check if interrupted before waiting for input
-    static bool isInterruptedCtrlC();
   };
 }
 

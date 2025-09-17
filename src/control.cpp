@@ -178,12 +178,12 @@ namespace cli_menu {
       Console::chooseBoundaryColor(editing)
     );
 
-    if (Control::isInterruptedCtrlC()) return false; // stop loop
+    if (Control::INTERRUPTED_CTRL_C.load()) return false; // stop loop
 
     // user input
     std::getline(std::cin, buffer);
 
-    if (Control::isInterruptedCtrlC()) return false; // stop loop
+    if (Control::INTERRUPTED_CTRL_C.load()) return false; // stop loop
 
     // loop still running
     return true;
@@ -191,16 +191,6 @@ namespace cli_menu {
 
   void Control::setInterruptedCtrlC(int) {
     Control::INTERRUPTED_CTRL_C.store(true);
-  }
-
-  bool Control::isInterruptedCtrlC() {
-
-    // 'Ctrl+C' is detected
-    if (Control::INTERRUPTED_CTRL_C.load()) {
-      return true;
-    }
-
-    return false;
   }
 }
 
