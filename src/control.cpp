@@ -25,7 +25,7 @@ namespace cli_menu {
       for (int j = 0; j < Control::totalSymbols; j++) {
 
         if (input == symbols[j][i]) {
-          sharedEnum = static_cast<CONTROL_CODE>(j+1);
+          sharedEnum = static_cast<CONTROL_CODE>(j);
           return sharedEnum;
         }
       }
@@ -94,12 +94,16 @@ namespace cli_menu {
     return whitespacesCheck(str) == CONTROL_QUIT;
   }
 
-  void Control::printAbbreviations() {
-
-    Console::logItalicString(
-      Langu::ageControl::getAbbreviationsTitle() + ":\n",
-      Console::messageColors[CONSOLE_HINT_1]
-    );
+  void Control::printAbbreviations(
+    mt::CR_BOL titleDisplayed,
+    mt::CR_SZ numberOfIndents
+  ) {
+    if (titleDisplayed) {
+      Console::logItalicString(
+        Langu::ageControl::getAbbreviationsTitle() + ":\n",
+        Console::messageColors[CONSOLE_HINT_1]
+      );
+    }
 
     size_t leastMaxTermLength = 0;
 
@@ -115,11 +119,13 @@ namespace cli_menu {
 
     // display terms with 2 columns
     for (int i = 0; i < Control::totalSymbols; i++) {
+
+      std::cout << std::string(numberOfIndents, ' ');
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
 
       // even is followed by spaces, uneven is followed by newline
       Console::logString(
-        "  " + symbols[i][0] + " = " + curterm
+        symbols[i][0] + " = " + curterm
         + (i % 2 ? "\n" : std::string(leastMaxTermLength - curterm.length(), ' ')),
         Console::messageColors[CONSOLE_HINT_2]
       );
@@ -128,16 +134,23 @@ namespace cli_menu {
     std::cout << "\n\n";
   }
 
-  void Control::printBooleanAvailableValues() {
-
-    Console::logItalicString(
-      Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n  ",
-      Console::messageColors[CONSOLE_HINT_1]
-    );
+  void Control::printBooleanAvailableValues(
+    mt::CR_BOL titleDisplayed,
+    mt::CR_SZ numberOfIndents
+  ) {
+    if (titleDisplayed) {
+      Console::logItalicString(
+        Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
+        Console::messageColors[CONSOLE_HINT_1]
+      );
+    }
 
     mt::CR_PAIR<mt::VEC_STR> boolTerms = Langu::ageBooleanizer::getTerms();
 
-    // true terms
+    /** True Terms */
+
+    std::cout << std::string(numberOfIndents, ' ');
+
     for (int i = 0; i < boolTerms.first.size(); i++) {
       Console::logString(
         boolTerms.first[i] + ", ",
@@ -145,19 +158,37 @@ namespace cli_menu {
       );
     }
 
-    // number is not zero
     Console::logString(
-      "n != 0\n  ",
+      symbols[CONTROL_ENTER][0] + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 
-    // false terms
+    Console::logString(
+      symbols[CONTROL_NEXT][0] + ", ",
+      Console::messageColors[CONSOLE_HINT_2]
+    );
+
+    // number is not zero
+    Console::logString(
+      "n != 0\n",
+      Console::messageColors[CONSOLE_HINT_2]
+    );
+
+    /** False Terms */
+
+    std::cout << std::string(numberOfIndents, ' ');
+
     for (int i = 0; i < boolTerms.second.size(); i++) {
       Console::logString(
         boolTerms.second[i] + ", ",
         Console::messageColors[CONSOLE_HINT_2]
       );
     }
+
+    Console::logString(
+      symbols[CONTROL_PREVIOUS][0] + ", ",
+      Console::messageColors[CONSOLE_HINT_2]
+    );
 
     // number is zero
     Console::logString(

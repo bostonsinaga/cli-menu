@@ -55,8 +55,15 @@ namespace cli_menu {
     static bool pasteTest(mt::CR_STR str);
     static bool quitTest(mt::CR_STR str);
 
-    static void printAbbreviations();
-    static void printBooleanAvailableValues();
+    static void printAbbreviations(
+      mt::CR_BOL titleDisplayed,
+      mt::CR_SZ numberOfIndents
+    );
+
+    static void printBooleanAvailableValues(
+      mt::CR_BOL titleDisplayed,
+      mt::CR_SZ numberOfIndents
+    );
 
     static const CONTROL_CODE& getSharedEnum() {
       return sharedEnum;
