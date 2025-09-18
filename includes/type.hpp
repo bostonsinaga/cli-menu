@@ -132,6 +132,12 @@ namespace cli_menu {
 
   /** BOOLEAN */
 
+  enum BOOLEAN_INSTANT_QUESTION_CODE {
+    BOOLEAN_INSTANT_QUESTION_CANCELED,
+    BOOLEAN_INSTANT_QUESTION_NO,
+    BOOLEAN_INSTANT_QUESTION_YES
+  };
+
   class Boolean : public Creator {
   protected:
     void clipboardPaste() override;
@@ -157,7 +163,7 @@ namespace cli_menu {
     Boolean() = delete;
 
     // ask yes or no
-    static bool instantQuestion(
+    static BOOLEAN_INSTANT_QUESTION_CODE instantQuestion(
       const SENTENCE_CODE &responseCode,  // The 'xMessage::sentences[responseCode]' is expected
       mt::CR_STR replacementText          // to have 'xManager::placeholder' that will be replaced by 'replacementText'.
     );

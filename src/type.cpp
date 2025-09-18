@@ -288,7 +288,7 @@ namespace cli_menu {
     return false;
   }
 
-  bool Boolean::instantQuestion(
+  BOOLEAN_INSTANT_QUESTION_CODE Boolean::instantQuestion(
     const SENTENCE_CODE &responseCode,
     mt::CR_STR replacementText
   ) {
@@ -298,8 +298,53 @@ namespace cli_menu {
       responseCode, replacementText, true
     );
 
-    return Control::cinDialogInput(input, true) &&
-      Langu::ageBooleanizer::test(input);
+    while (Control::cinDialogInput(input, true)) {
+      // no
+      if (Control::previousTest(input)) {
+        break;
+      }
+      else if ( // yes
+        Control::enterTest(input) ||
+        Control::nextTest(input)
+      ) {
+        return BOOLEAN_INSTANT_QUESTION_YES;
+      }
+      else if ( // cancel
+        Control::backTest(input) ||        
+        Control::quitTest(input)
+      ) {
+        return BOOLEAN_INSTANT_QUESTION_CANCELED;
+      }
+      // help
+      else if (Control::helpTest(input)) {
+        Control::printBooleanAvailableValues(true, 2);
+      }
+      // list
+      else if (Control::listTest(input)) {
+        Control::printBooleanAvailableValues(false, 0);
+      }
+      else if ( // forbidden
+        Control::modifyTest(input) ||
+        Control::selectTest(input) ||
+        Control::resetThisTest(input) ||
+        Control::viewThisTest(input) ||
+        Control::resetAllTest(input) ||
+        Control::viewAllTest(input) ||
+        Control::copyTest(input) ||
+        Control::pasteTest(input)
+      ) {
+        Langu::ageMessage::printResponse(
+          SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
+        );
+      }
+      // yes
+      else if (Langu::ageBooleanizer::test(input)) {
+        return BOOLEAN_INSTANT_QUESTION_YES;
+      }
+      else break; // no
+    }
+
+    return BOOLEAN_INSTANT_QUESTION_NO;
   }
 }
 
