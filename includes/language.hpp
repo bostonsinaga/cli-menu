@@ -9,6 +9,7 @@ namespace cli_menu {
     SENTENCE_ALREADY_MODIFYING,
     SENTENCE_ALREADY_SELECTING,
     SENTENCE_ARGUMENT_REQUIRED,
+    SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER,
     SENTENCE_CLIPBOARD_COPY_FAILURE,
     SENTENCE_CLIPBOARD_COPY_SUCCEED,
     SENTENCE_CLIPBOARD_GET_FAILURE,
@@ -32,6 +33,7 @@ namespace cli_menu {
     SENTENCE_PARENT_STRICT,
     SENTENCE_PROGRAM_TERMINATED,
     SENTENCE_PROGRAM_FAILED,
+    SENTENCE_PROGRAM_CANCELED,
     SENTENCE_PROGRAM_SUCCEEDED
   };
 
@@ -46,7 +48,6 @@ namespace cli_menu {
    * the input string in 'Control' class.
    */
   enum CONTROL_CODE {
-    CONTROL_UNKNOWN,
     CONTROL_HELP,
     CONTROL_LIST,
     CONTROL_ENTER,
@@ -61,7 +62,8 @@ namespace cli_menu {
     CONTROL_VIEW_ALL,
     CONTROL_COPY,
     CONTROL_PASTE,
-    CONTROL_QUIT
+    CONTROL_QUIT,
+    CONTROL_UNKNOWN
   };
 
   enum PROGRAM_LABEL_CODE {
@@ -88,7 +90,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 27;
+      static constexpr int totalSentences = 29;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
       static mt::STRUNORMAP_STR welcomeToString;
@@ -156,6 +158,7 @@ namespace cli_menu {
         mt::CR_STR alreadyModifyingSentence,
         mt::CR_STR alreadySelectingSentence,
         mt::CR_STR argumentRequiredSentence,
+        mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
         mt::CR_STR clipboardCopyFailureSentence,
         mt::CR_STR clipboardCopySucceedSentence,        
         mt::CR_STR clipboardGetFailureSentence,
@@ -179,6 +182,7 @@ namespace cli_menu {
         mt::CR_STR parentStrictSentence,
         mt::CR_STR programTerminatedSentence,
         mt::CR_STR programFailedSentence,
+        mt::CR_STR programCanceledSentence,
         mt::CR_STR programSucceededSentence
       );
 

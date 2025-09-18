@@ -52,6 +52,8 @@ namespace cli_menu {
     "Already in selection mode.",
     // SENTENCE_ARGUMENT_REQUIRED
     "Prohibited without explicit arguments.",
+    // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
+    "Forbidden controller on instant boolean question.",
     // SENTENCE_CLIPBOARD_COPY_FAILURE
     "Operation result is empty.",
     // SENTENCE_CLIPBOARD_COPY_SUCCEED
@@ -98,6 +100,8 @@ namespace cli_menu {
     "TERMINATED",
     // SENTENCE_PROGRAM_FAILED
     "FAILED",
+    // SENTENCE_PROGRAM_CANCELED
+    "CANCELED",
     // SENTENCE_PROGRAM_SUCCEEDED
     "SUCCEEDED"
   }}};
@@ -108,6 +112,8 @@ namespace cli_menu {
     // SENTENCE_ALREADY_SELECTING
     CONSOLE_WARNING,
     // SENTENCE_ARGUMENT_REQUIRED
+    CONSOLE_ERROR,
+    // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_COPY_FAILURE
     CONSOLE_WARNING,
@@ -155,6 +161,8 @@ namespace cli_menu {
     CONSOLE_CANCEL,
     // SENTENCE_PROGRAM_FAILED
     CONSOLE_ERROR,
+    // SENTENCE_PROGRAM_CANCELED
+    CONSOLE_CANCEL,
     // SENTENCE_PROGRAM_SUCCEEDED
     CONSOLE_CORRECT
   };
@@ -163,6 +171,7 @@ namespace cli_menu {
     mt::CR_STR alreadyModifyingSentence,
     mt::CR_STR alreadySelectingSentence,
     mt::CR_STR argumentRequiredSentence,
+    mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
     mt::CR_STR clipboardCopyFailureSentence,
     mt::CR_STR clipboardCopySucceedSentence,
     mt::CR_STR clipboardGetFailureSentence,
@@ -186,11 +195,13 @@ namespace cli_menu {
     mt::CR_STR parentStrictSentence,
     mt::CR_STR programTerminatedSentence,
     mt::CR_STR programFailedSentence,
+    mt::CR_STR programCanceledSentence,
     mt::CR_STR programSucceededSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ALREADY_MODIFYING] = alreadyModifyingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ALREADY_SELECTING] = alreadySelectingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_FAILURE] = clipboardCopyFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedSentence;    
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
@@ -214,6 +225,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARENT_STRICT] = parentStrictSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_TERMINATED] = programTerminatedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_CANCELED] = programCanceledSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
   }
 
