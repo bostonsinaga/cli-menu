@@ -98,19 +98,27 @@ namespace cli_menu {
       Command::raws.push_back(argv[i]);
     }
 
-    // start recursion
-    COMMAND_CODE commandCode = Program<T>::match();
+    /** Start Recursion */
 
-    switch (commandCode) {
-      case COMMAND_FAILED: {
-        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
-      break;}
-      case COMMAND_SUCCEEDED: {
-        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_SUCCEEDED);
-      break;}
-      case COMMAND_TERMINATED: {
+    Command *lastNode = Program<T>::match();
+
+    while (true) {
+      if (lastNode->getStatusCode() == COMMAND_PSEUDO_ENDED) {
+        break;
+      }
+      else if (lastNode->getStatusCode() == COMMAND_TERMINATED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_TERMINATED);
-      break;}
+        break;
+      }
+      else if (lastNode->getStatusCode() == COMMAND_FAILED) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
+      }
+      else if (lastNode->getStatusCode() == COMMAND_SUCCEEDED) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_SUCCEEDED);
+      }
+
+      if (lastNode->isDialogued()) lastNode = lastNode->dialog();
+      else break;
     }
   }
 }
