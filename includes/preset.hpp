@@ -11,10 +11,10 @@ namespace cli_menu {
     static void completeFileInWildcards(Command *node);
 
     /**
-     * Write 'Result::outputs' to file.
+     * Write 'Result::outputs' of parent to file.
      * Part of 'applyFileOut' preset callback.
      */
-    static bool setFileOut(
+    static COMMAND_CALLBACK_CODE setFileOut(
       Command *node,
       std::string &filename
     );

@@ -53,11 +53,12 @@ namespace cli_menu {
   ) {
     Word *in = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_IN),
-      Langu::agePreset::getDescription(PRESET_IN)
+      Langu::agePreset::getDescription(PRESET_IN),
+      customCallback
     );
 
+    in->registerAsInput();
     if (isRequired) in->makeRequired();
-    owner->pushInputCallbacks(customCallback, in);
   }
 
   void Preset::applyFileOut(
@@ -67,11 +68,12 @@ namespace cli_menu {
   ) {
     Word *out = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_OUT),
-      Langu::agePreset::getDescription(PRESET_OUT)
+      Langu::agePreset::getDescription(PRESET_OUT),
+      customCallback
     );
 
+    out->registerAsOutput();
     if (isRequired) out->makeRequired();
-    owner->pushOutputCallbacks(customCallback, out);
   }
 
   void Preset::applyFileIn(
@@ -80,7 +82,7 @@ namespace cli_menu {
   ) {
     applyFileIn(
       owner, isRequired,
-      [](Command *current)->bool {
+      [](Command *current)->COMMAND_CALLBACK_CODE {
         bool found = false;
         std::string filename;
         completeFileInWildcards(current);
@@ -104,12 +106,16 @@ namespace cli_menu {
           );
         }
 
-        return found || !Result::numberOfWords(current);
+        if (found || !Result::numberOfWords(current)) {
+          return COMMAND_CALLBACK_SUCCEEDED;
+        }
+
+        return COMMAND_CALLBACK_FAILED;
       }
     );
   }
 
-  bool Preset::setFileOut(
+  COMMAND_CALLBACK_CODE Preset::setFileOut(
     Command *node,
     std::string &filename
   ) {
@@ -120,38 +126,47 @@ namespace cli_menu {
       );
 
       if (!outputText.empty()) {
+        BOOLEAN_INSTANT_QUESTION_CODE
+          booleanInstantQuestionCode = BOOLEAN_INSTANT_QUESTION_NO;
 
         // existing file require verification to be overwritten
-        if (mt_uti::Scanner::isFileExist(filename) &&
-          !Boolean::instantQuestion(
+        if (mt_uti::Scanner::isFileExist(filename)) {
+
+          booleanInstantQuestionCode = Boolean::instantQuestion(
             SENTENCE_FILE_OVERWRITE_QUESTION,
             filename
-          )
-        ) {
-          int counter = 0;
-          std::string prefix = filename, suffix, numname;
+          );
 
-          // separate the name and extension from the filename
-          for (int i = filename.length() - 1; i >= 0; i--) {
-            if (filename[i] == '.') {
-              prefix = filename.substr(0, i);
-              suffix = filename.substr(i);
-              break;
+          if (booleanInstantQuestionCode == BOOLEAN_INSTANT_QUESTION_NO) {
+            int counter = 0;
+            std::string prefix = filename, suffix, numname;
+
+            // separate the name and extension from the filename
+            for (int i = filename.length() - 1; i >= 0; i--) {
+              if (filename[i] == '.') {
+                prefix = filename.substr(0, i);
+                suffix = filename.substr(i);
+                break;
+              }
             }
+
+            // trying to make a unique name with numbers in brackets
+            do {
+              numname = prefix + Langu::agePreset::fileOutBracketsForNumbering.first
+                + std::to_string(counter) + Langu::agePreset::fileOutBracketsForNumbering.second + suffix;
+              counter++;
+            } while (mt_uti::Scanner::isFileExist(numname));
+
+            filename = numname;
           }
-
-          // trying to make a unique name with numbers in brackets
-          do {
-            numname = prefix + Langu::agePreset::fileOutBracketsForNumbering.first
-              + std::to_string(counter) + Langu::agePreset::fileOutBracketsForNumbering.second + suffix;
-            counter++;
-          } while (mt_uti::Scanner::isFileExist(numname));
-
-          filename = numname;
         }
 
-        // write string vector to text file
-        if (mt_uti::Printer::write(
+        // canceled
+        if (booleanInstantQuestionCode == BOOLEAN_INSTANT_QUESTION_CANCELED) {
+          return COMMAND_CALLBACK_CANCELED;
+        }
+        // write string vector to text file (yes/no)
+        else if (mt_uti::Printer::write(
           outputText, filename, false
         )) {
           Langu::ageMessage::printTemplateResponse(
@@ -159,7 +174,7 @@ namespace cli_menu {
             filename
           );
 
-          return true;
+          return COMMAND_CALLBACK_SUCCEEDED;
         }
       }
       else Langu::ageMessage::printTemplateResponse(
@@ -168,7 +183,7 @@ namespace cli_menu {
       );
     }
 
-    return false;
+    return COMMAND_CALLBACK_FAILED;
   }
 
   void Preset::applyFileOutFallback(
@@ -177,7 +192,7 @@ namespace cli_menu {
   ) {
     applyFileOut(
       owner, isRequired,
-      [](Command *current)->bool {
+      [](Command *current)->COMMAND_CALLBACK_CODE {
         std::string filename = Result::getLastWord(current);
 
         if (filename.empty()) {
@@ -205,13 +220,14 @@ namespace cli_menu {
           }
         }
 
-        // file write failed
-        if (!setFileOut(current, filename)) {
+        COMMAND_CALLBACK_CODE callbackCode = setFileOut(current, filename);
+
+        // file write failed message
+        if (callbackCode == COMMAND_CALLBACK_FAILED) {
           Langu::ageMessage::printResponse(SENTENCE_FILE_WRITE_FAILURE);
-          return false;
         }
 
-        return true;
+        return callbackCode;
       }
     );
   }
@@ -219,10 +235,10 @@ namespace cli_menu {
   void Preset::applyFileOutOptional(Creator *owner) {
     applyFileOut(
       owner, false,
-      [](Command *current)->bool {
+      [](Command *current)->COMMAND_CALLBACK_CODE {
         std::string filename = Result::getLastWord(current);
         setFileOut(current, filename);
-        return true;
+        return COMMAND_CALLBACK_SUCCEEDED;
       }
     );
   }
@@ -231,9 +247,9 @@ namespace cli_menu {
     Boolean *help = new Boolean(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
-      [](Command *current)->bool {
+      [](Command *current)->COMMAND_CALLBACK_CODE {
         static_cast<Creator*>(current->getParent())->printHelp();
-        return true;
+        return COMMAND_CALLBACK_SUCCEEDED;
       }
     );
 
@@ -246,11 +262,9 @@ namespace cli_menu {
     Boolean *list = new Boolean(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
-      [](Command *current)->bool {
-        static_cast<Creator*>(current->getParent())->printList(
-          CONSOLE_HINT_2, 0, true
-        );
-        return true;
+      [](Command *current)->COMMAND_CALLBACK_CODE {
+        static_cast<Creator*>(current->getParent())->printList(CONSOLE_HINT_2, 0, true);
+        return COMMAND_CALLBACK_SUCCEEDED;
       }
     );
 
