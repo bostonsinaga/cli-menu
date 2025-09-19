@@ -111,7 +111,7 @@ namespace cli_menu {
 
   void Word::resetUnormap() {
     if (required.second) required.first = true;
-    Result::words.clear();
+    Result::words.erase(this);
   }
 
   bool Word::printInput() {
@@ -155,7 +155,7 @@ namespace cli_menu {
 
   void Number::resetUnormap() {
     if (required.second) required.first = true;
-    Result::numbers.clear();
+    Result::numbers.erase(this);
   }
 
   bool Number::printInput() {
@@ -198,7 +198,7 @@ namespace cli_menu {
 
   void Boolean::resetUnormap() {
     if (required.second) required.first = true;
-    Result::booleans.clear();
+    Result::booleans.erase(this);
   }
 
   bool Boolean::printInput() {
