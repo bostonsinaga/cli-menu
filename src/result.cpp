@@ -62,27 +62,19 @@ namespace cli_menu {
   }
 
   void Result::eraseWords(Command *node) {
-    if (hasWords(node)) {
-      words.erase(node);
-    }
+    words.erase(node);
   }
 
   void Result::eraseNumbers(Command *node) {
-    if (hasNumbers(node)) {
-      numbers.erase(node);
-    }
+    numbers.erase(node);
   }
 
   void Result::eraseBooleans(Command *node) {
-    if (hasBooleans(node)) {
-      booleans.erase(node);
-    }
+    booleans.erase(node);
   }
 
   void Result::eraseOutputs(Command *node) {
-    if (hasOutputs(node)) {
-      outputs.erase(node);
-    }
+    outputs.erase(node);
   }
 
   void Result::clearWords() {
