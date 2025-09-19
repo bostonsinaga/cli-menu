@@ -10,22 +10,26 @@ int main(int argc, char *argv[]) {
       "https://github.com/bostonsinaga/cli-menu",
       cm::ProgramVersion(1, 0, 0)
     ),
-    [](cm::Command *current)->bool {
+    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
+
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Users"
       );
-      return true;
+
+      return cm::COMMAND_CALLBACK_SUCCEEDED;
     }
   );
 
   cm::Boolean *men = users->createBoolean(
     "men",
     "Born to fight",
-    [](cm::Command *current)->bool {
+    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
+
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Men"
       );
-      return true;
+
+      return cm::COMMAND_CALLBACK_SUCCEEDED;
     }
   );
 
@@ -36,11 +40,13 @@ int main(int argc, char *argv[]) {
   cm::Boolean *women = users->createBoolean(
     "women",
     "Beutiful and smart",
-    [](cm::Command *current)->bool {
+    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
+
       cm::Console::logResponse(
         cm::CONSOLE_HINT_1, "Hello Women"
       );
-      return true;
+
+      return cm::COMMAND_CALLBACK_SUCCEEDED;
     }
   );
 
@@ -54,4 +60,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
