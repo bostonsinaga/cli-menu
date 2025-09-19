@@ -104,17 +104,20 @@ namespace cli_menu {
 
     while (true) {
       if (lastNode->getStatusCode() == COMMAND_PSEUDO_ENDED) {
-        break;
+        break; // silent termination
       }
       else if (lastNode->getStatusCode() == COMMAND_TERMINATED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_TERMINATED);
         break;
       }
-      else if (lastNode->getStatusCode() == COMMAND_FAILED) {
-        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
-      }
       else if (lastNode->getStatusCode() == COMMAND_SUCCEEDED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_SUCCEEDED);
+      }
+      else if (lastNode->getStatusCode() == COMMAND_CANCELED) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_CANCELED);
+      }
+      else if (lastNode->getStatusCode() == COMMAND_FAILED) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
       }
 
       if (lastNode->isDialogued()) lastNode = lastNode->dialog();
