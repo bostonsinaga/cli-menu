@@ -30,6 +30,11 @@ namespace cli_menu {
   typedef std::function<COMMAND_CALLBACK_CODE(Command*)> COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
+  protected:
+    inline static COMMAND_CALLBACK defaultCallback = [](Command *current)->COMMAND_CALLBACK_CODE {
+      return COMMAND_CALLBACK_SUCCEEDED;
+    };
+
   private:
     int pseudosCount = 0;
 
@@ -51,7 +56,7 @@ namespace cli_menu {
     COMMAND_CODE statusCode = COMMAND_ONGOING;
 
     // return false to stop the program 
-    COMMAND_CALLBACK callback;
+    COMMAND_CALLBACK callback = Command::defaultCallback;
 
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
@@ -124,11 +129,6 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
-    );
-
-    Command(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
     );
 
     // better called after callbacks call

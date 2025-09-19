@@ -12,15 +12,7 @@ namespace cli_menu {
   ) {
     keyword = keyword_in;
     description = description_in;
-    callback = callback_in;
-  }
-
-  Command::Command(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) {
-    keyword = keyword_in;
-    description = description_in;
+    if (callback_in) callback = callback_in;
   }
 
   std::string Command::generateSequentialRootNames() {
@@ -428,6 +420,7 @@ namespace cli_menu {
         }
         else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
           propagatingCode = COMMAND_CANCELED;
+          return false;
         }
         else propagatingCode = COMMAND_SUCCEEDED;
 

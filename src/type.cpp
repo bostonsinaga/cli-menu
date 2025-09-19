@@ -13,13 +13,6 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {}
 
-  Creator::Creator(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) : Command(
-    keyword_in, description_in
-  ) {}
-
   void Creator::replaceExistingKeyword(Command *newCommand) {
     if (!sterilized) {
       Creator *willDestroyed = nullptr;
@@ -61,20 +54,6 @@ namespace cli_menu {
     return word;
   }
 
-  Word *Creator::createWord(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) {
-    Word *word = new Word(
-      keyword_in,
-      description_in
-    );
-
-    replaceExistingKeyword(word);
-    word->setPresetHelpList();
-    return word;
-  }
-
   Number *Creator::createNumber(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
@@ -91,20 +70,6 @@ namespace cli_menu {
     return number;
   }
 
-  Number *Creator::createNumber(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) {
-    Number *number = new Number(
-      keyword_in,
-      description_in
-    );
-
-    replaceExistingKeyword(number);
-    number->setPresetHelpList();
-    return number;
-  }
-
   Boolean *Creator::createBoolean(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
@@ -114,20 +79,6 @@ namespace cli_menu {
       keyword_in,
       description_in,
       callback_in
-    );
-
-    replaceExistingKeyword(boolean);
-    boolean->setPresetHelpList();
-    return boolean;
-  }
-
-  Boolean *Creator::createBoolean(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) {
-    Boolean *boolean = new Boolean(
-      keyword_in,
-      description_in
     );
 
     replaceExistingKeyword(boolean);
@@ -143,16 +94,6 @@ namespace cli_menu {
     COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) {
-    hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
-  }
-
-  Word::Word(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) : Creator (
-    keyword_in, description_in
   ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
@@ -189,16 +130,6 @@ namespace cli_menu {
     COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) {
-    hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
-  }
-
-  Number::Number(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) : Creator (
-    keyword_in, description_in
   ) {
     hyphens = "-";
     stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
@@ -243,16 +174,6 @@ namespace cli_menu {
     COMMAND_CALLBACK callback_in
   ) : Creator (
     keyword_in, description_in, callback_in
-  ) {
-    hyphens = "--";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_BOOLEAN;
-  }
-
-  Boolean::Boolean(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in
-  ) : Creator (
-    keyword_in, description_in
   ) {
     hyphens = "--";
     stringifiedTypeIndex = STRINGIFIED_TYPE_BOOLEAN;

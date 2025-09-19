@@ -52,15 +52,6 @@ namespace cli_menu {
   ) { Command::makeRequired(); }
 
   template <CommandType T>
-  Program<T>::Program(
-    mt::CR_STR keyword_in,
-    const ProgramAbout &about_in
-  ) : T(
-    keyword_in,
-    about_in.stringify()
-  ) { Command::makeRequired(); }
-
-  template <CommandType T>
   Program<T> *Program<T>::create(
     mt::CR_STR keyword_in,
     const ProgramAbout &about_in,
@@ -70,16 +61,6 @@ namespace cli_menu {
       keyword_in, about_in, callback_in
     );
 
-    program->setPresetHelpList();
-    return program;
-  }
-
-  template <CommandType T>
-  Program<T> *Program<T>::create(
-    mt::CR_STR keyword_in,
-    const ProgramAbout &about_in
-  ) {
-    Program<T> *program = new Program<T>(keyword_in, about_in);
     program->setPresetHelpList();
     return program;
   }

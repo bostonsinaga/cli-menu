@@ -54,23 +54,13 @@ namespace cli_menu {
       COMMAND_CALLBACK callback_in
     );
 
-    Program(
-      mt::CR_STR keyword_in,
-      const ProgramAbout &about_in
-    );
-
   public:
     Program() = delete;
 
     static Program *create(
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
-      COMMAND_CALLBACK callback_in
-    );
-
-    static Program *create(
-      mt::CR_STR keyword_in,
-      const ProgramAbout &about_in
+      COMMAND_CALLBACK callback_in = Command::defaultCallback
     );
 
     /**

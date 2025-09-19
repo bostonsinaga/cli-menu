@@ -61,21 +61,6 @@ namespace cli_menu {
     if (isRequired) in->makeRequired();
   }
 
-  void Preset::applyFileOut(
-    Creator *owner,
-    mt::CR_BOL isRequired,
-    COMMAND_CALLBACK customCallback
-  ) {
-    Word *out = owner->createWord(
-      Langu::agePreset::getKeyword(PRESET_OUT),
-      Langu::agePreset::getDescription(PRESET_OUT),
-      customCallback
-    );
-
-    out->registerAsOutput();
-    if (isRequired) out->makeRequired();
-  }
-
   void Preset::applyFileIn(
     Creator *owner,
     mt::CR_BOL isRequired
@@ -184,6 +169,21 @@ namespace cli_menu {
     }
 
     return COMMAND_CALLBACK_FAILED;
+  }
+
+  void Preset::applyFileOut(
+    Creator *owner,
+    mt::CR_BOL isRequired,
+    COMMAND_CALLBACK customCallback
+  ) {
+    Word *out = owner->createWord(
+      Langu::agePreset::getKeyword(PRESET_OUT),
+      Langu::agePreset::getDescription(PRESET_OUT),
+      customCallback
+    );
+
+    out->registerAsOutput();
+    if (isRequired) out->makeRequired();
   }
 
   void Preset::applyFileOutFallback(

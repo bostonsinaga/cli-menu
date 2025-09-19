@@ -20,19 +20,14 @@ namespace cli_menu {
     );
 
   public:
-    /** Read/write text file with custom handler */
-
+    /**
+     * Read text file with custom handler.
+     */
     static void applyFileIn(
       Creator *owner,
       mt::CR_BOL isRequired,
       COMMAND_CALLBACK customCallback
-    );
-
-    static void applyFileOut(
-      Creator *owner,
-      mt::CR_BOL isRequired,
-      COMMAND_CALLBACK customCallback
-    );
+    );    
 
     /**
      * Text file reader preset (can read multiple files).
@@ -44,6 +39,15 @@ namespace cli_menu {
     static void applyFileIn(
       Creator *owner,
       mt::CR_BOL isRequired
+    );
+
+    /**
+     * Write text file with custom handler.
+     */
+    static void applyFileOut(
+      Creator *owner,
+      mt::CR_BOL isRequired,
+      COMMAND_CALLBACK customCallback
     );
 
     /**

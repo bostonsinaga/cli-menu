@@ -29,11 +29,6 @@ namespace cli_menu {
       COMMAND_CALLBACK callback_in
     );
 
-    Creator(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
-    );
-
     // add '--help' and '--list' booleans for each command
     void setPresetHelpList(); // defined at 'preset.cpp'
 
@@ -45,34 +40,19 @@ namespace cli_menu {
     Word *createWord(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
-    );
-
-    Word *createWord(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
+      COMMAND_CALLBACK callback_in = Command::defaultCallback
     );
 
     Number *createNumber(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
-    );
-
-    Number *createNumber(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
+      COMMAND_CALLBACK callback_in = Command::defaultCallback
     );
 
     Boolean *createBoolean(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
-    );
-
-    Boolean *createBoolean(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
+      COMMAND_CALLBACK callback_in = Command::defaultCallback
     );
   };
 
@@ -89,11 +69,6 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
-    );
-
-    Word(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
     );
 
     friend class Creator;
@@ -116,11 +91,6 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
-    );
-
-    Number(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
     );
 
     friend class Creator;
@@ -149,11 +119,6 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       COMMAND_CALLBACK callback_in
-    );
-
-    Boolean(
-      mt::CR_STR keyword_in,
-      mt::CR_STR description_in
     );
 
     friend class Creator;
