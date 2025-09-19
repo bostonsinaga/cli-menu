@@ -12,7 +12,7 @@ namespace cli_menu {
   ) {
     keyword = keyword_in;
     description = description_in;
-    processCallback = callback_in;
+    callback = callback_in;
   }
 
   Command::Command(
@@ -188,7 +188,6 @@ namespace cli_menu {
 
   Command *Command::dialog() {
     Command::phaseCode = COMMAND_PHASE_DIALOG;
-    static bool hinted = false;
     std::string input;
 
     // outline or fill style
@@ -197,12 +196,7 @@ namespace cli_menu {
       editing
     );
 
-    // hints for controllers
-    if (!hinted) {
-      hinted = true;
-      Control::printAbbreviations();
-      Control::printBooleanAvailableValues();
-    }
+    printControllersHints();
 
     while (Control::cinDialogInput(input, editing)) {
       // HELP
@@ -354,96 +348,106 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  bool Command::triggerCallbacks() {
-    bool anyInput = false,
-      isProcess = false,
-      anyOutput = false;
+  COMMAND_CALLBACK_CODE Command::iterateInOutCallbacks(
+    const std::function<bool(Command*)> &asWhatCallback
+  ) {
+    COMMAND_CALLBACK_CODE callbackCode;
+    bool anyFailed = false, anyCanceled = false;
 
-    for (mt::PAIR2<COMMAND_CALLBACK, Command*> &cbnode : inputCallbacks) {
-      if (cbnode.first && cbnode.first(cbnode.second)) {
-        anyInput = true;
-      }
-    }
+    if (hasChildren()) {
+      getChildren()->iterate(
+        mt_ds::GeneralTree::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
 
-    if ((anyInput || inputCallbacks.empty()) &&
-      processCallback && processCallback(this)
-    ) {
-      isProcess = true;
+          if (static_cast<Command*>(node)->callback &&
+            asWhatCallback(static_cast<Command*>(node))
+          ) {
+            callbackCode = static_cast<Command*>(node)->callback(
+              static_cast<Command*>(node)
+            );
 
-      for (mt::PAIR2<COMMAND_CALLBACK, Command*> &cbnode : outputCallbacks) {
-        if (cbnode.first && cbnode.first(cbnode.second)) {
-          anyOutput = true;
+            if (callbackCode == COMMAND_CALLBACK_FAILED) {
+              anyFailed = true;
+            }
+            else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
+              anyCanceled = true;
+            }
+          }
+
+          return true;
         }
+      );
+    }
+
+    if (anyFailed) return COMMAND_CALLBACK_FAILED;
+    else if (anyCanceled) return COMMAND_CALLBACK_CANCELED;
+    return COMMAND_CALLBACK_SUCCEEDED;
+  }
+
+  COMMAND_CALLBACK_CODE Command::triggerCallbacks() {
+    if (!asInput && !asOutput) {
+      // input
+      COMMAND_CALLBACK_CODE inputCallbackCode = iterateInOutCallbacks(
+        [](Command *current)->bool { return current->asInput; }
+      );
+
+      // process
+      COMMAND_CALLBACK_CODE processCallbackCode = COMMAND_CALLBACK_SUCCEEDED;
+      if (callback) processCallbackCode = callback(this);
+
+      // output
+      COMMAND_CALLBACK_CODE outputCallbackCode = iterateInOutCallbacks(
+        [](Command *current)->bool { return current->asOutput; }
+      );
+
+      if (outputCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+        return outputCallbackCode;
+      }
+      else if (processCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+        return processCallbackCode;
+      }
+      else if (inputCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+        return inputCallbackCode;
       }
     }
 
-    return (isProcess || !processCallback) &&
-      (anyOutput || outputCallbacks.empty());
+    return COMMAND_CALLBACK_SUCCEEDED;
   }
 
   Command *Command::igniteCallbacks() {
-
     if (isPropagated()) {
       COMMAND_CODE propagatingCode;
+      COMMAND_CALLBACK_CODE callbackCode;
 
       bubble([&](mt_ds::LinkedList *node)->bool {
+        callbackCode = static_cast<Command*>(node)->triggerCallbacks();
 
-        if (static_cast<Command*>(node)->triggerCallbacks()) {
-          propagatingCode = COMMAND_SUCCEEDED;
-          return static_cast<Command*>(node)->localPropagation;
+        if (callbackCode == COMMAND_CALLBACK_FAILED) {
+          propagatingCode = COMMAND_FAILED;
+          return false;
         }
+        else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
+          propagatingCode = COMMAND_CANCELED;
+        }
+        else propagatingCode = COMMAND_SUCCEEDED;
 
-        propagatingCode = COMMAND_FAILED;
-        return false;
+        return static_cast<Command*>(node)->localPropagation;
       });
 
       return setStatus(propagatingCode);
     }
     else { // not propagated
-      if (triggerCallbacks()) {
-        return setStatus(COMMAND_SUCCEEDED);
+      COMMAND_CALLBACK_CODE callbackCode = triggerCallbacks();
+
+      if (callbackCode == COMMAND_CALLBACK_FAILED) {
+        return setStatus(COMMAND_FAILED);
+      }
+      else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
+        return setStatus(COMMAND_CANCELED);
       }
 
-      return setStatus(COMMAND_FAILED);
+      return setStatus(COMMAND_SUCCEEDED);
     }
-  }
-
-  void Command::pushInputCallbacks(
-    COMMAND_CALLBACK callback_in,
-    Command *node
-  ) {
-    if (processCallback && node) {
-      inputCallbacks.push_back({callback_in, node});
-    }
-  }
-
-  void Command::pushOutputCallbacks(
-    COMMAND_CALLBACK callback_in,
-    Command *node
-  ) {
-    if (processCallback && node) {
-      outputCallbacks.push_back({callback_in, node});
-    }
-  }
-
-  void Command::popInputCallbacks() {
-    if (!inputCallbacks.empty()) {
-      inputCallbacks.pop_back();
-    }
-  }
-
-  void Command::popOutputCallbacks() {
-    if (!outputCallbacks.empty()) {
-      outputCallbacks.pop_back();
-    }
-  }
-
-  void Command::clearInputCallbacks() {
-    inputCallbacks.clear();
-  }
-
-  void Command::clearOutputCallbacks() {
-    outputCallbacks.clear();
   }
 
   // always in selection mode
@@ -594,6 +598,16 @@ namespace cli_menu {
         Command::description + "\n\n",
         Console::messageColors[CONSOLE_HINT_2]
       );
+    }
+  }
+
+  void Command::printControllersHints() {
+    static bool displayed = false;
+
+    if (!displayed) {
+      displayed = true;
+      Control::printAbbreviations(true, 2);
+      Control::printBooleanAvailableValues(true, 2);
     }
   }
 

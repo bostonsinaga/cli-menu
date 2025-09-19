@@ -8,9 +8,9 @@ namespace cli_menu {
 
   // status codes
   enum COMMAND_CODE {
-    COMMAND_FAILED, COMMAND_ONGOING,
+    COMMAND_FAILED, COMMAND_CANCELED,
     COMMAND_SUCCEEDED, COMMAND_TERMINATED,
-    COMMAND_PSEUDO_ENDED
+    COMMAND_ONGOING, COMMAND_PSEUDO_ENDED
   };
 
   // phase codes
@@ -20,7 +20,14 @@ namespace cli_menu {
     COMMAND_PHASE_MATCH_IN_DIALOG
   };
 
-  typedef std::function<bool(Command*)> COMMAND_CALLBACK;
+  // callback codes
+  enum COMMAND_CALLBACK_CODE {
+    COMMAND_CALLBACK_FAILED,
+    COMMAND_CALLBACK_CANCELED,
+    COMMAND_CALLBACK_SUCCEEDED
+  };
+
+  typedef std::function<COMMAND_CALLBACK_CODE(Command*)> COMMAND_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   private:
@@ -30,7 +37,9 @@ namespace cli_menu {
       pseudo = false,
       strict = false,
       localDialogued = true,
-      localPropagation = true;
+      localPropagation = true,
+      asInput = false,
+      asOutput = false;
 
     inline static bool
       globalDialogued = true,
@@ -42,17 +51,7 @@ namespace cli_menu {
     COMMAND_CODE statusCode = COMMAND_ONGOING;
 
     // return false to stop the program 
-    COMMAND_CALLBACK processCallback;
-
-    /**
-     * The vector only contains if 'processCallback' exists.
-     * The 'Command' will be passed to the callback.
-     * 
-     * This node can be said to be the 'Ultimate Command'
-     * if one of these vectors contains the pair.
-     */
-    std::vector<mt::PAIR2<COMMAND_CALLBACK, Command*>>
-      inputCallbacks, outputCallbacks;
+    COMMAND_CALLBACK callback;
 
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
@@ -60,8 +59,21 @@ namespace cli_menu {
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
-    // call input-process-output callbacks
-    bool triggerCallbacks();
+    /**
+     * Invoke input or output callbacks.
+     * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default
+     * if there is no 'asInput' or 'asOutput' condition from the children.
+     */
+    COMMAND_CALLBACK_CODE iterateInOutCallbacks(
+      const std::function<bool(Command*)> &asWhatCallback
+    );
+
+    /**
+     * Invoke input-process-output callbacks.
+     * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default
+     * if this has no callback and no children with 'asInput' and 'asOutput' conditions.
+     */
+    COMMAND_CALLBACK_CODE triggerCallbacks();
 
     // return this node with its status set
     Command *setStatus(const COMMAND_CODE &code);
@@ -142,28 +154,6 @@ namespace cli_menu {
     // extended runtime input
     Command *dialog();
 
-    /**
-     * Input-output callbacks modifiers.
-     * The 'processCallback' and the 'node'
-     * must exist to be accepted by the vector.
-     */
-
-    void pushInputCallbacks(
-      COMMAND_CALLBACK callback_in,
-      Command* node
-    );
-
-    void pushOutputCallbacks(
-      COMMAND_CALLBACK callback_in,
-      Command* node
-    );
-
-    // removers
-    void popInputCallbacks();
-    void popOutputCallbacks();
-    void clearInputCallbacks();
-    void clearOutputCallbacks();
-
     // member variable access
     const bool isRequired() const { return required.first; }
     const std::string getHyphens() const { return hyphens; }
@@ -193,7 +183,7 @@ namespace cli_menu {
 
     /**
      * Prevent 'igniteCallbacks' from bubbling callbacks to the root.
-     * Make this will only call its own callbacks.
+     * Make this will only call its input-process-output callbacks.
      */
 
     // local
@@ -248,17 +238,46 @@ namespace cli_menu {
       mt::CR_BOL willDestroy = false
     );
 
+    /**
+     * Make parent call this callback
+     * before or after its own callback.
+     */
+
+    // before
+    void registerAsInput() {
+      if (getParent()) {
+        asInput = true;
+        asOutput = false;
+      }
+    }
+
+    // after
+    void registerAsOutput() {
+      if (getParent()) {
+        asInput = false;
+        asOutput = true;
+      }
+    }
+
     /** Display information about this node */
 
+    // displayed once
     void printWelcome();
+    void printControllersHints();
+
+    // print keyword, description, and children keywords
     void printHelp();
 
-    // display '*' for required node
+    /**
+     * Print keyword and type.
+     * Display '*' for required node.
+     */
     void printKeyword(
       const CONSOLE_CODE &consoleCode,
       mt::CR_SZ numberOfIndents
     );
 
+    // print children keywords
     void printList(
       const CONSOLE_CODE &consoleCode,
       mt::CR_SZ numberOfIndents,
