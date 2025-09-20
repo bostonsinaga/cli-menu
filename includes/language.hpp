@@ -6,9 +6,10 @@
 namespace cli_menu {
 
   enum SENTENCE_CODE {
-    SENTENCE_ALREADY_MODIFYING,
-    SENTENCE_ALREADY_SELECTING,
     SENTENCE_ARGUMENT_REQUIRED,
+    SENTENCE_ARGUMENT_RESET_THIS,
+    SENTENCE_ARGUMENT_RESET_ALL,
+    SENTENCE_ARGUMENT_VIEW_EMPTY_THIS,
     SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER,
     SENTENCE_CLIPBOARD_COPY_FAILURE,
     SENTENCE_CLIPBOARD_COPY_SUCCEED,
@@ -18,13 +19,16 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
     SENTENCE_EMPTY_OUTPUT,
-    SENTENCE_EMPTY_SINGLE_VIEW_INPUT,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
     SENTENCE_FORBIDDEN_HIDDEN_PASTE,
     SENTENCE_INTERRUPTION_DIALOG,
     SENTENCE_KEYWORD_NOT_FOUND,
+    SENTENCE_MODE_ALREADY_EDITING,
+    SENTENCE_MODE_ALREADY_SELECTING,
+    SENTENCE_MODE_SWITCH_TO_EDITING,
+    SENTENCE_MODE_SWITCH_TO_SELECTION,
     SENTENCE_PARAMETER_ALONE,
     SENTENCE_PARAMETER_AT_LEAF,
     SENTENCE_PARAMETER_AT_ROOT,
@@ -90,7 +94,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 29;
+      static constexpr int totalSentences = 33;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
       static mt::STRUNORMAP_STR welcomeToString;
@@ -155,9 +159,10 @@ namespace cli_menu {
     struct ageMessage {
 
       static void setSentences(
-        mt::CR_STR alreadyModifyingSentence,
-        mt::CR_STR alreadySelectingSentence,
         mt::CR_STR argumentRequiredSentence,
+        mt::CR_STR argumentResetThisSentence,
+        mt::CR_STR argumentResetAllSentence,
+        mt::CR_STR argumentViewEmptyThis,
         mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
         mt::CR_STR clipboardCopyFailureSentence,
         mt::CR_STR clipboardCopySucceedSentence,        
@@ -167,13 +172,16 @@ namespace cli_menu {
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
         mt::CR_STR emptyOutputSentence,
-        mt::CR_STR emptySingleViewInputSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
         mt::CR_STR keywordNotFoundSentence,
+        mt::CR_STR modeAlreadyEditingSentence,
+        mt::CR_STR modeAlreadySelectingSentence,
+        mt::CR_STR modeSwitchToEditingSentence,
+        mt::CR_STR modeSwitchToSelectionSentence,
         mt::CR_STR parameterAloneSentence,
         mt::CR_STR parameterAtLeafSentence,
         mt::CR_STR parameterAtRootSentence,

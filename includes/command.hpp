@@ -139,7 +139,7 @@ namespace cli_menu {
     // modify the 'Result' values
     virtual void clipboardPaste() {}
     virtual void pushUnormap(mt::CR_STR input) {}
-    virtual void resetUnormap() {}
+    virtual bool resetUnormap() { return false; }
 
   public:
     Command() = delete;
