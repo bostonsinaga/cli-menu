@@ -109,9 +109,15 @@ namespace cli_menu {
     Result::words[this].push_back(input);
   }
 
-  void Word::resetUnormap() {
+  bool Word::resetUnormap() {
     if (required.second) required.first = true;
-    Result::words.erase(this);
+
+    if (Result::hasWords(this)) {
+      Result::words.erase(this);
+      return true;
+    }
+
+    return false;
   }
 
   bool Word::printInput() {
@@ -153,9 +159,15 @@ namespace cli_menu {
     );
   }
 
-  void Number::resetUnormap() {
+  bool Number::resetUnormap() {
     if (required.second) required.first = true;
-    Result::numbers.erase(this);
+
+    if (Result::hasNumbers(this)) {
+      Result::numbers.erase(this);
+      return true;
+    }
+
+    return false;
   }
 
   bool Number::printInput() {
@@ -196,9 +208,15 @@ namespace cli_menu {
     );
   }
 
-  void Boolean::resetUnormap() {
+  bool Boolean::resetUnormap() {
     if (required.second) required.first = true;
-    Result::booleans.erase(this);
+
+    if (Result::hasBooleans(this)) {
+      Result::booleans.erase(this);
+      return true;
+    }
+
+    return false;
   }
 
   bool Boolean::printInput() {

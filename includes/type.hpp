@@ -62,7 +62,7 @@ namespace cli_menu {
   protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
-    void resetUnormap() override;
+    bool resetUnormap() override;
     bool printInput() override;
 
     Word(
@@ -84,7 +84,7 @@ namespace cli_menu {
   protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
-    void resetUnormap() override;
+    bool resetUnormap() override;
     bool printInput() override;
 
     Number(
@@ -112,7 +112,7 @@ namespace cli_menu {
   protected:
     void clipboardPaste() override;
     void pushUnormap(mt::CR_STR input) override;
-    void resetUnormap() override;
+    bool resetUnormap() override;
     bool printInput() override;
 
     Boolean(
