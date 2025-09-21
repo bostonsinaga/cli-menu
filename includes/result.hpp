@@ -62,7 +62,9 @@ namespace cli_menu {
     static void clearNumbers();
     static void clearBooleans();
     static void clearOutputs();
-    static void clearAll();
+
+    // return false (empty) or true (cleared)
+    static bool clearAll();
 
     /** Getters */
 

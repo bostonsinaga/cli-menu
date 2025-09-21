@@ -93,11 +93,19 @@ namespace cli_menu {
     outputs.clear();
   }
 
-  void Result::clearAll() {
-    words.clear();
-    numbers.clear();
-    booleans.clear();
-    outputs.clear();
+  bool Result::clearAll() {
+
+    if (words.size() || numbers.size() ||
+      booleans.size() || outputs.size()
+    ) {
+      words.clear();
+      numbers.clear();
+      booleans.clear();
+      outputs.clear();
+      return true;
+    }
+
+    return false;
   }
 
   size_t Result::numberOfWords(Command *node) {
