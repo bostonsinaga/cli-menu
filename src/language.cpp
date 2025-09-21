@@ -48,12 +48,6 @@ namespace cli_menu {
   mt::STRUNORMAP<mt::ARR_STR<Langu::xMessage::totalSentences>> Langu::xMessage::sentences = {{"en", {    
     // SENTENCE_ARGUMENT_REQUIRED
     "Prohibited without explicit arguments.",
-    // SENTENCE_ARGUMENT_RESET_THIS
-    "This argument is removed.",
-    // SENTENCE_ARGUMENT_RESET_ALL
-    "All arguments are removed.",
-    // SENTENCE_ARGUMENT_VIEW_EMPTY_THIS
-    "This argument is empty.",
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
     "Forbidden controller on instant boolean question.",
     // SENTENCE_CLIPBOARD_COPY_FAILURE
@@ -72,6 +66,8 @@ namespace cli_menu {
     "Pasted from clipboard.",
     // SENTENCE_EMPTY_OUTPUT
     "Output inside '$' is empty.",
+    // SENTENCE_EMPTY_VIEW_INPUT
+    "This argument is empty.",
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "Are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
@@ -88,7 +84,7 @@ namespace cli_menu {
     "Already in editing mode.",
     // SENTENCE_MODE_ALREADY_SELECTING
     "Already in selection mode.",
-    // SENTENCE_MODE_SWITCH_TO_EDITING
+    // SENTENCE_MODE_SWITCH_TO_MODIFICATION
     "Switch to editing mode.",
     // SENTENCE_MODE_SWITCH_TO_SELECTION
     "Switch to selection mode.",
@@ -111,18 +107,16 @@ namespace cli_menu {
     // SENTENCE_PROGRAM_CANCELED
     "CANCELED",
     // SENTENCE_PROGRAM_SUCCEEDED
-    "SUCCEEDED"
+    "SUCCEEDED",
+    // SENTENCE_RESET_THIS
+    "This argument is removed.",
+    // SENTENCE_RESET_ALL
+    "All arguments are removed.",
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
-    // SENTENCE_ARGUMENT_RESET_THIS
-    CONSOLE_HINT_1,
-    // SENTENCE_ARGUMENT_RESET_ALL
-    CONSOLE_HINT_1,
-    // SENTENCE_ARGUMENT_VIEW_EMPTY_THIS
-    CONSOLE_WARNING,
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_COPY_FAILURE
@@ -141,6 +135,8 @@ namespace cli_menu {
     CONSOLE_HINT_1,
     // SENTENCE_EMPTY_OUTPUT
     CONSOLE_WARNING,
+    // SENTENCE_EMPTY_VIEW_INPUT
+    CONSOLE_WARNING,
     // SENTENCE_FILE_OVERWRITE_QUESTION
     CONSOLE_WARNING,
     // SENTENCE_FILE_WRITE_FAILURE
@@ -157,7 +153,7 @@ namespace cli_menu {
     CONSOLE_WARNING,
     // SENTENCE_MODE_ALREADY_SELECTING
     CONSOLE_WARNING,
-    // SENTENCE_MODE_SWITCH_TO_EDITING
+    // SENTENCE_MODE_SWITCH_TO_MODIFICATION
     CONSOLE_HINT_1,
     // SENTENCE_MODE_SWITCH_TO_SELECTION
     CONSOLE_HINT_1,
@@ -180,23 +176,25 @@ namespace cli_menu {
     // SENTENCE_PROGRAM_CANCELED
     CONSOLE_CANCEL,
     // SENTENCE_PROGRAM_SUCCEEDED
-    CONSOLE_CORRECT
+    CONSOLE_CORRECT,
+    // SENTENCE_RESET_THIS
+    CONSOLE_HINT_1,
+    // SENTENCE_RESET_ALL
+    CONSOLE_HINT_1
   };
 
   void Langu::ageMessage::setSentences(
     mt::CR_STR argumentRequiredSentence,
-    mt::CR_STR argumentResetThisSentence,
-    mt::CR_STR argumentResetAllSentence,
-    mt::CR_STR argumentViewEmptyThis,
     mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
     mt::CR_STR clipboardCopyFailureSentence,
-    mt::CR_STR clipboardCopySucceedSentence,
+    mt::CR_STR clipboardCopySucceedmptyThis,
     mt::CR_STR clipboardGetFailureSentence,
     mt::CR_STR clipboardLockFailureSentence,
-    mt::CR_STR clipboardMemoryAllocationFailureSentence,
+    mt::CR_STR clipboardMemoryAllocationFailureSentence,        
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
     mt::CR_STR emptyOutputSentence,
+    mt::CR_STR emptyViewSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
@@ -216,21 +214,21 @@ namespace cli_menu {
     mt::CR_STR programTerminatedSentence,
     mt::CR_STR programFailedSentence,
     mt::CR_STR programCanceledSentence,
-    mt::CR_STR programSucceededSentence
+    mt::CR_STR programSucceededSentence,
+    mt::CR_STR resetThisSentence,
+    mt::CR_STR resetAllSentence
   ) {
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_RESET_THIS] = argumentResetThisSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_RESET_ALL] = argumentResetAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_VIEW_EMPTY_THIS] = argumentViewEmptyThis;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_FAILURE] = clipboardCopyFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedSentence;    
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedmptyThis;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;    
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT] = emptyOutputSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_VIEW_INPUT] = emptyViewSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
@@ -239,7 +237,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_EDITING] = modeAlreadyEditingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_SELECTING] = modeAlreadySelectingSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_EDITING] = modeSwitchToEditingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_MODIFICATION] = modeSwitchToEditingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_SELECTION] = modeSwitchToSelectionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_ALONE] = parameterAloneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
@@ -251,6 +249,8 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_CANCELED] = programCanceledSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_THIS] = resetThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_ALL] = resetAllSentence;
   }
 
   void Langu::ageMessage::printResponse(

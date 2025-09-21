@@ -7,9 +7,6 @@ namespace cli_menu {
 
   enum SENTENCE_CODE {
     SENTENCE_ARGUMENT_REQUIRED,
-    SENTENCE_ARGUMENT_RESET_THIS,
-    SENTENCE_ARGUMENT_RESET_ALL,
-    SENTENCE_ARGUMENT_VIEW_EMPTY_THIS,
     SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER,
     SENTENCE_CLIPBOARD_COPY_FAILURE,
     SENTENCE_CLIPBOARD_COPY_SUCCEED,
@@ -19,6 +16,7 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
     SENTENCE_EMPTY_OUTPUT,
+    SENTENCE_EMPTY_VIEW_INPUT,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -27,7 +25,7 @@ namespace cli_menu {
     SENTENCE_KEYWORD_NOT_FOUND,
     SENTENCE_MODE_ALREADY_EDITING,
     SENTENCE_MODE_ALREADY_SELECTING,
-    SENTENCE_MODE_SWITCH_TO_EDITING,
+    SENTENCE_MODE_SWITCH_TO_MODIFICATION,
     SENTENCE_MODE_SWITCH_TO_SELECTION,
     SENTENCE_PARAMETER_ALONE,
     SENTENCE_PARAMETER_AT_LEAF,
@@ -38,7 +36,9 @@ namespace cli_menu {
     SENTENCE_PROGRAM_TERMINATED,
     SENTENCE_PROGRAM_FAILED,
     SENTENCE_PROGRAM_CANCELED,
-    SENTENCE_PROGRAM_SUCCEEDED
+    SENTENCE_PROGRAM_SUCCEEDED,
+    SENTENCE_RESET_THIS,
+    SENTENCE_RESET_ALL
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -160,18 +160,16 @@ namespace cli_menu {
 
       static void setSentences(
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR argumentResetThisSentence,
-        mt::CR_STR argumentResetAllSentence,
-        mt::CR_STR argumentViewEmptyThis,
         mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
         mt::CR_STR clipboardCopyFailureSentence,
-        mt::CR_STR clipboardCopySucceedSentence,        
+        mt::CR_STR clipboardCopySucceedmptyThis,
         mt::CR_STR clipboardGetFailureSentence,
         mt::CR_STR clipboardLockFailureSentence,
-        mt::CR_STR clipboardMemoryAllocationFailureSentence,
+        mt::CR_STR clipboardMemoryAllocationFailureSentence,        
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
         mt::CR_STR emptyOutputSentence,
+        mt::CR_STR emptyViewSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
@@ -191,7 +189,9 @@ namespace cli_menu {
         mt::CR_STR programTerminatedSentence,
         mt::CR_STR programFailedSentence,
         mt::CR_STR programCanceledSentence,
-        mt::CR_STR programSucceededSentence
+        mt::CR_STR programSucceededSentence,
+        mt::CR_STR resetThisSentence,
+        mt::CR_STR resetAllSentence
       );
 
       static void printResponse(

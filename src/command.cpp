@@ -235,7 +235,7 @@ namespace cli_menu {
         }
         else { // switch to editing mode
           editing = true;
-          Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_EDITING);
+          Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_MODIFICATION);
           return dialog();
         }
       }
@@ -260,13 +260,15 @@ namespace cli_menu {
       // RESET
       else if (Control::resetThisTest(input)) {
         if (resetUnormap()) {
-          Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_RESET_THIS);
+          Langu::ageMessage::printResponse(SENTENCE_RESET_THIS);
         }
-        else Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_VIEW_EMPTY_THIS);
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
       }
       else if (Control::resetAllTest(input)) {
-        Result::clearAll();
-        Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_RESET_ALL);
+        if (Result::clearAll()) {
+          Langu::ageMessage::printResponse(SENTENCE_RESET_ALL);
+        }
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
       }
       // VIEW
       else if (Control::viewThisTest(input)) {
@@ -745,7 +747,7 @@ namespace cli_menu {
   void Result::printInputs(Command *onlyThis) {
     if (onlyThis) {
       if (!onlyThis->printInput()) {
-        Langu::ageMessage::printResponse(SENTENCE_ARGUMENT_VIEW_EMPTY_THIS);
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
       }
     }
     else {
