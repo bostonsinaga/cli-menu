@@ -163,7 +163,7 @@ namespace cli_menu {
         }
       }
       else Langu::ageMessage::printTemplateResponse(
-        SENTENCE_EMPTY_OUTPUT,
+        SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
         static_cast<Command*>(node->getParent())->getKeyword()
       );
     }

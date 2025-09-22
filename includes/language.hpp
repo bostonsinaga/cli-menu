@@ -15,8 +15,10 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
-    SENTENCE_EMPTY_OUTPUT,
-    SENTENCE_EMPTY_VIEW_INPUT,
+    SENTENCE_EMPTY_VIEW_OUTPUT_THIS,
+    SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
+    SENTENCE_EMPTY_INPUT_ALL,
+    SENTENCE_EMPTY_INPUT_THIS,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -44,7 +46,8 @@ namespace cli_menu {
   enum STRINGIFIED_TYPE_COMMAND_CODE {
     STRINGIFIED_TYPE_WORD,
     STRINGIFIED_TYPE_NUMBER,
-    STRINGIFIED_TYPE_BOOLEAN
+    STRINGIFIED_TYPE_BOOLEAN,
+    STRINGIFIED_TYPE_OUTPUT
   };
 
   /**
@@ -60,10 +63,12 @@ namespace cli_menu {
     CONTROL_PREVIOUS,
     CONTROL_MODIFY,
     CONTROL_SELECT,
+    CONTROL_VIEW_THIS_INPUT,
+    CONTROL_VIEW_ALL_INPUT,
+    CONTROL_VIEW_THIS_OUTPUT,
+    CONTROL_VIEW_ALL_OUTPUT,
     CONTROL_RESET_THIS,
-    CONTROL_VIEW_THIS,
     CONTROL_RESET_ALL,
-    CONTROL_VIEW_ALL,
     CONTROL_COPY,
     CONTROL_PASTE,
     CONTROL_QUIT,
@@ -94,7 +99,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 33;
+      static constexpr int totalSentences = 35;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
       static mt::STRUNORMAP_STR welcomeToString;
@@ -102,7 +107,7 @@ namespace cli_menu {
 
     struct xControl {
 
-      static constexpr int totalSymbols = 15;
+      static constexpr int totalSymbols = 17;
       inline static size_t maxTermLength = 16;
       static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
 
@@ -122,7 +127,7 @@ namespace cli_menu {
     };
 
     struct xCommand {
-      static constexpr int totalTypes = 3;
+      static constexpr int totalTypes = 4;
       static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
     };
 
@@ -168,8 +173,10 @@ namespace cli_menu {
         mt::CR_STR clipboardMemoryAllocationFailureSentence,        
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
-        mt::CR_STR emptyOutputSentence,
-        mt::CR_STR emptyViewSentence,
+        mt::CR_STR emptyViewOutputThisSentence,
+        mt::CR_STR emptyWriteOutputThisSentence,
+        mt::CR_STR emptyInputAllSentence,
+        mt::CR_STR emptyInputThisSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
@@ -220,10 +227,12 @@ namespace cli_menu {
         std::string previousTerm,
         std::string modifyTerm,
         std::string selectTerm,
+        std::string viewThisInputTerm,
+        std::string viewAllInputTerm,
+        std::string viewThisOutputTerm,
+        std::string viewAllOutputTerm,
         std::string resetThisTerm,
-        std::string viewThisTerm,
         std::string resetAllTerm,
-        std::string viewAllTerm,
         std::string copyTerm,
         std::string pasteTerm,
         std::string quitTerm
@@ -258,7 +267,8 @@ namespace cli_menu {
       static void setStringifiedTypes(
         mt::CR_STR wordStringifiedType,
         mt::CR_STR numberStringifiedType,
-        mt::CR_STR booleanStringifiedType
+        mt::CR_STR booleanStringifiedType,
+        mt::CR_STR outputStringifiedType
       );
 
       static std::string getStringifiedType(

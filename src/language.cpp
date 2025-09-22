@@ -64,9 +64,13 @@ namespace cli_menu {
     "Failed to open clipboard.",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "Pasted from clipboard.",
-    // SENTENCE_EMPTY_OUTPUT
+    // SENTENCE_EMPTY_VIEW_OUTPUT_THIS
+    "This output is empty.",
+    // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
     "Output inside '$' is empty.",
-    // SENTENCE_EMPTY_VIEW_INPUT
+    // SENTENCE_EMPTY_INPUT_ALL
+    "No arguments at all.",
+    // SENTENCE_EMPTY_INPUT_THIS
     "This argument is empty.",
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "Are you sure you want to overwrite '$'?",
@@ -133,9 +137,13 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
-    // SENTENCE_EMPTY_OUTPUT
+    // SENTENCE_EMPTY_VIEW_OUTPUT_THIS
     CONSOLE_WARNING,
-    // SENTENCE_EMPTY_VIEW_INPUT
+    // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
+    CONSOLE_WARNING,
+    // SENTENCE_EMPTY_INPUT_ALL
+    CONSOLE_WARNING,
+    // SENTENCE_EMPTY_INPUT_THIS
     CONSOLE_WARNING,
     // SENTENCE_FILE_OVERWRITE_QUESTION
     CONSOLE_WARNING,
@@ -193,8 +201,10 @@ namespace cli_menu {
     mt::CR_STR clipboardMemoryAllocationFailureSentence,        
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
-    mt::CR_STR emptyOutputSentence,
-    mt::CR_STR emptyViewSentence,
+    mt::CR_STR emptyViewOutputThisSentence,
+    mt::CR_STR emptyWriteOutputThisSentence,
+    mt::CR_STR emptyInputAllSentence,
+    mt::CR_STR emptyInputThisSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
@@ -227,8 +237,10 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;    
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT] = emptyOutputSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_VIEW_INPUT] = emptyViewSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_VIEW_OUTPUT_THIS] = emptyViewOutputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_WRITE_OUTPUT_THIS] = emptyWriteOutputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_ALL] = emptyInputAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_THIS] = emptyInputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
@@ -298,7 +310,8 @@ namespace cli_menu {
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalSymbols>> Langu::xControl::terms = {{"en", {
     "help", "list", "enter", "back", "next", "previous", "modify", "select",
-    "reset this", "view this", "reset all", "view all", "copy", "paste", "quit"
+    "view this input", "view all input", "view this output", "view all output",
+    "reset this", "reset all", "copy", "paste", "quit"
   }}};
 
   mt::STRUNORMAP_STR
@@ -326,10 +339,12 @@ namespace cli_menu {
     std::string previousTerm,
     std::string modifyTerm,
     std::string selectTerm,
+    std::string viewThisInputTerm,
+    std::string viewAllInputTerm,
+    std::string viewThisOutputTerm,
+    std::string viewAllOutputTerm,
     std::string resetThisTerm,
-    std::string viewThisTerm,
     std::string resetAllTerm,
-    std::string viewAllTerm,
     std::string copyTerm,
     std::string pasteTerm,
     std::string quitTerm
@@ -342,10 +357,12 @@ namespace cli_menu {
     Langu::xControl::limitTerm(CONTROL_PREVIOUS, previousTerm);
     Langu::xControl::limitTerm(CONTROL_MODIFY, modifyTerm);
     Langu::xControl::limitTerm(CONTROL_SELECT, selectTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_THIS_INPUT, viewThisInputTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_ALL_INPUT, viewAllInputTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_THIS_OUTPUT, viewThisOutputTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_ALL_OUTPUT, viewAllOutputTerm);
     Langu::xControl::limitTerm(CONTROL_RESET_THIS, resetThisTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_THIS, viewThisTerm);
     Langu::xControl::limitTerm(CONTROL_RESET_ALL, resetAllTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_ALL, viewAllTerm);
     Langu::xControl::limitTerm(CONTROL_COPY, copyTerm);
     Langu::xControl::limitTerm(CONTROL_PASTE, pasteTerm);
     Langu::xControl::limitTerm(CONTROL_QUIT, quitTerm);
@@ -419,13 +436,14 @@ namespace cli_menu {
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xCommand::totalTypes>>
   Langu::xCommand::stringifiedTypes = {{"en", {
-    "WORD", "NUMBER", "BOOLEAN"
+    "WORD", "NUMBER", "BOOLEAN", "OUTPUT"
   }}};
 
   void Langu::ageCommand::setStringifiedTypes(
     mt::CR_STR wordStringifiedType,
     mt::CR_STR numberStringifiedType,
-    mt::CR_STR booleanStringifiedType
+    mt::CR_STR booleanStringifiedType,
+    mt::CR_STR outputStringifiedType
   ) {
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
@@ -438,6 +456,10 @@ namespace cli_menu {
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
     [STRINGIFIED_TYPE_BOOLEAN] = booleanStringifiedType;
+
+    Langu::xCommand::stringifiedTypes
+    [Langu::xManager::currentISOCode]
+    [STRINGIFIED_TYPE_OUTPUT] = outputStringifiedType;
   }
 
   std::string Langu::ageCommand::getStringifiedType(
