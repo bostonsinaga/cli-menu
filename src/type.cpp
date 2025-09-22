@@ -112,8 +112,9 @@ namespace cli_menu {
   bool Word::resetUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasWords(this)) {
+    if (Result::hasWords(this) || Result::hasOutputs(this)) {
       Result::words.erase(this);
+      Result::outputs.erase(this);
       return true;
     }
 
@@ -122,7 +123,7 @@ namespace cli_menu {
 
   bool Word::printInput() {
     if (Result::numberOfWords(this)) {
-      Result::printInput<std::string>(this, false);
+      Result::printVector<std::string>(this, false);
       return true;
     }
     return false;
@@ -162,8 +163,9 @@ namespace cli_menu {
   bool Number::resetUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasNumbers(this)) {
+    if (Result::hasNumbers(this) || Result::hasOutputs(this)) {
       Result::numbers.erase(this);
+      Result::outputs.erase(this);
       return true;
     }
 
@@ -172,7 +174,7 @@ namespace cli_menu {
 
   bool Number::printInput() {
     if (Result::numberOfNumbers(this)) {
-      Result::printInput<mt::LD>(this, false);
+      Result::printVector<mt::LD>(this, false);
       return true;
     }
     return false;
@@ -211,8 +213,9 @@ namespace cli_menu {
   bool Boolean::resetUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasBooleans(this)) {
+    if (Result::hasBooleans(this) || Result::hasOutputs(this)) {
       Result::booleans.erase(this);
+      Result::outputs.erase(this);
       return true;
     }
 
@@ -221,7 +224,7 @@ namespace cli_menu {
 
   bool Boolean::printInput() {
     if (Result::numberOfBooleans(this)) {
-      Result::printInput<bool>(this, false);
+      Result::printVector<bool>(this, false);
       return true;
     }
     return false;
@@ -265,10 +268,12 @@ namespace cli_menu {
       else if ( // forbidden
         Control::modifyTest(input) ||
         Control::selectTest(input) ||
+        Control::viewThisInputTest(input) ||
+        Control::viewAllInputTest(input) ||
+        Control::viewThisOutputTest(input) ||
+        Control::viewAllOutputTest(input) ||
         Control::resetThisTest(input) ||
-        Control::viewThisTest(input) ||
         Control::resetAllTest(input) ||
-        Control::viewAllTest(input) ||
         Control::copyTest(input) ||
         Control::pasteTest(input)
       ) {
