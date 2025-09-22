@@ -257,25 +257,31 @@ namespace cli_menu {
           else Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
         }
       }
+      // VIEW
+      else if (Control::viewThisInputTest(input)) {
+        Result::printInputs(this);
+      }
+      else if (Control::viewAllInputTest(input)) {
+        Result::printInputs(nullptr);
+      }
+      else if (Control::viewThisOutputTest(input)) {
+        Result::printOutputs(this);
+      }
+      else if (Control::viewAllOutputTest(input)) {
+        Result::printOutputs(nullptr);
+      }
       // RESET
       else if (Control::resetThisTest(input)) {
         if (resetUnormap()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_THIS);
         }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
       else if (Control::resetAllTest(input)) {
         if (Result::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_ALL);
         }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
-      }
-      // VIEW
-      else if (Control::viewThisTest(input)) {
-        Result::printInputs(this);
-      }
-      else if (Control::viewAllTest(input)) {
-        Result::printInputs(nullptr);
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
       }
       // CLIPBOARD COPY
       else if (Control::copyTest(input)) {
@@ -747,7 +753,7 @@ namespace cli_menu {
   void Result::printInputs(Command *onlyThis) {
     if (onlyThis) {
       if (!onlyThis->printInput()) {
-        Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_INPUT);
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
     }
     else {
@@ -766,6 +772,19 @@ namespace cli_menu {
         booleans
       );
     }
+  }
+
+  void Result::printOutputs(Command *onlyThis) {
+    if (onlyThis) {
+      if (Result::numberOfOutputs(onlyThis)) {
+        Result::printVector<std::string>(onlyThis, false);
+      }
+      else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_OUTPUT_THIS);
+    }
+    else printType<std::string>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_OUTPUT),
+      outputs
+    );
   }
 }
 
