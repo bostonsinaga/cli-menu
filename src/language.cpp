@@ -85,13 +85,13 @@ namespace cli_menu {
     // SENTENCE_KEYWORD_NOT_FOUND
     "'$' not found.",
     // SENTENCE_MODE_ALREADY_EDITING
-    "Already in editing mode.",
+    "Already in edit mode.",
     // SENTENCE_MODE_ALREADY_SELECTING
-    "Already in selection mode.",
+    "Already in select mode.",
     // SENTENCE_MODE_SWITCH_TO_MODIFICATION
-    "Switch to editing mode.",
+    "Switch to edit mode.",
     // SENTENCE_MODE_SWITCH_TO_SELECTION
-    "Switch to selection mode.",
+    "Switch to select mode.",
     // SENTENCE_PARAMETER_ALONE
     "This node has no neighbors.",
     // SENTENCE_PARAMETER_AT_LEAF
