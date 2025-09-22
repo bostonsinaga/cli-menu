@@ -71,20 +71,28 @@ namespace cli_menu {
     return whitespacesCheck(str) == CONTROL_SELECT;
   }
 
+  bool Control::viewThisInputTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_THIS_INPUT;
+  }
+
+  bool Control::viewAllInputTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_ALL_INPUT;
+  }
+
+  bool Control::viewThisOutputTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_THIS_OUTPUT;
+  }
+
+  bool Control::viewAllOutputTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_ALL_OUTPUT;
+  }
+
   bool Control::resetThisTest(mt::CR_STR str) {
     return whitespacesCheck(str) == CONTROL_RESET_THIS;
   }
 
-  bool Control::viewThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_THIS;
-  }
-
   bool Control::resetAllTest(mt::CR_STR str) {
     return whitespacesCheck(str) == CONTROL_RESET_ALL;
-  }
-
-  bool Control::viewAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_ALL;
   }
 
   bool Control::copyTest(mt::CR_STR str) {
