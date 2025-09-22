@@ -118,11 +118,20 @@ namespace cli_menu {
 
       Console::logBoundaryLine(editing);
     }
-    else Console::logString(
-      ' ' + title + '\n',
-      editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
-      editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
-    );
+    // filled style
+    else {
+      std::string fillerSpaces;
+
+      if (title.length() < boundaryCharactersAmount) {
+        fillerSpaces = std::string(boundaryCharactersAmount - title.length() - 1, ' ');
+      }
+
+      Console::logString(
+        ' ' + title + fillerSpaces + '\n',
+        editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
+        editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
+      );
+    }
   }
 
   void Console::logResponse(
