@@ -64,6 +64,9 @@ namespace cli_menu {
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
+    // set the 'editing' variable and display one-time message
+    void setMode(mt::CR_BOL isSelecting);
+
     /**
      * Invoke input or output callbacks.
      * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default

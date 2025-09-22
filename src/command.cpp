@@ -173,6 +173,19 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
+  void Command::setMode(mt::CR_BOL isSelecting) {
+    editing = !isSelecting;
+    static bool displayed[2] = {false, false};
+
+    if (!displayed[isSelecting]) {
+      displayed[isSelecting] = true;
+
+      Langu::ageMessage::printResponse(isSelecting ?
+        SENTENCE_MODE_SWITCH_TO_SELECTION : SENTENCE_MODE_SWITCH_TO_MODIFICATION
+      );
+    }
+  }
+
   Command *Command::setStatus(const COMMAND_CODE & code) {
     statusCode = code;
     return this;
@@ -234,8 +247,7 @@ namespace cli_menu {
           Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_EDITING);
         }
         else { // switch to editing mode
-          editing = true;
-          Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_MODIFICATION);
+          setMode(false);
           return dialog();
         }
       }
@@ -248,9 +260,7 @@ namespace cli_menu {
         else {
           // switch to selection mode
           if (editing) {
-            editing = false;
-
-            Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_SELECTION);
+            setMode(true);
             return dialog();
           }
           // cannot repeat
