@@ -17,8 +17,8 @@ namespace cli_menu {
 
   Color Console::boundaryModifyColor = Color::WHITE,
     Console::boundarySelectionColor = Color::SILVER,
-    Console::boxModifyColors[2] = {Color::WHITE, Color::CYAN},
-    Console::boxSelectionColors[2] = {Color::WHITE, Color::MINT};
+    Console::boxModifyColors[2] = {Color::WHITE, Color::MINT},
+    Console::boxSelectionColors[2] = {Color::WHITE, Color::TEAL};
 
   /** NORMAL */
 
@@ -119,7 +119,7 @@ namespace cli_menu {
       Console::logBoundaryLine(editing);
     }
     else Console::logString(
-      title,
+      ' ' + title + '\n',
       editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
       editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
     );
