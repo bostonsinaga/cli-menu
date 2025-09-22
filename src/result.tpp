@@ -22,7 +22,7 @@ namespace cli_menu {
   }
 
   template <typename T>
-  void Result::printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
+  void Result::printVector(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
 
     for (int i = 0; i < vec.size(); i++) {
       Console::logString(
@@ -34,16 +34,16 @@ namespace cli_menu {
   }
 
   template <typename T>
-  void Result::printInput(Command *node, mt::CR_BOL withIndent) {
+  void Result::printVector(Command *node, mt::CR_BOL withIndent) {
 
     if constexpr (std::is_same_v<T, std::string>) {
-      Result::printInput<std::string>(words[node], withIndent);
+      Result::printVector<std::string>(words[node], withIndent);
     }
     else if constexpr (std::is_same_v<T, mt::LD>) {
-      Result::printInput<mt::LD>(numbers[node], withIndent);
+      Result::printVector<mt::LD>(numbers[node], withIndent);
     }
     else if constexpr (std::is_same_v<T, bool>) {
-      Result::printInput<bool>(booleans[node], withIndent);
+      Result::printVector<bool>(booleans[node], withIndent);
     }
   }
 
@@ -72,7 +72,7 @@ namespace cli_menu {
         );
 
         // members of vector
-        Result::printInput<T>(keyvec.second, true);
+        Result::printVector<T>(keyvec.second, true);
       }
 
       // display emptiness

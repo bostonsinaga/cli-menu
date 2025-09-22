@@ -31,9 +31,9 @@ namespace cli_menu {
     // better set inside the 'Command' callback
     inline static COMUNORMAP<mt::VEC_STR> outputs;
 
-    // display current node arguments
+    // display current node vector
     template <typename T>
-    static void printInput(mt::CR_VEC<T> vec, mt::CR_BOL withIndent);
+    static void printVector(mt::CR_VEC<T> vec, mt::CR_BOL withIndent);
 
     // friend classes
     friend class Word;
@@ -104,12 +104,13 @@ namespace cli_menu {
       mt::CR_STR separator = "\n"
     );
 
-    // display current node arguments
+    // display current node vector
     template <typename T>
-    static void printInput(Command *node, mt::CR_BOL withIndent);
+    static void printVector(Command *node, mt::CR_BOL withIndent);
 
-    // display all visited nodes arguments
-    static void printInputs(Command *onlyThis); // defined at 'command.cpp'
+    // display all visited node vectors (defined at 'command.cpp')
+    static void printInputs(Command *onlyThis);
+    static void printOutputs(Command *onlyThis);
   };
 }
 
