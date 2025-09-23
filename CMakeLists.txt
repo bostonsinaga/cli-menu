@@ -10,7 +10,10 @@ message(STATUS "Patch version: ${PROJECT_VERSION_PATCH}")
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/mini-tools)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
