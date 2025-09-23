@@ -58,12 +58,12 @@ namespace cli_menu {
     static void eraseBooleans(Command *node);
     static void eraseOutputs(Command *node);
 
-    static void clearWords();
-    static void clearNumbers();
-    static void clearBooleans();
-    static void clearOutputs();
-
     // return false (empty) or true (cleared)
+    static bool clearWords();
+    static bool clearNumbers();
+    static bool clearBooleans();
+    static bool clearInputs();
+    static bool clearOutputs();
     static bool clearAll();
 
     /** Getters */

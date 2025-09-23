@@ -77,35 +77,44 @@ namespace cli_menu {
     outputs.erase(node);
   }
 
-  void Result::clearWords() {
-    words.clear();
-  }
-
-  void Result::clearNumbers() {
-    numbers.clear();
-  }
-
-  void Result::clearBooleans() {
-    booleans.clear();
-  }
-
-  void Result::clearOutputs() {
-    outputs.clear();
-  }
-
-  bool Result::clearAll() {
-
-    if (words.size() || numbers.size() ||
-      booleans.size() || outputs.size()
-    ) {
+  bool Result::clearWords() {
+    if (words.size()) {
       words.clear();
+      return true;
+    }
+    return false;
+  }
+
+  bool Result::clearNumbers() {
+    if (numbers.size()) {
       numbers.clear();
+      return true;
+    }
+    return false;
+  }
+
+  bool Result::clearBooleans() {
+    if (booleans.size()) {
       booleans.clear();
+      return true;
+    }
+    return false;
+  }
+
+  bool Result::clearInputs() {
+    return clearWords() || clearNumbers() || clearBooleans();
+  }
+
+  bool Result::clearOutputs() {
+    if (outputs.size()) {
       outputs.clear();
       return true;
     }
-
     return false;
+  }
+
+  bool Result::clearAll() {
+    return clearInputs() || clearOutputs();
   }
 
   size_t Result::numberOfWords(Command *node) {
