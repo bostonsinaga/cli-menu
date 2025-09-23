@@ -61,8 +61,9 @@ namespace cli_menu {
   class Word : public Creator {
   protected:
     void clipboardPaste() override;
-    void pushUnormap(mt::CR_STR input) override;
-    bool resetUnormap() override;
+    void pushInputUnormap(mt::CR_STR input) override;
+    bool resetInputUnormap() override;
+    bool resetOutputUnormap() override;
     bool printInput() override;
 
     Word(
@@ -83,8 +84,9 @@ namespace cli_menu {
   class Number : public Creator {
   protected:
     void clipboardPaste() override;
-    void pushUnormap(mt::CR_STR input) override;
-    bool resetUnormap() override;
+    void pushInputUnormap(mt::CR_STR input) override;
+    bool resetInputUnormap() override;
+    bool resetOutputUnormap() override;
     bool printInput() override;
 
     Number(
@@ -111,8 +113,9 @@ namespace cli_menu {
   class Boolean : public Creator {
   protected:
     void clipboardPaste() override;
-    void pushUnormap(mt::CR_STR input) override;
-    bool resetUnormap() override;
+    void pushInputUnormap(mt::CR_STR input) override;
+    bool resetInputUnormap() override;
+    bool resetOutputUnormap() override;
     bool printInput() override;
 
     Boolean(

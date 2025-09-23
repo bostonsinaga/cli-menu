@@ -104,20 +104,27 @@ namespace cli_menu {
     Result::words[this].push_back(Clipboard::pasteText());
   }
 
-  void Word::pushUnormap(mt::CR_STR input) {
+  void Word::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
     Result::words[this].push_back(input);
   }
 
-  bool Word::resetUnormap() {
+  bool Word::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasWords(this) || Result::hasOutputs(this)) {
+    if (Result::hasWords(this)) {
       Result::words.erase(this);
-      Result::outputs.erase(this);
       return true;
     }
 
+    return false;
+  }
+
+  bool Word::resetOutputUnormap() {
+    if (Result::hasOutputs(this)) {
+      Result::outputs.erase(this);
+      return true;
+    }
     return false;
   }
 
@@ -151,7 +158,7 @@ namespace cli_menu {
     );
   }
 
-  void Number::pushUnormap(mt::CR_STR input) {
+  void Number::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
@@ -160,15 +167,22 @@ namespace cli_menu {
     );
   }
 
-  bool Number::resetUnormap() {
+  bool Number::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasNumbers(this) || Result::hasOutputs(this)) {
+    if (Result::hasNumbers(this)) {
       Result::numbers.erase(this);
-      Result::outputs.erase(this);
       return true;
     }
 
+    return false;
+  }
+
+  bool Number::resetOutputUnormap() {
+    if (Result::hasOutputs(this)) {
+      Result::outputs.erase(this);
+      return true;
+    }
     return false;
   }
 
@@ -202,7 +216,7 @@ namespace cli_menu {
     );
   }
 
-  void Boolean::pushUnormap(mt::CR_STR input) {
+  void Boolean::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
 
     Result::booleans[this].push_back(
@@ -210,15 +224,22 @@ namespace cli_menu {
     );
   }
 
-  bool Boolean::resetUnormap() {
+  bool Boolean::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasBooleans(this) || Result::hasOutputs(this)) {
+    if (Result::hasBooleans(this)) {
       Result::booleans.erase(this);
-      Result::outputs.erase(this);
       return true;
     }
 
+    return false;
+  }
+
+  bool Boolean::resetOutputUnormap() {
+    if (Result::hasOutputs(this)) {
+      Result::outputs.erase(this);
+      return true;
+    }
     return false;
   }
 
@@ -268,12 +289,14 @@ namespace cli_menu {
       else if ( // forbidden
         Control::modifyTest(input) ||
         Control::selectTest(input) ||
-        Control::viewThisInputTest(input) ||
-        Control::viewAllInputTest(input) ||
-        Control::viewThisOutputTest(input) ||
-        Control::viewAllOutputTest(input) ||
-        Control::resetThisTest(input) ||
-        Control::resetAllTest(input) ||
+        Control::viewInputThisTest(input) ||
+        Control::viewInputAllTest(input) ||
+        Control::viewOutputThisTest(input) ||
+        Control::viewOutputAllTest(input) ||
+        Control::resetInputThisTest(input) ||
+        Control::resetInputAllTest(input) ||
+        Control::resetOutputThisTest(input) ||
+        Control::resetOutputAllTest(input) ||
         Control::copyTest(input) ||
         Control::pasteTest(input)
       ) {
