@@ -15,10 +15,11 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
-    SENTENCE_EMPTY_VIEW_OUTPUT_THIS,
-    SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
     SENTENCE_EMPTY_INPUT_ALL,
     SENTENCE_EMPTY_INPUT_THIS,
+    SENTENCE_EMPTY_OUTPUT_ALL,
+    SENTENCE_EMPTY_OUTPUT_THIS,
+    SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -39,8 +40,10 @@ namespace cli_menu {
     SENTENCE_PROGRAM_FAILED,
     SENTENCE_PROGRAM_CANCELED,
     SENTENCE_PROGRAM_SUCCEEDED,
-    SENTENCE_RESET_THIS,
-    SENTENCE_RESET_ALL
+    SENTENCE_RESET_INPUT_ALL,
+    SENTENCE_RESET_INPUT_THIS,
+    SENTENCE_RESET_OUTPUT_ALL,
+    SENTENCE_RESET_OUTPUT_THIS
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -63,12 +66,14 @@ namespace cli_menu {
     CONTROL_PREVIOUS,
     CONTROL_MODIFY,
     CONTROL_SELECT,
-    CONTROL_VIEW_THIS_INPUT,
-    CONTROL_VIEW_ALL_INPUT,
-    CONTROL_VIEW_THIS_OUTPUT,
-    CONTROL_VIEW_ALL_OUTPUT,
-    CONTROL_RESET_THIS,
-    CONTROL_RESET_ALL,
+    CONTROL_VIEW_INPUT_THIS,
+    CONTROL_VIEW_OUTPUT_THIS,
+    CONTROL_VIEW_INPUT_ALL,
+    CONTROL_VIEW_OUTPUT_ALL,
+    CONTROL_RESET_INPUT_THIS,
+    CONTROL_RESET_OUTPUT_THIS,
+    CONTROL_RESET_INPUT_ALL,
+    CONTROL_RESET_OUTPUT_ALL,
     CONTROL_COPY,
     CONTROL_PASTE,
     CONTROL_QUIT,
@@ -99,7 +104,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 35;
+      static constexpr int totalSentences = 38;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
       static mt::STRUNORMAP_STR welcomeToString;
@@ -107,7 +112,7 @@ namespace cli_menu {
 
     struct xControl {
 
-      static constexpr int totalSymbols = 17;
+      static constexpr int totalSymbols = 19;
       inline static size_t maxTermLength = 16;
       static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
 
@@ -167,16 +172,17 @@ namespace cli_menu {
         mt::CR_STR argumentRequiredSentence,
         mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
         mt::CR_STR clipboardCopyFailureSentence,
-        mt::CR_STR clipboardCopySucceedmptyThis,
+        mt::CR_STR clipboardCopySucceedSentence,
         mt::CR_STR clipboardGetFailureSentence,
         mt::CR_STR clipboardLockFailureSentence,
         mt::CR_STR clipboardMemoryAllocationFailureSentence,        
         mt::CR_STR clipboardOpenFailureSentence,
         mt::CR_STR clipboardPasteSucceedSentence,
-        mt::CR_STR emptyViewOutputThisSentence,
-        mt::CR_STR emptyWriteOutputThisSentence,
         mt::CR_STR emptyInputAllSentence,
         mt::CR_STR emptyInputThisSentence,
+        mt::CR_STR emptyOutputAllSentence,
+        mt::CR_STR emptyOutputThisSentence,
+        mt::CR_STR emptyWriteOutputThisSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
@@ -185,7 +191,7 @@ namespace cli_menu {
         mt::CR_STR keywordNotFoundSentence,
         mt::CR_STR modeAlreadyEditingSentence,
         mt::CR_STR modeAlreadySelectingSentence,
-        mt::CR_STR modeSwitchToEditingSentence,
+        mt::CR_STR modeSwitchToModificationSentence,
         mt::CR_STR modeSwitchToSelectionSentence,
         mt::CR_STR parameterAloneSentence,
         mt::CR_STR parameterAtLeafSentence,
@@ -197,8 +203,10 @@ namespace cli_menu {
         mt::CR_STR programFailedSentence,
         mt::CR_STR programCanceledSentence,
         mt::CR_STR programSucceededSentence,
-        mt::CR_STR resetThisSentence,
-        mt::CR_STR resetAllSentence
+        mt::CR_STR resetInputAllSentence,
+        mt::CR_STR resetInputThisSentence,
+        mt::CR_STR resetOutputAllSentence,
+        mt::CR_STR resetOutputThisSentence
       );
 
       static void printResponse(
@@ -227,12 +235,14 @@ namespace cli_menu {
         std::string previousTerm,
         std::string modifyTerm,
         std::string selectTerm,
-        std::string viewThisInputTerm,
-        std::string viewAllInputTerm,
-        std::string viewThisOutputTerm,
-        std::string viewAllOutputTerm,
-        std::string resetThisTerm,
-        std::string resetAllTerm,
+        std::string viewInputThisTerm,
+        std::string viewOutputThisTerm,
+        std::string viewInputAllTerm,
+        std::string viewOutputAllTerm,
+        std::string resetInputThisTerm,
+        std::string resetOutputThisTerm,
+        std::string resetInputAllTerm,
+        std::string resetOutputAllTerm,
         std::string copyTerm,
         std::string pasteTerm,
         std::string quitTerm

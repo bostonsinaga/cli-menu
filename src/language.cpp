@@ -64,14 +64,16 @@ namespace cli_menu {
     "Failed to open clipboard.",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "Pasted from clipboard.",
-    // SENTENCE_EMPTY_VIEW_OUTPUT_THIS
+    // SENTENCE_EMPTY_INPUT_ALL
+    "No inputs at all.",
+    // SENTENCE_EMPTY_INPUT_THIS
+    "This input is empty.",
+    // SENTENCE_EMPTY_OUTPUT_ALL
+    "No outputs at all.",
+    // SENTENCE_EMPTY_OUTPUT_THIS
     "This output is empty.",
     // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
     "Output inside '$' is empty.",
-    // SENTENCE_EMPTY_INPUT_ALL
-    "No arguments at all.",
-    // SENTENCE_EMPTY_INPUT_THIS
-    "This argument is empty.",
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "Are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
@@ -112,10 +114,14 @@ namespace cli_menu {
     "CANCELED",
     // SENTENCE_PROGRAM_SUCCEEDED
     "SUCCEEDED",
-    // SENTENCE_RESET_THIS
-    "This argument is removed.",
-    // SENTENCE_RESET_ALL
-    "All arguments are removed.",
+    // SENTENCE_RESET_INPUT_ALL
+    "All inputs deleted.",
+    // SENTENCE_RESET_INPUT_THIS
+    "This input deleted.",
+    // SENTENCE_RESET_OUTPUT_ALL
+    "All outputs deleted.",
+    // SENTENCE_RESET_OUTPUT_THIS
+    "This output deleted."
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
@@ -137,14 +143,16 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
-    // SENTENCE_EMPTY_VIEW_OUTPUT_THIS
-    CONSOLE_WARNING,
-    // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
-    CONSOLE_WARNING,
     // SENTENCE_EMPTY_INPUT_ALL
     CONSOLE_WARNING,
     // SENTENCE_EMPTY_INPUT_THIS
     CONSOLE_WARNING,
+    // SENTENCE_EMPTY_OUTPUT_ALL
+    CONSOLE_WARNING,
+    // SENTENCE_EMPTY_OUTPUT_THIS
+    CONSOLE_WARNING,
+    // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
+    CONSOLE_ERROR,
     // SENTENCE_FILE_OVERWRITE_QUESTION
     CONSOLE_WARNING,
     // SENTENCE_FILE_WRITE_FAILURE
@@ -185,9 +193,13 @@ namespace cli_menu {
     CONSOLE_CANCEL,
     // SENTENCE_PROGRAM_SUCCEEDED
     CONSOLE_CORRECT,
-    // SENTENCE_RESET_THIS
+    // SENTENCE_RESET_INPUT_THIS
     CONSOLE_HINT_1,
-    // SENTENCE_RESET_ALL
+    // SENTENCE_RESET_INPUT_ALL
+    CONSOLE_HINT_1,
+    // SENTENCE_RESET_OUTPUT_THIS
+    CONSOLE_HINT_1,
+    // SENTENCE_RESET_OUTPUT_ALL
     CONSOLE_HINT_1
   };
 
@@ -195,16 +207,17 @@ namespace cli_menu {
     mt::CR_STR argumentRequiredSentence,
     mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
     mt::CR_STR clipboardCopyFailureSentence,
-    mt::CR_STR clipboardCopySucceedmptyThis,
+    mt::CR_STR clipboardCopySucceedSentence,
     mt::CR_STR clipboardGetFailureSentence,
     mt::CR_STR clipboardLockFailureSentence,
     mt::CR_STR clipboardMemoryAllocationFailureSentence,        
     mt::CR_STR clipboardOpenFailureSentence,
     mt::CR_STR clipboardPasteSucceedSentence,
-    mt::CR_STR emptyViewOutputThisSentence,
-    mt::CR_STR emptyWriteOutputThisSentence,
     mt::CR_STR emptyInputAllSentence,
     mt::CR_STR emptyInputThisSentence,
+    mt::CR_STR emptyOutputAllSentence,
+    mt::CR_STR emptyOutputThisSentence,
+    mt::CR_STR emptyWriteOutputThisSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
@@ -213,7 +226,7 @@ namespace cli_menu {
     mt::CR_STR keywordNotFoundSentence,
     mt::CR_STR modeAlreadyEditingSentence,
     mt::CR_STR modeAlreadySelectingSentence,
-    mt::CR_STR modeSwitchToEditingSentence,
+    mt::CR_STR modeSwitchToModificationSentence,
     mt::CR_STR modeSwitchToSelectionSentence,
     mt::CR_STR parameterAloneSentence,
     mt::CR_STR parameterAtLeafSentence,
@@ -225,22 +238,25 @@ namespace cli_menu {
     mt::CR_STR programFailedSentence,
     mt::CR_STR programCanceledSentence,
     mt::CR_STR programSucceededSentence,
-    mt::CR_STR resetThisSentence,
-    mt::CR_STR resetAllSentence
+    mt::CR_STR resetInputAllSentence,
+    mt::CR_STR resetInputThisSentence,
+    mt::CR_STR resetOutputAllSentence,
+    mt::CR_STR resetOutputThisSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_FAILURE] = clipboardCopyFailureSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedmptyThis;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_FAILURE] = clipboardGetFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_LOCK_FAILURE] = clipboardLockFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE] = clipboardMemoryAllocationFailureSentence;    
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_VIEW_OUTPUT_THIS] = emptyViewOutputThisSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_WRITE_OUTPUT_THIS] = emptyWriteOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_ALL] = emptyInputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_THIS] = emptyInputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_ALL] = emptyOutputAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_THIS] = emptyOutputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_WRITE_OUTPUT_THIS] = emptyWriteOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
@@ -249,7 +265,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_EDITING] = modeAlreadyEditingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_SELECTING] = modeAlreadySelectingSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_MODIFICATION] = modeSwitchToEditingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_MODIFICATION] = modeSwitchToModificationSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_SELECTION] = modeSwitchToSelectionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_ALONE] = parameterAloneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
@@ -261,8 +277,10 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_CANCELED] = programCanceledSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_THIS] = resetThisSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_ALL] = resetAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_ALL] = resetInputAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_THIS] = resetInputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_ALL] = resetOutputAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_THIS] = resetOutputThisSentence;
   }
 
   void Langu::ageMessage::printResponse(
@@ -310,8 +328,9 @@ namespace cli_menu {
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalSymbols>> Langu::xControl::terms = {{"en", {
     "help", "list", "enter", "back", "next", "previous", "modify", "select",
-    "view this input", "view all input", "view this output", "view all output",
-    "reset this", "reset all", "copy", "paste", "quit"
+    "view this input", "view this output", "view all input", "view all output",
+    "reset this input", "reset this output", "reset all input", "reset all output",
+    "copy", "paste", "quit"
   }}};
 
   mt::STRUNORMAP_STR
@@ -339,12 +358,14 @@ namespace cli_menu {
     std::string previousTerm,
     std::string modifyTerm,
     std::string selectTerm,
-    std::string viewThisInputTerm,
-    std::string viewAllInputTerm,
-    std::string viewThisOutputTerm,
-    std::string viewAllOutputTerm,
-    std::string resetThisTerm,
-    std::string resetAllTerm,
+    std::string viewInputThisTerm,
+    std::string viewOutputThisTerm,
+    std::string viewInputAllTerm,
+    std::string viewOutputAllTerm,
+    std::string resetInputThisTerm,
+    std::string resetOutputThisTerm,
+    std::string resetInputAllTerm,
+    std::string resetOutputAllTerm,
     std::string copyTerm,
     std::string pasteTerm,
     std::string quitTerm
@@ -357,12 +378,14 @@ namespace cli_menu {
     Langu::xControl::limitTerm(CONTROL_PREVIOUS, previousTerm);
     Langu::xControl::limitTerm(CONTROL_MODIFY, modifyTerm);
     Langu::xControl::limitTerm(CONTROL_SELECT, selectTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_THIS_INPUT, viewThisInputTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_ALL_INPUT, viewAllInputTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_THIS_OUTPUT, viewThisOutputTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_ALL_OUTPUT, viewAllOutputTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_THIS, resetThisTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_ALL, resetAllTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_INPUT_THIS, viewInputThisTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_OUTPUT_THIS, viewOutputThisTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_INPUT_ALL, viewInputAllTerm);
+    Langu::xControl::limitTerm(CONTROL_VIEW_OUTPUT_ALL, viewOutputAllTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_INPUT_THIS, resetInputThisTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_OUTPUT_THIS, resetOutputThisTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_INPUT_ALL, resetInputAllTerm);
+    Langu::xControl::limitTerm(CONTROL_RESET_OUTPUT_ALL, resetOutputAllTerm);
     Langu::xControl::limitTerm(CONTROL_COPY, copyTerm);
     Langu::xControl::limitTerm(CONTROL_PASTE, pasteTerm);
     Langu::xControl::limitTerm(CONTROL_QUIT, quitTerm);
