@@ -29,8 +29,8 @@ namespace cli_menu {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < Control::totalSymbols; j++) {
 
-        if (input == symbols[j][i]) {
-          sharedEnum = static_cast<CONTROL_CODE>(j);
+        if (input == symbols[j][i].first) {
+          sharedEnum = static_cast<CONTROL_CODE>(symbols[j][i].second);
           return sharedEnum;
         }
       }
@@ -71,28 +71,36 @@ namespace cli_menu {
     return whitespacesCheck(str) == CONTROL_SELECT;
   }
 
-  bool Control::viewThisInputTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_THIS_INPUT;
+  bool Control::viewInputThisTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_INPUT_THIS;
   }
 
-  bool Control::viewAllInputTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_ALL_INPUT;
+  bool Control::viewInputAllTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_INPUT_ALL;
   }
 
-  bool Control::viewThisOutputTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_THIS_OUTPUT;
+  bool Control::viewOutputThisTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_OUTPUT_THIS;
   }
 
-  bool Control::viewAllOutputTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_ALL_OUTPUT;
+  bool Control::viewOutputAllTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_VIEW_OUTPUT_ALL;
   }
 
-  bool Control::resetThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_THIS;
+  bool Control::resetInputThisTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_RESET_INPUT_THIS;
   }
 
-  bool Control::resetAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_ALL;
+  bool Control::resetInputAllTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_RESET_INPUT_ALL;
+  }
+
+  bool Control::resetOutputThisTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_RESET_OUTPUT_THIS;
+  }
+
+  bool Control::resetOutputAllTest(mt::CR_STR str) {
+    return whitespacesCheck(str) == CONTROL_RESET_OUTPUT_ALL;
   }
 
   bool Control::copyTest(mt::CR_STR str) {
@@ -130,6 +138,17 @@ namespace cli_menu {
       }
     }
 
+    // combine lowercase symbols with uppercase symbols that have different codes
+    std::vector<const std::string*> onlySymbols;
+
+    for (int i = 0; i < Control::totalSymbols; i++) {
+      onlySymbols.push_back(&Control::symbols[i][0].first);
+
+      if (Control::symbols[i][0].second != Control::symbols[i][1].second) {
+        onlySymbols.push_back(&Control::symbols[i][1].first);
+      }
+    }
+
     // display terms with 2 columns
     for (int i = 0; i < Control::totalSymbols; i++) {
 
@@ -138,7 +157,7 @@ namespace cli_menu {
 
       // even is followed by spaces, uneven is followed by newline
       Console::logString(
-        symbols[i][0] + " = " + curterm
+        *onlySymbols[i] + " = " + curterm
         + (i % 2 ? "\n" : std::string(leastMaxTermLength - curterm.length(), ' ')),
         Console::messageColors[CONSOLE_HINT_2]
       );
@@ -172,12 +191,12 @@ namespace cli_menu {
     }
 
     Console::logString(
-      symbols[CONTROL_ENTER][0] + ", ",
+      symbols[CONTROL_ENTER][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 
     Console::logString(
-      symbols[CONTROL_NEXT][0] + ", ",
+      symbols[CONTROL_NEXT][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 
@@ -199,7 +218,7 @@ namespace cli_menu {
     }
 
     Console::logString(
-      symbols[CONTROL_PREVIOUS][0] + ", ",
+      symbols[CONTROL_PREVIOUS][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 

@@ -10,26 +10,29 @@ namespace cli_menu {
   class Control {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
-    static constexpr int totalSymbols = 17;
+    static constexpr int totalSymbols = 19;
 
-    inline static const std::string symbols[totalSymbols][2] = {
-      {":h", ":H"}, // help
-      {":l", ":L"}, // list
-      {":e", ":E"}, // enter
-      {":b", ":B"}, // back
-      {":>", ":>"}, // next
-      {":<", ":<"}, // previous
-      {":m", ":M"}, // modify
-      {":s", ":S"}, // select
-      {":i", ":I"}, // view this input
-      {":v", ":V"}, // view all input
-      {":o", ":O"}, // view this output
-      {":w", ":W"}, // view all output
-      {":r", ":R"}, // reset this input-output
-      {":x", ":X"}, // reset all input-output
-      {":c", ":C"}, // copy
-      {":p", ":P"}, // paste
-      {":q", ":Q"}  // quit
+    /**
+     * Uppercase symbol that have a different code from its left lowercase symbol
+     * will be 1 level below it when displayed in the 'printAbbreviations' method.
+     */
+    inline static const mt::PAIR2<std::string, CONTROL_CODE>
+    symbols[totalSymbols][2] = {
+      {{":h", CONTROL_HELP             }, {":H", CONTROL_HELP              }},
+      {{":l", CONTROL_LIST             }, {":L", CONTROL_LIST              }},
+      {{":e", CONTROL_ENTER            }, {":E", CONTROL_ENTER             }},
+      {{":b", CONTROL_BACK             }, {":B", CONTROL_BACK              }},
+      {{":>", CONTROL_NEXT             }, {":>", CONTROL_NEXT              }},
+      {{":<", CONTROL_PREVIOUS         }, {":<", CONTROL_PREVIOUS          }},
+      {{":m", CONTROL_MODIFY           }, {":M", CONTROL_MODIFY            }},
+      {{":s", CONTROL_SELECT           }, {":S", CONTROL_SELECT            }},
+      {{":v", CONTROL_VIEW_INPUT_THIS  }, {":V", CONTROL_VIEW_OUTPUT_THIS  }},
+      {{":w", CONTROL_VIEW_INPUT_ALL   }, {":W", CONTROL_VIEW_OUTPUT_ALL   }},
+      {{":r", CONTROL_RESET_INPUT_THIS }, {":R", CONTROL_RESET_OUTPUT_THIS }},
+      {{":x", CONTROL_RESET_INPUT_ALL  }, {":X", CONTROL_RESET_OUTPUT_ALL  }},
+      {{":c", CONTROL_COPY             }, {":C", CONTROL_COPY              }},
+      {{":p", CONTROL_PASTE            }, {":P", CONTROL_PASTE             }},
+      {{":q", CONTROL_QUIT             }, {":Q", CONTROL_QUIT              }}
     };
 
     // find 'symbols' pattern in 'str'
@@ -49,12 +52,14 @@ namespace cli_menu {
     static bool previousTest(mt::CR_STR str);
     static bool modifyTest(mt::CR_STR str);
     static bool selectTest(mt::CR_STR str);
-    static bool viewThisInputTest(mt::CR_STR str);
-    static bool viewAllInputTest(mt::CR_STR str);
-    static bool viewThisOutputTest(mt::CR_STR str);
-    static bool viewAllOutputTest(mt::CR_STR str);
-    static bool resetThisTest(mt::CR_STR str);
-    static bool resetAllTest(mt::CR_STR str);
+    static bool viewInputThisTest(mt::CR_STR str);
+    static bool viewInputAllTest(mt::CR_STR str);
+    static bool viewOutputThisTest(mt::CR_STR str);
+    static bool viewOutputAllTest(mt::CR_STR str);
+    static bool resetInputThisTest(mt::CR_STR str);
+    static bool resetInputAllTest(mt::CR_STR str);
+    static bool resetOutputThisTest(mt::CR_STR str);
+    static bool resetOutputAllTest(mt::CR_STR str);
     static bool copyTest(mt::CR_STR str);
     static bool pasteTest(mt::CR_STR str);
     static bool quitTest(mt::CR_STR str);
