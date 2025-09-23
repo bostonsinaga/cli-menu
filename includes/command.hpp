@@ -141,8 +141,9 @@ namespace cli_menu {
 
     // modify the 'Result' values
     virtual void clipboardPaste() {}
-    virtual void pushUnormap(mt::CR_STR input) {}
-    virtual bool resetUnormap() { return false; }
+    virtual void pushInputUnormap(mt::CR_STR input) {}
+    virtual bool resetInputUnormap() { return false; }
+    virtual bool resetOutputUnormap() { return false; }
 
   public:
     Command() = delete;

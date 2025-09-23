@@ -107,7 +107,7 @@ namespace cli_menu {
 
           // the required boolean automatically has value 'true'
           if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_BOOLEAN) {
-            pushUnormap("1");
+            pushInputUnormap("1");
           }
 
           if (firstChild) return firstChild->match();
@@ -115,7 +115,7 @@ namespace cli_menu {
         }
       }
       else { // push argument to 'Result'
-        pushUnormap(Command::raws.back());
+        pushInputUnormap(Command::raws.back());
         Command::raws.pop_back();
       }
     }
@@ -267,31 +267,45 @@ namespace cli_menu {
           else Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
         }
       }
-      // VIEW
-      else if (Control::viewThisInputTest(input)) {
+      // VIEW INPUT
+      else if (Control::viewInputThisTest(input)) {
         Result::printInputs(this);
       }
-      else if (Control::viewAllInputTest(input)) {
+      else if (Control::viewInputAllTest(input)) {
         Result::printInputs(nullptr);
       }
-      else if (Control::viewThisOutputTest(input)) {
+      // VIEW OUTPUT
+      else if (Control::viewOutputThisTest(input)) {
         Result::printOutputs(this);
       }
-      else if (Control::viewAllOutputTest(input)) {
+      else if (Control::viewOutputAllTest(input)) {
         Result::printOutputs(nullptr);
       }
-      // RESET
-      else if (Control::resetThisTest(input)) {
-        if (resetUnormap()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_THIS);
+      // RESET INPUT
+      else if (Control::resetInputThisTest(input)) {
+        if (resetInputUnormap()) {
+          Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else if (Control::resetAllTest(input)) {
-        if (Result::clearAll()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_ALL);
+      else if (Control::resetInputAllTest(input)) {
+        if (Result::clearInputs()) {
+          Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
+      }
+      // RESET OUTPUT
+      else if (Control::resetOutputThisTest(input)) {
+        if (resetOutputUnormap()) {
+          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
+        }
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+      }
+      else if (Control::resetOutputAllTest(input)) {
+        if (Result::clearOutputs()) {
+          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_ALL);
+        }
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_ALL);
       }
       // CLIPBOARD COPY
       else if (Control::copyTest(input)) {
@@ -310,7 +324,7 @@ namespace cli_menu {
       else {
         // push argument to 'Result'
         if (editing) {
-          pushUnormap(input);
+          pushInputUnormap(input);
         }
         // selection (match in dialog)
         else {
@@ -789,7 +803,7 @@ namespace cli_menu {
       if (Result::numberOfOutputs(onlyThis)) {
         Result::printVector<std::string>(onlyThis, false);
       }
-      else Langu::ageMessage::printResponse(SENTENCE_EMPTY_VIEW_OUTPUT_THIS);
+      else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
     }
     else printType<std::string>(
       Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_OUTPUT),
