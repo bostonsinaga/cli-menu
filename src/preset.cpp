@@ -6,7 +6,44 @@
 
 namespace cli_menu {
 
-  void Preset::completeFileInWildcards(Command *node) {
+  void Preset::applyHelp(Creator *owner) {
+    Boolean *help = new Boolean(
+      Langu::agePreset::getKeyword(PRESET_HELP),
+      Langu::agePreset::getDescription(PRESET_HELP),
+      [](Command *current)->COMMAND_CALLBACK_CODE {
+        static_cast<Creator*>(current->getParent())->printHelp();
+        return COMMAND_CALLBACK_SUCCEEDED;
+      }
+    );
+
+    owner->replaceExistingKeyword(help);
+    help->makePseudo();
+    help->makeSterilized();
+  }
+
+  void Preset::applyList(Creator *owner) {
+    Boolean *list = new Boolean(
+      Langu::agePreset::getKeyword(PRESET_LIST),
+      Langu::agePreset::getDescription(PRESET_LIST),
+      [](Command *current)->COMMAND_CALLBACK_CODE {
+        static_cast<Creator*>(current->getParent())->printList(CONSOLE_HINT_2, 0, true);
+        return COMMAND_CALLBACK_SUCCEEDED;
+      }
+    );
+
+    owner->replaceExistingKeyword(list);
+    list->makePseudo();
+    list->makeSterilized();
+  }
+
+  void Creator::setPresetHelpList() {
+    Preset::applyHelp(this);
+    Preset::applyList(this);
+  }
+
+  /** PRESET FILE */
+
+  void PresetFile::completePathWildcards(Command *node) {
 
     std::string pattern;
     WIN32_FIND_DATAA findFileData;
@@ -46,31 +83,31 @@ namespace cli_menu {
     }
   }
 
-  void Preset::applyFileIn(
+  void PresetFile::applyCustomIn(
     Creator *owner,
     mt::CR_BOL isRequired,
-    COMMAND_CALLBACK customCallback
+    COMMAND_CALLBACK callback
   ) {
     Word *in = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_IN),
       Langu::agePreset::getDescription(PRESET_IN),
-      customCallback
+      callback
     );
 
     in->registerAsInput();
     if (isRequired) in->makeRequired();
   }
 
-  void Preset::applyFileIn(
+  void PresetFile::applyTextIn(
     Creator *owner,
     mt::CR_BOL isRequired
   ) {
-    applyFileIn(
+    applyCustomIn(
       owner, isRequired,
       [](Command *current)->COMMAND_CALLBACK_CODE {
         bool found = false;
         std::string filename;
-        completeFileInWildcards(current);
+        completePathWildcards(current);
 
         // read multiple files
         for (int i = 0; i < Result::numberOfWords(current); i++) {
@@ -100,7 +137,7 @@ namespace cli_menu {
     );
   }
 
-  COMMAND_CALLBACK_CODE Preset::setFileOut(
+  COMMAND_CALLBACK_CODE PresetFile::useTextOut(
     Command *node,
     std::string &filename
   ) {
@@ -171,26 +208,26 @@ namespace cli_menu {
     return COMMAND_CALLBACK_FAILED;
   }
 
-  void Preset::applyFileOut(
+  void PresetFile::applyCustomOut(
     Creator *owner,
     mt::CR_BOL isRequired,
-    COMMAND_CALLBACK customCallback
+    COMMAND_CALLBACK callback
   ) {
     Word *out = owner->createWord(
       Langu::agePreset::getKeyword(PRESET_OUT),
       Langu::agePreset::getDescription(PRESET_OUT),
-      customCallback
+      callback
     );
 
     out->registerAsOutput();
     if (isRequired) out->makeRequired();
   }
 
-  void Preset::applyFileOutFallback(
+  void PresetFile::applyTextOutFallback(
     Creator *owner,
     mt::CR_BOL isRequired
   ) {
-    applyFileOut(
+    applyCustomOut(
       owner, isRequired,
       [](Command *current)->COMMAND_CALLBACK_CODE {
         std::string filename = Result::getLastWord(current);
@@ -220,7 +257,7 @@ namespace cli_menu {
           }
         }
 
-        COMMAND_CALLBACK_CODE callbackCode = setFileOut(current, filename);
+        COMMAND_CALLBACK_CODE callbackCode = useTextOut(current, filename);
 
         // file write failed message
         if (callbackCode == COMMAND_CALLBACK_FAILED) {
@@ -232,50 +269,15 @@ namespace cli_menu {
     );
   }
 
-  void Preset::applyFileOutOptional(Creator *owner) {
-    applyFileOut(
+  void PresetFile::applyTextOutOptional(Creator *owner) {
+    applyCustomOut(
       owner, false,
       [](Command *current)->COMMAND_CALLBACK_CODE {
         std::string filename = Result::getLastWord(current);
-        setFileOut(current, filename);
+        useTextOut(current, filename);
         return COMMAND_CALLBACK_SUCCEEDED;
       }
     );
-  }
-
-  void Preset::applyHelp(Creator *owner) {
-    Boolean *help = new Boolean(
-      Langu::agePreset::getKeyword(PRESET_HELP),
-      Langu::agePreset::getDescription(PRESET_HELP),
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        static_cast<Creator*>(current->getParent())->printHelp();
-        return COMMAND_CALLBACK_SUCCEEDED;
-      }
-    );
-
-    owner->replaceExistingKeyword(help);
-    help->makePseudo();
-    help->makeSterilized();
-  }
-
-  void Preset::applyList(Creator *owner) {
-    Boolean *list = new Boolean(
-      Langu::agePreset::getKeyword(PRESET_LIST),
-      Langu::agePreset::getDescription(PRESET_LIST),
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        static_cast<Creator*>(current->getParent())->printList(CONSOLE_HINT_2, 0, true);
-        return COMMAND_CALLBACK_SUCCEEDED;
-      }
-    );
-
-    owner->replaceExistingKeyword(list);
-    list->makePseudo();
-    list->makeSterilized();
-  }
-
-  void Creator::setPresetHelpList() {
-    Preset::applyHelp(this);
-    Preset::applyList(this);
   }
 }
 

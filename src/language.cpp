@@ -115,13 +115,13 @@ namespace cli_menu {
     // SENTENCE_PROGRAM_SUCCEEDED
     "SUCCEEDED",
     // SENTENCE_RESET_INPUT_ALL
-    "All inputs deleted.",
+    "All inputs are removed.",
     // SENTENCE_RESET_INPUT_THIS
-    "This input deleted.",
+    "This input is removed.",
     // SENTENCE_RESET_OUTPUT_ALL
-    "All outputs deleted.",
+    "All outputs are removed.",
     // SENTENCE_RESET_OUTPUT_THIS
-    "This output deleted."
+    "This output is removed."
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
