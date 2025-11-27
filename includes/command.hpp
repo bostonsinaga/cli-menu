@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_HPP__
 #define __CLI_MENU__COMMAND_HPP__
 
-#include "result.hpp"
+#include "data.hpp"
 #include "clipboard.hpp"
 
 namespace cli_menu {

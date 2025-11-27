@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
   );
 
   men->makeRequired();
-  cm::PresetFile::applyTextIn(men, true);
-  cm::PresetFile::applyTextOutFallback(men, true);
+  cm::Preset::File::applyTextIn(men, true);
+  cm::Preset::File::applyTextOutFallback(men, true);
 
   cm::Boolean *women = users->createBoolean(
     "women",
@@ -51,8 +51,8 @@ int main(int argc, char *argv[]) {
   );
 
   women->makeRequired();
-  cm::PresetFile::applyTextIn(women, true);
-  cm::PresetFile::applyTextOutFallback(women, true);
+  cm::Preset::File::applyTextIn(women, true);
+  cm::Preset::File::applyTextOutFallback(women, true);
 
   // proceed
   users->run(argc, argv);

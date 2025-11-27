@@ -3,7 +3,7 @@ set (SOURCES
   console.cpp
   language.cpp
   control.cpp
-  result.cpp
+  data.cpp
   clipboard.cpp
   command.cpp
   type.cpp

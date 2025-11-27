@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__RESULT_CPP__
 #define __CLI_MENU__RESULT_CPP__
 
-#include "result.hpp"
+#include "data.hpp"
 
 namespace cli_menu {
 

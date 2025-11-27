@@ -41,9 +41,9 @@ namespace cli_menu {
     Preset::applyList(this);
   }
 
-  /** PRESET FILE */
+  /** FILE OPERATIONS */
 
-  void PresetFile::completePathWildcards(Command *node) {
+  void Preset::File::completePathWildcards(Command *node) {
 
     std::string pattern;
     WIN32_FIND_DATAA findFileData;
@@ -83,7 +83,7 @@ namespace cli_menu {
     }
   }
 
-  void PresetFile::applyCustomIn(
+  void Preset::File::applyCustomIn(
     Creator *owner,
     mt::CR_BOL isRequired,
     COMMAND_CALLBACK callback
@@ -98,7 +98,7 @@ namespace cli_menu {
     if (isRequired) in->makeRequired();
   }
 
-  void PresetFile::applyTextIn(
+  void Preset::File::applyTextIn(
     Creator *owner,
     mt::CR_BOL isRequired
   ) {
@@ -137,7 +137,7 @@ namespace cli_menu {
     );
   }
 
-  COMMAND_CALLBACK_CODE PresetFile::useTextOut(
+  COMMAND_CALLBACK_CODE Preset::File::useTextOut(
     Command *node,
     std::string &filename
   ) {
@@ -208,7 +208,7 @@ namespace cli_menu {
     return COMMAND_CALLBACK_FAILED;
   }
 
-  void PresetFile::applyCustomOut(
+  void Preset::File::applyCustomOut(
     Creator *owner,
     mt::CR_BOL isRequired,
     COMMAND_CALLBACK callback
@@ -223,7 +223,7 @@ namespace cli_menu {
     if (isRequired) out->makeRequired();
   }
 
-  void PresetFile::applyTextOutFallback(
+  void Preset::File::applyTextOutFallback(
     Creator *owner,
     mt::CR_BOL isRequired
   ) {
@@ -269,7 +269,7 @@ namespace cli_menu {
     );
   }
 
-  void PresetFile::applyTextOutOptional(Creator *owner) {
+  void Preset::File::applyTextOutOptional(Creator *owner) {
     applyCustomOut(
       owner, false,
       [](Command *current)->COMMAND_CALLBACK_CODE {

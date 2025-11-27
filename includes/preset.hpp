@@ -10,75 +10,75 @@ namespace cli_menu {
     // these are owned by all commands by default
     static void applyHelp(Creator *owner);
     static void applyList(Creator *owner);
-  };
 
-  class PresetFile final {
-  private:
-    // get multiple filenames from wildcard pattern
-    static void completePathWildcards(Command *node);
+    class File final {
+    private:
+      // get multiple filenames from wildcard pattern
+      static void completePathWildcards(Command *node);
 
-    /**
-     * Writes a text file using the parent's 'Data::Output' string.
-     * Used as part of the 'applyTextOut..' callback.
-     */
-    static COMMAND_CALLBACK_CODE useTextOut(
-      Command *node,
-      std::string &filename
-    );
+      /**
+      * Writes a text file using the parent's 'Data::Output' string.
+      * Used as part of the 'applyTextOut..' callback.
+      */
+      static COMMAND_CALLBACK_CODE useTextOut(
+        Command *node,
+        std::string &filename
+      );
 
-  public:
-    /**
-     * Reads text file with custom handler.
-     */
-    static void applyCustomIn(
-      Creator *owner,
-      mt::CR_BOL isRequired,
-      COMMAND_CALLBACK callback
-    );
+    public:
+      /**
+      * Reads text file with custom handler.
+      */
+      static void applyCustomIn(
+        Creator *owner,
+        mt::CR_BOL isRequired,
+        COMMAND_CALLBACK callback
+      );
 
-    /**
-     * Text file reader preset (can read multiple files).
-     * Accept wildcards to get multiple files.
-     * 
-     * If 'isRequired' is false and filename is not provided,
-     * the callback will return true without displaying error message.
-     */
-    static void applyTextIn(
-      Creator *owner,
-      mt::CR_BOL isRequired
-    );
+      /**
+      * Text file reader preset (can read multiple files).
+      * Accept wildcards to get multiple files.
+      * 
+      * If 'isRequired' is false and filename is not provided,
+      * the callback will return true without displaying error message.
+      */
+      static void applyTextIn(
+        Creator *owner,
+        mt::CR_BOL isRequired
+      );
 
-    /**
-     * Writes text file with custom handler.
-     */
-    static void applyCustomOut(
-      Creator *owner,
-      mt::CR_BOL isRequired,
-      COMMAND_CALLBACK callback
-    );
+      /**
+      * Writes text file with custom handler.
+      */
+      static void applyCustomOut(
+        Creator *owner,
+        mt::CR_BOL isRequired,
+        COMMAND_CALLBACK callback
+      );
 
-    /**
-     * Text file writer preset.
-     * 
-     * Only write to the last filename of 'PRESET_OUT' argument.
-     * If it not provided ('isRequired' is false), the last argument of 'PRESET_IN' will be used.
-     * If still not provided, the program keyword will be used as the filename
-     * with 'fileOutDefaultExtension' as its extension.
-     */
-    static void applyTextOutFallback(
-      Creator *owner,
-      mt::CR_BOL isRequired
-    );
+      /**
+      * Text file writer preset.
+      * 
+      * Only write to the last filename of 'PRESET_OUT' argument.
+      * If it not provided ('isRequired' is false), the last argument of 'PRESET_IN' will be used.
+      * If still not provided, the program keyword will be used as the filename
+      * with 'fileOutDefaultExtension' as its extension.
+      */
+      static void applyTextOutFallback(
+        Creator *owner,
+        mt::CR_BOL isRequired
+      );
 
-    /**
-     * Text file writer preset.
-     * 
-     * If filename is not provided, the callback will return true
-     * without creating file and without displaying error message.
-     * 
-     * The node will not be required.
-     */
-    static void applyTextOutOptional(Creator *owner);
+      /**
+      * Text file writer preset.
+      * 
+      * If filename is not provided, the callback will return true
+      * without creating file and without displaying error message.
+      * 
+      * The node will not be required.
+      */
+      static void applyTextOutOptional(Creator *owner);
+    };
   };
 }
 
