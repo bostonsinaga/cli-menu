@@ -91,7 +91,7 @@ namespace cli_menu {
          */
         else if (
           required.first && isDialogued() &&
-          stringifiedTypeIndex != STRINGIFIED_TYPE_BOOLEAN
+          stringifiedTypeIndex != STRINGIFIED_TYPE_INPUT_BOOLEAN
         ) {
           printWelcome();
 
@@ -106,7 +106,7 @@ namespace cli_menu {
         else { // go to other node
 
           // the required boolean automatically has value 'true'
-          if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_BOOLEAN) {
+          if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_INPUT_BOOLEAN) {
             pushInputUnormap("1");
           }
 
@@ -114,7 +114,7 @@ namespace cli_menu {
           return firstNeighbor->match();
         }
       }
-      else { // push argument to 'Result'
+      else { // push argument to 'Data::Input'
         pushInputUnormap(Command::raws.back());
         Command::raws.pop_back();
       }
@@ -269,17 +269,17 @@ namespace cli_menu {
       }
       // VIEW INPUT
       else if (Control::viewInputThisTest(input)) {
-        Result::printInputs(this);
+        Data::Input::print(this);
       }
       else if (Control::viewInputAllTest(input)) {
-        Result::printInputs(nullptr);
+        Data::Input::printAll();
       }
       // VIEW OUTPUT
       else if (Control::viewOutputThisTest(input)) {
-        Result::printOutputs(this);
+        Data::Output::print(this);
       }
       else if (Control::viewOutputAllTest(input)) {
-        Result::printOutputs(nullptr);
+        Data::Output::printAll();
       }
       // RESET INPUT
       else if (Control::resetInputThisTest(input)) {
@@ -289,7 +289,7 @@ namespace cli_menu {
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
       else if (Control::resetInputAllTest(input)) {
-        if (Result::clearInputs()) {
+        if (Data::Input::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
@@ -302,7 +302,7 @@ namespace cli_menu {
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
       }
       else if (Control::resetOutputAllTest(input)) {
-        if (Result::clearOutputs()) {
+        if (Data::Output::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_ALL);
@@ -322,7 +322,7 @@ namespace cli_menu {
       }
       // WILD VALUE
       else {
-        // push argument to 'Result'
+        // push argument to 'Data::Input'
         if (editing) {
           pushInputUnormap(input);
         }
@@ -772,42 +772,38 @@ namespace cli_menu {
     sterilized = condition;
   }
 
-  /** From class 'Result' */
+  /** Belows are declared in 'data.hpp' */
 
-  void Result::printInputs(Command *onlyThis) {
-    if (onlyThis) {
-      if (!onlyThis->printInput()) {
-        Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
-      }
-    }
-    else {
-      printType<std::string>(
-        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_WORD),
-        words
-      );
-
-      printType<mt::LD>(
-        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_NUMBER),
-        numbers
-      );
-
-      printType<bool>(
-        Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_BOOLEAN),
-        booleans
-      );
+  void Data::Input::print(Command *node) {
+    if (node && !node->printInput()) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
     }
   }
 
-  void Result::printOutputs(Command *onlyThis) {
-    if (onlyThis) {
-      if (Result::numberOfOutputs(onlyThis)) {
-        Result::printVector<std::string>(onlyThis, false);
-      }
-      else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+  void Data::Input::printAll() {
+    Data::printType<std::string>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_WORD), words
+    );
+
+    Data::printType<mt::LD>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_NUMBER), numbers
+    );
+
+    Data::printType<bool>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_BOOLEAN), booleans
+    );
+  }
+
+  void Data::Output::print(Command *node) {
+    if (Output::numberOf(node)) {
+      Data::printVector<std::string>(texts[node], false);
     }
-    else printType<std::string>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_OUTPUT),
-      outputs
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+  }
+
+  void Data::Output::printAll() {
+    Data::printType<std::string>(
+      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_OUTPUT_TEXT), texts
     );
   }
 }

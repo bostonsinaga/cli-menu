@@ -1,8 +1,8 @@
 #ifndef __CLI_MENU__COMMAND_HPP__
 #define __CLI_MENU__COMMAND_HPP__
 
-#include "data.hpp"
 #include "clipboard.hpp"
+#include "data.hpp"
 
 namespace cli_menu {
 
@@ -136,10 +136,10 @@ namespace cli_menu {
 
     // better called after callbacks call
     void clipboardCopy() {
-      Clipboard::copyText(Result::concatOutputs(this));
+      Clipboard::copyText(Data::Output::concat(this));
     }
 
-    // modify the 'Result' values
+    // modify the 'Data' values
     virtual void clipboardPaste() {}
     virtual void pushInputUnormap(mt::CR_STR input) {}
     virtual bool resetInputUnormap() { return false; }
@@ -293,5 +293,4 @@ namespace cli_menu {
   };
 }
 
-#include "result.tpp"
 #endif // __CLI_MENU__COMMAND_HPP__

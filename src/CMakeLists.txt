@@ -3,8 +3,8 @@ set (SOURCES
   console.cpp
   language.cpp
   control.cpp
-  data.cpp
   clipboard.cpp
+  data.cpp
   command.cpp
   type.cpp
   preset.cpp

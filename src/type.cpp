@@ -96,24 +96,24 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_WORD;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
   }
 
   void Word::clipboardPaste() {
     required.first = false;
-    Result::words[this].push_back(Clipboard::pasteText());
+    Data::Input::words[this].push_back(Clipboard::pasteText());
   }
 
   void Word::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
-    Result::words[this].push_back(input);
+    Data::Input::words[this].push_back(input);
   }
 
   bool Word::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasWords(this)) {
-      Result::words.erase(this);
+    if (Data::Input::hasWords(this)) {
+      Data::Input::words.erase(this);
       return true;
     }
 
@@ -121,16 +121,16 @@ namespace cli_menu {
   }
 
   bool Word::resetOutputUnormap() {
-    if (Result::hasOutputs(this)) {
-      Result::outputs.erase(this);
+    if (Data::Output::has(this)) {
+      Data::Output::texts.erase(this);
       return true;
     }
     return false;
   }
 
   bool Word::printInput() {
-    if (Result::numberOfWords(this)) {
-      Result::printVector<std::string>(this, false);
+    if (Data::Input::numberOfWords(this)) {
+      Data::Input::printVector<std::string>(this, false);
       return true;
     }
     return false;
@@ -146,14 +146,14 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_NUMBER;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
   }
 
   void Number::clipboardPaste() {
     required.first = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[this],
+      Data::Input::numbers[this],
       Clipboard::pasteNumbers()
     );
   }
@@ -162,7 +162,7 @@ namespace cli_menu {
     required.first = false;
 
     mt_uti::VecTools<mt::LD>::concatCopy(
-      Result::numbers[this],
+      Data::Input::numbers[this],
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
   }
@@ -170,8 +170,8 @@ namespace cli_menu {
   bool Number::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasNumbers(this)) {
-      Result::numbers.erase(this);
+    if (Data::Input::hasNumbers(this)) {
+      Data::Input::numbers.erase(this);
       return true;
     }
 
@@ -179,16 +179,16 @@ namespace cli_menu {
   }
 
   bool Number::resetOutputUnormap() {
-    if (Result::hasOutputs(this)) {
-      Result::outputs.erase(this);
+    if (Data::Output::has(this)) {
+      Data::Output::texts.erase(this);
       return true;
     }
     return false;
   }
 
   bool Number::printInput() {
-    if (Result::numberOfNumbers(this)) {
-      Result::printVector<mt::LD>(this, false);
+    if (Data::Input::numberOfNumbers(this)) {
+      Data::Input::printVector<mt::LD>(this, false);
       return true;
     }
     return false;
@@ -204,14 +204,14 @@ namespace cli_menu {
     keyword_in, description_in, callback_in
   ) {
     hyphens = "--";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_BOOLEAN;
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
   }
 
   void Boolean::clipboardPaste() {
     required.first = false;
 
     mt_uti::VecTools<bool>::concatCopy(
-      Result::booleans[this],
+      Data::Input::booleans[this],
       Clipboard::pasteConditions()
     );
   }
@@ -219,7 +219,7 @@ namespace cli_menu {
   void Boolean::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
 
-    Result::booleans[this].push_back(
+    Data::Input::booleans[this].push_back(
       Langu::ageBooleanizer::test(input)
     );
   }
@@ -227,8 +227,8 @@ namespace cli_menu {
   bool Boolean::resetInputUnormap() {
     if (required.second) required.first = true;
 
-    if (Result::hasBooleans(this)) {
-      Result::booleans.erase(this);
+    if (Data::Input::hasBooleans(this)) {
+      Data::Input::booleans.erase(this);
       return true;
     }
 
@@ -236,16 +236,16 @@ namespace cli_menu {
   }
 
   bool Boolean::resetOutputUnormap() {
-    if (Result::hasOutputs(this)) {
-      Result::outputs.erase(this);
+    if (Data::Output::has(this)) {
+      Data::Output::texts.erase(this);
       return true;
     }
     return false;
   }
 
   bool Boolean::printInput() {
-    if (Result::numberOfBooleans(this)) {
-      Result::printVector<bool>(this, false);
+    if (Data::Input::numberOfBooleans(this)) {
+      Data::Input::printVector<bool>(this, false);
       return true;
     }
     return false;

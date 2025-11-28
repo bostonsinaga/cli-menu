@@ -52,8 +52,8 @@ namespace cli_menu {
     std::string::size_type lastSlashIndex;
     std::string basePath;
 
-    for (int i = 0; i < Result::numberOfWords(node); i++) {
-      pattern = Result::getWordAt(node, i);
+    for (int i = 0; i < Data::Input::numberOfWords(node); i++) {
+      pattern = Data::Input::getWordAt(node, i);
 
       if (pattern.find('*') != std::string::npos ||
         pattern.find('?') != std::string::npos
@@ -67,12 +67,12 @@ namespace cli_menu {
 
         // expand wildcard pattern to path with filename
         if (hFind != INVALID_HANDLE_VALUE) {
-          Result::popWord(node);
+          Data::Input::popWord(node);
           i--;
 
           do {
             if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-              Result::pushWord(node, basePath + findFileData.cFileName);
+              Data::Input::pushWord(node, basePath + findFileData.cFileName);
               i++;
             }
           } while (FindNextFileA(hFind, &findFileData) != 0);
@@ -110,14 +110,14 @@ namespace cli_menu {
         completePathWildcards(current);
 
         // read multiple files
-        for (int i = 0; i < Result::numberOfWords(current); i++) {
-          filename = Result::getWordAt(current, i);
+        for (int i = 0; i < Data::Input::numberOfWords(current); i++) {
+          filename = Data::Input::getWordAt(current, i);
 
           if (mt_uti::Scanner::isFileExist(filename)) {
             found = true;
 
             // read file content
-            Result::pushOutput(
+            Data::Output::push(
               static_cast<Command*>(current->getParent()),
               mt_uti::Scanner::readFileString(filename)
             );
@@ -128,7 +128,7 @@ namespace cli_menu {
           );
         }
 
-        if (found || !Result::numberOfWords(current)) {
+        if (found || !Data::Input::numberOfWords(current)) {
           return COMMAND_CALLBACK_SUCCEEDED;
         }
 
@@ -143,7 +143,7 @@ namespace cli_menu {
   ) {
     if (!filename.empty()) {
 
-      std::string outputText = Result::concatOutputs(
+      std::string outputText = Data::Output::concat(
         static_cast<Command*>(node->getParent())
       );
 
@@ -230,7 +230,7 @@ namespace cli_menu {
     applyCustomOut(
       owner, isRequired,
       [](Command *current)->COMMAND_CALLBACK_CODE {
-        std::string filename = Result::getLastWord(current);
+        std::string filename = Data::Input::getLastWord(current);
 
         if (filename.empty()) {
 
@@ -242,7 +242,7 @@ namespace cli_menu {
               if (static_cast<Command*>(node)->getKeyword()
                 == Langu::agePreset::getKeyword(PRESET_IN)
               ) {
-                filename = Result::getLastWord(static_cast<Command*>(node));
+                filename = Data::Input::getLastWord(static_cast<Command*>(node));
                 return false;
               }
 
@@ -273,7 +273,7 @@ namespace cli_menu {
     applyCustomOut(
       owner, false,
       [](Command *current)->COMMAND_CALLBACK_CODE {
-        std::string filename = Result::getLastWord(current);
+        std::string filename = Data::Input::getLastWord(current);
         useTextOut(current, filename);
         return COMMAND_CALLBACK_SUCCEEDED;
       }

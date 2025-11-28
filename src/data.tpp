@@ -1,19 +1,19 @@
-#ifndef __CLI_MENU__RESULT_TPP__
-#define __CLI_MENU__RESULT_TPP__
+#ifndef __CLI_MENU__DATA_TPP__
+#define __CLI_MENU__DATA_TPP__
 
 namespace cli_menu {
 
-  template <typename T>
-  std::string Result::stringifiedVectorMember(mt::CR<T> vecmem) {
+  template <PRIMITIVE_TYPE T>
+  std::string Data::stringifiedVectorMember(mt::CR<T> vecmem) {
     std::string stringified;
 
-    if constexpr (std::is_same_v<T, std::string>) {
+    if constexpr (WORD_TYPE<T>) {
       stringified = vecmem;
     }
-    else if constexpr (std::is_same_v<T, mt::LD>) {
+    else if constexpr (NUMBER_TYPE<T>) {
       stringified = std::to_string(vecmem);
     }
-    else if constexpr (std::is_same_v<T, bool>) {
+    else { // boolean
       if (vecmem) stringified = "true";
       else stringified = "false";
     }
@@ -21,68 +21,62 @@ namespace cli_menu {
     return stringified;
   }
 
-  template <typename T>
-  void Result::printVector(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
+  template <PRIMITIVE_TYPE T>
+  void Data::printVector(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
 
     for (int i = 0; i < vec.size(); i++) {
       Console::logString(
-        (withIndent ? "  " : "") + Result::stringifiedVectorMember<T>(vec[i])
+        (withIndent ? "  " : "") + stringifiedVectorMember<T>(vec[i])
         + (i == vec.size() - 1 ? "\n" : ",\n"),
         Console::messageColors[withIndent ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
       );
     }
   }
 
-  template <typename T>
-  void Result::printVector(Command *node, mt::CR_BOL withIndent) {
-
-    if constexpr (std::is_same_v<T, std::string>) {
-      Result::printVector<std::string>(words[node], withIndent);
-    }
-    else if constexpr (std::is_same_v<T, mt::LD>) {
-      Result::printVector<mt::LD>(numbers[node], withIndent);
-    }
-    else if constexpr (std::is_same_v<T, bool>) {
-      Result::printVector<bool>(booleans[node], withIndent);
-    }
-  }
-
-  template <typename T>
-  void Result::printType(
+  template <PRIMITIVE_TYPE T>
+  void Data::printType(
     mt::CR_STR stringifiedType,
-    COMUNORMAP<mt::VEC<T>> &unormap
+    COMUNORMAP<T> &unormap
   ) {
-    if constexpr (
-      std::is_same_v<T, std::string> ||
-      std::is_same_v<T, mt::LD> ||
-      std::is_same_v<T, bool>
-    ) {
-      // type title
-      Console::logString(
-        stringifiedType + ":\n",
-        Console::messageColors[CONSOLE_HINT_1]
+    // type title
+    Console::logString(
+      stringifiedType + ":\n",
+      Console::messageColors[CONSOLE_HINT_1]
+    );
+
+    for (mt::CR_PAIR2<Command*, mt::VEC<T>> keyvec : unormap) {
+
+      // keyword with size of vector
+      Console::logItalicString(
+        keyvec.first->getKeyword() + " (" + std::to_string(keyvec.second.size()) + "):\n",
+        Console::messageColors[CONSOLE_HINT_2]
       );
 
-      for (mt::CR_PAIR2<Command*, mt::VEC<T>> keyvec : unormap) {
+      // members of vector
+      printVector<T>(keyvec.second, true);
+    }
 
-        // keyword with size of vector
-        Console::logItalicString(
-          keyvec.first->getKeyword() + " (" + std::to_string(keyvec.second.size()) + "):\n",
-          Console::messageColors[CONSOLE_HINT_2]
-        );
+    // display emptiness
+    if (unormap.empty()) {
+      Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
+    }
 
-        // members of vector
-        Result::printVector<T>(keyvec.second, true);
-      }
+    std::cout << std::endl;
+  }
 
-      // display emptiness
-      if (unormap.empty()) {
-        Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
-      }
+  template <PRIMITIVE_TYPE T>
+  void Data::Input::printVector(Command *node, mt::CR_BOL withIndent) {
 
-      std::cout << std::endl;
+    if constexpr (WORD_TYPE<T>) {
+      Data::printVector<std::string>(words[node], withIndent);
+    }
+    else if constexpr (NUMBER_TYPE<T>) {
+      Data::printVector<mt::LD>(numbers[node], withIndent);
+    }
+    else { // boolean
+      Data::printVector<bool>(booleans[node], withIndent);
     }
   }
 }
 
-#endif // __CLI_MENU__RESULT_TPP__
+#endif // __CLI_MENU__DATA_TPP__

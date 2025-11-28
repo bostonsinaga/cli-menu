@@ -470,19 +470,19 @@ namespace cli_menu {
   ) {
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [STRINGIFIED_TYPE_WORD] = wordStringifiedType;
+    [STRINGIFIED_TYPE_INPUT_WORD] = wordStringifiedType;
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [STRINGIFIED_TYPE_NUMBER] = numberStringifiedType;
+    [STRINGIFIED_TYPE_INPUT_NUMBER] = numberStringifiedType;
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [STRINGIFIED_TYPE_BOOLEAN] = booleanStringifiedType;
+    [STRINGIFIED_TYPE_INPUT_BOOLEAN] = booleanStringifiedType;
 
     Langu::xCommand::stringifiedTypes
     [Langu::xManager::currentISOCode]
-    [STRINGIFIED_TYPE_OUTPUT] = outputStringifiedType;
+    [STRINGIFIED_TYPE_OUTPUT_TEXT] = outputStringifiedType;
   }
 
   std::string Langu::ageCommand::getStringifiedType(
