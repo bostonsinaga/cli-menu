@@ -58,14 +58,14 @@ namespace cli_menu {
    * the input string in 'Control' class.
    */
   enum CONTROL_CODE {
-    CONTROL_HELP,
-    CONTROL_LIST,
-    CONTROL_ENTER,
-    CONTROL_BACK,
-    CONTROL_NEXT,
-    CONTROL_PREVIOUS,
-    CONTROL_MODIFY,
-    CONTROL_SELECT,
+    CONTROL_COMMAND_HELP,
+    CONTROL_CONTROLLER_LIST,
+    CONTROL_CHILDREN_ENTER,
+    CONTROL_CHILDREN_LIST,
+    CONTROL_NEIGHBOR_NEXT,
+    CONTROL_NEIGHBOR_PREVIOUS,
+    CONTROL_SWITCH_MODIFY,
+    CONTROL_SWITCH_SELECT,
     CONTROL_VIEW_INPUT_THIS,
     CONTROL_VIEW_OUTPUT_THIS,
     CONTROL_VIEW_INPUT_ALL,
@@ -74,9 +74,10 @@ namespace cli_menu {
     CONTROL_RESET_OUTPUT_THIS,
     CONTROL_RESET_INPUT_ALL,
     CONTROL_RESET_OUTPUT_ALL,
-    CONTROL_COPY,
-    CONTROL_PASTE,
-    CONTROL_QUIT,
+    CONTROL_COPY_OUTPUT,
+    CONTROL_PASTE_INPUT,
+    CONTROL_PARENT_BACK,
+    CONTROL_PROGRAM_QUIT,
     CONTROL_UNKNOWN
   };
 
@@ -112,18 +113,12 @@ namespace cli_menu {
 
     struct xControl {
 
-      static constexpr int totalSymbols = 19;
-      inline static size_t maxTermLength = 16;
-      static mt::STRUNORMAP<mt::ARR_STR<totalSymbols>> terms;
+      static constexpr int totalCodes = 20;
+      static mt::STRUNORMAP<mt::ARR_STR<totalCodes>> terms;
 
       static mt::STRUNORMAP_STR
         abbreviationsTitle,
         booleanAvailableValuesTitle;
-
-      static void limitTerm(
-        const CONTROL_CODE &code,
-        std::string &newTerm
-      );
     };
 
     struct xBooleanizer {
@@ -225,16 +220,15 @@ namespace cli_menu {
 
     struct ageControl {
 
-      // string length is limited to 'maxTermLength'
       static void setTerms(
-        std::string helpTerm,
-        std::string listTerm,
-        std::string enterTerm,
-        std::string backTerm,
-        std::string nextTerm,
-        std::string previousTerm,
-        std::string modifyTerm,
-        std::string selectTerm,
+        std::string commandHelpTerm,
+        std::string controllerListTerm,
+        std::string childrenEnterTerm,
+        std::string childrenListTerm,
+        std::string neighborNextTerm,
+        std::string neighborPreviousTerm,
+        std::string switchModifyTerm,
+        std::string switchSelectTerm,
         std::string viewInputThisTerm,
         std::string viewOutputThisTerm,
         std::string viewInputAllTerm,
@@ -243,9 +237,10 @@ namespace cli_menu {
         std::string resetOutputThisTerm,
         std::string resetInputAllTerm,
         std::string resetOutputAllTerm,
-        std::string copyTerm,
-        std::string pasteTerm,
-        std::string quitTerm
+        std::string copyOutputTerm,
+        std::string pasteInputTerm,
+        std::string parentBackTerm,
+        std::string programQuitTerm
       );
 
       static void setAbbreviationsTitle(mt::CR_STR title);

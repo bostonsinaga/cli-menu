@@ -326,38 +326,42 @@ namespace cli_menu {
   // CONTROL |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalSymbols>> Langu::xControl::terms = {{"en", {
-    "help", "list", "enter", "back", "next", "previous", "modify", "select",
-    "view this input", "view this output", "view all input", "view all output",
-    "reset this input", "reset this output", "reset all input", "reset all output",
-    "copy", "paste", "quit"
+  mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalCodes>> Langu::xControl::terms = {{"en", {
+    "show this help",
+    "show controller list",
+    "enter the children's level",
+    "show list of children",
+    "go to next neighbor",
+    "go to previous neighbor",
+    "modify this input",
+    "select another node",
+    "view this input",
+    "view this output",
+    "view all input",
+    "view all output",
+    "reset this input",
+    "reset this output",
+    "reset all input",
+    "reset all output",
+    "copy text from this output",
+    "paste text into this input",
+    "back to parent level",
+    "exit the program"
   }}};
 
   mt::STRUNORMAP_STR
     Langu::xControl::abbreviationsTitle = {{"en", "Controller List"}},
     Langu::xControl::booleanAvailableValuesTitle = {{"en", "Boolean Available Values"}};
 
-  void Langu::xControl::limitTerm(
-    const CONTROL_CODE &code,
-    std::string &newTerm
-  ) {
-    if (newTerm.length() > Langu::xControl::maxTermLength) {
-      newTerm = newTerm.substr(0, Langu::xControl::maxTermLength - 2);
-      newTerm += "..";
-    }
-
-    Langu::xControl::terms[Langu::xManager::currentISOCode][code] = newTerm;
-  }
-
   void Langu::ageControl::setTerms(
-    std::string helpTerm,
-    std::string listTerm,
-    std::string enterTerm,
-    std::string backTerm,
-    std::string nextTerm,
-    std::string previousTerm,
-    std::string modifyTerm,
-    std::string selectTerm,
+    std::string commandHelpTerm,
+    std::string controllerListTerm,
+    std::string childrenEnterTerm,
+    std::string childrenListTerm,
+    std::string neighborNextTerm,
+    std::string neighborPreviousTerm,
+    std::string switchModifyTerm,
+    std::string switchSelectTerm,
     std::string viewInputThisTerm,
     std::string viewOutputThisTerm,
     std::string viewInputAllTerm,
@@ -366,29 +370,31 @@ namespace cli_menu {
     std::string resetOutputThisTerm,
     std::string resetInputAllTerm,
     std::string resetOutputAllTerm,
-    std::string copyTerm,
-    std::string pasteTerm,
-    std::string quitTerm
+    std::string copyOutputTerm,
+    std::string pasteInputTerm,
+    std::string parentBackTerm,
+    std::string programQuitTerm
   ) {
-    Langu::xControl::limitTerm(CONTROL_HELP, helpTerm);
-    Langu::xControl::limitTerm(CONTROL_LIST, listTerm);
-    Langu::xControl::limitTerm(CONTROL_ENTER, enterTerm);
-    Langu::xControl::limitTerm(CONTROL_BACK, backTerm);
-    Langu::xControl::limitTerm(CONTROL_NEXT, nextTerm);
-    Langu::xControl::limitTerm(CONTROL_PREVIOUS, previousTerm);
-    Langu::xControl::limitTerm(CONTROL_MODIFY, modifyTerm);
-    Langu::xControl::limitTerm(CONTROL_SELECT, selectTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_INPUT_THIS, viewInputThisTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_OUTPUT_THIS, viewOutputThisTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_INPUT_ALL, viewInputAllTerm);
-    Langu::xControl::limitTerm(CONTROL_VIEW_OUTPUT_ALL, viewOutputAllTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_INPUT_THIS, resetInputThisTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_OUTPUT_THIS, resetOutputThisTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_INPUT_ALL, resetInputAllTerm);
-    Langu::xControl::limitTerm(CONTROL_RESET_OUTPUT_ALL, resetOutputAllTerm);
-    Langu::xControl::limitTerm(CONTROL_COPY, copyTerm);
-    Langu::xControl::limitTerm(CONTROL_PASTE, pasteTerm);
-    Langu::xControl::limitTerm(CONTROL_QUIT, quitTerm);
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CONTROLLER_LIST] = controllerListTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_LIST] = childrenListTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_NEXT] = neighborNextTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFY] = switchModifyTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_ALL] = viewInputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_ALL] = viewOutputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_THIS] = resetInputThisTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_THIS] = resetOutputThisTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_ALL] = resetInputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_ALL] = resetOutputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COPY_OUTPUT] = copyOutputTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PASTE_INPUT] = pasteInputTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PARENT_BACK] = parentBackTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PROGRAM_QUIT] = programQuitTerm;
   }
 
   void Langu::ageControl::setAbbreviationsTitle(mt::CR_STR title) {

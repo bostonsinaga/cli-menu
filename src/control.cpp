@@ -7,19 +7,19 @@ namespace cli_menu {
 
   /** Controllers Test */
 
-  CONTROL_CODE Control::whitespacesCheck(mt::CR_STR str) {
+  CONTROL_CODE Control::whitespacesCheck(mt::CR_STR rawstr) {
     bool prevSpaced = false;
-    std::string input;
+    std::string str;
 
     // force to return 'UNKNOWN' when pattern 'abc123 \t abc123' is detected
-    for (mt::CR_CH ch : str) {
+    for (mt::CR_CH ch : rawstr) {
       if (!mt_uti::StrTools::isWhitespace(ch)) {
 
-        if (prevSpaced && !input.empty()) {
+        if (prevSpaced && !str.empty()) {
           return CONTROL_UNKNOWN;
         }
 
-        input += ch;
+        str += ch;
         prevSpaced = false;
       }
       else prevSpaced = true;
@@ -29,7 +29,7 @@ namespace cli_menu {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < Control::totalSymbols; j++) {
 
-        if (input == symbols[j][i].first) {
+        if (str == symbols[j][i].first) {
           sharedEnum = static_cast<CONTROL_CODE>(symbols[j][i].second);
           return sharedEnum;
         }
@@ -39,80 +39,85 @@ namespace cli_menu {
     return CONTROL_UNKNOWN;
   }
 
-  bool Control::helpTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_HELP;
+  bool Control::commandHelpTest(mt::CR_STR rawstr) {
+    bool isEqual = whitespacesCheck(rawstr) == CONTROL_COMMAND_HELP;
+    return isEqual;
   }
 
-  bool Control::listTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_LIST;
+  bool Control::controllerListTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CONTROLLER_LIST;
   }
 
-  bool Control::enterTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_ENTER;
+  bool Control::childrenEnterTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_ENTER;
   }
 
-  bool Control::backTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_BACK;
+  bool Control::childrenListTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_LIST;
   }
 
-  bool Control::nextTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_NEXT;
+  bool Control::neighborNextTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_NEIGHBOR_NEXT;
   }
 
-  bool Control::previousTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_PREVIOUS;
+  bool Control::neighborPreviousTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_NEIGHBOR_PREVIOUS;
   }
 
-  bool Control::modifyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_MODIFY;
+  bool Control::switchModifyTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SWITCH_MODIFY;
   }
 
-  bool Control::selectTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_SELECT;
+  bool Control::switchSelectTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SWITCH_SELECT;
   }
 
-  bool Control::viewInputThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_INPUT_THIS;
+  bool Control::viewInputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_THIS;
   }
 
-  bool Control::viewInputAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_INPUT_ALL;
+  bool Control::viewOutputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_THIS;
   }
 
-  bool Control::viewOutputThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_OUTPUT_THIS;
+  bool Control::viewInputAllTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_ALL;
   }
 
-  bool Control::viewOutputAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_VIEW_OUTPUT_ALL;
+  bool Control::viewOutputAllTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_ALL;
   }
 
-  bool Control::resetInputThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_INPUT_THIS;
+  bool Control::resetInputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_THIS;
   }
 
-  bool Control::resetInputAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_INPUT_ALL;
+  bool Control::resetOutputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_THIS;
   }
 
-  bool Control::resetOutputThisTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_OUTPUT_THIS;
+  bool Control::resetInputAllTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_ALL;
   }
 
-  bool Control::resetOutputAllTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_RESET_OUTPUT_ALL;
+  bool Control::resetOutputAllTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_ALL;
   }
 
-  bool Control::copyTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_COPY;
+  bool Control::copyOutputTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_COPY_OUTPUT;
   }
 
-  bool Control::pasteTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_PASTE;
+  bool Control::pasteInputTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_PASTE_INPUT;
   }
 
-  bool Control::quitTest(mt::CR_STR str) {
-    return whitespacesCheck(str) == CONTROL_QUIT;
+  bool Control::parentBackTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_PARENT_BACK;
+  }
+
+  bool Control::programQuitTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_PROGRAM_QUIT;
   }
 
   void Control::printAbbreviations(
@@ -126,19 +131,7 @@ namespace cli_menu {
       );
     }
 
-    size_t leastMaxTermLength = 0;
-
-    // find the maximum term length at even indices
-    for (int i = 0; i < Control::totalSymbols; i++) {
-
-      size_t curlen = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i)).length();
-
-      if (i % 2 == 0 && curlen > leastMaxTermLength) {
-        leastMaxTermLength = curlen;
-      }
-    }
-
-    // combine lowercase symbols with uppercase symbols that have different codes
+    // include lowercase and uppercase symbols that have different codes
     std::vector<const std::string*> onlySymbols;
 
     for (int i = 0; i < Control::totalSymbols; i++) {
@@ -149,21 +142,20 @@ namespace cli_menu {
       }
     }
 
-    // display terms with 2 columns
+    // display terms in rows
     for (int i = 0; i < Control::totalSymbols; i++) {
 
       std::cout << std::string(numberOfIndents, ' ');
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
 
-      // even is followed by spaces, uneven is followed by newline
       Console::logString(
-        *onlySymbols[i] + " = " + curterm
-        + (i % 2 ? "\n" : std::string(leastMaxTermLength - curterm.length(), ' ')),
+        *onlySymbols[i] + " = " + curterm + '\n',
         Console::messageColors[CONSOLE_HINT_2]
       );
     }
 
-    std::cout << "\n\n";
+    // additional newline
+    std::cout << std::endl;
   }
 
   void Control::printBooleanAvailableValues(
@@ -191,12 +183,12 @@ namespace cli_menu {
     }
 
     Console::logString(
-      symbols[CONTROL_ENTER][0].first + ", ",
+      symbols[CONTROL_CHILDREN_ENTER][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 
     Console::logString(
-      symbols[CONTROL_NEXT][0].first + ", ",
+      symbols[CONTROL_NEIGHBOR_NEXT][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 
@@ -218,7 +210,7 @@ namespace cli_menu {
     }
 
     Console::logString(
-      symbols[CONTROL_PREVIOUS][0].first + ", ",
+      symbols[CONTROL_NEIGHBOR_PREVIOUS][0].first + ", ",
       Console::messageColors[CONSOLE_HINT_2]
     );
 

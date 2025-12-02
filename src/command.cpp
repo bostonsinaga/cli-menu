@@ -193,7 +193,7 @@ namespace cli_menu {
 
   Command *Command::dialog() {
     Command::phaseCode = COMMAND_PHASE_DIALOG;
-    std::string input;
+    std::string rawstr;
 
     // outline or fill style
     Console::logStylishHeader(
@@ -201,47 +201,37 @@ namespace cli_menu {
       editing
     );
 
-    printControllersHints();
-
-    while (Control::cinDialogInput(input, editing)) {
-      // HELP
-      if (Control::helpTest(input)) {
+    while (Control::cinDialogInput(rawstr, editing)) {
+      // COMMAND HELP
+      if (Control::commandHelpTest(rawstr)) {
         printHelp();
       }
-      // LIST
-      else if (Control::listTest(input)) {
-        printList(CONSOLE_HINT_2, 0, true);
+      // CONTROLLER LIST
+      else if (Control::controllerListTest(rawstr)) {
+        Control::printAbbreviations(true, 2);
+        Control::printBooleanAvailableValues(true, 2);
       }
-      // ENTER
-      else if (Control::enterTest(input)) {        
+      // ENTER CHILDREN
+      else if (Control::childrenEnterTest(rawstr)) {        
         Command *lastNode = enter();
         if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
-      // BACK
-      else if (Control::backTest(input)) {
-        if (getParent()) {
-          // moving is prohibited
-          if (Command::interruptionDialogued) {
-            printInterruptionDialoguedResponse();
-          }
-          // go to parent
-          else return static_cast<Command*>(getParent())->dialog();
-        }
-        // this is root
-        else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
+      // LIST CHILDREN
+      else if (Control::childrenListTest(rawstr)) {
+        printList(CONSOLE_HINT_2, 0, true);
       }
-      // NEXT
-      else if (Control::nextTest(input)) {
+      // NEXT NEIGHBOR
+      else if (Control::neighborNextTest(rawstr)) {
         Command *lastNode = goToNeighbor(mt_ds::GeneralTree::RIGHT);
         if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
-      // PREVIOUS
-      else if (Control::previousTest(input)) {
+      // PREVIOUS NEIGHBOR
+      else if (Control::neighborPreviousTest(rawstr)) {
         Command *lastNode = goToNeighbor(mt_ds::GeneralTree::LEFT);
         if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
-      // MODIFY
-      else if (Control::modifyTest(input)) {
+      // MODIFY INPUT
+      else if (Control::switchModifyTest(rawstr)) {
         // cannot repeat
         if (editing) {
           Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_EDITING);
@@ -251,8 +241,8 @@ namespace cli_menu {
           return dialog();
         }
       }
-      // SELECT
-      else if (Control::selectTest(input)) {
+      // SELECT NODE
+      else if (Control::switchSelectTest(rawstr)) {
         // switching mode is prohibited
         if (Command::interruptionDialogued) {
           printInterruptionDialoguedResponse();
@@ -268,67 +258,80 @@ namespace cli_menu {
         }
       }
       // VIEW INPUT
-      else if (Control::viewInputThisTest(input)) {
+      else if (Control::viewInputThisTest(rawstr)) {
         Data::Input::print(this);
       }
-      else if (Control::viewInputAllTest(input)) {
+      else if (Control::viewOutputThisTest(rawstr)) {
         Data::Input::printAll();
       }
       // VIEW OUTPUT
-      else if (Control::viewOutputThisTest(input)) {
+      else if (Control::viewInputAllTest(rawstr)) {
         Data::Output::print(this);
       }
-      else if (Control::viewOutputAllTest(input)) {
+      else if (Control::viewOutputAllTest(rawstr)) {
         Data::Output::printAll();
       }
       // RESET INPUT
-      else if (Control::resetInputThisTest(input)) {
+      else if (Control::resetInputThisTest(rawstr)) {
         if (resetInputUnormap()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else if (Control::resetInputAllTest(input)) {
+      else if (Control::resetOutputThisTest(rawstr)) {
         if (Data::Input::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
       }
       // RESET OUTPUT
-      else if (Control::resetOutputThisTest(input)) {
+      else if (Control::resetInputAllTest(rawstr)) {
         if (resetOutputUnormap()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
       }
-      else if (Control::resetOutputAllTest(input)) {
+      else if (Control::resetOutputAllTest(rawstr)) {
         if (Data::Output::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_ALL);
       }
-      // CLIPBOARD COPY
-      else if (Control::copyTest(input)) {
+      // CLIPBOARD COPY OUTPUT
+      else if (Control::copyOutputTest(rawstr)) {
         clipboardCopy();
       }
-      // CLIPBOARD PASTE
-      else if (Control::pasteTest(input)) {
+      // CLIPBOARD PASTE INPUT
+      else if (Control::pasteInputTest(rawstr)) {
         if (editing) clipboardPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
-      // QUIT
-      else if (Control::quitTest(input)) {
+      // BACK TO PARENT
+      else if (Control::parentBackTest(rawstr)) {
+        if (getParent()) {
+          // moving is prohibited
+          if (Command::interruptionDialogued) {
+            printInterruptionDialoguedResponse();
+          }
+          // go to parent
+          else return static_cast<Command*>(getParent())->dialog();
+        }
+        // this is root
+        else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
+      }
+      // EXIT PROGRAM
+      else if (Control::programQuitTest(rawstr)) {
         break;
       }
       // WILD VALUE
       else {
         // push argument to 'Data::Input'
         if (editing) {
-          pushInputUnormap(input);
+          pushInputUnormap(rawstr);
         }
         // selection (match in dialog)
         else {
-          Command *lastNode = goDown(input);
+          Command *lastNode = goDown(rawstr);
           if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
         }
       }
@@ -517,7 +520,7 @@ namespace cli_menu {
 
     if (getChildren()) {
       resetPointer();
-      
+
       getChildren()->iterate(
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
@@ -627,19 +630,9 @@ namespace cli_menu {
 
       // description
       Console::logItalicString(
-        Command::description + "\n\n",
+        description + "\n\n",
         Console::messageColors[CONSOLE_HINT_2]
       );
-    }
-  }
-
-  void Command::printControllersHints() {
-    static bool displayed = false;
-
-    if (!displayed) {
-      displayed = true;
-      Control::printAbbreviations(true, 2);
-      Control::printBooleanAvailableValues(true, 2);
     }
   }
 

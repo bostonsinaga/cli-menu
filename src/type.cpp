@@ -255,57 +255,60 @@ namespace cli_menu {
     const SENTENCE_CODE &responseCode,
     mt::CR_STR replacementText
   ) {
-    std::string input;
+    std::string rawstr;
 
     Langu::ageMessage::printTemplateResponse(
       responseCode, replacementText, true
     );
 
-    while (Control::cinDialogInput(input, true)) {
+    while (Control::cinDialogInput(rawstr, true)) {
       // no
-      if (Control::previousTest(input)) {
+      if (Control::neighborPreviousTest(rawstr)) {
         break;
       }
       else if ( // yes
-        Control::enterTest(input) ||
-        Control::nextTest(input)
+        Control::childrenEnterTest(rawstr) ||
+        Control::neighborNextTest(rawstr)
       ) {
         return BOOLEAN_INSTANT_QUESTION_YES;
       }
       else if ( // cancel
-        Control::backTest(input) ||        
-        Control::quitTest(input)
+        Control::parentBackTest(rawstr) ||        
+        Control::programQuitTest(rawstr)
       ) {
         return BOOLEAN_INSTANT_QUESTION_CANCELED;
       }
       // help
-      else if (Control::helpTest(input)) {
+      else if (
+        Control::commandHelpTest(rawstr) ||
+        Control::controllerListTest(rawstr)
+      ) {
         Control::printBooleanAvailableValues(true, 2);
       }
       // list
-      else if (Control::listTest(input)) {
+      else if (Control::childrenListTest(rawstr)) {
         Control::printBooleanAvailableValues(false, 0);
       }
       else if ( // forbidden
-        Control::modifyTest(input) ||
-        Control::selectTest(input) ||
-        Control::viewInputThisTest(input) ||
-        Control::viewInputAllTest(input) ||
-        Control::viewOutputThisTest(input) ||
-        Control::viewOutputAllTest(input) ||
-        Control::resetInputThisTest(input) ||
-        Control::resetInputAllTest(input) ||
-        Control::resetOutputThisTest(input) ||
-        Control::resetOutputAllTest(input) ||
-        Control::copyTest(input) ||
-        Control::pasteTest(input)
+        Control::switchModifyTest(rawstr) ||
+        Control::switchSelectTest(rawstr) ||
+        Control::viewInputThisTest(rawstr) ||
+        Control::viewInputAllTest(rawstr) ||
+        Control::viewOutputThisTest(rawstr) ||
+        Control::viewOutputAllTest(rawstr) ||
+        Control::resetInputThisTest(rawstr) ||
+        Control::resetInputAllTest(rawstr) ||
+        Control::resetOutputThisTest(rawstr) ||
+        Control::resetOutputAllTest(rawstr) ||
+        Control::copyOutputTest(rawstr) ||
+        Control::pasteInputTest(rawstr)
       ) {
         Langu::ageMessage::printResponse(
           SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
         );
       }
       // yes
-      else if (Langu::ageBooleanizer::test(input)) {
+      else if (Langu::ageBooleanizer::test(rawstr)) {
         return BOOLEAN_INSTANT_QUESTION_YES;
       }
       else break; // no

@@ -267,7 +267,6 @@ namespace cli_menu {
 
     // displayed once
     void printWelcome();
-    void printControllersHints();
 
     // print keyword, description, and children keywords
     void printHelp();

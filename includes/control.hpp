@@ -10,7 +10,7 @@ namespace cli_menu {
   class Control {
   private:
     inline static CONTROL_CODE sharedEnum = CONTROL_UNKNOWN;
-    static constexpr int totalSymbols = 19;
+    static constexpr int totalSymbols = 15;
 
     /**
      * Uppercase symbol that have a different code from its left lowercase symbol
@@ -18,25 +18,25 @@ namespace cli_menu {
      */
     inline static const mt::PAIR2<std::string, CONTROL_CODE>
     symbols[totalSymbols][2] = {
-      {{":h", CONTROL_HELP             }, {":H", CONTROL_HELP              }},
-      {{":l", CONTROL_LIST             }, {":L", CONTROL_LIST              }},
-      {{":e", CONTROL_ENTER            }, {":E", CONTROL_ENTER             }},
-      {{":b", CONTROL_BACK             }, {":B", CONTROL_BACK              }},
-      {{":>", CONTROL_NEXT             }, {":>", CONTROL_NEXT              }},
-      {{":<", CONTROL_PREVIOUS         }, {":<", CONTROL_PREVIOUS          }},
-      {{":m", CONTROL_MODIFY           }, {":M", CONTROL_MODIFY            }},
-      {{":s", CONTROL_SELECT           }, {":S", CONTROL_SELECT            }},
-      {{":v", CONTROL_VIEW_INPUT_THIS  }, {":V", CONTROL_VIEW_OUTPUT_THIS  }},
-      {{":w", CONTROL_VIEW_INPUT_ALL   }, {":W", CONTROL_VIEW_OUTPUT_ALL   }},
-      {{":r", CONTROL_RESET_INPUT_THIS }, {":R", CONTROL_RESET_OUTPUT_THIS }},
-      {{":x", CONTROL_RESET_INPUT_ALL  }, {":X", CONTROL_RESET_OUTPUT_ALL  }},
-      {{":c", CONTROL_COPY             }, {":C", CONTROL_COPY              }},
-      {{":p", CONTROL_PASTE            }, {":P", CONTROL_PASTE             }},
-      {{":q", CONTROL_QUIT             }, {":Q", CONTROL_QUIT              }}
+      {{":h", CONTROL_COMMAND_HELP      }, {":H", CONTROL_CONTROLLER_LIST   }},
+      {{":e", CONTROL_CHILDREN_ENTER    }, {":E", CONTROL_CHILDREN_ENTER    }},
+      {{":l", CONTROL_CHILDREN_LIST     }, {":L", CONTROL_CHILDREN_LIST     }},
+      {{":>", CONTROL_NEIGHBOR_NEXT     }, {":>", CONTROL_NEIGHBOR_NEXT     }},
+      {{":<", CONTROL_NEIGHBOR_PREVIOUS }, {":<", CONTROL_NEIGHBOR_PREVIOUS }},
+      {{":m", CONTROL_SWITCH_MODIFY     }, {":M", CONTROL_SWITCH_MODIFY     }},
+      {{":s", CONTROL_SWITCH_SELECT     }, {":S", CONTROL_SWITCH_SELECT     }},
+      {{":v", CONTROL_VIEW_INPUT_THIS   }, {":V", CONTROL_VIEW_OUTPUT_THIS  }},
+      {{":w", CONTROL_VIEW_INPUT_ALL    }, {":W", CONTROL_VIEW_OUTPUT_ALL   }},
+      {{":r", CONTROL_RESET_INPUT_THIS  }, {":R", CONTROL_RESET_OUTPUT_THIS }},
+      {{":x", CONTROL_RESET_INPUT_ALL   }, {":X", CONTROL_RESET_OUTPUT_ALL  }},
+      {{":c", CONTROL_COPY_OUTPUT       }, {":C", CONTROL_COPY_OUTPUT       }},
+      {{":p", CONTROL_PASTE_INPUT       }, {":P", CONTROL_PASTE_INPUT       }},
+      {{":b", CONTROL_PARENT_BACK       }, {":B", CONTROL_PARENT_BACK       }},
+      {{":q", CONTROL_PROGRAM_QUIT      }, {":Q", CONTROL_PROGRAM_QUIT      }}
     };
 
-    // find 'symbols' pattern in 'str'
-    static CONTROL_CODE whitespacesCheck(mt::CR_STR str);
+    // find 'symbols' pattern in 'rawstr'
+    static CONTROL_CODE whitespacesCheck(mt::CR_STR rawstr);
 
     // use an atomic boolean to signal an interrupt
     inline static std::atomic<bool> INTERRUPTED_CTRL_C = false;
@@ -44,25 +44,26 @@ namespace cli_menu {
   public:
     Control() = delete;
 
-    static bool helpTest(mt::CR_STR str);
-    static bool listTest(mt::CR_STR str);
-    static bool enterTest(mt::CR_STR str);
-    static bool backTest(mt::CR_STR str);
-    static bool nextTest(mt::CR_STR str);
-    static bool previousTest(mt::CR_STR str);
-    static bool modifyTest(mt::CR_STR str);
-    static bool selectTest(mt::CR_STR str);
-    static bool viewInputThisTest(mt::CR_STR str);
-    static bool viewInputAllTest(mt::CR_STR str);
-    static bool viewOutputThisTest(mt::CR_STR str);
-    static bool viewOutputAllTest(mt::CR_STR str);
-    static bool resetInputThisTest(mt::CR_STR str);
-    static bool resetInputAllTest(mt::CR_STR str);
-    static bool resetOutputThisTest(mt::CR_STR str);
-    static bool resetOutputAllTest(mt::CR_STR str);
-    static bool copyTest(mt::CR_STR str);
-    static bool pasteTest(mt::CR_STR str);
-    static bool quitTest(mt::CR_STR str);
+    static bool commandHelpTest(mt::CR_STR rawstr);
+    static bool controllerListTest(mt::CR_STR rawstr);
+    static bool childrenEnterTest(mt::CR_STR rawstr);
+    static bool childrenListTest(mt::CR_STR rawstr);
+    static bool neighborNextTest(mt::CR_STR rawstr);
+    static bool neighborPreviousTest(mt::CR_STR rawstr);
+    static bool switchModifyTest(mt::CR_STR rawstr);
+    static bool switchSelectTest(mt::CR_STR rawstr);
+    static bool viewInputThisTest(mt::CR_STR rawstr);
+    static bool viewOutputThisTest(mt::CR_STR rawstr);
+    static bool viewInputAllTest(mt::CR_STR rawstr);
+    static bool viewOutputAllTest(mt::CR_STR rawstr);
+    static bool resetInputThisTest(mt::CR_STR rawstr);
+    static bool resetOutputThisTest(mt::CR_STR rawstr);
+    static bool resetInputAllTest(mt::CR_STR rawstr);
+    static bool resetOutputAllTest(mt::CR_STR rawstr);
+    static bool copyOutputTest(mt::CR_STR rawstr);
+    static bool pasteInputTest(mt::CR_STR rawstr);
+    static bool parentBackTest(mt::CR_STR rawstr);
+    static bool programQuitTest(mt::CR_STR rawstr);
 
     static void printAbbreviations(
       mt::CR_BOL titleDisplayed,
