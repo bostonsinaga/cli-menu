@@ -129,11 +129,6 @@ namespace cli_menu {
       // better set this vector inside the 'Command' callback
       inline static COMUNORMAP<std::string> texts;
 
-      // friend classes
-      friend class Word;
-      friend class Number;
-      friend class Boolean;
-
     public:
       // setters
       static void push(Command *node, mt::CR_STR input);
