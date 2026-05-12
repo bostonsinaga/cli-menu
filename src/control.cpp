@@ -13,7 +13,7 @@ namespace cli_menu {
 
     // force to return 'UNKNOWN' when pattern 'abc123 \t abc123' is detected
     for (mt::CR_CH ch : rawstr) {
-      if (!mt_uti::StrTools::isWhitespace(ch)) {
+      if (!mt_uti::StrTool::isWhitespace(ch)) {
 
         if (prevSpaced && !str.empty()) {
           return CONTROL_UNKNOWN;

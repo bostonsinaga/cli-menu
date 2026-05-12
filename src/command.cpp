@@ -44,7 +44,7 @@ namespace cli_menu {
       if (getChildren()) {
         resetPointer();
 
-        static_cast<Command*>(getChildren())->iterate(
+        static_cast<Command*>(getChildren())->forEach(
           mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
 
@@ -60,7 +60,7 @@ namespace cli_menu {
 
       // find first neighbor of the same keyword with 'raws.back()'
       if (!firstChild) {
-        iterate(
+        forEach(
           mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
 
@@ -145,7 +145,7 @@ namespace cli_menu {
       resetPointer();
 
       // find first required child
-      getChildren()->iterate(
+      getChildren()->forEach(
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
@@ -271,25 +271,27 @@ namespace cli_menu {
       else if (Control::viewOutputAllTest(rawstr)) {
         Data::Output::printAll();
       }
-      // RESET INPUT
+      // RESET THIS & DESCENDANTS INPUT/OUTPUT
       else if (Control::resetInputThisTest(rawstr)) {
-        if (resetInputUnormap()) {
+        if (resetInputUnormapDescendants()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
       else if (Control::resetOutputThisTest(rawstr)) {
+        // output only stores strings
+        if (Data::Output::has(this)) {
+          Data::Output::erase(this);
+          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
+        }
+        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+      }
+      // RESET ALL INPUT/OUTPUT
+      else if (Control::resetInputAllTest(rawstr)) {
         if (Data::Input::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
-      }
-      // RESET OUTPUT
-      else if (Control::resetInputAllTest(rawstr)) {
-        if (resetOutputUnormap()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
-        }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
       }
       else if (Control::resetOutputAllTest(rawstr)) {
         if (Data::Output::clearAll()) {
@@ -299,11 +301,11 @@ namespace cli_menu {
       }
       // CLIPBOARD COPY OUTPUT
       else if (Control::copyOutputTest(rawstr)) {
-        clipboardCopy();
+        Clipboard::copyText(Data::Output::concat(this));
       }
       // CLIPBOARD PASTE INPUT
       else if (Control::pasteInputTest(rawstr)) {
-        if (editing) clipboardPaste();
+        if (editing) clipboardInputPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
       // BACK TO PARENT
@@ -357,7 +359,7 @@ namespace cli_menu {
         resetPointer();
 
         // find first ortho child
-        getChildren()->iterate(
+        getChildren()->forEach(
           mt_ds::GeneralTree::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
 
@@ -382,14 +384,14 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  COMMAND_CALLBACK_CODE Command::iterateInOutCallbacks(
+  COMMAND_CALLBACK_CODE Command::forEachInOutCallbacks(
     const std::function<bool(Command*)> &asWhatCallback
   ) {
     COMMAND_CALLBACK_CODE callbackCode;
     bool anyFailed = false, anyCanceled = false;
 
     if (hasChildren()) {
-      getChildren()->iterate(
+      getChildren()->forEach(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
@@ -421,7 +423,7 @@ namespace cli_menu {
   COMMAND_CALLBACK_CODE Command::triggerCallbacks() {
     if (!asInput && !asOutput) {
       // input
-      COMMAND_CALLBACK_CODE inputCallbackCode = iterateInOutCallbacks(
+      COMMAND_CALLBACK_CODE inputCallbackCode = forEachInOutCallbacks(
         [](Command *current)->bool { return current->asInput; }
       );
 
@@ -430,7 +432,7 @@ namespace cli_menu {
       if (callback) processCallbackCode = callback(this);
 
       // output
-      COMMAND_CALLBACK_CODE outputCallbackCode = iterateInOutCallbacks(
+      COMMAND_CALLBACK_CODE outputCallbackCode = forEachInOutCallbacks(
         [](Command *current)->bool { return current->asOutput; }
       );
 
@@ -495,7 +497,7 @@ namespace cli_menu {
     // split input into the string vector using spaces as delimiters
     for (mt::CR_CH ch : input) {
 
-      if (mt_uti::StrTools::isWhitespace(ch)) {
+      if (mt_uti::StrTool::isWhitespace(ch)) {
         if (!spaceFound) {
           spaceFound = true;
           additionalRaws.push_back("");
@@ -511,7 +513,7 @@ namespace cli_menu {
     std::reverse(additionalRaws.begin(), additionalRaws.end());
 
     // insert to back of main raws
-    mt_uti::VecTools<std::string>::concatCopy(
+    mt_uti::VecTool<std::string>::concatCopy(
       Command::raws, additionalRaws
     );
 
@@ -521,7 +523,7 @@ namespace cli_menu {
     if (getChildren()) {
       resetPointer();
 
-      getChildren()->iterate(
+      getChildren()->forEach(
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
@@ -568,7 +570,7 @@ namespace cli_menu {
 
     // remove the recently added strings
     if (!Command::raws.empty()) {
-      mt_uti::VecTools<std::string>::eraseIntervalStable(
+      mt_uti::VecTool<std::string>::eraseIntervalStable(
         Command::raws,
         {
           Command::raws.size() - additionalRaws.size(),
@@ -586,7 +588,7 @@ namespace cli_menu {
     Command *firstOrthoNeighbor = nullptr;
 
     // find first ortho neighbor
-    iterate(
+    forEach(
       direction,
       [&](mt_ds::LinkedList *node)->bool {
 
@@ -624,7 +626,7 @@ namespace cli_menu {
       // keyword
       Console::logString(
         Langu::ageMessage::getWelcomeToString() +
-        mt_uti::StrTools::copyStringToUppercase(keyword) + '\n',
+        mt_uti::StrTool::copyStringToUppercase(keyword) + '\n',
         Console::messageColors[CONSOLE_HINT_1]
       );
 
@@ -669,7 +671,7 @@ namespace cli_menu {
       resetPointer();
 
       // print children keyword
-      getChildren()->iterate(
+      getChildren()->forEach(
         mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
@@ -707,7 +709,7 @@ namespace cli_menu {
   Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
     Command *found = nullptr;
 
-    iterate(
+    forEach(
       mt_ds::LinkedList::RIGHT,
       [&](mt_ds::LinkedList *node)->bool {
 
@@ -763,6 +765,22 @@ namespace cli_menu {
     }
 
     sterilized = condition;
+  }
+
+  bool Command::resetInputUnormapDescendants() {
+    bool resetSucceeded = resetInputUnormap();
+
+    if (getChildren()) {
+      getChildren()->traverse(
+        mt_ds::LinkedList::RIGHT,
+        [&](mt_ds::LinkedList *node)->bool {
+          static_cast<Command*>(node)->resetInputUnormap();
+          return true;
+        }
+      );
+    }
+
+    return resetSucceeded;
   }
 
   /** Belows are declared in 'data.hpp' */

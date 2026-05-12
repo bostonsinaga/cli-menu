@@ -61,9 +61,6 @@ namespace cli_menu {
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
 
-    // accumulate keywords up to root
-    std::string generateSequentialRootNames();
-
     // set the 'editing' variable and display one-time message
     void setMode(mt::CR_BOL isSelecting);
 
@@ -72,7 +69,7 @@ namespace cli_menu {
      * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default
      * if there is no 'asInput' or 'asOutput' condition from the children.
      */
-    COMMAND_CALLBACK_CODE iterateInOutCallbacks(
+    COMMAND_CALLBACK_CODE forEachInOutCallbacks(
       const std::function<bool(Command*)> &asWhatCallback
     );
 
@@ -114,6 +111,9 @@ namespace cli_menu {
       return numberOfChildren() - pseudosCount > 0;
     }
 
+    // reset this input and its descendant inputs
+    bool resetInputUnormapDescendants();
+
   protected:
     // changeable and initial reference
     mt::PAIR_BOL required = {false, false};
@@ -134,16 +134,10 @@ namespace cli_menu {
       COMMAND_CALLBACK callback_in
     );
 
-    // better called after callbacks call
-    void clipboardCopy() {
-      Clipboard::copyText(Data::Output::concat(this));
-    }
-
-    // modify the 'Data' values
-    virtual void clipboardPaste() {}
+    // modify this 'Data::Input'
+    virtual void clipboardInputPaste() {}
     virtual void pushInputUnormap(mt::CR_STR input) {}
     virtual bool resetInputUnormap() { return false; }
-    virtual bool resetOutputUnormap() { return false; }
 
   public:
     Command() = delete;
@@ -264,6 +258,9 @@ namespace cli_menu {
     }
 
     /** Display information about this node */
+
+    // accumulate keywords up to root
+    std::string generateSequentialRootNames();
 
     // displayed once
     void printWelcome();

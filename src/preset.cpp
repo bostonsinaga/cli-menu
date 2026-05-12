@@ -113,7 +113,7 @@ namespace cli_menu {
         for (int i = 0; i < Data::Input::numberOfWords(current); i++) {
           filename = Data::Input::getWordAt(current, i);
 
-          if (mt_uti::Scanner::isFileExist(filename)) {
+          if (mt::FS::is_regular_file(filename)) {
             found = true;
 
             // read file content
@@ -152,7 +152,7 @@ namespace cli_menu {
           booleanInstantQuestionCode = BOOLEAN_INSTANT_QUESTION_NO;
 
         // existing file require verification to be overwritten
-        if (mt_uti::Scanner::isFileExist(filename)) {
+        if (mt::FS::is_regular_file(filename)) {
 
           booleanInstantQuestionCode = Boolean::instantQuestion(
             SENTENCE_FILE_OVERWRITE_QUESTION,
@@ -177,7 +177,7 @@ namespace cli_menu {
               numname = prefix + Langu::agePreset::fileOutBracketsForNumbering.first
                 + std::to_string(counter) + Langu::agePreset::fileOutBracketsForNumbering.second + suffix;
               counter++;
-            } while (mt_uti::Scanner::isFileExist(numname));
+            } while (mt::FS::is_regular_file(numname));
 
             filename = numname;
           }
@@ -188,7 +188,7 @@ namespace cli_menu {
           return COMMAND_CALLBACK_CANCELED;
         }
         // write string vector to text file (yes/no)
-        else if (mt_uti::Printer::write(
+        else if (mt_uti::Printer::writeFileString(
           outputText, filename, false
         )) {
           Langu::ageMessage::printTemplateResponse(
@@ -235,8 +235,8 @@ namespace cli_menu {
         if (filename.empty()) {
 
           // set filename with file-in last argument
-          current->iterate(
-            mt_ds::GeneralTree::RIGHT,
+          current->forEach(
+            mt_ds::LinkedList::RIGHT,
             [&](mt_ds::LinkedList *node)->bool {
 
               if (static_cast<Command*>(node)->getKeyword()

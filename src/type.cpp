@@ -2,7 +2,6 @@
 #define __CLI_MENU__TYPE_CPP__
 
 #include "type.hpp"
-
 namespace cli_menu {
 
   Creator::Creator(
@@ -17,7 +16,7 @@ namespace cli_menu {
     if (!sterilized) {
       Creator *willDestroyed = nullptr;
 
-      if (getChildren()) getChildren()->iterate(
+      if (getChildren()) getChildren()->forEach(
         mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
@@ -99,7 +98,7 @@ namespace cli_menu {
     stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
   }
 
-  void Word::clipboardPaste() {
+  void Word::clipboardInputPaste() {
     required.first = false;
     Data::Input::words[this].push_back(Clipboard::pasteText());
   }
@@ -117,14 +116,6 @@ namespace cli_menu {
       return true;
     }
 
-    return false;
-  }
-
-  bool Word::resetOutputUnormap() {
-    if (Data::Output::has(this)) {
-      Data::Output::texts.erase(this);
-      return true;
-    }
     return false;
   }
 
@@ -149,10 +140,10 @@ namespace cli_menu {
     stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
   }
 
-  void Number::clipboardPaste() {
+  void Number::clipboardInputPaste() {
     required.first = false;
 
-    mt_uti::VecTools<mt::LD>::concatCopy(
+    mt_uti::VecTool<mt::LD>::concatCopy(
       Data::Input::numbers[this],
       Clipboard::pasteNumbers()
     );
@@ -161,7 +152,7 @@ namespace cli_menu {
   void Number::pushInputUnormap(mt::CR_STR input) {
     required.first = false;
 
-    mt_uti::VecTools<mt::LD>::concatCopy(
+    mt_uti::VecTool<mt::LD>::concatCopy(
       Data::Input::numbers[this],
       mt_uti::Scanner::parseNumbers<mt::LD>(input)
     );
@@ -175,14 +166,6 @@ namespace cli_menu {
       return true;
     }
 
-    return false;
-  }
-
-  bool Number::resetOutputUnormap() {
-    if (Data::Output::has(this)) {
-      Data::Output::texts.erase(this);
-      return true;
-    }
     return false;
   }
 
@@ -207,10 +190,10 @@ namespace cli_menu {
     stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
   }
 
-  void Boolean::clipboardPaste() {
+  void Boolean::clipboardInputPaste() {
     required.first = false;
 
-    mt_uti::VecTools<bool>::concatCopy(
+    mt_uti::VecTool<bool>::concatCopy(
       Data::Input::booleans[this],
       Clipboard::pasteConditions()
     );
@@ -231,15 +214,7 @@ namespace cli_menu {
       Data::Input::booleans.erase(this);
       return true;
     }
-
-    return false;
-  }
-
-  bool Boolean::resetOutputUnormap() {
-    if (Data::Output::has(this)) {
-      Data::Output::texts.erase(this);
-      return true;
-    }
+  
     return false;
   }
 
