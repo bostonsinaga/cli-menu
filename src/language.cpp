@@ -117,11 +117,11 @@ namespace cli_menu {
     // SENTENCE_RESET_INPUT_ALL
     "All inputs are removed.",
     // SENTENCE_RESET_INPUT_THIS
-    "This input is removed.",
+    "This and its descendant inputs are removed.",
     // SENTENCE_RESET_OUTPUT_ALL
     "All outputs are removed.",
     // SENTENCE_RESET_OUTPUT_THIS
-    "This output is removed."
+    "This and its descendant outputs are removed."
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
