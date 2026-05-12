@@ -48,7 +48,8 @@ namespace cli_menu {
 
       // keyword with size of vector
       Console::logItalicString(
-        keyvec.first->getKeyword() + " (" + std::to_string(keyvec.second.size()) + "):\n",
+        keyvec.first->generateSequentialRootNames()
+        + '(' + std::to_string(keyvec.second.size()) + "):\n",
         Console::messageColors[CONSOLE_HINT_2]
       );
 
