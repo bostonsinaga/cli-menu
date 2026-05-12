@@ -43,7 +43,7 @@ namespace cli_menu {
     Color::YELLOW(255, 255, 0);
 
   const std::string
-    Color::antidote = "\x1B[0m",
+    Color::antidote = "\x1b[0m",
     Color::italic = "\x1b[3m",
     Color::underline = "\x1b[4m";
 
