@@ -2,6 +2,7 @@
 #define __CLI_MENU__TYPE_CPP__
 
 #include "type.hpp"
+
 namespace cli_menu {
 
   Creator::Creator(
@@ -17,7 +18,6 @@ namespace cli_menu {
       Creator *willDestroyed = nullptr;
 
       if (getChildren()) getChildren()->forEach(
-        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
           // find keyword

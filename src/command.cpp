@@ -45,7 +45,6 @@ namespace cli_menu {
         resetPointer();
 
         static_cast<Command*>(getChildren())->forEach(
-          mt_ds::LinkedList::RIGHT,
           [&](mt_ds::LinkedList *node)->bool {
 
             if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
@@ -60,20 +59,16 @@ namespace cli_menu {
 
       // find first neighbor of the same keyword with 'raws.back()'
       if (!firstChild) {
-        forEach(
-          mt_ds::LinkedList::RIGHT,
-          [&](mt_ds::LinkedList *node)->bool {
-
-            if (node != this &&
-              static_cast<Command*>(node)->testHyphens(Command::raws.back())
-            ) {
-              firstNeighbor = static_cast<Command*>(node);
-              return false;
-            }
-
-            return true;
+        forEach([&](mt_ds::LinkedList *node)->bool {
+          if (node != this &&
+            static_cast<Command*>(node)->testHyphens(Command::raws.back())
+          ) {
+            firstNeighbor = static_cast<Command*>(node);
+            return false;
           }
-        );
+
+          return true;
+        });
       }
 
       // keyword is detected
@@ -146,7 +141,6 @@ namespace cli_menu {
 
       // find first required child
       getChildren()->forEach(
-        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
           if (static_cast<Command*>(node)->required.first) {
@@ -359,18 +353,15 @@ namespace cli_menu {
         resetPointer();
 
         // find first ortho child
-        getChildren()->forEach(
-          mt_ds::GeneralTree::RIGHT,
-          [&](mt_ds::LinkedList *node)->bool {
+        getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
 
-            if (!static_cast<Command*>(node)->pseudo) {
-              firsOrthoChild = static_cast<Command*>(node);
-              return false;
-            }
-
-            return true;
+          if (!static_cast<Command*>(node)->pseudo) {
+            firsOrthoChild = static_cast<Command*>(node);
+            return false;
           }
-        );
+
+          return true;
+        });
 
         if (firsOrthoChild) return firsOrthoChild->dialog();
       }
@@ -392,7 +383,6 @@ namespace cli_menu {
 
     if (hasChildren()) {
       getChildren()->forEach(
-        mt_ds::GeneralTree::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
           if (static_cast<Command*>(node)->callback &&
@@ -524,7 +514,6 @@ namespace cli_menu {
       resetPointer();
 
       getChildren()->forEach(
-        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
 
           if (static_cast<Command*>(node)->testHyphens(
@@ -588,20 +577,17 @@ namespace cli_menu {
     Command *firstOrthoNeighbor = nullptr;
 
     // find first ortho neighbor
-    forEach(
-      direction,
-      [&](mt_ds::LinkedList *node)->bool {
+    forEach([&](mt_ds::LinkedList *node)->bool {
 
-        if (node != this &&
-          !static_cast<Command*>(node)->pseudo
-        ) {
-          firstOrthoNeighbor = static_cast<Command*>(node);
-          return false;
-        }
-
-        return true;
+      if (node != this &&
+        !static_cast<Command*>(node)->pseudo
+      ) {
+        firstOrthoNeighbor = static_cast<Command*>(node);
+        return false;
       }
-    );
+
+      return true;
+    }, direction);
 
     if (firstOrthoNeighbor) {
       // moving is prohibited
@@ -671,19 +657,16 @@ namespace cli_menu {
       resetPointer();
 
       // print children keyword
-      getChildren()->forEach(
-        mt_ds::GeneralTree::RIGHT,
-        [&](mt_ds::LinkedList *node)->bool {
+      getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
 
-          if (!static_cast<Command*>(node)->pseudo) {
-            static_cast<Command*>(node)->printKeyword(
-              consoleCode, numberOfIndents
-            );
-          }
-
-          return true;
+        if (!static_cast<Command*>(node)->pseudo) {
+          static_cast<Command*>(node)->printKeyword(
+            consoleCode, numberOfIndents
+          );
         }
-      );
+
+        return true;
+      });
     }
     // print warning
     else if (displayAtLeafWarning) {
@@ -709,20 +692,17 @@ namespace cli_menu {
   Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
     Command *found = nullptr;
 
-    forEach(
-      mt_ds::LinkedList::RIGHT,
-      [&](mt_ds::LinkedList *node)->bool {
+    forEach([&](mt_ds::LinkedList *node)->bool {
 
-        if (static_cast<Command*>(node)->required.first &&
-          (!onlyOrtho || (onlyOrtho && !static_cast<Command*>(node)->pseudo))
-        ) {
-          found = static_cast<Command*>(node);
-          return false;
-        }
-
-        return true;
+      if (static_cast<Command*>(node)->required.first &&
+        (!onlyOrtho || (onlyOrtho && !static_cast<Command*>(node)->pseudo))
+      ) {
+        found = static_cast<Command*>(node);
+        return false;
       }
-    );
+
+      return true;
+    });
 
     if (found) {
       // strict parent disallowed
@@ -772,7 +752,6 @@ namespace cli_menu {
 
     if (getChildren()) {
       getChildren()->traverse(
-        mt_ds::LinkedList::RIGHT,
         [&](mt_ds::LinkedList *node)->bool {
           static_cast<Command*>(node)->resetInputUnormap();
           return true;

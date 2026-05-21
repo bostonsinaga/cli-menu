@@ -236,7 +236,6 @@ namespace cli_menu {
 
           // set filename with file-in last argument
           current->forEach(
-            mt_ds::LinkedList::RIGHT,
             [&](mt_ds::LinkedList *node)->bool {
 
               if (static_cast<Command*>(node)->getKeyword()
