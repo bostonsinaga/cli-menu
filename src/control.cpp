@@ -143,7 +143,7 @@ namespace cli_menu {
     }
 
     // display terms in rows
-    for (int i = 0; i < Control::totalSymbols; i++) {
+    for (int i = 0; i < onlySymbols.size(); i++) {
 
       std::cout << std::string(numberOfIndents, ' ');
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
