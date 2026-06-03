@@ -52,6 +52,10 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_CHILDREN_ENTER;
   }
 
+  bool Control::childrenSkipEnterTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_SKIP_ENTER;
+  }
+
   bool Control::childrenListTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_CHILDREN_LIST;
   }

@@ -330,6 +330,7 @@ namespace cli_menu {
     "show this help",
     "show controller list",
     "enter the children's level",
+    "directly callback without entering children",
     "show list of children",
     "go to next neighbor",
     "go to previous neighbor",
@@ -357,6 +358,7 @@ namespace cli_menu {
     std::string commandHelpTerm,
     std::string controllerListTerm,
     std::string childrenEnterTerm,
+    std::string childrenSkipEnterTerm,
     std::string childrenListTerm,
     std::string neighborNextTerm,
     std::string neighborPreviousTerm,
@@ -378,6 +380,7 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CONTROLLER_LIST] = controllerListTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_SKIP_ENTER] = childrenSkipEnterTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_LIST] = childrenListTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_NEXT] = neighborNextTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;

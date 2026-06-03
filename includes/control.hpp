@@ -18,21 +18,21 @@ namespace cli_menu {
      */
     inline static const mt::PAIR2<std::string, CONTROL_CODE>
     symbols[totalSymbols][2] = {
-      {{":h", CONTROL_COMMAND_HELP      }, {":H", CONTROL_CONTROLLER_LIST   }},
-      {{":e", CONTROL_CHILDREN_ENTER    }, {":E", CONTROL_CHILDREN_ENTER    }},
-      {{":l", CONTROL_CHILDREN_LIST     }, {":L", CONTROL_CHILDREN_LIST     }},
-      {{":>", CONTROL_NEIGHBOR_NEXT     }, {":>", CONTROL_NEIGHBOR_NEXT     }},
-      {{":<", CONTROL_NEIGHBOR_PREVIOUS }, {":<", CONTROL_NEIGHBOR_PREVIOUS }},
-      {{":m", CONTROL_SWITCH_MODIFY     }, {":M", CONTROL_SWITCH_MODIFY     }},
-      {{":s", CONTROL_SWITCH_SELECT     }, {":S", CONTROL_SWITCH_SELECT     }},
-      {{":v", CONTROL_VIEW_INPUT_THIS   }, {":V", CONTROL_VIEW_OUTPUT_THIS  }},
-      {{":w", CONTROL_VIEW_INPUT_ALL    }, {":W", CONTROL_VIEW_OUTPUT_ALL   }},
-      {{":r", CONTROL_RESET_INPUT_THIS  }, {":R", CONTROL_RESET_OUTPUT_THIS }},
-      {{":x", CONTROL_RESET_INPUT_ALL   }, {":X", CONTROL_RESET_OUTPUT_ALL  }},
-      {{":c", CONTROL_COPY_OUTPUT       }, {":C", CONTROL_COPY_OUTPUT       }},
-      {{":p", CONTROL_PASTE_INPUT       }, {":P", CONTROL_PASTE_INPUT       }},
-      {{":b", CONTROL_PARENT_BACK       }, {":B", CONTROL_PARENT_BACK       }},
-      {{":q", CONTROL_PROGRAM_QUIT      }, {":Q", CONTROL_PROGRAM_QUIT      }}
+      {{ ":h", CONTROL_COMMAND_HELP      }, { ":H", CONTROL_CONTROLLER_LIST     }},
+      {{ ":e", CONTROL_CHILDREN_ENTER    }, { ":E", CONTROL_CHILDREN_SKIP_ENTER }},
+      {{ ":l", CONTROL_CHILDREN_LIST     }, { ":L", CONTROL_CHILDREN_LIST       }},
+      {{ ":>", CONTROL_NEIGHBOR_NEXT     }, { ":>", CONTROL_NEIGHBOR_NEXT       }},
+      {{ ":<", CONTROL_NEIGHBOR_PREVIOUS }, { ":<", CONTROL_NEIGHBOR_PREVIOUS   }},
+      {{ ":m", CONTROL_SWITCH_MODIFY     }, { ":M", CONTROL_SWITCH_MODIFY       }},
+      {{ ":s", CONTROL_SWITCH_SELECT     }, { ":S", CONTROL_SWITCH_SELECT       }},
+      {{ ":v", CONTROL_VIEW_INPUT_THIS   }, { ":V", CONTROL_VIEW_OUTPUT_THIS    }},
+      {{ ":w", CONTROL_VIEW_INPUT_ALL    }, { ":W", CONTROL_VIEW_OUTPUT_ALL     }},
+      {{ ":r", CONTROL_RESET_INPUT_THIS  }, { ":R", CONTROL_RESET_OUTPUT_THIS   }},
+      {{ ":x", CONTROL_RESET_INPUT_ALL   }, { ":X", CONTROL_RESET_OUTPUT_ALL    }},
+      {{ ":c", CONTROL_COPY_OUTPUT       }, { ":C", CONTROL_COPY_OUTPUT         }},
+      {{ ":p", CONTROL_PASTE_INPUT       }, { ":P", CONTROL_PASTE_INPUT         }},
+      {{ ":b", CONTROL_PARENT_BACK       }, { ":B", CONTROL_PARENT_BACK         }},
+      {{ ":q", CONTROL_PROGRAM_QUIT      }, { ":Q", CONTROL_PROGRAM_QUIT        }}
     };
 
     // find 'symbols' pattern in 'rawstr'
@@ -47,6 +47,7 @@ namespace cli_menu {
     static bool commandHelpTest(mt::CR_STR rawstr);
     static bool controllerListTest(mt::CR_STR rawstr);
     static bool childrenEnterTest(mt::CR_STR rawstr);
+    static bool childrenSkipEnterTest(mt::CR_STR rawstr);
     static bool childrenListTest(mt::CR_STR rawstr);
     static bool neighborNextTest(mt::CR_STR rawstr);
     static bool neighborPreviousTest(mt::CR_STR rawstr);

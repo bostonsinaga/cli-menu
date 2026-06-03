@@ -61,6 +61,7 @@ namespace cli_menu {
     CONTROL_COMMAND_HELP,
     CONTROL_CONTROLLER_LIST,
     CONTROL_CHILDREN_ENTER,
+    CONTROL_CHILDREN_SKIP_ENTER,
     CONTROL_CHILDREN_LIST,
     CONTROL_NEIGHBOR_NEXT,
     CONTROL_NEIGHBOR_PREVIOUS,
@@ -113,7 +114,7 @@ namespace cli_menu {
 
     struct xControl {
 
-      static constexpr int totalCodes = 20;
+      static constexpr int totalCodes = 21;
       static mt::STRUNORMAP<mt::ARR_STR<totalCodes>> terms;
 
       static mt::STRUNORMAP_STR
@@ -224,6 +225,7 @@ namespace cli_menu {
         std::string commandHelpTerm,
         std::string controllerListTerm,
         std::string childrenEnterTerm,
+        std::string childrenSkipEnterTerm,
         std::string childrenListTerm,
         std::string neighborNextTerm,
         std::string neighborPreviousTerm,
