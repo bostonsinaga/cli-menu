@@ -84,8 +84,8 @@ namespace cli_menu {
     Command *setStatus(const COMMAND_CODE &code);
 
     // after dialog interactions
-    Command *enter();
     Command *igniteCallbacks();
+    Command *enter(mt::CR_BOL skipChildren);
     Command *goDown(mt::CR_STR input);
     Command *goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
 

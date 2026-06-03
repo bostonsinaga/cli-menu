@@ -330,7 +330,7 @@ namespace cli_menu {
     "show this help",
     "show controller list",
     "enter the children level",
-    "directly callback from this"
+    "directly callback from this",
     "show list of children",
     "go to next neighbor",
     "go to previous neighbor",

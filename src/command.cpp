@@ -207,7 +207,12 @@ namespace cli_menu {
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
-        Command *lastNode = enter();
+        Command *lastNode = enter(false);
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+      }
+      // SKIP ENTER CHILDREN
+      else if (Control::childrenSkipEnterTest(rawstr)) {        
+        Command *lastNode = enter(true);
         if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
       // LIST CHILDREN
@@ -336,7 +341,7 @@ namespace cli_menu {
     return setStatus(COMMAND_TERMINATED);
   }
 
-  Command *Command::enter() {
+  Command *Command::enter(mt::CR_BOL skipChildren) {
 
     // continue the interrupted match
     if (Command::interruptionDialogued && !required.first) {
@@ -347,31 +352,42 @@ namespace cli_menu {
     else {
       Command *firstRequiredNeighbor = strictParentHasRequired(true);
 
-      // go to children level
-      if (!firstRequiredNeighbor && hasChildren()) {
-        Command *firsOrthoChild = nullptr;
-        resetPointer();
-
-        // find first ortho child
-        getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
-
-          if (!static_cast<Command*>(node)->pseudo) {
-            firsOrthoChild = static_cast<Command*>(node);
-            return false;
-          }
-
-          return true;
-        });
-
-        if (firsOrthoChild) return firsOrthoChild->dialog();
-      }
       // uncompleted required neighbors with strict parent
-      else if (firstRequiredNeighbor) {
+      if (firstRequiredNeighbor) {
         return setStatus(COMMAND_ONGOING);
+      }
+      else if (hasChildren()) {
+
+        // skip to children level
+        if (skipChildren) {
+          Command *firstRequiredChild = static_cast<Command*>(getChildren())->strictParentHasRequired(true);
+
+          // stricted and cannot skip the children
+          if (firstRequiredChild && strict) {
+            return setStatus(COMMAND_ONGOING);
+          }
+        }
+        else { // go to children level
+          Command *firsOrthoChild = nullptr;
+          resetPointer();
+
+          // find first ortho child
+          getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
+
+            if (!static_cast<Command*>(node)->pseudo) {
+              firsOrthoChild = static_cast<Command*>(node);
+              return false;
+            }
+
+            return true;
+          });
+
+          if (firsOrthoChild) return firsOrthoChild->dialog();
+        }
       }
     }
 
-    // no required nodes (done)
+    // skipping children or this has no children
     return igniteCallbacks();
   }
 

@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
     }
   );
 
+  users->makeStrict();
+
   cm::Boolean *men = users->createBoolean(
     "men",
     "Born to fight",
