@@ -1,64 +1,23 @@
 #include "cli-menu.hpp"
+#include "reader.hpp"
+#include "writer.hpp"
 
 int main(int argc, char *argv[]) {
 
-  cm::Program<cm::Boolean> *users = cm::Program<cm::Boolean>::create(
-    "users",
+  cm::Program<cm::Boolean> *cli_log = cm::Program<cm::Boolean>::create(
+    "log",
     cm::ProgramAbout(
-      "Describe your loyalty users.",
+      "Record the set of IDs, names, and values into a file or display them in the terminal",
       "Boston Sinaga",
       "https://github.com/bostonsinaga/cli-menu",
       cm::ProgramVersion(1, 0, 0)
-    ),
-    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
-
-      cm::Console::logResponse(
-        cm::CONSOLE_HINT_1, "Hello Users"
-      );
-
-      return cm::COMMAND_CALLBACK_SUCCEEDED;
-    }
+    )
   );
 
-  users->makeStrict();
+  initRead(cli_log);
+  initWrite(cli_log);
+  initFilter(cli_log);
 
-  cm::Boolean *men = users->createBoolean(
-    "men",
-    "Born to fight",
-    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
-
-      cm::Console::logResponse(
-        cm::CONSOLE_HINT_1, "Hello Men"
-      );
-
-      return cm::COMMAND_CALLBACK_SUCCEEDED;
-    }
-  );
-
-  men->makeRequired();
-  cm::Preset::File::applyTextIn(men, true);
-  cm::Preset::File::applyTextOutFallback(men, true);
-
-  cm::Boolean *women = users->createBoolean(
-    "women",
-    "Beutiful and smart",
-    [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
-
-      cm::Console::logResponse(
-        cm::CONSOLE_HINT_1, "Hello Women"
-      );
-
-      return cm::COMMAND_CALLBACK_SUCCEEDED;
-    }
-  );
-
-  women->makeRequired();
-  cm::Preset::File::applyTextIn(women, true);
-  cm::Preset::File::applyTextOutFallback(women, true);
-
-  // proceed
   users->run(argc, argv);
-  users->destroy();
-
   return 0;
 }
