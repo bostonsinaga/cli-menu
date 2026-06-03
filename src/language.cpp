@@ -329,8 +329,8 @@ namespace cli_menu {
   mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalCodes>> Langu::xControl::terms = {{"en", {
     "show this help",
     "show controller list",
-    "enter the children's level",
-    "directly callback without entering children",
+    "enter the children level",
+    "directly callback from this"
     "show list of children",
     "go to next neighbor",
     "go to previous neighbor",
