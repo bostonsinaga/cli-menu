@@ -309,16 +309,14 @@ namespace cli_menu {
       }
       // BACK TO PARENT
       else if (Control::parentBackTest(rawstr)) {
-        if (getParent()) {
-          // moving is prohibited
-          if (Command::interruptionDialogued) {
-            printInterruptionDialoguedResponse();
-          }
-          // go to parent
-          else return static_cast<Command*>(getParent())->dialog();
-        }
-        // this is root
-        else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
+        Command *lastNode = backTo(getParent());
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+      }
+      // BACK TO ROOT
+      else if (Control::rootBackTest(rawstr)) {
+        mt_ds::GeneralTree *root = getRoot();
+        Command *lastNode = backTo(root == this ? nullptr : root);
+        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
       }
       // EXIT PROGRAM
       else if (Control::programQuitTest(rawstr)) {
@@ -339,6 +337,21 @@ namespace cli_menu {
     }
 
     return setStatus(COMMAND_TERMINATED);
+  }
+
+  Command *Command::backTo(mt_ds::GeneralTree *topNode) {
+    if (topNode) {
+      // moving is prohibited
+      if (Command::interruptionDialogued) {
+        printInterruptionDialoguedResponse();
+      }
+      // go back to parent
+      else return static_cast<Command*>(topNode)->dialog();
+    }
+    // this is root
+    else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
+
+    return setStatus(COMMAND_ONGOING);
   }
 
   Command *Command::enter(mt::CR_BOL skipChildren) {

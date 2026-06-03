@@ -78,6 +78,7 @@ namespace cli_menu {
     CONTROL_COPY_OUTPUT,
     CONTROL_PASTE_INPUT,
     CONTROL_PARENT_BACK,
+    CONTROL_ROOT_BACK,
     CONTROL_PROGRAM_QUIT,
     CONTROL_UNKNOWN
   };
@@ -113,8 +114,7 @@ namespace cli_menu {
     };
 
     struct xControl {
-
-      static constexpr int totalCodes = 21;
+      static constexpr int totalCodes = 22;
       static mt::STRUNORMAP<mt::ARR_STR<totalCodes>> terms;
 
       static mt::STRUNORMAP_STR
@@ -242,6 +242,7 @@ namespace cli_menu {
         std::string copyOutputTerm,
         std::string pasteInputTerm,
         std::string parentBackTerm,
+        std::string rootBackTerm,
         std::string programQuitTerm
       );
 

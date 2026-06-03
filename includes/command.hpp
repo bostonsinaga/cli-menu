@@ -85,6 +85,7 @@ namespace cli_menu {
 
     // after dialog interactions
     Command *igniteCallbacks();
+    Command *backTo(mt_ds::GeneralTree *topNode);
     Command *enter(mt::CR_BOL skipChildren);
     Command *goDown(mt::CR_STR input);
     Command *goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);

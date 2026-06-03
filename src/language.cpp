@@ -347,6 +347,7 @@ namespace cli_menu {
     "copy text from this output",
     "paste text into this input",
     "back to parent level",
+    "back to root level",
     "exit the program"
   }}};
 
@@ -375,6 +376,7 @@ namespace cli_menu {
     std::string copyOutputTerm,
     std::string pasteInputTerm,
     std::string parentBackTerm,
+    std::string rootBackTerm,
     std::string programQuitTerm
   ) {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
@@ -397,6 +399,7 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COPY_OUTPUT] = copyOutputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PASTE_INPUT] = pasteInputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PARENT_BACK] = parentBackTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_ROOT_BACK] = rootBackTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PROGRAM_QUIT] = programQuitTerm;
   }
 

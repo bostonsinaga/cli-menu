@@ -31,7 +31,7 @@ namespace cli_menu {
       {{ ":x", CONTROL_RESET_INPUT_ALL   }, { ":X", CONTROL_RESET_OUTPUT_ALL    }},
       {{ ":c", CONTROL_COPY_OUTPUT       }, { ":C", CONTROL_COPY_OUTPUT         }},
       {{ ":p", CONTROL_PASTE_INPUT       }, { ":P", CONTROL_PASTE_INPUT         }},
-      {{ ":b", CONTROL_PARENT_BACK       }, { ":B", CONTROL_PARENT_BACK         }},
+      {{ ":b", CONTROL_PARENT_BACK       }, { ":B", CONTROL_ROOT_BACK           }},
       {{ ":q", CONTROL_PROGRAM_QUIT      }, { ":Q", CONTROL_PROGRAM_QUIT        }}
     };
 
@@ -64,6 +64,7 @@ namespace cli_menu {
     static bool copyOutputTest(mt::CR_STR rawstr);
     static bool pasteInputTest(mt::CR_STR rawstr);
     static bool parentBackTest(mt::CR_STR rawstr);
+    static bool rootBackTest(mt::CR_STR rawstr);
     static bool programQuitTest(mt::CR_STR rawstr);
 
     static void printAbbreviations(

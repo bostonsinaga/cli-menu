@@ -120,6 +120,10 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_PARENT_BACK;
   }
 
+  bool Control::rootBackTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_ROOT_BACK;
+  }
+
   bool Control::programQuitTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_PROGRAM_QUIT;
   }
