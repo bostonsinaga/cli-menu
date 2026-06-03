@@ -47,65 +47,65 @@ namespace cli_menu {
 
   mt::STRUNORMAP<mt::ARR_STR<Langu::xMessage::totalSentences>> Langu::xMessage::sentences = {{"en", {    
     // SENTENCE_ARGUMENT_REQUIRED
-    "Prohibited without explicit arguments",
+    "prohibited without explicit arguments",
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
-    "Forbidden controller on instant boolean question",
+    "forbidden controller on instant boolean question",
     // SENTENCE_CLIPBOARD_COPY_FAILURE
-    "Operation result is empty",
+    "operation result is empty",
     // SENTENCE_CLIPBOARD_COPY_SUCCEED
-    "Copied to clipboard",
+    "copied to clipboard",
     // SENTENCE_CLIPBOARD_GET_FAILURE,
-    "Failed to get clipboard data",
+    "failed to get clipboard data",
     // SENTENCE_CLIPBOARD_LOCK_FAILURE
-    "Failed to lock clipboard data",
+    "failed to lock clipboard data",
     // SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE
-    "Failed to allocate memory for clipboard operation",
+    "failed to allocate memory for clipboard operation",
     // SENTENCE_CLIPBOARD_OPEN_FAILURE,
-    "Failed to open clipboard",
+    "failed to open clipboard",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
-    "Pasted from clipboard",
+    "pasted from clipboard",
     // SENTENCE_EMPTY_INPUT_ALL
-    "No inputs at all",
+    "no inputs at all",
     // SENTENCE_EMPTY_INPUT_THIS
-    "This input is empty",
+    "this input is empty",
     // SENTENCE_EMPTY_OUTPUT_ALL
-    "No outputs at all",
+    "no outputs at all",
     // SENTENCE_EMPTY_OUTPUT_THIS
-    "This output is empty",
+    "this output is empty",
     // SENTENCE_EMPTY_WRITE_OUTPUT_THIS
-    "Output inside '$' is empty",
+    "output inside '$' is empty",
     // SENTENCE_FILE_OVERWRITE_QUESTION
-    "Are you sure you want to overwrite '$'?",
+    "are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
-    "Cannot write file because the path or filename is invalid, permission is not granted, or the disk is full",
+    "cannot write file because the path or filename is invalid, permission is not granted, or the disk is full",
     // SENTENCE_FILE_WRITE_SUCCEED
-    "Output is written to '$'",
+    "output is written to '$'",
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
-    "Hidden text pasting is only available on insertion",
+    "hidden text pasting is only available on insertion",
     // SENTENCE_INTERRUPTION_DIALOG
-    "Prohibited until the remaining direct inputs are processed",
+    "prohibited until the remaining direct inputs are processed",
     // SENTENCE_KEYWORD_NOT_FOUND
     "'$' not found",
     // SENTENCE_MODE_ALREADY_EDITING
-    "Already in edit mode",
+    "already in edit mode",
     // SENTENCE_MODE_ALREADY_SELECTING
-    "Already in select mode",
+    "already in select mode",
     // SENTENCE_MODE_SWITCH_TO_MODIFICATION
-    "Switch to edit mode",
+    "switch to edit mode",
     // SENTENCE_MODE_SWITCH_TO_SELECTION
-    "Switch to select mode",
+    "switch to select mode",
     // SENTENCE_PARAMETER_ALONE
-    "This node has no neighbors",
+    "this node has no neighbors",
     // SENTENCE_PARAMETER_AT_LEAF
-    "This node does not contain any children",
+    "this node does not contain any children",
     // SENTENCE_PARAMETER_AT_ROOT
-    "No more groups above",
+    "no more groups above",
     // SENTENCE_PARAMETER_NOT_FOUND
-    "Parameter not found",
+    "parameter not found",
     // SENTENCE_PARAMETER_REQUIRED
     "'$' needs explicit arguments",
     // SENTENCE_PARENT_STRICT
-    "Parent needs explicit arguments for all its required children",
+    "parent needs explicit arguments for all its required children",
     // SENTENCE_PROGRAM_TERMINATED
     "TERMINATED",
     // SENTENCE_PROGRAM_FAILED
@@ -115,13 +115,13 @@ namespace cli_menu {
     // SENTENCE_PROGRAM_SUCCEEDED
     "SUCCEEDED",
     // SENTENCE_RESET_INPUT_ALL
-    "All inputs are removed",
+    "all inputs are removed",
     // SENTENCE_RESET_INPUT_THIS
-    "This and its descendant inputs are removed",
+    "this and its descendant inputs are removed",
     // SENTENCE_RESET_OUTPUT_ALL
-    "All outputs are removed",
+    "all outputs are removed",
     // SENTENCE_RESET_OUTPUT_THIS
-    "This and its descendant outputs are removed"
+    "this and its descendant outputs are removed"
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
