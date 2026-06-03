@@ -1,23 +1,26 @@
 #include "cli-menu.hpp"
-#include "reader.hpp"
-#include "writer.hpp"
+#include "read.hpp"
+#include "write.hpp"
+#include "filter.hpp"
 
 int main(int argc, char *argv[]) {
 
+  // main menu
   cm::Program<cm::Boolean> *cli_log = cm::Program<cm::Boolean>::create(
     "log",
     cm::ProgramAbout(
-      "Record the set of IDs, names, and values into a file or display them in the terminal",
+      "Log the set of IDs, names, and values into a TXT file or display them in the terminal",
       "Boston Sinaga",
       "https://github.com/bostonsinaga/cli-menu",
       cm::ProgramVersion(1, 0, 0)
     )
   );
 
+  // partial initializations
   initRead(cli_log);
   initWrite(cli_log);
   initFilter(cli_log);
 
-  users->run(argc, argv);
+  cli_log->run(argc, argv);
   return 0;
 }
