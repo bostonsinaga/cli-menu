@@ -1,8 +1,8 @@
 @echo off
 ninja -C ../build
 
-IF EXIST "..\build\test\users.exe" (
-  COPY "..\build\test\users.exe" "..\test\users.exe"
+IF EXIST "..\build\test\log.exe" (
+  COPY "..\build\test\log.exe" "..\test\log.exe"
 ) ELSE (
   ECHO Executable does not exist!
 )
