@@ -1,5 +1,5 @@
-add_executable(users main.cpp)
+add_executable(log main.cpp)
 
-target_link_libraries(users PRIVATE
+target_link_libraries(log PRIVATE
   mini-tools ${PROJECT_NAME}
 )

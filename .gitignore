@@ -1,3 +1,3 @@
 build/*
-test/logs/*
-test/users.exe
+test/logs
+test/log.exe
