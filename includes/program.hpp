@@ -52,7 +52,7 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
       COMMAND_CALLBACK callback_in
-    );
+    ) : T(keyword_in, about_in.stringify(), callback_in) {}
 
   public:
     Program() = delete;

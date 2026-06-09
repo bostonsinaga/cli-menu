@@ -41,17 +41,6 @@ namespace cli_menu {
   }
 
   template <CommandType T>
-  Program<T>::Program(
-    mt::CR_STR keyword_in,
-    const ProgramAbout &about_in,
-    COMMAND_CALLBACK callback_in
-  ) : T(
-    keyword_in,
-    about_in.stringify(),
-    callback_in
-  ) { Command::makeRequired(); }
-
-  template <CommandType T>
   Program<T> *Program<T>::create(
     mt::CR_STR keyword_in,
     const ProgramAbout &about_in,
@@ -91,19 +80,22 @@ namespace cli_menu {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_TERMINATED);
         break;
       }
-      else if (lastNode->getStatusCode() == COMMAND_SUCCEEDED) {
-        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_SUCCEEDED);
+      else if (lastNode->getStatusCode() == COMMAND_DONE) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_DONE);
       }
       else if (lastNode->getStatusCode() == COMMAND_CANCELED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_CANCELED);
       }
-      else if (lastNode->getStatusCode() == COMMAND_FAILED) {
-        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_FAILED);
+      else if (lastNode->getStatusCode() == COMMAND_ERROR) {
+        Langu::ageMessage::printResponse(SENTENCE_PROGRAM_ERROR);
       }
 
       if (lastNode->isDialogued()) lastNode = lastNode->dialog();
       else break;
     }
+
+    // delete this and its descendants
+    Command::destroy();
   }
 }
 
