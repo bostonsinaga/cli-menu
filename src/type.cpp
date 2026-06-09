@@ -91,7 +91,7 @@ namespace cli_menu {
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     COMMAND_CALLBACK callback_in
-  ) : Creator (
+  ) : Creator(
     keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
@@ -133,7 +133,7 @@ namespace cli_menu {
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     COMMAND_CALLBACK callback_in
-  ) : Creator (
+  ) : Creator(
     keyword_in, description_in, callback_in
   ) {
     hyphens = "-";
@@ -183,7 +183,7 @@ namespace cli_menu {
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
     COMMAND_CALLBACK callback_in
-  ) : Creator (
+  ) : Creator(
     keyword_in, description_in, callback_in
   ) {
     hyphens = "--";

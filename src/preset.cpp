@@ -12,7 +12,7 @@ namespace cli_menu {
       Langu::agePreset::getDescription(PRESET_HELP),
       [](Command *current)->COMMAND_CALLBACK_CODE {
         static_cast<Creator*>(current->getParent())->printHelp();
-        return COMMAND_CALLBACK_SUCCEEDED;
+        return COMMAND_CALLBACK_DONE;
       }
     );
 
@@ -27,7 +27,7 @@ namespace cli_menu {
       Langu::agePreset::getDescription(PRESET_LIST),
       [](Command *current)->COMMAND_CALLBACK_CODE {
         static_cast<Creator*>(current->getParent())->printList(CONSOLE_HINT_2, 0, true);
-        return COMMAND_CALLBACK_SUCCEEDED;
+        return COMMAND_CALLBACK_DONE;
       }
     );
 
@@ -129,10 +129,10 @@ namespace cli_menu {
         }
 
         if (found || !Data::Input::numberOfWords(current)) {
-          return COMMAND_CALLBACK_SUCCEEDED;
+          return COMMAND_CALLBACK_DONE;
         }
 
-        return COMMAND_CALLBACK_FAILED;
+        return COMMAND_CALLBACK_ERROR;
       }
     );
   }
@@ -196,7 +196,7 @@ namespace cli_menu {
             filename
           );
 
-          return COMMAND_CALLBACK_SUCCEEDED;
+          return COMMAND_CALLBACK_DONE;
         }
       }
       else Langu::ageMessage::printTemplateResponse(
@@ -205,7 +205,7 @@ namespace cli_menu {
       );
     }
 
-    return COMMAND_CALLBACK_FAILED;
+    return COMMAND_CALLBACK_ERROR;
   }
 
   void Preset::File::applyCustomOut(
@@ -259,7 +259,7 @@ namespace cli_menu {
         COMMAND_CALLBACK_CODE callbackCode = useTextOut(current, filename);
 
         // file write failed message
-        if (callbackCode == COMMAND_CALLBACK_FAILED) {
+        if (callbackCode == COMMAND_CALLBACK_ERROR) {
           Langu::ageMessage::printResponse(SENTENCE_FILE_WRITE_FAILURE);
         }
 
@@ -274,7 +274,7 @@ namespace cli_menu {
       [](Command *current)->COMMAND_CALLBACK_CODE {
         std::string filename = Data::Input::getLastWord(current);
         useTextOut(current, filename);
-        return COMMAND_CALLBACK_SUCCEEDED;
+        return COMMAND_CALLBACK_DONE;
       }
     );
   }
