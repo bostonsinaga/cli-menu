@@ -108,12 +108,12 @@ namespace cli_menu {
     "parent needs explicit arguments for all its required children",
     // SENTENCE_PROGRAM_TERMINATED
     "TERMINATED",
-    // SENTENCE_PROGRAM_FAILED
-    "FAILED",
+    // SENTENCE_PROGRAM_ERROR
+    "ERROR",
     // SENTENCE_PROGRAM_CANCELED
     "CANCELED",
-    // SENTENCE_PROGRAM_SUCCEEDED
-    "SUCCEEDED",
+    // SENTENCE_PROGRAM_DONE
+    "DONE",
     // SENTENCE_RESET_INPUT_ALL
     "all inputs are removed",
     // SENTENCE_RESET_INPUT_THIS
@@ -187,11 +187,11 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_PROGRAM_TERMINATED
     CONSOLE_CANCEL,
-    // SENTENCE_PROGRAM_FAILED
+    // SENTENCE_PROGRAM_ERROR
     CONSOLE_ERROR,
     // SENTENCE_PROGRAM_CANCELED
     CONSOLE_CANCEL,
-    // SENTENCE_PROGRAM_SUCCEEDED
+    // SENTENCE_PROGRAM_DONE
     CONSOLE_CORRECT,
     // SENTENCE_RESET_INPUT_THIS
     CONSOLE_HINT_1,
@@ -235,9 +235,9 @@ namespace cli_menu {
     mt::CR_STR parameterRequiredSentence,
     mt::CR_STR parentStrictSentence,
     mt::CR_STR programTerminatedSentence,
-    mt::CR_STR programFailedSentence,
+    mt::CR_STR programErrorSentence,
     mt::CR_STR programCanceledSentence,
-    mt::CR_STR programSucceededSentence,
+    mt::CR_STR programDoneSentence,
     mt::CR_STR resetInputAllSentence,
     mt::CR_STR resetInputThisSentence,
     mt::CR_STR resetOutputAllSentence,
@@ -274,9 +274,9 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_REQUIRED] = parameterRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARENT_STRICT] = parentStrictSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_TERMINATED] = programTerminatedSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_FAILED] = programFailedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_ERROR] = programErrorSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_CANCELED] = programCanceledSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_SUCCEEDED] = programSucceededSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_DONE] = programDoneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_ALL] = resetInputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_THIS] = resetInputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_ALL] = resetOutputAllSentence;
