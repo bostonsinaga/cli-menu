@@ -8,9 +8,9 @@ namespace cli_menu {
 
   // status codes
   enum COMMAND_CODE {
-    COMMAND_FAILED, COMMAND_CANCELED,
-    COMMAND_SUCCEEDED, COMMAND_TERMINATED,
-    COMMAND_ONGOING, COMMAND_PSEUDO_ENDED
+    COMMAND_ERROR, COMMAND_ONGOING,
+    COMMAND_DONE, COMMAND_CANCELED,
+    COMMAND_TERMINATED, COMMAND_PSEUDO_ENDED
   };
 
   // phase codes
@@ -22,9 +22,9 @@ namespace cli_menu {
 
   // callback codes
   enum COMMAND_CALLBACK_CODE {
-    COMMAND_CALLBACK_FAILED,
-    COMMAND_CALLBACK_CANCELED,
-    COMMAND_CALLBACK_SUCCEEDED
+    COMMAND_CALLBACK_ERROR,
+    COMMAND_CALLBACK_DONE,
+    COMMAND_CALLBACK_CANCELED
   };
 
   typedef std::function<COMMAND_CALLBACK_CODE(Command*)> COMMAND_CALLBACK;
@@ -32,7 +32,7 @@ namespace cli_menu {
   class Command : public mt_ds::GeneralTree {
   protected:
     inline static COMMAND_CALLBACK defaultCallback = [](Command *current)->COMMAND_CALLBACK_CODE {
-      return COMMAND_CALLBACK_SUCCEEDED;
+      return COMMAND_CALLBACK_DONE;
     };
 
   private:
@@ -52,7 +52,7 @@ namespace cli_menu {
 
     inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
 
-    // always set this code before moving to another node
+    // this code always set before moving to another node
     COMMAND_CODE statusCode = COMMAND_ONGOING;
 
     // return false to stop the program 
@@ -66,7 +66,7 @@ namespace cli_menu {
 
     /**
      * Invoke input or output callbacks.
-     * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default
+     * Will return 'COMMAND_CALLBACK_DONE' by default
      * if there is no 'asInput' or 'asOutput' condition from the children.
      */
     COMMAND_CALLBACK_CODE forEachInOutCallbacks(
@@ -75,7 +75,7 @@ namespace cli_menu {
 
     /**
      * Invoke input-process-output callbacks.
-     * Will return 'COMMAND_CALLBACK_SUCCEEDED' by default
+     * Will return 'COMMAND_CALLBACK_DONE' by default
      * if this has no callback and no children with 'asInput' and 'asOutput' conditions.
      */
     COMMAND_CALLBACK_CODE triggerCallbacks();
@@ -162,17 +162,15 @@ namespace cli_menu {
 
     /**
      * Will not open dialog to complete the required.
-     * Directly display 'COMMAND_FAILED'.
+     * Directly display 'COMMAND_ERROR'.
      */
 
     // local
-    void noDialogue(mt::CR_BOL condition = true) {
-      localDialogued = !condition;
-    }
+    void noDialogue() { localDialogued = false; }
 
     // global
-    static void banDialogue(mt::CR_BOL condition = true) {
-      Command::globalDialogued = !condition;
+    static void banDialogue() {
+      Command::globalDialogued = false;
     }
 
     // ask both
@@ -186,13 +184,11 @@ namespace cli_menu {
      */
 
     // local
-    void noPropagation(mt::CR_BOL condition = true) {
-      localPropagation = !condition;
-    }
+    void noPropagation() { localPropagation = false; }
 
     // global
-    static void banPropagation(mt::CR_BOL condition = true) {
-      Command::globalPropagation = !condition;
+    static void banPropagation() {
+      Command::globalPropagation = false;
     }
 
     // ask both
@@ -210,32 +206,25 @@ namespace cli_menu {
      * 
      * DOES NOT APPLY TO THE ROOT.
      */
-    void makePseudo(mt::CR_BOL condition = true);
+    void makePseudo();
 
     /**
      * Make arguments must be provided explicitly
      * to be able to call the 'igniteCallbacks'.
      */
-    void makeRequired(mt::CR_BOL condition = true) {
-      required = {condition, condition};
-    }
+    void makeRequired() { required = { true, true }; }
 
     /**
      * Make all the required descendants must be
      * completed to be able to call the 'igniteCallbacks'.
      */
-    void makeStrict(mt::CR_BOL condition = true) {
-      strict = condition;
-    }
+    void makeStrict() { strict = true; }
 
     /**
      * Make this cannot have children
      * and the existing can be deleted.
      */
-    void makeSterilized(
-      mt::CR_BOL condition = true,
-      mt::CR_BOL willDestroy = false
-    );
+    void makeSterilized(mt::CR_BOL becomeLeaf = false);
 
     /**
      * Make parent call this callback

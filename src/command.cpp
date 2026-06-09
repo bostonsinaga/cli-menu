@@ -180,7 +180,7 @@ namespace cli_menu {
     }
   }
 
-  Command *Command::setStatus(const COMMAND_CODE & code) {
+  Command *Command::setStatus(const COMMAND_CODE &code) {
     statusCode = code;
     return this;
   }
@@ -408,7 +408,7 @@ namespace cli_menu {
     const std::function<bool(Command*)> &asWhatCallback
   ) {
     COMMAND_CALLBACK_CODE callbackCode;
-    bool anyFailed = false, anyCanceled = false;
+    bool anyError = false, anyCanceled = false;
 
     if (hasChildren()) {
       getChildren()->forEach(
@@ -421,8 +421,8 @@ namespace cli_menu {
               static_cast<Command*>(node)
             );
 
-            if (callbackCode == COMMAND_CALLBACK_FAILED) {
-              anyFailed = true;
+            if (callbackCode == COMMAND_CALLBACK_ERROR) {
+              anyError = true;
             }
             else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
               anyCanceled = true;
@@ -434,9 +434,9 @@ namespace cli_menu {
       );
     }
 
-    if (anyFailed) return COMMAND_CALLBACK_FAILED;
+    if (anyError) return COMMAND_CALLBACK_ERROR;
     else if (anyCanceled) return COMMAND_CALLBACK_CANCELED;
-    return COMMAND_CALLBACK_SUCCEEDED;
+    return COMMAND_CALLBACK_DONE;
   }
 
   COMMAND_CALLBACK_CODE Command::triggerCallbacks() {
@@ -447,7 +447,7 @@ namespace cli_menu {
       );
 
       // process
-      COMMAND_CALLBACK_CODE processCallbackCode = COMMAND_CALLBACK_SUCCEEDED;
+      COMMAND_CALLBACK_CODE processCallbackCode = COMMAND_CALLBACK_DONE;
       if (callback) processCallbackCode = callback(this);
 
       // output
@@ -455,18 +455,18 @@ namespace cli_menu {
         [](Command *current)->bool { return current->asOutput; }
       );
 
-      if (outputCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+      if (outputCallbackCode != COMMAND_CALLBACK_DONE) {
         return outputCallbackCode;
       }
-      else if (processCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+      else if (processCallbackCode != COMMAND_CALLBACK_DONE) {
         return processCallbackCode;
       }
-      else if (inputCallbackCode != COMMAND_CALLBACK_SUCCEEDED) {
+      else if (inputCallbackCode != COMMAND_CALLBACK_DONE) {
         return inputCallbackCode;
       }
     }
 
-    return COMMAND_CALLBACK_SUCCEEDED;
+    return COMMAND_CALLBACK_DONE;
   }
 
   Command *Command::igniteCallbacks() {
@@ -477,15 +477,15 @@ namespace cli_menu {
       bubble([&](mt_ds::LinkedList *node)->bool {
         callbackCode = static_cast<Command*>(node)->triggerCallbacks();
 
-        if (callbackCode == COMMAND_CALLBACK_FAILED) {
-          propagatingCode = COMMAND_FAILED;
+        if (callbackCode == COMMAND_CALLBACK_ERROR) {
+          propagatingCode = COMMAND_ERROR;
           return false;
         }
         else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
           propagatingCode = COMMAND_CANCELED;
           return false;
         }
-        else propagatingCode = COMMAND_SUCCEEDED;
+        else propagatingCode = COMMAND_DONE;
 
         return static_cast<Command*>(node)->localPropagation;
       });
@@ -495,14 +495,14 @@ namespace cli_menu {
     else { // not propagated
       COMMAND_CALLBACK_CODE callbackCode = triggerCallbacks();
 
-      if (callbackCode == COMMAND_CALLBACK_FAILED) {
-        return setStatus(COMMAND_FAILED);
+      if (callbackCode == COMMAND_CALLBACK_ERROR) {
+        return setStatus(COMMAND_ERROR);
       }
       else if (callbackCode == COMMAND_CALLBACK_CANCELED) {
         return setStatus(COMMAND_CANCELED);
       }
 
-      return setStatus(COMMAND_SUCCEEDED);
+      return setStatus(COMMAND_DONE);
     }
   }
 
@@ -757,27 +757,25 @@ namespace cli_menu {
     return found;
   }
 
-  void Command::makePseudo(mt::CR_BOL condition) {
+  void Command::makePseudo() {
     if (getParent()) {
-      pseudo = condition;
-      localPropagation = !condition;
-      static_cast<Command*>(getParent())->pseudosCount += 1 - !condition * 2;
+      pseudo = true;
+      localPropagation = false;
+      static_cast<Command*>(getParent())->pseudosCount++;
     }
   }
 
-  void Command::makeSterilized(
-    mt::CR_BOL condition,
-    mt::CR_BOL willDestroy
-  ) {
-    if (condition && willDestroy && getChildren()) {
-      getChildren()->destroy();
+  void Command::makeSterilized(mt::CR_BOL becomeLeaf) {
+
+    if (becomeLeaf && getChildren()) {
+      getChildren()->annihilate();
     }
 
-    sterilized = condition;
+    sterilized = true;
   }
 
   bool Command::resetInputUnormapDescendants() {
-    bool resetSucceeded = resetInputUnormap();
+    bool hasReset = resetInputUnormap();
 
     if (getChildren()) {
       getChildren()->traverse(
@@ -788,7 +786,7 @@ namespace cli_menu {
       );
     }
 
-    return resetSucceeded;
+    return hasReset;
   }
 
   /** Belows are declared in 'data.hpp' */
