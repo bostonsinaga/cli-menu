@@ -85,7 +85,7 @@ namespace cli_menu {
          * The 'Command::raws' is not 'pop_back()'.
          */
         else if (
-          required.first && isDialogued() &&
+          required.first && dialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_INPUT_BOOLEAN
         ) {
           printWelcome();
@@ -115,23 +115,25 @@ namespace cli_menu {
       }
     }
 
-    // extended runtime input
-    if (required.first && isDialogued()) {
-      printWelcome();
+    // uncompleted required this
+    if (required.first) {
+      if (dialogued) printWelcome();
 
       Langu::ageMessage::printTemplateResponse(
         SENTENCE_PARAMETER_REQUIRED,
         keyword
       );
 
-      return dialog();
+      if (dialogued) return dialog();
+      return setStatus(COMMAND_ERROR);
     }
 
     Command *firstRequiredNeighbor = strictParentHasRequired(false);
 
     // uncompleted required neighbors with strict parent
     if (firstRequiredNeighbor) {
-      return firstRequiredNeighbor->dialog();
+      if (dialogued) return firstRequiredNeighbor->dialog();
+      return setStatus(COMMAND_ERROR);
     }
     // parent may not be strict, but at least one required child must be completed
     else if (hasChildren()) {
@@ -159,7 +161,8 @@ namespace cli_menu {
           firstRequiredChild->keyword
         );
 
-        return firstRequiredChild->dialog();
+        if (dialogued) return firstRequiredChild->dialog();
+        return setStatus(COMMAND_ERROR);
       }
     }
 
@@ -470,7 +473,7 @@ namespace cli_menu {
   }
 
   Command *Command::igniteCallbacks() {
-    if (isPropagated()) {
+    if (propagation) {
       COMMAND_CODE propagatingCode;
       COMMAND_CALLBACK_CODE callbackCode;
 
@@ -487,7 +490,7 @@ namespace cli_menu {
         }
         else propagatingCode = COMMAND_DONE;
 
-        return static_cast<Command*>(node)->localPropagation;
+        return static_cast<Command*>(node)->propagation;
       });
 
       return setStatus(propagatingCode);
@@ -760,7 +763,7 @@ namespace cli_menu {
   void Command::makePseudo() {
     if (getParent()) {
       pseudo = true;
-      localPropagation = false;
+      propagation = false;
       static_cast<Command*>(getParent())->pseudosCount++;
     }
   }

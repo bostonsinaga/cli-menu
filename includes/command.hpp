@@ -41,14 +41,10 @@ namespace cli_menu {
     bool editing = true,
       pseudo = false,
       strict = false,
-      localDialogued = true,
-      localPropagation = true,
+      dialogued = true,
+      propagation = true,
       asInput = false,
       asOutput = false;
-
-    inline static bool
-      globalDialogued = true,
-      globalPropagation = true;
 
     inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
 
@@ -162,39 +158,17 @@ namespace cli_menu {
 
     /**
      * Will not open dialog to complete the required.
-     * Directly display 'COMMAND_ERROR'.
+     * Directly display the callback status.
      */
-
-    // local
-    void noDialogue() { localDialogued = false; }
-
-    // global
-    static void banDialogue() {
-      Command::globalDialogued = false;
-    }
-
-    // ask both
-    bool isDialogued() {
-      return Command::globalDialogued && localDialogued;
-    }
+    void noDialogued() { dialogued = false; }
+    bool isDialogued() const { return dialogued; }
 
     /**
      * Prevent 'igniteCallbacks' from bubbling callbacks to the root.
      * Make this will only call its input-process-output callbacks.
      */
-
-    // local
-    void noPropagation() { localPropagation = false; }
-
-    // global
-    static void banPropagation() {
-      Command::globalPropagation = false;
-    }
-
-    // ask both
-    bool isPropagated() {
-      return Command::globalPropagation && localPropagation;
-    }
+    void noPropagation() { propagation = false; }
+    bool isPropagation() const { return propagation; }
 
     /**
      * Make this will not appeared in help and list controls.
