@@ -8,9 +8,9 @@ namespace cli_menu {
 
   // status codes
   enum COMMAND_CODE {
-    COMMAND_ERROR, COMMAND_ONGOING,
-    COMMAND_DONE, COMMAND_CANCELED,
-    COMMAND_TERMINATED, COMMAND_PSEUDO_ENDED
+    COMMAND_ERROR, COMMAND_DONE,
+    COMMAND_CANCELED, COMMAND_TERMINATED,
+    COMMAND_PSEUDO_ENDED, COMMAND_ONGOING
   };
 
   // phase codes
@@ -37,6 +37,7 @@ namespace cli_menu {
 
   private:
     int pseudosCount = 0;
+    static constexpr int totalCommandCodes = 6;
 
     bool editing = true,
       pseudo = false,
@@ -48,8 +49,16 @@ namespace cli_menu {
 
     inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
 
-    // this code always set before moving to another node
-    COMMAND_CODE statusCode = COMMAND_ONGOING;
+    // this code (7th) always set before moving to another node
+    COMMAND_CODE statusCodes[totalCommandCodes + 1] = {
+      COMMAND_ERROR,
+      COMMAND_DONE,
+      COMMAND_CANCELED,
+      COMMAND_TERMINATED,
+      COMMAND_PSEUDO_ENDED,
+      COMMAND_ONGOING,
+      COMMAND_ONGOING
+    };
 
     // return false to stop the program 
     COMMAND_CALLBACK callback = Command::defaultCallback;
@@ -154,7 +163,12 @@ namespace cli_menu {
     const std::string getHyphens() const { return hyphens; }
     const std::string getKeyword() const { return keyword; }
     const std::string getDescription() const { return description; }
-    const COMMAND_CODE getStatusCode() const { return statusCode; }
+
+    // status code to be displayed after callback
+    const COMMAND_CODE getStatusCode() const;
+
+    // set status code done/error assign values to 'COMMAND_ONGOING'
+    void silentStatus(const COMMAND_CODE &onlyCode = COMMAND_ONGOING);
 
     /**
      * Will not open dialog to complete the required.

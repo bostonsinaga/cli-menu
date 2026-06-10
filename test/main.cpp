@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
   initWrite(cli_log);
   initFilter(cli_log);
 
+  cli_log->silentStatus();
   cli_log->run(argc, argv);
   return 0;
 }

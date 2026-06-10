@@ -183,8 +183,22 @@ namespace cli_menu {
     }
   }
 
+  const COMMAND_CODE Command::getStatusCode() const {
+    return statusCodes[totalCommandCodes];
+  }
+
+  void Command::silentStatus(const COMMAND_CODE &onlyCode) {
+    if (onlyCode == COMMAND_ERROR || onlyCode == COMMAND_DONE) {
+      statusCodes[onlyCode] = COMMAND_ONGOING;
+    }
+    else {
+      statusCodes[COMMAND_ERROR] = COMMAND_ONGOING;
+      statusCodes[COMMAND_DONE] = COMMAND_ONGOING;
+    }
+  }
+
   Command *Command::setStatus(const COMMAND_CODE &code) {
-    statusCode = code;
+    statusCodes[totalCommandCodes] = statusCodes[code];
     return this;
   }
 
@@ -211,12 +225,12 @@ namespace cli_menu {
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
         Command *lastNode = enter(false);
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // SKIP ENTER CHILDREN
       else if (Control::childrenSkipEnterTest(rawstr)) {        
         Command *lastNode = enter(true);
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
@@ -225,12 +239,12 @@ namespace cli_menu {
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
         Command *lastNode = goToNeighbor(mt_ds::GeneralTree::RIGHT);
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // PREVIOUS NEIGHBOR
       else if (Control::neighborPreviousTest(rawstr)) {
         Command *lastNode = goToNeighbor(mt_ds::GeneralTree::LEFT);
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // MODIFY INPUT
       else if (Control::switchModifyTest(rawstr)) {
@@ -313,13 +327,13 @@ namespace cli_menu {
       // BACK TO PARENT
       else if (Control::parentBackTest(rawstr)) {
         Command *lastNode = backTo(getParent());
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // BACK TO ROOT
       else if (Control::rootBackTest(rawstr)) {
         mt_ds::GeneralTree *root = getRoot();
         Command *lastNode = backTo(root == this ? nullptr : root);
-        if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
       }
       // EXIT PROGRAM
       else if (Control::programQuitTest(rawstr)) {
@@ -334,7 +348,7 @@ namespace cli_menu {
         // selection (match in dialog)
         else {
           Command *lastNode = goDown(rawstr);
-          if (lastNode->statusCode != COMMAND_ONGOING) return lastNode;
+          if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
         }
       }
     }
@@ -574,8 +588,8 @@ namespace cli_menu {
          * Exclude the return of 'COMMAND_PSEUDO_ENDED' to prevent the program
          * from terminating when selecting a node followed by its pseudo-child.
          */
-        if (lastNode->statusCode != COMMAND_ONGOING &&
-          lastNode->statusCode != COMMAND_PSEUDO_ENDED
+        if (lastNode->getStatusCode() != COMMAND_ONGOING &&
+          lastNode->getStatusCode() != COMMAND_PSEUDO_ENDED
         ) return lastNode;
       }
     }
