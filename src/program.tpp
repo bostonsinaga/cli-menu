@@ -73,8 +73,10 @@ namespace cli_menu {
     Command *lastNode = Program<T>::match();
 
     while (true) {
-      if (lastNode->getStatusCode() == COMMAND_PSEUDO_ENDED) {
-        break; // silent termination
+      if (lastNode->getStatusCode() == COMMAND_PSEUDO_SILENT ||
+        lastNode->getStatusCode() == COMMAND_TERMINATED_SILENT
+      ) {
+        break;
       }
       else if (lastNode->getStatusCode() == COMMAND_TERMINATED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_TERMINATED);

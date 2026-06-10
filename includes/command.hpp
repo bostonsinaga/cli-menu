@@ -6,21 +6,25 @@
 
 namespace cli_menu {
 
-  // status codes
+  // callback status codes
   enum COMMAND_CODE {
-    COMMAND_ERROR, COMMAND_DONE,
-    COMMAND_CANCELED, COMMAND_TERMINATED,
-    COMMAND_PSEUDO_ENDED, COMMAND_ONGOING
+    COMMAND_ERROR,
+    COMMAND_DONE,
+    COMMAND_CANCELED,
+    COMMAND_TERMINATED,
+    COMMAND_TERMINATED_SILENT,
+    COMMAND_PSEUDO_SILENT,
+    COMMAND_ONGOING
   };
 
-  // phase codes
+  // parsing phase codes
   enum COMMAND_PHASE_CODE {
     COMMAND_PHASE_MATCH,
     COMMAND_PHASE_DIALOG,
     COMMAND_PHASE_MATCH_IN_DIALOG
   };
 
-  // callback codes
+  // callback return codes
   enum COMMAND_CALLBACK_CODE {
     COMMAND_CALLBACK_ERROR,
     COMMAND_CALLBACK_DONE,
@@ -37,7 +41,7 @@ namespace cli_menu {
 
   private:
     int pseudosCount = 0;
-    static constexpr int totalCommandCodes = 6;
+    static constexpr int totalCommandCodes = 7;
 
     bool editing = true,
       pseudo = false,
@@ -55,7 +59,8 @@ namespace cli_menu {
       COMMAND_DONE,
       COMMAND_CANCELED,
       COMMAND_TERMINATED,
-      COMMAND_PSEUDO_ENDED,
+      COMMAND_TERMINATED_SILENT,
+      COMMAND_PSEUDO_SILENT,
       COMMAND_ONGOING,
       COMMAND_ONGOING
     };
@@ -86,7 +91,7 @@ namespace cli_menu {
     COMMAND_CALLBACK_CODE triggerCallbacks();
 
     // return this node with its status set
-    Command *setStatus(const COMMAND_CODE &code);
+    Command *setStatus(mt::CR<COMMAND_CODE> code);
 
     // after dialog interactions
     Command *igniteCallbacks();
@@ -168,7 +173,7 @@ namespace cli_menu {
     const COMMAND_CODE getStatusCode() const;
 
     // set status code done/error assign values to 'COMMAND_ONGOING'
-    void silentStatus(const COMMAND_CODE &onlyCode = COMMAND_ONGOING);
+    void silentStatus(mt::CR_VEC<COMMAND_CODE> onlyCodes = {});
 
     /**
      * Will not open dialog to complete the required.

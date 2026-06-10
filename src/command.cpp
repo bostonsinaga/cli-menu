@@ -78,7 +78,7 @@ namespace cli_menu {
         // pseudo-child callbacks and program ends at initial match
         if (firstChild && firstChild->pseudo) {
           firstChild->triggerCallbacks();
-          return setStatus(COMMAND_PSEUDO_ENDED);
+          return setStatus(COMMAND_PSEUDO_SILENT);
         }
         /**
          * The match will be paused until arguments are given from the dialog.
@@ -187,17 +187,29 @@ namespace cli_menu {
     return statusCodes[totalCommandCodes];
   }
 
-  void Command::silentStatus(const COMMAND_CODE &onlyCode) {
-    if (onlyCode == COMMAND_ERROR || onlyCode == COMMAND_DONE) {
-      statusCodes[onlyCode] = COMMAND_ONGOING;
-    }
-    else {
+  void Command::silentStatus(mt::CR_VEC<COMMAND_CODE> onlyCodes) {
+    // silent all
+    if (onlyCodes.empty()) {
       statusCodes[COMMAND_ERROR] = COMMAND_ONGOING;
       statusCodes[COMMAND_DONE] = COMMAND_ONGOING;
+      statusCodes[COMMAND_CANCELED] = COMMAND_ONGOING;
+      statusCodes[COMMAND_TERMINATED] = COMMAND_TERMINATED_SILENT;
+    }
+    // silent some
+    else for (mt::CR<COMMAND_CODE> code : onlyCodes) {
+      if (code == COMMAND_ERROR ||
+        code == COMMAND_DONE ||
+        code == COMMAND_CANCELED
+      ) {
+        statusCodes[code] = COMMAND_ONGOING;
+      }
+      else if (code == COMMAND_TERMINATED) {
+        statusCodes[COMMAND_TERMINATED] = COMMAND_TERMINATED_SILENT;
+      }
     }
   }
 
-  Command *Command::setStatus(const COMMAND_CODE &code) {
+  Command *Command::setStatus(mt::CR<COMMAND_CODE> code) {
     statusCodes[totalCommandCodes] = statusCodes[code];
     return this;
   }
@@ -585,11 +597,11 @@ namespace cli_menu {
         Command *lastNode = firstSelected->match();
 
         /**
-         * Exclude the return of 'COMMAND_PSEUDO_ENDED' to prevent the program
+         * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
          * from terminating when selecting a node followed by its pseudo-child.
          */
         if (lastNode->getStatusCode() != COMMAND_ONGOING &&
-          lastNode->getStatusCode() != COMMAND_PSEUDO_ENDED
+          lastNode->getStatusCode() != COMMAND_PSEUDO_SILENT
         ) return lastNode;
       }
     }
