@@ -34,6 +34,8 @@ namespace cli_menu {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
 
+    if (dialogued) printWelcome();
+
     /**
      * The string vector will 'pop_back()'
      * until it is empty to stop this loop.
@@ -88,7 +90,7 @@ namespace cli_menu {
           required.first && dialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_INPUT_BOOLEAN
         ) {
-          printWelcome();
+          std::cout << std::endl;
 
           Langu::ageMessage::printTemplateResponse(
             SENTENCE_PARAMETER_REQUIRED,
@@ -117,7 +119,7 @@ namespace cli_menu {
 
     // uncompleted required this
     if (required.first) {
-      if (dialogued) printWelcome();
+      std::cout << std::endl;
 
       Langu::ageMessage::printTemplateResponse(
         SENTENCE_PARAMETER_REQUIRED,
@@ -132,7 +134,12 @@ namespace cli_menu {
 
     // uncompleted required neighbors with strict parent
     if (firstRequiredNeighbor) {
-      if (dialogued) return firstRequiredNeighbor->dialog();
+      std::cout << std::endl;
+
+      if (dialogued) {
+        return firstRequiredNeighbor->dialog();
+      }
+
       return setStatus(COMMAND_ERROR);
     }
     // parent may not be strict, but at least one required child must be completed
@@ -156,6 +163,8 @@ namespace cli_menu {
 
       // go to first required child
       if (firstRequiredChild) {
+        std::cout << std::endl;
+
         Langu::ageMessage::printTemplateResponse(
           SENTENCE_PARAMETER_REQUIRED,
           firstRequiredChild->keyword
@@ -664,19 +673,21 @@ namespace cli_menu {
   void Command::printWelcome() {
     static bool displayed = false;
 
-    if (!displayed && !getParent()) {
+    if (!displayed) {
+      Command *root = static_cast<Command*>(getRoot());
       displayed = true;
+      std::cout << std::endl;
 
       // keyword
       Console::logString(
         Langu::ageMessage::getWelcomeToString() +
-        mt_uti::StrTool::copyStringToUppercase(keyword) + '\n',
+        mt_uti::StrTool::copyStringToUppercase(root->keyword) + '\n',
         Console::messageColors[CONSOLE_HINT_1]
       );
 
       // description
       Console::logItalicString(
-        description + "\n\n",
+        root->description + '\n',
         Console::messageColors[CONSOLE_HINT_2]
       );
     }
