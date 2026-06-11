@@ -820,7 +820,7 @@ namespace cli_menu {
     if (getChildren()) {
       getChildren()->traverse(
         [&](mt_ds::LinkedList *node)->bool {
-          static_cast<Command*>(node)->resetInputUnormap();
+          hasReset = static_cast<Command*>(node)->resetInputUnormap();
           return true;
         }
       );
