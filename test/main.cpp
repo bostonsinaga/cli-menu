@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
   cm::Program<cm::Boolean> *cli_log = cm::Program<cm::Boolean>::create(
     "log",
     cm::ProgramAbout(
-      "Log the set of IDs, names, and values",
+      "Logging set of IDs, names, and values",
       "Boston Sinaga",
       "https://github.com/bostonsinaga/cli-menu",
       cm::ProgramVersion(1, 0, 0)
@@ -21,7 +21,6 @@ int main(int argc, char *argv[]) {
   initWrite(cli_log);
   initFilter(cli_log);
 
-  cli_log->silentStatus();
   cli_log->run(argc, argv);
   return 0;
 }

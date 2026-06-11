@@ -44,32 +44,16 @@ namespace cli_menu {
 
       // find first child of the same keyword with 'raws.back()'
       if (getChildren()) {
-        resetPointer();
-
-        static_cast<Command*>(getChildren())->forEach(
-          [&](mt_ds::LinkedList *node)->bool {
-
-            if (static_cast<Command*>(node)->testHyphens(Command::raws.back())) {
-              firstChild = static_cast<Command*>(node);
-              return false;
-            }
-
-            return true;
-          }
-        );
+        firstChild = static_cast<Command*>(getChildren())
+        ->findEach([](Command *command)->bool {
+          return command->testHyphens(Command::raws.back());
+        });
       }
 
       // find first neighbor of the same keyword with 'raws.back()'
       if (!firstChild) {
-        forEach([&](mt_ds::LinkedList *node)->bool {
-          if (node != this &&
-            static_cast<Command*>(node)->testHyphens(Command::raws.back())
-          ) {
-            firstNeighbor = static_cast<Command*>(node);
-            return false;
-          }
-
-          return true;
+        firstNeighbor = findEach([&](Command *command)->bool {
+          return command != this && command->testHyphens(Command::raws.back());
         });
       }
 
@@ -100,7 +84,7 @@ namespace cli_menu {
           Command::interruptionDialogued = true;
           return dialog();
         }
-        else { // go to other node
+        else { // go to other command
 
           // the required boolean automatically has value 'true'
           if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_INPUT_BOOLEAN) {
@@ -145,21 +129,11 @@ namespace cli_menu {
     // parent may not be strict, but at least one required child must be completed
     else if (hasChildren()) {
 
-      Command *firstRequiredChild = nullptr;
-      resetPointer();
-
       // find first required child
-      getChildren()->forEach(
-        [&](mt_ds::LinkedList *node)->bool {
-
-          if (static_cast<Command*>(node)->required.first) {
-            firstRequiredChild = static_cast<Command*>(node);
-            return false;
-          }
-
-          return true;
-        }
-      );
+      Command *firstRequiredChild = static_cast<Command*>(getChildren()->head())
+      ->findEach([](Command *command)->bool {
+        return command->required.first;
+      });
 
       // go to first required child
       if (firstRequiredChild) {
@@ -245,13 +219,13 @@ namespace cli_menu {
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
-        Command *lastNode = enter(false);
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = enter(false);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
-      // SKIP ENTER CHILDREN
+      // IGNITE CALLBACKS
       else if (Control::childrenSkipEnterTest(rawstr)) {        
-        Command *lastNode = enter(true);
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = enter(true);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
@@ -259,13 +233,13 @@ namespace cli_menu {
       }
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
-        Command *lastNode = goToNeighbor(mt_ds::GeneralTree::RIGHT);
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = goToNeighbor(RIGHT);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // PREVIOUS NEIGHBOR
       else if (Control::neighborPreviousTest(rawstr)) {
-        Command *lastNode = goToNeighbor(mt_ds::GeneralTree::LEFT);
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = goToNeighbor(LEFT);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // MODIFY INPUT
       else if (Control::switchModifyTest(rawstr)) {
@@ -278,7 +252,7 @@ namespace cli_menu {
           return dialog();
         }
       }
-      // SELECT NODE
+      // SELECT COMMAND
       else if (Control::switchSelectTest(rawstr)) {
         // switching mode is prohibited
         if (Command::interruptionDialogued) {
@@ -347,14 +321,14 @@ namespace cli_menu {
       }
       // BACK TO PARENT
       else if (Control::parentBackTest(rawstr)) {
-        Command *lastNode = backTo(getParent());
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = backTo(getParent());
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // BACK TO ROOT
       else if (Control::rootBackTest(rawstr)) {
         mt_ds::GeneralTree *root = getRoot();
-        Command *lastNode = backTo(root == this ? nullptr : root);
-        if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+        Command *lastCom = backTo(root == this ? nullptr : root);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // EXIT PROGRAM
       else if (Control::programQuitTest(rawstr)) {
@@ -368,8 +342,8 @@ namespace cli_menu {
         }
         // selection (match in dialog)
         else {
-          Command *lastNode = goDown(rawstr);
-          if (lastNode->getStatusCode() != COMMAND_ONGOING) return lastNode;
+          Command *lastCom = goDown(rawstr);
+          if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
         }
       }
     }
@@ -377,14 +351,14 @@ namespace cli_menu {
     return setStatus(COMMAND_TERMINATED);
   }
 
-  Command *Command::backTo(mt_ds::GeneralTree *topNode) {
-    if (topNode) {
+  Command *Command::backTo(mt_ds::GeneralTree *topCommand) {
+    if (topCommand) {
       // moving is prohibited
       if (Command::interruptionDialogued) {
         printInterruptionDialoguedResponse();
       }
       // go back to parent
-      else return static_cast<Command*>(topNode)->dialog();
+      else return static_cast<Command*>(topCommand)->dialog();
     }
     // this is root
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
@@ -409,9 +383,10 @@ namespace cli_menu {
       }
       else if (hasChildren()) {
 
-        // skip to children level
+        // skip the children level (direct call this)
         if (skipChildren) {
-          Command *firstRequiredChild = static_cast<Command*>(getChildren())->strictParentHasRequired(true);
+          Command *firstRequiredChild = static_cast<Command*>(getChildren())
+            ->strictParentHasRequired(true);
 
           // stricted and cannot skip the children
           if (firstRequiredChild && strict) {
@@ -419,18 +394,9 @@ namespace cli_menu {
           }
         }
         else { // go to children level
-          Command *firsOrthoChild = nullptr;
-          resetPointer();
-
-          // find first ortho child
-          getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
-
-            if (!static_cast<Command*>(node)->pseudo) {
-              firsOrthoChild = static_cast<Command*>(node);
-              return false;
-            }
-
-            return true;
+          Command *firsOrthoChild = static_cast<Command*>(getChildren()->head())
+          ->findEach([](Command *command)->bool {
+            return !command->pseudo;
           });
 
           if (firsOrthoChild) return firsOrthoChild->dialog();
@@ -443,7 +409,7 @@ namespace cli_menu {
   }
 
   COMMAND_CALLBACK_CODE Command::forEachInOutCallbacks(
-    const std::function<bool(Command*)> &asWhatCallback
+    mt::CR<CONDITION_CALLBACK> asWhatCallback
   ) {
     COMMAND_CALLBACK_CODE callbackCode;
     bool anyError = false, anyCanceled = false;
@@ -452,12 +418,8 @@ namespace cli_menu {
       getChildren()->forEach(
         [&](mt_ds::LinkedList *node)->bool {
 
-          if (static_cast<Command*>(node)->callback &&
-            asWhatCallback(static_cast<Command*>(node))
-          ) {
-            callbackCode = static_cast<Command*>(node)->callback(
-              static_cast<Command*>(node)
-            );
+          if (asWhatCallback(static_cast<Command*>(node))) {
+            callbackCode = static_cast<Command*>(node)->callback(static_cast<Command*>(node));
 
             if (callbackCode == COMMAND_CALLBACK_ERROR) {
               anyError = true;
@@ -481,7 +443,7 @@ namespace cli_menu {
     if (!asInput && !asOutput) {
       // input
       COMMAND_CALLBACK_CODE inputCallbackCode = forEachInOutCallbacks(
-        [](Command *current)->bool { return current->asInput; }
+        [](Command *command)->bool { return command->asInput; }
       );
 
       // process
@@ -490,7 +452,7 @@ namespace cli_menu {
 
       // output
       COMMAND_CALLBACK_CODE outputCallbackCode = forEachInOutCallbacks(
-        [](Command *current)->bool { return current->asOutput; }
+        [](Command *command)->bool { return command->asOutput; }
       );
 
       if (outputCallbackCode != COMMAND_CALLBACK_DONE) {
@@ -575,43 +537,28 @@ namespace cli_menu {
     );
 
     // find first child by keyword possibility at back of string vector
-    Command *firstSelected = nullptr;
-
-    if (getChildren()) {
-      resetPointer();
-
-      getChildren()->forEach(
-        [&](mt_ds::LinkedList *node)->bool {
-
-          if (static_cast<Command*>(node)->testHyphens(
-            Command::raws.back()
-          )) {
-            firstSelected = static_cast<Command*>(node);
-            return false;
-          }
-
-          return true;
-        }
-      );
-    }
+    Command *firstSelected = getChildren() ? static_cast<Command*>(getChildren())
+    ->findEach([](Command *command)->bool {
+      return command->testHyphens(Command::raws.back());
+    }) : nullptr;
 
     // match in dialog
     if (firstSelected) {
-      // still on the current node
+      // still on the current command
       if (firstSelected->pseudo) {
         firstSelected->igniteCallbacks();
       }
       // move to child
       else if (!strictParentHasRequired(false)) {
-        Command *lastNode = firstSelected->match();
+        Command *lastCom = firstSelected->match();
 
         /**
          * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
-         * from terminating when selecting a node followed by its pseudo-child.
+         * from terminating when selecting a command followed by its pseudo-child.
          */
-        if (lastNode->getStatusCode() != COMMAND_ONGOING &&
-          lastNode->getStatusCode() != COMMAND_PSEUDO_SILENT
-        ) return lastNode;
+        if (lastCom->getStatusCode() != COMMAND_ONGOING &&
+          lastCom->getStatusCode() != COMMAND_PSEUDO_SILENT
+        ) return lastCom;
       }
     }
     else {
@@ -638,22 +585,11 @@ namespace cli_menu {
     return setStatus(COMMAND_ONGOING);
   }
 
-  Command *Command::goToNeighbor(
-    const mt_ds::GeneralTree::DIRECTION &direction
-  ) {
-    Command *firstOrthoNeighbor = nullptr;
+  Command *Command::goToNeighbor(mt::CR<DIRECTION> direction) {
 
     // find first ortho neighbor
-    forEach([&](mt_ds::LinkedList *node)->bool {
-
-      if (node != this &&
-        !static_cast<Command*>(node)->pseudo
-      ) {
-        firstOrthoNeighbor = static_cast<Command*>(node);
-        return false;
-      }
-
-      return true;
+    Command *firstOrthoNeighbor = findEach([&](Command *command)->bool {
+      return command != this && !command->pseudo;
     }, direction);
 
     if (firstOrthoNeighbor) {
@@ -706,7 +642,7 @@ namespace cli_menu {
   }
 
   void Command::printKeyword(
-    const CONSOLE_CODE &consoleCode,
+    mt::CR<CONSOLE_CODE> consoleCode,
     mt::CR_SZ numberOfIndents
   ) {
     Console::logString(
@@ -718,20 +654,17 @@ namespace cli_menu {
   }
 
   void Command::printList(
-    const CONSOLE_CODE &consoleCode,
+    mt::CR<CONSOLE_CODE> consoleCode,
     mt::CR_SZ numberOfIndents,
     mt::CR_BOL displayAtLeafWarning
   ) {
     if (hasChildren()) {
-      resetPointer();
 
       // print children keyword
-      getChildren()->forEach([&](mt_ds::LinkedList *node)->bool {
+      getChildren()->head()->forEach([&](mt_ds::LinkedList *node)->bool {
 
         if (!static_cast<Command*>(node)->pseudo) {
-          static_cast<Command*>(node)->printKeyword(
-            consoleCode, numberOfIndents
-          );
+          static_cast<Command*>(node)->printKeyword(consoleCode, numberOfIndents);
         }
 
         return true;
@@ -758,19 +691,30 @@ namespace cli_menu {
     );
   }
 
-  Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
+  Command *Command::findEach(
+    mt::CR<CONDITION_CALLBACK> condition,
+    mt::CR<DIRECTION> direction
+  ) {
     Command *found = nullptr;
 
     forEach([&](mt_ds::LinkedList *node)->bool {
 
-      if (static_cast<Command*>(node)->required.first &&
-        (!onlyOrtho || (onlyOrtho && !static_cast<Command*>(node)->pseudo))
-      ) {
+      if (condition(static_cast<Command*>(node))) {
         found = static_cast<Command*>(node);
         return false;
       }
 
       return true;
+    }, direction);
+
+    return found;
+  }
+
+  Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
+
+    Command *found = findEach([&](Command *command)->bool {
+      return command->required.first &&
+        (!onlyOrtho || (onlyOrtho && !command->pseudo));
     });
 
     if (found) {
@@ -831,8 +775,8 @@ namespace cli_menu {
 
   /** Belows are declared in 'data.hpp' */
 
-  void Data::Input::print(Command *node) {
-    if (node && !node->printInput()) {
+  void Data::Input::print(Command *command) {
+    if (command && !command->printInput()) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
     }
   }
@@ -851,9 +795,9 @@ namespace cli_menu {
     );
   }
 
-  void Data::Output::print(Command *node) {
-    if (Output::numberOf(node)) {
-      Data::printVector<std::string>(texts[node], false);
+  void Data::Output::print(Command *command) {
+    if (Output::numberOf(command)) {
+      Data::printVector<std::string>(texts[command], false);
     }
     else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
   }

@@ -13,58 +13,58 @@ namespace cli_menu {
   // INPUT |
   //_______|
 
-  bool Data::Input::hasWords(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(words, node);
+  bool Data::Input::hasWords(Command *command) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(words, command);
   }
 
-  bool Data::Input::hasNumbers(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_LD>(numbers, node);
+  bool Data::Input::hasNumbers(Command *command) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_LD>(numbers, command);
   }
 
-  bool Data::Input::hasBooleans(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(booleans, node);
+  bool Data::Input::hasBooleans(Command *command) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_BOL>(booleans, command);
   }
 
-  void Data::Input::pushWord(Command *node, mt::CR_STR input) {
-    words[node].push_back(input);
+  void Data::Input::pushWord(Command *command, mt::CR_STR input) {
+    words[command].push_back(input);
   }
 
-  void Data::Input::pushNumber(Command *node, mt::CR_LD input) {
-    numbers[node].push_back(input);
+  void Data::Input::pushNumber(Command *command, mt::CR_LD input) {
+    numbers[command].push_back(input);
   }
 
-  void Data::Input::pushBoolean(Command *node, mt::CR_BOL input) {
-    booleans[node].push_back(input);
+  void Data::Input::pushBoolean(Command *command, mt::CR_BOL input) {
+    booleans[command].push_back(input);
   }
 
-  void Data::Input::popWord(Command *node) {
-    if (hasWords(node)) {
-      words[node].pop_back();
+  void Data::Input::popWord(Command *command) {
+    if (hasWords(command)) {
+      words[command].pop_back();
     }
   }
 
-  void Data::Input::popNumber(Command *node) {
-    if (hasNumbers(node)) {
-      numbers[node].pop_back();
+  void Data::Input::popNumber(Command *command) {
+    if (hasNumbers(command)) {
+      numbers[command].pop_back();
     }
   }
 
-  void Data::Input::popBoolean(Command *node) {
-    if (hasBooleans(node)) {
-      booleans[node].pop_back();
+  void Data::Input::popBoolean(Command *command) {
+    if (hasBooleans(command)) {
+      booleans[command].pop_back();
     }
   }
 
-  void Data::Input::eraseWords(Command *node) {
-    words.erase(node);
+  void Data::Input::eraseWords(Command *command) {
+    words.erase(command);
   }
 
-  void Data::Input::eraseNumbers(Command *node) {
-    numbers.erase(node);
+  void Data::Input::eraseNumbers(Command *command) {
+    numbers.erase(command);
   }
 
-  void Data::Input::eraseBooleans(Command *node) {
-    booleans.erase(node);
+  void Data::Input::eraseBooleans(Command *command) {
+    booleans.erase(command);
   }
 
   bool Data::Input::clearWords() {
@@ -95,98 +95,98 @@ namespace cli_menu {
     return clearWords() || clearNumbers() || clearBooleans();
   }
 
-  size_t Data::Input::numberOfWords(Command *node) {
-    if (hasWords(node)) {
-      return words[node].size();
+  size_t Data::Input::numberOfWords(Command *command) {
+    if (hasWords(command)) {
+      return words[command].size();
     }
     return 0;
   }
 
-  size_t Data::Input::numberOfNumbers(Command *node) {
-    if (hasNumbers(node)) {
-      return numbers[node].size();
+  size_t Data::Input::numberOfNumbers(Command *command) {
+    if (hasNumbers(command)) {
+      return numbers[command].size();
     }
     return 0;
   }
 
-  size_t Data::Input::numberOfBooleans(Command *node) {
-    if (hasBooleans(node)) {
-      return booleans[node].size();
+  size_t Data::Input::numberOfBooleans(Command *command) {
+    if (hasBooleans(command)) {
+      return booleans[command].size();
     }
     return 0;
   }
 
-  std::string Data::Input::getWordAt(Command *node, mt::CR_SZ index) {
-    if (hasWords(node) &&
-      index < words[node].size()
+  std::string Data::Input::getWordAt(Command *command, mt::CR_SZ index) {
+    if (hasWords(command) &&
+      index < words[command].size()
     ) {
-      return words[node][index];
+      return words[command][index];
     }
     return "";
   }
 
-  mt::LD Data::Input::getNumberAt(Command *node, mt::CR_SZ index) {
-    if (hasNumbers(node) &&
-      index < numbers[node].size()
+  mt::LD Data::Input::getNumberAt(Command *command, mt::CR_SZ index) {
+    if (hasNumbers(command) &&
+      index < numbers[command].size()
     ) {
-      return numbers[node][index];
+      return numbers[command][index];
     }
     return 0;
   }
 
-  bool Data::Input::getBooleanAt(Command *node, mt::CR_SZ index) {
-    if (hasBooleans(node) &&
-      index < booleans[node].size()
+  bool Data::Input::getBooleanAt(Command *command, mt::CR_SZ index) {
+    if (hasBooleans(command) &&
+      index < booleans[command].size()
     ) {
-      return booleans[node][index];
+      return booleans[command][index];
     }
     return false;
   }
 
-  std::string Data::Input::getFirstWord(Command *node) {
-    if (hasWords(node)) {
-      if (words[node].empty()) return "";
-      return words[node].front();
+  std::string Data::Input::getFirstWord(Command *command) {
+    if (hasWords(command)) {
+      if (words[command].empty()) return "";
+      return words[command].front();
     }
     return "";
   }
 
-  mt::LD Data::Input::getFirstNumber(Command *node) {
-    if (hasNumbers(node)) {
-      if (numbers[node].empty()) return 0;
-      return numbers[node].front();
+  mt::LD Data::Input::getFirstNumber(Command *command) {
+    if (hasNumbers(command)) {
+      if (numbers[command].empty()) return 0;
+      return numbers[command].front();
     }
     return 0;
   }
 
-  bool Data::Input::getFirstBoolean(Command *node) {
-    if (hasBooleans(node)) {
-      if (booleans[node].empty()) return false;
-      return booleans[node].front();
+  bool Data::Input::getFirstBoolean(Command *command) {
+    if (hasBooleans(command)) {
+      if (booleans[command].empty()) return false;
+      return booleans[command].front();
     }
     return false;
   }
 
-  std::string Data::Input::getLastWord(Command *node) {
-    if (hasWords(node)) {
-      if (words[node].empty()) return "";
-      return words[node].back();
+  std::string Data::Input::getLastWord(Command *command) {
+    if (hasWords(command)) {
+      if (words[command].empty()) return "";
+      return words[command].back();
     }
     return "";
   }
 
-  mt::LD Data::Input::getLastNumber(Command *node) {
-    if (hasNumbers(node)) {
-      if (numbers[node].empty()) return 0;
-      return numbers[node].back();
+  mt::LD Data::Input::getLastNumber(Command *command) {
+    if (hasNumbers(command)) {
+      if (numbers[command].empty()) return 0;
+      return numbers[command].back();
     }
     return 0;
   }
 
-  bool Data::Input::getLastBoolean(Command *node) {
-    if (hasBooleans(node)) {
-      if (booleans[node].empty()) return false;
-      return booleans[node].back();
+  bool Data::Input::getLastBoolean(Command *command) {
+    if (hasBooleans(command)) {
+      if (booleans[command].empty()) return false;
+      return booleans[command].back();
     }
     return false;
   }
@@ -195,22 +195,22 @@ namespace cli_menu {
   // OUTPUT |
   //________|
 
-  bool Data::Output::has(Command *node) {
-    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(texts, node);
+  bool Data::Output::has(Command *command) {
+    return mt::UNORMAP_FOUND<Command*, mt::VEC_STR>(texts, command);
   }
 
-  void Data::Output::push(Command *node, mt::CR_STR input) {
-    texts[node].push_back(input);
+  void Data::Output::push(Command *command, mt::CR_STR input) {
+    texts[command].push_back(input);
   }
 
-  void Data::Output::pop(Command *node) {
-    if (has(node)) {
-      texts[node].pop_back();
+  void Data::Output::pop(Command *command) {
+    if (has(command)) {
+      texts[command].pop_back();
     }
   }
 
-  void Data::Output::erase(Command *node) {
-    texts.erase(node);
+  void Data::Output::erase(Command *command) {
+    texts.erase(command);
   }
 
   bool Data::Output::clearAll() {
@@ -221,51 +221,51 @@ namespace cli_menu {
     return false;
   }
 
-  size_t Data::Output::numberOf(Command *node) {
-    if (has(node)) {
-      return texts[node].size();
+  size_t Data::Output::numberOf(Command *command) {
+    if (has(command)) {
+      return texts[command].size();
     }
     return 0;
   }
 
-  std::string Data::Output::getAt(Command *node, mt::CR_SZ index) {
-    if (has(node) &&
-      index < texts[node].size()
+  std::string Data::Output::getAt(Command *command, mt::CR_SZ index) {
+    if (has(command) &&
+      index < texts[command].size()
     ) {
-      return texts[node][index];
+      return texts[command][index];
     }
     return "";
   }
 
-  std::string Data::Output::getFirst(Command *node) {
-    if (has(node)) {
-      if (texts[node].empty()) return "";
-      return texts[node].front();
+  std::string Data::Output::getFirst(Command *command) {
+    if (has(command)) {
+      if (texts[command].empty()) return "";
+      return texts[command].front();
     }
     return "";
   }
 
-  std::string Data::Output::getLast(Command *node) {
-    if (has(node)) {
-      if (texts[node].empty()) return "";
-      return texts[node].back();
+  std::string Data::Output::getLast(Command *command) {
+    if (has(command)) {
+      if (texts[command].empty()) return "";
+      return texts[command].back();
     }
     return "";
   }
 
   std::string Data::Output::concat(
-    Command *node,
+    Command *command,
     mt::CR_STR separator
   ) {
     std::string retstr;
 
-    if (has(node)) {
-      for (int i = 0; i < texts[node].size() - 1; i++) {
-        retstr += texts[node][i] + separator;
+    if (has(command)) {
+      for (int i = 0; i < texts[command].size() - 1; i++) {
+        retstr += texts[command][i] + separator;
       }
 
-      if (!texts[node].empty()) {
-        retstr += texts[node].back();
+      if (!texts[command].empty()) {
+        retstr += texts[command].back();
       }
     }
 

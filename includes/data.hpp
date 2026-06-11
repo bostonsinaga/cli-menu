@@ -63,17 +63,17 @@ namespace cli_menu {
     public:
       /** SETTERS */
 
-      static void pushWord(Command *node, mt::CR_STR input);
-      static void pushNumber(Command *node, mt::CR_LD input);
-      static void pushBoolean(Command *node, mt::CR_BOL input);
+      static void pushWord(Command *command, mt::CR_STR input);
+      static void pushNumber(Command *command, mt::CR_LD input);
+      static void pushBoolean(Command *command, mt::CR_BOL input);
 
-      static void popWord(Command *node);
-      static void popNumber(Command *node);
-      static void popBoolean(Command *node);
+      static void popWord(Command *command);
+      static void popNumber(Command *command);
+      static void popBoolean(Command *command);
 
-      static void eraseWords(Command *node);
-      static void eraseNumbers(Command *node);
-      static void eraseBooleans(Command *node);
+      static void eraseWords(Command *command);
+      static void eraseNumbers(Command *command);
+      static void eraseBooleans(Command *command);
 
       // return false (empty) or true (cleared)
       static bool clearWords();
@@ -84,38 +84,38 @@ namespace cli_menu {
       /** GETTERS */
 
       // 'std::unordered_map' existence checkers
-      static bool hasWords(Command *node);
-      static bool hasNumbers(Command *node);
-      static bool hasBooleans(Command *node);
+      static bool hasWords(Command *command);
+      static bool hasNumbers(Command *command);
+      static bool hasBooleans(Command *command);
 
       // return 0 for unknown id
-      static size_t numberOfWords(Command *node);
-      static size_t numberOfNumbers(Command *node);
-      static size_t numberOfBooleans(Command *node);
+      static size_t numberOfWords(Command *command);
+      static size_t numberOfNumbers(Command *command);
+      static size_t numberOfBooleans(Command *command);
 
       // get with index
-      static std::string getWordAt(Command *node, mt::CR_SZ index);
-      static mt::LD getNumberAt(Command *node, mt::CR_SZ index);
-      static bool getBooleanAt(Command *node, mt::CR_SZ index);
+      static std::string getWordAt(Command *command, mt::CR_SZ index);
+      static mt::LD getNumberAt(Command *command, mt::CR_SZ index);
+      static bool getBooleanAt(Command *command, mt::CR_SZ index);
 
       // get at front
-      static std::string getFirstWord(Command *node);
-      static mt::LD getFirstNumber(Command *node);
-      static bool getFirstBoolean(Command *node);
+      static std::string getFirstWord(Command *command);
+      static mt::LD getFirstNumber(Command *command);
+      static bool getFirstBoolean(Command *command);
 
       // get at back
-      static std::string getLastWord(Command *node);
-      static mt::LD getLastNumber(Command *node);
-      static bool getLastBoolean(Command *node);
+      static std::string getLastWord(Command *command);
+      static mt::LD getLastNumber(Command *command);
+      static bool getLastBoolean(Command *command);
 
       /** PRINTERS */
 
-      // display a node vector
+      // display a command vector
       template <PRIMITIVE_TYPE T>
-      static void printVector(Command *node, mt::CR_BOL withIndent);
+      static void printVector(Command *command, mt::CR_BOL withIndent);
 
       // belows are defined at 'command.cpp'
-      static void print(Command *node);
+      static void print(Command *command);
       static void printAll();
     };
 
@@ -131,26 +131,26 @@ namespace cli_menu {
 
     public:
       // setters
-      static void push(Command *node, mt::CR_STR input);
-      static void pop(Command *node);
-      static void erase(Command *node);
+      static void push(Command *command, mt::CR_STR input);
+      static void pop(Command *command);
+      static void erase(Command *command);
       static bool clearAll();
 
       // getters
-      static bool has(Command *node);
-      static size_t numberOf(Command *node);
-      static std::string getAt(Command *node, mt::CR_SZ index);
-      static std::string getFirst(Command *node);
-      static std::string getLast(Command *node);
+      static bool has(Command *command);
+      static size_t numberOf(Command *command);
+      static std::string getAt(Command *command, mt::CR_SZ index);
+      static std::string getFirst(Command *command);
+      static std::string getLast(Command *command);
 
       // concatenate string vector into a string
       static std::string concat(
-        Command *node,
+        Command *command,
         mt::CR_STR separator = "\n"
       );
 
       // belows are defined at 'command.cpp'
-      static void print(Command *node);
+      static void print(Command *command);
       static void printAll();
     };
   };

@@ -32,6 +32,7 @@ namespace cli_menu {
   };
 
   typedef std::function<COMMAND_CALLBACK_CODE(Command*)> COMMAND_CALLBACK;
+  typedef std::function<bool(Command*)> CONDITION_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   protected:
@@ -53,7 +54,7 @@ namespace cli_menu {
 
     inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
 
-    // this code (7th) always set before moving to another node
+    // this code (7th) always set before moving to another command
     COMMAND_CODE statusCodes[totalCommandCodes + 1] = {
       COMMAND_ERROR,
       COMMAND_DONE,
@@ -80,7 +81,7 @@ namespace cli_menu {
      * if there is no 'asInput' or 'asOutput' condition from the children.
      */
     COMMAND_CALLBACK_CODE forEachInOutCallbacks(
-      const std::function<bool(Command*)> &asWhatCallback
+      mt::CR<CONDITION_CALLBACK> asWhatCallback
     );
 
     /**
@@ -90,18 +91,24 @@ namespace cli_menu {
      */
     COMMAND_CALLBACK_CODE triggerCallbacks();
 
-    // return this node with its status set
+    // return this command with its status set
     Command *setStatus(mt::CR<COMMAND_CODE> code);
 
     // after dialog interactions
     Command *igniteCallbacks();
-    Command *backTo(mt_ds::GeneralTree *topNode);
+    Command *backTo(mt_ds::GeneralTree *topCommand);
     Command *enter(mt::CR_BOL skipChildren);
     Command *goDown(mt::CR_STR input);
-    Command *goToNeighbor(const mt_ds::GeneralTree::DIRECTION &direction);
+    Command *goToNeighbor(mt::CR<DIRECTION> direction);
 
     // an error message in dialog when switching mode / moving position
     void printInterruptionDialoguedResponse();
+
+    // find one desired command in this level with given condition
+    Command *findEach(
+      mt::CR<CONDITION_CALLBACK> condition,
+      mt::CR<DIRECTION> direction = RIGHT
+    );
 
     /**
      * Check whether strict parent has incomplete required child.
@@ -240,7 +247,7 @@ namespace cli_menu {
       }
     }
 
-    /** Display information about this node */
+    /** Display information about this command */
 
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
@@ -253,16 +260,16 @@ namespace cli_menu {
 
     /**
      * Print keyword and type.
-     * Display '*' for required node.
+     * Display '*' for required command.
      */
     void printKeyword(
-      const CONSOLE_CODE &consoleCode,
+      mt::CR<CONSOLE_CODE> consoleCode,
       mt::CR_SZ numberOfIndents
     );
 
     // print children keywords
     void printList(
-      const CONSOLE_CODE &consoleCode,
+      mt::CR<CONSOLE_CODE> consoleCode,
       mt::CR_SZ numberOfIndents,
       mt::CR_BOL displayAtLeafWarning
     );
