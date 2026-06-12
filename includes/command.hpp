@@ -97,7 +97,8 @@ namespace cli_menu {
     // after dialog interactions
     Command *igniteCallbacks();
     Command *backTo(mt_ds::GeneralTree *topCommand);
-    Command *enter(mt::CR_BOL skipChildren);
+    Command *enter();
+    Command *execute();
     Command *goDown(mt::CR_STR input);
     Command *goToNeighbor(mt::CR<DIRECTION> direction);
 
@@ -114,7 +115,7 @@ namespace cli_menu {
      * Check whether strict parent has incomplete required child.
      * If so, print error and return the first found.
      */
-    Command *strictParentHasRequired(mt::CR_BOL onlyOrtho);
+    Command *strictParentHasRequired();
 
     // input is expected as e.g. '--foo' or '-goo'
     bool testHyphens(mt::CR_STR input) {
@@ -211,8 +212,9 @@ namespace cli_menu {
     /**
      * Make arguments must be provided explicitly
      * to be able to call the 'igniteCallbacks'.
+     * Only applies to non-pseudo commands.
      */
-    void makeRequired() { required = { true, true }; }
+    void makeRequired();
 
     /**
      * Make all the required descendants must be

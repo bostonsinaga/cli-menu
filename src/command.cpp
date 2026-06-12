@@ -114,7 +114,7 @@ namespace cli_menu {
       return setStatus(COMMAND_ERROR);
     }
 
-    Command *firstRequiredNeighbor = strictParentHasRequired(false);
+    Command *firstRequiredNeighbor = strictParentHasRequired();
 
     // uncompleted required neighbors with strict parent
     if (firstRequiredNeighbor) {
@@ -219,12 +219,12 @@ namespace cli_menu {
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
-        Command *lastCom = enter(false);
+        Command *lastCom = enter();
         if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
-      // IGNITE CALLBACKS
+      // EXECUTE CALLBACKS
       else if (Control::childrenSkipEnterTest(rawstr)) {        
-        Command *lastCom = enter(true);
+        Command *lastCom = execute();
         if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // LIST CHILDREN
@@ -366,46 +366,53 @@ namespace cli_menu {
     return setStatus(COMMAND_ONGOING);
   }
 
-  Command *Command::enter(mt::CR_BOL skipChildren) {
+  Command *Command::enter() {
 
     // continue the interrupted match
     if (Command::interruptionDialogued && !required.first) {
       Command::interruptionDialogued = false;
       return match();
     }
-    // trying to go down
-    else {
-      Command *firstRequiredNeighbor = strictParentHasRequired(true);
+    // go to children level
+    else if (hasChildren()) {
+      return static_cast<Command*>(getChildren()->head())
+      ->findEach([](Command *command)->bool {
+        return !command->pseudo;
+      })->dialog();
+    }
+    // no children warning
+    else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
 
-      // uncompleted required neighbors with strict parent
-      if (firstRequiredNeighbor) {
-        return setStatus(COMMAND_ONGOING);
+    return setStatus(COMMAND_ONGOING);
+  }
+
+  Command *Command::execute() {
+
+    // continue the interrupted match
+    if (Command::interruptionDialogued && !required.first) {
+      Command::interruptionDialogued = false;
+      return match();
+    }
+    // children may required
+    else if (!strictParentHasRequired()) {
+
+      Command *firstRequiredChild = hasChildren() ?
+      static_cast<Command*>(getChildren()->head())->findEach([](Command *command)->bool {
+        return command->required.first;
+      }) : nullptr;
+
+      // cannot skip the required children
+      if (firstRequiredChild) {
+
+        Langu::ageMessage::printTemplateResponse(
+          SENTENCE_PARAMETER_REQUIRED,
+          firstRequiredChild->keyword
+        );
       }
-      else if (hasChildren()) {
-
-        // skip the children level (direct call this)
-        if (skipChildren) {
-          Command *firstRequiredChild = static_cast<Command*>(getChildren())
-            ->strictParentHasRequired(true);
-
-          // stricted and cannot skip the children
-          if (firstRequiredChild && strict) {
-            return setStatus(COMMAND_ONGOING);
-          }
-        }
-        else { // go to children level
-          Command *firsOrthoChild = static_cast<Command*>(getChildren()->head())
-          ->findEach([](Command *command)->bool {
-            return !command->pseudo;
-          });
-
-          if (firsOrthoChild) return firsOrthoChild->dialog();
-        }
-      }
+      else return igniteCallbacks();
     }
 
-    // skipping children or this has no children
-    return igniteCallbacks();
+    return setStatus(COMMAND_ONGOING);
   }
 
   COMMAND_CALLBACK_CODE Command::forEachInOutCallbacks(
@@ -549,7 +556,7 @@ namespace cli_menu {
         firstSelected->igniteCallbacks();
       }
       // move to child
-      else if (!strictParentHasRequired(false)) {
+      else if (!strictParentHasRequired()) {
         Command *lastCom = firstSelected->match();
 
         /**
@@ -670,7 +677,7 @@ namespace cli_menu {
         return true;
       });
     }
-    // print warning
+    // no children warning
     else if (displayAtLeafWarning) {
       Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
       return;
@@ -710,11 +717,10 @@ namespace cli_menu {
     return found;
   }
 
-  Command *Command::strictParentHasRequired(mt::CR_BOL onlyOrtho) {
+  Command *Command::strictParentHasRequired() {
 
     Command *found = findEach([&](Command *command)->bool {
-      return command->required.first &&
-        (!onlyOrtho || (onlyOrtho && !command->pseudo));
+      return command->required.first && !command->pseudo;
     });
 
     if (found) {
@@ -745,12 +751,18 @@ namespace cli_menu {
     if (getParent()) {
       pseudo = true;
       propagation = false;
+      required = { false, false };
       static_cast<Command*>(getParent())->pseudosCount++;
     }
   }
 
+  void Command::makeRequired() {
+    if (!pseudo) required = { true, true };
+  }
+
   void Command::makeSterilized(mt::CR_BOL becomeLeaf) {
 
+    // delete all descendants
     if (becomeLeaf && getChildren()) {
       getChildren()->annihilate();
     }
