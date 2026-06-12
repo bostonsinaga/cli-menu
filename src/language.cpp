@@ -99,7 +99,7 @@ namespace cli_menu {
     // SENTENCE_PARAMETER_AT_LEAF
     "this node does not contain any children",
     // SENTENCE_PARAMETER_AT_ROOT
-    "no more groups above",
+    "there are no more parents above",
     // SENTENCE_PARAMETER_NOT_FOUND
     "parameter not found",
     // SENTENCE_PARAMETER_REQUIRED
@@ -118,10 +118,14 @@ namespace cli_menu {
     "all inputs are removed",
     // SENTENCE_RESET_INPUT_THIS
     "this and its descendant inputs are removed",
+    // SENTENCE_RESET_INPUT_DESCENDANTS
+    "descendant inputs are removed",
     // SENTENCE_RESET_OUTPUT_ALL
     "all outputs are removed",
     // SENTENCE_RESET_OUTPUT_THIS
-    "this and its descendant outputs are removed"
+    "this and its descendant outputs are removed",
+    // SENTENCE_RESET_OUTPUT_DESCENDANTS
+    "descendant outputs are removed"
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
@@ -240,8 +244,10 @@ namespace cli_menu {
     mt::CR_STR programDoneSentence,
     mt::CR_STR resetInputAllSentence,
     mt::CR_STR resetInputThisSentence,
+    mt::CR_STR resetInputDescendantsSentence,
     mt::CR_STR resetOutputAllSentence,
-    mt::CR_STR resetOutputThisSentence
+    mt::CR_STR resetOutputThisSentence,
+    mt::CR_STR resetOutputDescendantsSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
@@ -279,8 +285,10 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_DONE] = programDoneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_ALL] = resetInputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_THIS] = resetInputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_DESCENDANTS] = resetInputDescendantsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_ALL] = resetOutputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_THIS] = resetOutputThisSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_DESCENDANTS] = resetOutputDescendantsSentence;
   }
 
   void Langu::ageMessage::printResponse(
@@ -330,7 +338,7 @@ namespace cli_menu {
     "show this help",
     "show controller list",
     "enter the children level",
-    "directly callback from this",
+    "execute callbacks",
     "show list of children",
     "go to next neighbor",
     "go to previous neighbor",

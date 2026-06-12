@@ -42,8 +42,10 @@ namespace cli_menu {
     SENTENCE_PROGRAM_DONE,
     SENTENCE_RESET_INPUT_ALL,
     SENTENCE_RESET_INPUT_THIS,
+    SENTENCE_RESET_INPUT_DESCENDANTS,
     SENTENCE_RESET_OUTPUT_ALL,
-    SENTENCE_RESET_OUTPUT_THIS
+    SENTENCE_RESET_OUTPUT_THIS,
+    SENTENCE_RESET_OUTPUT_DESCENDANTS
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -107,7 +109,7 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 38;
+      static constexpr int totalSentences = 40;
       static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
       static CONSOLE_CODE consoleCodes[totalSentences];
       static mt::STRUNORMAP_STR welcomeToString;
@@ -201,8 +203,10 @@ namespace cli_menu {
         mt::CR_STR programDoneSentence,
         mt::CR_STR resetInputAllSentence,
         mt::CR_STR resetInputThisSentence,
+        mt::CR_STR resetInputDescendantsSentence,
         mt::CR_STR resetOutputAllSentence,
-        mt::CR_STR resetOutputThisSentence
+        mt::CR_STR resetOutputThisSentence,
+        mt::CR_STR resetOutputDescendantsSentence
       );
 
       static void printResponse(
