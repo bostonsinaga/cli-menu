@@ -114,18 +114,18 @@ namespace cli_menu {
     "CANCELED",
     // SENTENCE_PROGRAM_DONE
     "DONE",
-    // SENTENCE_RESET_INPUT_ALL
-    "all inputs are removed",
     // SENTENCE_RESET_INPUT_THIS
     "this and its descendant inputs are removed",
     // SENTENCE_RESET_INPUT_DESCENDANTS
     "descendant inputs are removed",
-    // SENTENCE_RESET_OUTPUT_ALL
-    "all outputs are removed",
+    // SENTENCE_RESET_INPUT_ALL
+    "all inputs are removed",
     // SENTENCE_RESET_OUTPUT_THIS
     "this and its descendant outputs are removed",
     // SENTENCE_RESET_OUTPUT_DESCENDANTS
-    "descendant outputs are removed"
+    "descendant outputs are removed",
+    // SENTENCE_RESET_OUTPUT_ALL
+    "all outputs are removed",
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
@@ -242,12 +242,12 @@ namespace cli_menu {
     mt::CR_STR programErrorSentence,
     mt::CR_STR programCanceledSentence,
     mt::CR_STR programDoneSentence,
-    mt::CR_STR resetInputAllSentence,
     mt::CR_STR resetInputThisSentence,
     mt::CR_STR resetInputDescendantsSentence,
-    mt::CR_STR resetOutputAllSentence,
+    mt::CR_STR resetInputAllSentence,
     mt::CR_STR resetOutputThisSentence,
-    mt::CR_STR resetOutputDescendantsSentence
+    mt::CR_STR resetOutputDescendantsSentence,
+    mt::CR_STR resetOutputAllSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
@@ -283,12 +283,12 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_ERROR] = programErrorSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_CANCELED] = programCanceledSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_DONE] = programDoneSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_ALL] = resetInputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_THIS] = resetInputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_DESCENDANTS] = resetInputDescendantsSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_ALL] = resetOutputAllSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_ALL] = resetInputAllSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_THIS] = resetOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_DESCENDANTS] = resetOutputDescendantsSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_ALL] = resetOutputAllSentence;
   }
 
   void Langu::ageMessage::printResponse(
@@ -345,13 +345,13 @@ namespace cli_menu {
     "modify this input",
     "select another node",
     "view this input",
+    "view all inputs",
     "view this output",
-    "view all input",
-    "view all output",
+    "view all outputs",
     "reset this input",
+    "reset all inputs",
     "reset this output",
-    "reset all input",
-    "reset all output",
+    "reset all outputs",
     "copy text from this output",
     "paste text into this input",
     "back to parent level",
@@ -367,19 +367,19 @@ namespace cli_menu {
     std::string commandHelpTerm,
     std::string controllerListTerm,
     std::string childrenEnterTerm,
-    std::string childrenSkipEnterTerm,
+    std::string childrenExecuteTerm,
     std::string childrenListTerm,
     std::string neighborNextTerm,
     std::string neighborPreviousTerm,
     std::string switchModifyTerm,
     std::string switchSelectTerm,
     std::string viewInputThisTerm,
-    std::string viewOutputThisTerm,
     std::string viewInputAllTerm,
+    std::string viewOutputThisTerm,
     std::string viewOutputAllTerm,
     std::string resetInputThisTerm,
-    std::string resetOutputThisTerm,
     std::string resetInputAllTerm,
+    std::string resetOutputThisTerm,
     std::string resetOutputAllTerm,
     std::string copyOutputTerm,
     std::string pasteInputTerm,
@@ -390,19 +390,19 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CONTROLLER_LIST] = controllerListTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_SKIP_ENTER] = childrenSkipEnterTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_EXECUTE] = childrenExecuteTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_LIST] = childrenListTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_NEXT] = neighborNextTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFY] = switchModifyTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_ALL] = viewInputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_ALL] = viewOutputAllTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_THIS] = resetInputThisTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_THIS] = resetOutputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_ALL] = resetInputAllTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_THIS] = resetOutputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_ALL] = resetOutputAllTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COPY_OUTPUT] = copyOutputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PASTE_INPUT] = pasteInputTerm;

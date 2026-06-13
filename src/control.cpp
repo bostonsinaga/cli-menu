@@ -52,8 +52,8 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_CHILDREN_ENTER;
   }
 
-  bool Control::childrenSkipEnterTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_SKIP_ENTER;
+  bool Control::childrenExecuteTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_EXECUTE;
   }
 
   bool Control::childrenListTest(mt::CR_STR rawstr) {
@@ -80,12 +80,12 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_THIS;
   }
 
-  bool Control::viewOutputThisTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_THIS;
-  }
-
   bool Control::viewInputAllTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_ALL;
+  }
+
+  bool Control::viewOutputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_THIS;
   }
 
   bool Control::viewOutputAllTest(mt::CR_STR rawstr) {
@@ -96,12 +96,12 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_THIS;
   }
 
-  bool Control::resetOutputThisTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_THIS;
-  }
-
   bool Control::resetInputAllTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_ALL;
+  }
+
+  bool Control::resetOutputThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_THIS;
   }
 
   bool Control::resetOutputAllTest(mt::CR_STR rawstr) {
