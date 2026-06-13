@@ -130,8 +130,14 @@ namespace cli_menu {
       return numberOfChildren() - pseudosCount > 0;
     }
 
-    // reset this input and its descendant inputs
-    bool resetInputUnormapDescendants();
+    // reset this 'Data' and its descendants 'Data'
+    void resetDescendants(
+      mt::CR<CONDITION_CALLBACK> resetMethod,
+      mt::CR_ARR<SENTENCE_CODE, 3> sentenceCodes
+    );
+
+    // output only stores string
+    bool resetOutput();
 
   protected:
     // changeable and initial reference
@@ -232,22 +238,8 @@ namespace cli_menu {
      * Make parent call this callback
      * before or after its own callback.
      */
-
-    // before
-    void registerAsInput() {
-      if (getParent()) {
-        asInput = true;
-        asOutput = false;
-      }
-    }
-
-    // after
-    void registerAsOutput() {
-      if (getParent()) {
-        asInput = false;
-        asOutput = true;
-      }
-    }
+    void registerAsInput();  // before
+    void registerAsOutput(); // after
 
     /** Display information about this command */
 

@@ -15,6 +15,20 @@ namespace cli_menu {
     if (callback_in) callback = callback_in;
   }
 
+  void Command::registerAsInput() {
+    if (getParent()) {
+      asInput = true;
+      asOutput = false;
+    }
+  }
+
+  void Command::registerAsOutput() {
+    if (getParent()) {
+      asInput = false;
+      asOutput = true;
+    }
+  }
+
   std::string Command::generateSequentialRootNames() {
     std::string sequentialNames;
 
@@ -223,7 +237,7 @@ namespace cli_menu {
         if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // EXECUTE CALLBACKS
-      else if (Control::childrenSkipEnterTest(rawstr)) {        
+      else if (Control::childrenExecuteTest(rawstr)) {        
         Command *lastCom = execute();
         if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
@@ -268,42 +282,52 @@ namespace cli_menu {
           else Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
         }
       }
-      // VIEW INPUT
+      // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {
         Data::Input::print(this);
       }
-      else if (Control::viewOutputThisTest(rawstr)) {
+      // VIEW ALL INPUTS
+      else if (Control::viewInputAllTest(rawstr)) {
         Data::Input::printAll();
       }
-      // VIEW OUTPUT
-      else if (Control::viewInputAllTest(rawstr)) {
+      // VIEW THIS OUTPUT
+      else if (Control::viewOutputThisTest(rawstr)) {
         Data::Output::print(this);
       }
+      // VIEW ALL OUTPUTS
       else if (Control::viewOutputAllTest(rawstr)) {
         Data::Output::printAll();
       }
-      // RESET THIS & DESCENDANTS INPUT/OUTPUT
+      // RESET THIS & DESCENDANT INPUTS
       else if (Control::resetInputThisTest(rawstr)) {
-        if (resetInputUnormapDescendants()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
-        }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+        resetDescendants(
+          [](Command *command)->bool { return command->resetInputUnormap(); },
+          {
+            SENTENCE_RESET_INPUT_THIS,
+            SENTENCE_RESET_INPUT_DESCENDANTS,
+            SENTENCE_EMPTY_INPUT_THIS
+          }
+        );
       }
-      else if (Control::resetOutputThisTest(rawstr)) {
-        // output only stores strings
-        if (Data::Output::has(this)) {
-          Data::Output::erase(this);
-          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
-        }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
-      }
-      // RESET ALL INPUT/OUTPUT
+      // RESET ALL INPUTS
       else if (Control::resetInputAllTest(rawstr)) {
         if (Data::Input::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
         }
         else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
       }
+      // RESET THIS & DESCENDANT OUTPUTS
+      else if (Control::resetOutputThisTest(rawstr)) {
+        resetDescendants(
+          [](Command *command)->bool { return command->resetOutput(); },
+          {
+            SENTENCE_RESET_OUTPUT_THIS,
+            SENTENCE_RESET_OUTPUT_DESCENDANTS,
+            SENTENCE_EMPTY_OUTPUT_THIS
+          }
+        );
+      }
+      // RESET ALL OUTPUTS
       else if (Control::resetOutputAllTest(rawstr)) {
         if (Data::Output::clearAll()) {
           Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_ALL);
@@ -770,19 +794,43 @@ namespace cli_menu {
     sterilized = true;
   }
 
-  bool Command::resetInputUnormapDescendants() {
-    bool hasReset = resetInputUnormap();
+  void Command::resetDescendants(
+    mt::CR<CONDITION_CALLBACK> resetMethod,
+    mt::CR_ARR<SENTENCE_CODE, 3> sentenceCodes
+  ) {
+    bool hasResetThis = resetMethod(this);
+    bool hasResetDescendants = false;
 
+    // reset down to the leaves
     if (getChildren()) {
       getChildren()->traverse(
         [&](mt_ds::LinkedList *node)->bool {
-          hasReset = static_cast<Command*>(node)->resetInputUnormap();
+          hasResetDescendants = resetMethod(static_cast<Command*>(node));
           return true;
         }
       );
     }
 
-    return hasReset;
+    // print messages
+    enum { _sentence_this, _sentence_descendants, _sentence_empty };
+
+    if (hasResetThis) {
+      Langu::ageMessage::printResponse(sentenceCodes[_sentence_this]);
+    }
+    else if (hasResetDescendants) {
+      Langu::ageMessage::printResponse(sentenceCodes[_sentence_descendants]);
+    }
+    else Langu::ageMessage::printResponse(sentenceCodes[_sentence_empty]);
+  }
+
+  bool Command::resetOutput() {
+
+    if (Data::Output::has(this)) {
+      Data::Output::erase(this);
+      return true;
+    }
+
+    return false;
   }
 
   /** Belows are declared in 'data.hpp' */
