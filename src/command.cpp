@@ -88,8 +88,6 @@ namespace cli_menu {
           required.first && dialogued &&
           stringifiedTypeIndex != STRINGIFIED_TYPE_INPUT_BOOLEAN
         ) {
-          std::cout << std::endl;
-
           Langu::ageMessage::printTemplateResponse(
             SENTENCE_PARAMETER_REQUIRED,
             keyword
@@ -117,7 +115,6 @@ namespace cli_menu {
 
     // uncompleted required this
     if (required.first) {
-      std::cout << std::endl;
 
       Langu::ageMessage::printTemplateResponse(
         SENTENCE_PARAMETER_REQUIRED,
@@ -132,7 +129,6 @@ namespace cli_menu {
 
     // uncompleted required neighbors with strict parent
     if (firstRequiredNeighbor) {
-      std::cout << std::endl;
 
       if (dialogued) {
         return firstRequiredNeighbor->dialog();
@@ -151,7 +147,6 @@ namespace cli_menu {
 
       // go to first required child
       if (firstRequiredChild) {
-        std::cout << std::endl;
 
         Langu::ageMessage::printTemplateResponse(
           SENTENCE_PARAMETER_REQUIRED,
@@ -486,14 +481,14 @@ namespace cli_menu {
         [](Command *command)->bool { return command->asOutput; }
       );
 
-      if (outputCallbackCode != COMMAND_CALLBACK_DONE) {
-        return outputCallbackCode;
+      if (inputCallbackCode != COMMAND_CALLBACK_DONE) {
+        return inputCallbackCode;
       }
       else if (processCallbackCode != COMMAND_CALLBACK_DONE) {
         return processCallbackCode;
       }
-      else if (inputCallbackCode != COMMAND_CALLBACK_DONE) {
-        return inputCallbackCode;
+      else if (outputCallbackCode != COMMAND_CALLBACK_DONE) {
+        return outputCallbackCode;
       }
     }
 
@@ -654,7 +649,7 @@ namespace cli_menu {
 
       // description
       Console::logItalicString(
-        root->description + '\n',
+        root->description + "\n\n",
         Console::messageColors[CONSOLE_HINT_2]
       );
     }

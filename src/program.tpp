@@ -92,7 +92,9 @@ namespace cli_menu {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_ERROR);
       }
 
+      // dialog continued to the last node
       if (lastNode->isDialogued()) lastNode = lastNode->dialog();
+      // match only (no dialog)
       else break;
     }
 
