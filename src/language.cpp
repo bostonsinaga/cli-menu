@@ -86,7 +86,7 @@ namespace cli_menu {
     "prohibited until the remaining direct inputs are processed",
     // SENTENCE_KEYWORD_NOT_FOUND
     "'$' not found",
-    // SENTENCE_MODE_ALREADY_EDITING
+    // SENTENCE_MODE_ALREADY_MODIFYING
     "already in edit mode",
     // SENTENCE_MODE_ALREADY_SELECTING
     "already in select mode",
@@ -169,7 +169,7 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_KEYWORD_NOT_FOUND
     CONSOLE_ERROR,
-    // SENTENCE_MODE_ALREADY_EDITING
+    // SENTENCE_MODE_ALREADY_MODIFYING
     CONSOLE_WARNING,
     // SENTENCE_MODE_ALREADY_SELECTING
     CONSOLE_WARNING,
@@ -228,7 +228,7 @@ namespace cli_menu {
     mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
-    mt::CR_STR modeAlreadyEditingSentence,
+    mt::CR_STR modeAlreadyModifyingSentence,
     mt::CR_STR modeAlreadySelectingSentence,
     mt::CR_STR modeSwitchToModificationSentence,
     mt::CR_STR modeSwitchToSelectionSentence,
@@ -269,7 +269,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_EDITING] = modeAlreadyEditingSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_MODIFYING] = modeAlreadyModifyingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_ALREADY_SELECTING] = modeAlreadySelectingSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_MODIFICATION] = modeSwitchToModificationSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_MODE_SWITCH_TO_SELECTION] = modeSwitchToSelectionSentence;

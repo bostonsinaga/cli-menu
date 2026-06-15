@@ -239,7 +239,7 @@ namespace cli_menu {
       else if (Control::switchModifyTest(rawstr)) {
         // repeating control warning
         if (editing) {
-          Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_EDITING);          
+          Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_MODIFYING);          
         }
         else { // switch to edit mode
           editing = true;
@@ -635,11 +635,10 @@ namespace cli_menu {
     if (!displayed) {
       Command *root = static_cast<Command*>(getRoot());
       displayed = true;
-      std::cout << std::endl;
 
       // keyword
       Console::logString(
-        Langu::ageMessage::getWelcomeToString() +
+        '\n' + Langu::ageMessage::getWelcomeToString() +
         mt_uti::StrTool::copyStringToUppercase(root->keyword) + '\n',
         Console::messageColors[CONSOLE_HINT_1]
       );
