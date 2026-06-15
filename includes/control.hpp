@@ -84,7 +84,7 @@ namespace cli_menu {
     /**
      * INTERRUPTED 'CTRL+C' INTERACTIONS
      * The 'editing' parameter, defined in 'Command::editing',
-     * is used to switch between editing and selecting modes.
+     * is used to switch between edit and select modes.
      * In this class, it serves to distinguish the theme.
      */
 

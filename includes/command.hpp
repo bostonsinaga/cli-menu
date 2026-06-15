@@ -72,9 +72,6 @@ namespace cli_menu {
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
 
-    // set the 'editing' variable and display one-time message
-    void setMode(mt::CR_BOL isSelecting);
-
     /**
      * Invoke input or output callbacks.
      * Will return 'COMMAND_CALLBACK_DONE' by default

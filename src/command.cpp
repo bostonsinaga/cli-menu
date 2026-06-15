@@ -162,19 +162,6 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  void Command::setMode(mt::CR_BOL isSelecting) {
-    editing = !isSelecting;
-    static bool displayed[2] = {false, false};
-
-    if (!displayed[isSelecting]) {
-      displayed[isSelecting] = true;
-
-      Langu::ageMessage::printResponse(isSelecting ?
-        SENTENCE_MODE_SWITCH_TO_SELECTION : SENTENCE_MODE_SWITCH_TO_MODIFICATION
-      );
-    }
-  }
-
   const COMMAND_CODE Command::getStatusCode() const {
     return statusCodes[totalCommandCodes];
   }
@@ -208,13 +195,11 @@ namespace cli_menu {
 
   Command *Command::dialog() {
     Command::phaseCode = COMMAND_PHASE_DIALOG;
+    std::string seqNames = generateSequentialRootNames();
     std::string rawstr;
 
     // outline or fill style
-    Console::logStylishHeader(
-      generateSequentialRootNames(),
-      editing
-    );
+    Console::logStylishHeader(seqNames, editing);
 
     while (Control::cinDialogInput(rawstr, editing)) {
       // COMMAND HELP
@@ -252,14 +237,17 @@ namespace cli_menu {
       }
       // MODIFY INPUT
       else if (Control::switchModifyTest(rawstr)) {
-        // cannot repeat
+        // repeating control warning
         if (editing) {
-          Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_EDITING);
+          Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_EDITING);          
         }
-        else { // switch to editing mode
-          setMode(false);
-          return dialog();
+        else { // switch to edit mode
+          editing = true;
+          Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_MODIFICATION);
         }
+
+        // reprint sequential root names
+        Console::logStylishHeader(seqNames, editing);
       }
       // SELECT COMMAND
       else if (Control::switchSelectTest(rawstr)) {
@@ -268,13 +256,17 @@ namespace cli_menu {
           printInterruptionDialoguedResponse();
         }
         else {
-          // switch to selection mode
+          // switch to select mode
           if (editing) {
-            setMode(true);
-            return dialog();
+            editing = false;
+            Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_SELECTION);
           }
-          // cannot repeat
-          else Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
+          else { // repeating control warning
+            Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
+          }
+
+          // reprint sequential root names
+          Console::logStylishHeader(seqNames, editing);
         }
       }
       // VIEW THIS INPUT
@@ -570,6 +562,11 @@ namespace cli_menu {
 
     // match in dialog
     if (firstSelected) {
+
+      // pop back detected keyword
+      Command::raws.pop_back();
+      additionalRaws.pop_back();
+
       // still on the current command
       if (firstSelected->pseudo) {
         firstSelected->igniteCallbacks();
@@ -598,7 +595,7 @@ namespace cli_menu {
     }
 
     // remove the recently added strings
-    if (!Command::raws.empty()) {
+    if (!additionalRaws.empty()) {
       mt_uti::VecTool<std::string>::eraseIntervalStable(
         Command::raws,
         {
