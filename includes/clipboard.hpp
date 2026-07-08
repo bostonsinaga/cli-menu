@@ -5,27 +5,37 @@
 
 namespace cli_menu {
 
-  /**
-   * COPY & PASTE (only available for string).
-   * The main purpose for this is to enable pasting large
-   * amounts of hidden text in the CLI via the interface,
-   * using the ':c' symbol from 'Control' within
-   * the 'Command::dialog' method by using
-   * 'Command::copyPaste' method.
-   */
-  class Clipboard {
+  class Clipboard final {
+  private:
+    static void paste(
+      mt::CR_UI formatID,
+      mt::CR<std::function<void(void*)>> usePMem
+    );
+
   public:
-    Clipboard() = delete;
+    static void copy(
+      mt::CR_UI formatID,
+      const void* pData,
+      mt::CR_SZ size
+    );
 
-    /**
-     * Copy functionality is only supported for string data.
-     * The content added to the clipboard is considered the final output.
-     */
-    static void copyText(mt::CR_STR text);
+    template <typename T>
+    static T paste(
+      mt::CR_UI formatID,
+      mt::CR<std::function<T()>> customDefaultValueGetter = nullptr
+    ) {
+      T data = mt::getDefaultFromType<T>(customDefaultValueGetter);
 
+      Clipboard::paste(formatID, [&](void *pMem) {
+        data = static_cast<T>(pMem);
+      });
+
+      return data;
+    }
+
+    // text special
+    static void copyText(std::string *strPtr);
     static std::string pasteText();
-    static mt::VEC_LD pasteNumbers();
-    static mt::VEC_BOL pasteConditions();
   };
 }
 

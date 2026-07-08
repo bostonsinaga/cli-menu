@@ -5,12 +5,6 @@
 
 namespace cli_menu {
 
-  template <typename T>
-  concept CommandType =
-    std::is_same_v<T, Word> ||
-    std::is_same_v<T, Number> ||
-    std::is_same_v<T, Boolean>;
-
   class ProgramVersion final {
   private:
     int major = 0, minor = 0, patch = 0;
@@ -45,14 +39,18 @@ namespace cli_menu {
     std::string stringify() const;
   };
 
-  template <CommandType T>
+  template <ParameterType T>
   class Program : public T {
   private:
     Program(
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
-      COMMAND_CALLBACK callback_in
-    ) : T(keyword_in, about_in.stringify(), callback_in) {}
+      mt::CR<CODE_CALLBACK> callback_in
+    ) : Command(keyword_in, "", callback_in),
+      T(keyword_in, "", callback_in)
+    {
+      this->description = about_in.stringify();
+    }
 
   public:
     Program() = delete;
@@ -60,7 +58,7 @@ namespace cli_menu {
     static Program *create(
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
-      COMMAND_CALLBACK callback_in = Command::defaultCallback
+      mt::CR<CODE_CALLBACK> callback_in = Command::defaultCallback
     );
 
     /**

@@ -4,7 +4,6 @@ set (SOURCES
   language.cpp
   control.cpp
   clipboard.cpp
-  data.cpp
   command.cpp
   type.cpp
   preset.cpp

@@ -3,79 +3,49 @@
 
 namespace cli_menu {
 
-  template <PRIMITIVE_TYPE T>
-  std::string Data::stringifiedVectorMember(mt::CR<T> vecmem) {
-    std::string stringified;
+  template <typename T>
+  T Data<T>::latest() {
+    if (!values.empty()) return values.back();
+    else {
+      if constexpr (mt::inspector::isPointer<T>()) {
+        return nullptr;
+      }
+      else return T();
+    }
+  }
 
-    if constexpr (WORD_TYPE<T>) {
-      stringified = vecmem;
-    }
-    else if constexpr (NUMBER_TYPE<T>) {
-      stringified = std::to_string(vecmem);
-    }
-    else { // boolean
-      if (vecmem) stringified = "true";
-      else stringified = "false";
+  template <typename T>
+  mt::VEC_STR Data<T>::stringify(mt::CR_STR separator) {
+    mt::VEC_STR stringified;
+
+    for (int i = 0 ; i < values.size(); i++) {
+
+      if constexpr (std::is_same_v<T, bool>) {
+        if (values[i]) stringified.push_back("true" + separator);
+        else stringified.push_back("false" + separator);
+      }
+      else if constexpr (mt::inspector::isLetter<T>()) {
+        stringified.push_back(values[i] + separator);
+      }
+      else if constexpr (mt::inspector::isNumber<T>()) {
+        stringified.push_back(std::to_string(values[i]) + separator);
+      }
+      else break;
     }
 
     return stringified;
   }
 
-  template <PRIMITIVE_TYPE T>
-  void Data::printVector(mt::CR_VEC<T> vec, mt::CR_BOL withIndent) {
-
-    for (int i = 0; i < vec.size(); i++) {
-      Console::logString(
-        (withIndent ? "  " : "") + stringifiedVectorMember<T>(vec[i])
-        + (i == vec.size() - 1 ? "\n" : ",\n"),
-        Console::messageColors[withIndent ? CONSOLE_HINT_3 : CONSOLE_HINT_2]
-      );
-    }
-  }
-
-  template <PRIMITIVE_TYPE T>
-  void Data::printType(
-    mt::CR_STR stringifiedType,
-    COMUNORMAP<T> &unormap
+  template <typename T>
+  void Data<T>::print(
+    mt::CR<CONSOLE_CODE> consoleCode,
+    mt::CR_SZ numberOfIndents
   ) {
-    // type title
-    Console::logString(
-      stringifiedType + ":\n",
-      Console::messageColors[CONSOLE_HINT_1]
-    );
-
-    for (mt::CR_PAIR2<Command*, mt::VEC<T>> keyvec : unormap) {
-
-      // keyword with size of vector
-      Console::logItalicString(
-        keyvec.first->generateSequentialRootNames()
-        + '(' + std::to_string(keyvec.second.size()) + "):\n",
-        Console::messageColors[CONSOLE_HINT_2]
+    for (mt::CR_STR str : stringify()) {
+      Console::logString(
+        std::string(' ', numberOfIndents) + str,
+        Console::messageColors[consoleCode]
       );
-
-      // members of vector
-      printVector<T>(keyvec.second, true);
-    }
-
-    // display emptiness
-    if (unormap.empty()) {
-      Console::logString("...\n", Console::messageColors[CONSOLE_HINT_2]);
-    }
-
-    std::cout << std::endl;
-  }
-
-  template <PRIMITIVE_TYPE T>
-  void Data::Input::printVector(Command *node, mt::CR_BOL withIndent) {
-
-    if constexpr (WORD_TYPE<T>) {
-      Data::printVector<std::string>(words[node], withIndent);
-    }
-    else if constexpr (NUMBER_TYPE<T>) {
-      Data::printVector<mt::LD>(numbers[node], withIndent);
-    }
-    else { // boolean
-      Data::printVector<bool>(booleans[node], withIndent);
     }
   }
 }

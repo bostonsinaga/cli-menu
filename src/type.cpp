@@ -5,225 +5,170 @@
 
 namespace cli_menu {
 
-  Creator::Creator(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
-  ) : Command(
-    keyword_in, description_in, callback_in
-  ) {}
+  /** CREATOR */
 
-  void Creator::replaceExistingKeyword(Command *newCommand) {
-    if (!sterilized) {
-      Creator *willDestroyed = nullptr;
+  void Creator::replaceExistingChildByKeyword(Command *newChild) {
+    Command *willDestroyed = nullptr;
 
-      if (getChildren()) getChildren()->forEach(
-        [&](mt_ds::LinkedList *node)->bool {
-
-          // find keyword
-          if (static_cast<Creator*>(node)->keyword
-            == static_cast<Creator*>(newCommand)->keyword
-          ) {
-            willDestroyed = static_cast<Creator*>(node);
-            return false;
-          }
-
-          return true;
-        }
-      );
-
-      if (willDestroyed) willDestroyed->destroy();
-      addChild(newCommand);
+    // find existing keyword
+    if (getChildren()) {
+      willDestroyed = static_cast<Command*>(getChildren())
+      ->findEach([&](Command *current)->bool {
+        return newChild->getKeyword() == current->getKeyword();
+      });
     }
+
+    if (willDestroyed) willDestroyed->destroy();
+    addChild(newChild);
   }
 
-  Word *Creator::createWord(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
+  Word *Creator::addWord(
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb,
+    mt::CR_BOL applyPresetHelpList
   ) {
-    Word *word = new Word(
-      keyword_in,
-      description_in,
-      callback_in
-    );
-
-    replaceExistingKeyword(word);
-    word->setPresetHelpList();
-    return word;
+    if (!sterilized) {
+      Word *word = new Word(keyw, desc, calb);
+      replaceExistingChildByKeyword(word);
+      if (applyPresetHelpList) word->setPresetHelpList();
+      return word;
+    }
+    return nullptr;
   }
 
-  Number *Creator::createNumber(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
+  Number *Creator::addNumber(
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb,
+    mt::CR_BOL applyPresetHelpList
   ) {
-    Number *number = new Number(
-      keyword_in,
-      description_in,
-      callback_in
-    );
-
-    replaceExistingKeyword(number);
-    number->setPresetHelpList();
-    return number;
+    if (!sterilized) {
+      Number *number = new Number(keyw, desc, calb);
+      replaceExistingChildByKeyword(number);
+      if (applyPresetHelpList) number->setPresetHelpList();
+      return number;
+    }
+    return nullptr;
   }
 
-  Boolean *Creator::createBoolean(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
+  Boolean *Creator::addBoolean(
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb,
+    mt::CR_BOL applyPresetHelpList
   ) {
-    Boolean *boolean = new Boolean(
-      keyword_in,
-      description_in,
-      callback_in
-    );
-
-    replaceExistingKeyword(boolean);
-    boolean->setPresetHelpList();
-    return boolean;
+    if (!sterilized) {
+      Boolean *boolean = new Boolean(keyw, desc, calb);
+      replaceExistingChildByKeyword(boolean);
+      if (applyPresetHelpList) boolean->setPresetHelpList();
+      return boolean;
+    }
+    return nullptr;
   }
 
   /** WORD */
 
   Word::Word(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
-  ) : Creator(
-    keyword_in, description_in, callback_in
-  ) {
-    hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb
+  ) : Command(keyw, desc, calb),
+    ParameterWord(keyw, desc, calb),
+    Creator(keyw, desc, calb)
+  {
+    this->hyphens = "-";
+    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
   }
 
   void Word::clipboardInputPaste() {
-    required.first = false;
-    Data::Input::words[this].push_back(Clipboard::pasteText());
+    strargv(Clipboard::pasteText());
   }
 
-  void Word::pushInputUnormap(mt::CR_STR input) {
-    required.first = false;
-    Data::Input::words[this].push_back(input);
-  }
-
-  bool Word::resetInputUnormap() {
-    if (required.second) required.first = true;
-
-    if (Data::Input::hasWords(this)) {
-      Data::Input::words.erase(this);
-      return true;
-    }
-
-    return false;
-  }
-
-  bool Word::printInput() {
-    if (Data::Input::numberOfWords(this)) {
-      Data::Input::printVector<std::string>(this, false);
-      return true;
-    }
-    return false;
+  void Word::strargv(mt::CR_STR raw) {
+    this->required.first = false;
+    this->input.values.push_back(raw);
   }
 
   /** NUMBER */
 
   Number::Number(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
-  ) : Creator(
-    keyword_in, description_in, callback_in
-  ) {
-    hyphens = "-";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb
+  ) : Command(keyw, desc, calb),
+    ParameterNumber(keyw, desc, calb),
+    Creator(keyw, desc, calb)
+  {
+    this->hyphens = "-";
+    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
   }
 
   void Number::clipboardInputPaste() {
-    required.first = false;
+    this->required.first = false;
+    std::string textPasted = Clipboard::pasteText();
 
-    mt_uti::VecTool<mt::LD>::concatCopy(
-      Data::Input::numbers[this],
-      Clipboard::pasteNumbers()
+    mt_uti::VecTool<double>::concatCopy(
+      this->input.values, mt_uti::Scanner::parseNumbers<double>(textPasted)
     );
   }
 
-  void Number::pushInputUnormap(mt::CR_STR input) {
-    required.first = false;
+  void Number::strargv(mt::CR_STR raw) {
+    this->required.first = false;
 
-    mt_uti::VecTool<mt::LD>::concatCopy(
-      Data::Input::numbers[this],
-      mt_uti::Scanner::parseNumbers<mt::LD>(input)
+    mt_uti::VecTool<double>::concatCopy(
+      this->input.values, mt_uti::Scanner::parseNumbers<double>(raw)
     );
-  }
-
-  bool Number::resetInputUnormap() {
-    if (required.second) required.first = true;
-
-    if (Data::Input::hasNumbers(this)) {
-      Data::Input::numbers.erase(this);
-      return true;
-    }
-
-    return false;
-  }
-
-  bool Number::printInput() {
-    if (Data::Input::numberOfNumbers(this)) {
-      Data::Input::printVector<mt::LD>(this, false);
-      return true;
-    }
-    return false;
   }
 
   /** BOOLEAN */
 
   Boolean::Boolean(
-    mt::CR_STR keyword_in,
-    mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
-  ) : Creator(
-    keyword_in, description_in, callback_in
-  ) {
-    hyphens = "--";
-    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
+    mt::CR_STR keyw,
+    mt::CR_STR desc,
+    mt::CR<CODE_CALLBACK> calb
+  ) : Command(keyw, desc, calb),
+    ParameterBoolean(keyw, desc, calb),
+    Creator(keyw, desc, calb)
+  {
+    this->hyphens = "--";
+    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
   }
 
   void Boolean::clipboardInputPaste() {
-    required.first = false;
+    this->required.first = false;
 
-    mt_uti::VecTool<bool>::concatCopy(
-      Data::Input::booleans[this],
-      Clipboard::pasteConditions()
-    );
-  }
+    bool pushed = false;
+    mt::VEC_BOL conditions;
+    mt::VEC_STR textVector {""};
+    std::string textPasted = Clipboard::pasteText();
 
-  void Boolean::pushInputUnormap(mt::CR_STR input) {
-    required.first = false;
+    // truncated by spaces
+    for (mt::CR_CH ch : textPasted) {
 
-    Data::Input::booleans[this].push_back(
-      Langu::ageBooleanizer::test(input)
-    );
-  }
-
-  bool Boolean::resetInputUnormap() {
-    if (required.second) required.first = true;
-
-    if (Data::Input::hasBooleans(this)) {
-      Data::Input::booleans.erase(this);
-      return true;
+      if (mt_uti::StrTool::isWhitespace(ch)) {
+        if (!pushed) {
+          textVector.push_back("");
+          pushed = true;
+        }
+      }
+      else {
+        textVector.back() += ch;
+        pushed = false;
+      }
     }
-  
-    return false;
+
+    // parse booleans
+    for (mt::CR_STR str : textVector) {
+      conditions.push_back(Langu::ageBooleanizer::test(str));
+    }
+
+    mt_uti::VecTool<bool>::concatCopy(this->input.values, conditions);
   }
 
-  bool Boolean::printInput() {
-    if (Data::Input::numberOfBooleans(this)) {
-      Data::Input::printVector<bool>(this, false);
-      return true;
-    }
-    return false;
+  void Boolean::strargv(mt::CR_STR raw) {
+    this->required.first = false;
+    this->input.values.push_back(Langu::ageBooleanizer::test(raw));
   }
 
   BOOLEAN_INSTANT_QUESTION_CODE Boolean::instantQuestion(
@@ -265,17 +210,17 @@ namespace cli_menu {
         Control::printBooleanAvailableValues(false, 0);
       }
       else if ( // forbidden
-        Control::switchModifyTest(rawstr) ||
-        Control::switchSelectTest(rawstr) ||
-        Control::viewInputThisTest(rawstr) ||
-        Control::viewInputAllTest(rawstr) ||
-        Control::viewOutputThisTest(rawstr) ||
-        Control::viewOutputAllTest(rawstr) ||
-        Control::resetInputThisTest(rawstr) ||
-        Control::resetInputAllTest(rawstr) ||
-        Control::resetOutputThisTest(rawstr) ||
-        Control::resetOutputAllTest(rawstr) ||
-        Control::copyOutputTest(rawstr) ||
+        Control::switchModifyTest(rawstr)           ||
+        Control::switchSelectTest(rawstr)           ||
+        Control::viewInputThisTest(rawstr)          ||
+        Control::viewInputDescendantsTest(rawstr)   ||
+        Control::viewOutputThisTest(rawstr)         ||
+        Control::viewOutputDescendantsTest(rawstr)  ||
+        Control::resetInputThisTest(rawstr)         ||
+        Control::resetInputDescendantsTest(rawstr)  ||
+        Control::resetOutputThisTest(rawstr)        ||
+        Control::resetOutputDescendantsTest(rawstr) ||
+        Control::copyOutputTest(rawstr)             ||
         Control::pasteInputTest(rawstr)
       ) {
         Langu::ageMessage::printResponse(

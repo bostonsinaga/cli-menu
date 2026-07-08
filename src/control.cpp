@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__CONTROL_CPP__
 #define __CLI_MENU__CONTROL_CPP__
 
+#include <csignal>
 #include "control.hpp"
 
 namespace cli_menu {
@@ -80,32 +81,32 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_THIS;
   }
 
-  bool Control::viewInputAllTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_ALL;
+  bool Control::viewInputDescendantsTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_DESCENDANTS;
   }
 
   bool Control::viewOutputThisTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_THIS;
   }
 
-  bool Control::viewOutputAllTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_ALL;
+  bool Control::viewOutputDescendantsTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_DESCENDANTS;
   }
 
   bool Control::resetInputThisTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_THIS;
   }
 
-  bool Control::resetInputAllTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_ALL;
+  bool Control::resetInputDescendantsTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_INPUT_DESCENDANTS;
   }
 
   bool Control::resetOutputThisTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_THIS;
   }
 
-  bool Control::resetOutputAllTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_ALL;
+  bool Control::resetOutputDescendantsTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_DESCENDANTS;
   }
 
   bool Control::copyOutputTest(mt::CR_STR rawstr) {
@@ -254,6 +255,10 @@ namespace cli_menu {
 
   void Control::setInterruptedCtrlC(int) {
     Control::INTERRUPTED_CTRL_C.store(true);
+  }
+
+  void Control::registerInterruptedCtrlC() {
+    std::signal(SIGINT, Control::setInterruptedCtrlC);
   }
 }
 

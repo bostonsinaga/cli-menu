@@ -7,33 +7,37 @@
 namespace cli_menu {
 
   void Preset::applyHelp(Creator *owner) {
-    Boolean *help = new Boolean(
+
+    Boolean *help = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_HELP),
       Langu::agePreset::getDescription(PRESET_HELP),
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        static_cast<Creator*>(current->getParent())->printHelp();
+      [](Command *self)->COMMAND_CALLBACK_CODE {
+        static_cast<Command*>(self->getParent())->printHelp();
         return COMMAND_CALLBACK_DONE;
-      }
+      }, false
     );
 
-    owner->replaceExistingKeyword(help);
-    help->makePseudo();
-    help->makeSterilized();
+    if (help) {
+      help->makePseudo();
+      help->makeSterilized();
+    }
   }
 
   void Preset::applyList(Creator *owner) {
-    Boolean *list = new Boolean(
+
+    Boolean *list = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_LIST),
       Langu::agePreset::getDescription(PRESET_LIST),
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        static_cast<Creator*>(current->getParent())->printList(CONSOLE_HINT_2, 0, true);
+      [](Command *self)->COMMAND_CALLBACK_CODE {
+        static_cast<Command*>(self->getParent())->printList(CONSOLE_HINT_2, 0, true);
         return COMMAND_CALLBACK_DONE;
-      }
+      }, false
     );
 
-    owner->replaceExistingKeyword(list);
-    list->makePseudo();
-    list->makeSterilized();
+    if (list) {
+      list->makePseudo();
+      list->makeSterilized();
+    }
   }
 
   void Creator::setPresetHelpList() {
@@ -43,7 +47,7 @@ namespace cli_menu {
 
   /** FILE OPERATIONS */
 
-  void Preset::File::completePathWildcards(Command *node) {
+  void Preset::File::completePathWildcards(ParameterWord *param) {
 
     std::string pattern;
     WIN32_FIND_DATAA findFileData;
@@ -52,8 +56,8 @@ namespace cli_menu {
     std::string::size_type lastSlashIndex;
     std::string basePath;
 
-    for (int i = 0; i < Data::Input::numberOfWords(node); i++) {
-      pattern = Data::Input::getWordAt(node, i);
+    for (int i = 0; i < param->input.values.size(); i++) {
+      pattern = param->input.values[i];
 
       if (pattern.find('*') != std::string::npos ||
         pattern.find('?') != std::string::npos
@@ -67,12 +71,12 @@ namespace cli_menu {
 
         // expand wildcard pattern to path with filename
         if (hFind != INVALID_HANDLE_VALUE) {
-          Data::Input::popWord(node);
+          param->input.values.pop_back();
           i--;
 
           do {
             if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-              Data::Input::pushWord(node, basePath + findFileData.cFileName);
+              param->input.values.push_back(basePath + findFileData.cFileName);
               i++;
             }
           } while (FindNextFileA(hFind, &findFileData) != 0);
@@ -86,16 +90,18 @@ namespace cli_menu {
   void Preset::File::applyCustomIn(
     Creator *owner,
     mt::CR_BOL isRequired,
-    COMMAND_CALLBACK callback
+    mt::CR<CODE_CALLBACK> callback
   ) {
-    Word *in = owner->createWord(
+    Word *in = owner->addWord(
       Langu::agePreset::getKeyword(PRESET_IN),
       Langu::agePreset::getDescription(PRESET_IN),
       callback
     );
 
-    in->registerAsInput();
-    if (isRequired) in->makeRequired();
+    if (in) {
+      in->registerAsInput();
+      if (isRequired) in->makeRequired();
+    }
   }
 
   void Preset::File::applyTextIn(
@@ -104,21 +110,26 @@ namespace cli_menu {
   ) {
     applyCustomIn(
       owner, isRequired,
-      [](Command *current)->COMMAND_CALLBACK_CODE {
+      [](Command *self)->COMMAND_CALLBACK_CODE {
         bool found = false;
         std::string filename;
-        completePathWildcards(current);
+
+        // convert 'Command' to 'ParameterWord'
+        ParameterWord *selfWord = dynamic_cast<ParameterWord*>(self),
+          *parentWord = dynamic_cast<ParameterWord*>(self->getParent());
+
+        // complete paths inside the input
+        completePathWildcards(selfWord);
 
         // read multiple files
-        for (int i = 0; i < Data::Input::numberOfWords(current); i++) {
-          filename = Data::Input::getWordAt(current, i);
+        for (int i = 0; i < selfWord->input.values.size(); i++) {
+          filename = selfWord->input.values[i];
 
           if (mt::FS::is_regular_file(filename)) {
             found = true;
 
             // read file content
-            Data::Output::push(
-              static_cast<Command*>(current->getParent()),
+            parentWord->output.values.push_back(
               mt_uti::Scanner::readFileString(filename)
             );
           }
@@ -128,7 +139,7 @@ namespace cli_menu {
           );
         }
 
-        if (found || !Data::Input::numberOfWords(current)) {
+        if (found || !selfWord->input.values.size()) {
           return COMMAND_CALLBACK_DONE;
         }
 
@@ -138,13 +149,12 @@ namespace cli_menu {
   }
 
   COMMAND_CALLBACK_CODE Preset::File::useTextOut(
-    Command *node,
-    std::string &filename
+    ParameterWord *owner,
+    std::string filename
   ) {
     if (!filename.empty()) {
-
-      std::string outputText = Data::Output::concat(
-        static_cast<Command*>(node->getParent())
+      std::string outputText = mt_uti::StrTool::joinVector(
+        owner->output.values, "\n"
       );
 
       if (!outputText.empty()) {
@@ -200,8 +210,7 @@ namespace cli_menu {
         }
       }
       else Langu::ageMessage::printTemplateResponse(
-        SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
-        static_cast<Command*>(node->getParent())->getKeyword()
+        SENTENCE_EMPTY_OUTPUT_NAMED, owner->getKeyword()
       );
     }
 
@@ -211,16 +220,18 @@ namespace cli_menu {
   void Preset::File::applyCustomOut(
     Creator *owner,
     mt::CR_BOL isRequired,
-    COMMAND_CALLBACK callback
+    mt::CR<CODE_CALLBACK> callback
   ) {
-    Word *out = owner->createWord(
+    Word *out = owner->addWord(
       Langu::agePreset::getKeyword(PRESET_OUT),
       Langu::agePreset::getDescription(PRESET_OUT),
       callback
     );
 
-    out->registerAsOutput();
-    if (isRequired) out->makeRequired();
+    if (out) {
+      out->registerAsOutput();
+      if (isRequired) out->makeRequired();
+    }
   }
 
   void Preset::File::applyTextOutFallback(
@@ -229,19 +240,19 @@ namespace cli_menu {
   ) {
     applyCustomOut(
       owner, isRequired,
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        std::string filename = Data::Input::getLastWord(current);
+      [](Command *self)->COMMAND_CALLBACK_CODE {
+        std::string filename = dynamic_cast<ParameterWord*>(self)->input.latest();
 
         if (filename.empty()) {
 
           // set filename with file-in last argument
-          current->forEach(
-            [&](mt_ds::LinkedList *node)->bool {
+          self->forEach(
+            [&](mt_ds::LinkedList *current)->bool {
 
-              if (static_cast<Command*>(node)->getKeyword()
+              if (static_cast<Command*>(current)->getKeyword()
                 == Langu::agePreset::getKeyword(PRESET_IN)
               ) {
-                filename = Data::Input::getLastWord(static_cast<Command*>(node));
+                filename = dynamic_cast<ParameterWord*>(current)->input.values.back();
                 return false;
               }
 
@@ -251,12 +262,14 @@ namespace cli_menu {
 
           // set filename with program keyword
           if (filename.empty()) {
-            filename = static_cast<Command*>(current->getRoot())->getKeyword()
+            filename = static_cast<Command*>(self->getRoot())->getKeyword()
               + Langu::agePreset::fileOutDefaultExtension;
           }
         }
 
-        COMMAND_CALLBACK_CODE callbackCode = useTextOut(current, filename);
+        COMMAND_CALLBACK_CODE callbackCode = useTextOut(
+          dynamic_cast<ParameterWord*>(self), filename
+        );
 
         // file write failed message
         if (callbackCode == COMMAND_CALLBACK_ERROR) {
@@ -271,9 +284,13 @@ namespace cli_menu {
   void Preset::File::applyTextOutOptional(Creator *owner) {
     applyCustomOut(
       owner, false,
-      [](Command *current)->COMMAND_CALLBACK_CODE {
-        std::string filename = Data::Input::getLastWord(current);
-        useTextOut(current, filename);
+      [](Command *self)->COMMAND_CALLBACK_CODE {
+
+        useTextOut(
+          dynamic_cast<ParameterWord*>(self->getParent()),
+          dynamic_cast<ParameterWord*>(self)->input.latest()
+        );
+
         return COMMAND_CALLBACK_DONE;
       }
     );

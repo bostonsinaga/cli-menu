@@ -8,18 +8,17 @@ namespace cli_menu {
   enum SENTENCE_CODE {
     SENTENCE_ARGUMENT_REQUIRED,
     SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER,
-    SENTENCE_CLIPBOARD_COPY_FAILURE,
-    SENTENCE_CLIPBOARD_COPY_SUCCEED,
-    SENTENCE_CLIPBOARD_GET_FAILURE,
-    SENTENCE_CLIPBOARD_LOCK_FAILURE,
-    SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
+    SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE,
+    SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE,
+    SENTENCE_CLIPBOARD_GET_DATA_FAILURE,
+    SENTENCE_CLIPBOARD_COPY_SUCCEED,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
-    SENTENCE_EMPTY_INPUT_ALL,
     SENTENCE_EMPTY_INPUT_THIS,
-    SENTENCE_EMPTY_OUTPUT_ALL,
+    SENTENCE_EMPTY_INPUT_DESCENDANTS,
     SENTENCE_EMPTY_OUTPUT_THIS,
-    SENTENCE_EMPTY_WRITE_OUTPUT_THIS,
+    SENTENCE_EMPTY_OUTPUT_DESCENDANTS,
+    SENTENCE_EMPTY_OUTPUT_NAMED,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -42,10 +41,8 @@ namespace cli_menu {
     SENTENCE_PROGRAM_DONE,
     SENTENCE_RESET_INPUT_THIS,
     SENTENCE_RESET_INPUT_DESCENDANTS,
-    SENTENCE_RESET_INPUT_ALL,
     SENTENCE_RESET_OUTPUT_THIS,
-    SENTENCE_RESET_OUTPUT_DESCENDANTS,
-    SENTENCE_RESET_OUTPUT_ALL
+    SENTENCE_RESET_OUTPUT_DESCENDANTS
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -70,13 +67,13 @@ namespace cli_menu {
     CONTROL_SWITCH_MODIFY,
     CONTROL_SWITCH_SELECT,
     CONTROL_VIEW_INPUT_THIS,
-    CONTROL_VIEW_INPUT_ALL,
+    CONTROL_VIEW_INPUT_DESCENDANTS,
     CONTROL_VIEW_OUTPUT_THIS,
-    CONTROL_VIEW_OUTPUT_ALL,
+    CONTROL_VIEW_OUTPUT_DESCENDANTS,
     CONTROL_RESET_INPUT_THIS,
-    CONTROL_RESET_INPUT_ALL,
+    CONTROL_RESET_INPUT_DESCENDANTS,
     CONTROL_RESET_OUTPUT_THIS,
-    CONTROL_RESET_OUTPUT_ALL,
+    CONTROL_RESET_OUTPUT_DESCENDANTS,
     CONTROL_COPY_OUTPUT,
     CONTROL_PASTE_INPUT,
     CONTROL_PARENT_BACK,
@@ -129,8 +126,8 @@ namespace cli_menu {
       static mt::STRUNORMAP_STR yesOrNoLabel;
     };
 
-    struct xCommand {
-      static constexpr int totalTypes = 4;
+    struct xCreator {
+      static constexpr int totalTypes = 3;
       static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
     };
 
@@ -169,18 +166,17 @@ namespace cli_menu {
       static void setSentences(
         mt::CR_STR argumentRequiredSentence,
         mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
-        mt::CR_STR clipboardCopyFailureSentence,
-        mt::CR_STR clipboardCopySucceedSentence,
-        mt::CR_STR clipboardGetFailureSentence,
-        mt::CR_STR clipboardLockFailureSentence,
-        mt::CR_STR clipboardMemoryAllocationFailureSentence,        
-        mt::CR_STR clipboardOpenFailureSentence,
-        mt::CR_STR clipboardPasteSucceedSentence,
-        mt::CR_STR emptyInputAllSentence,
+        mt::CR_STR sentenceClipboardOpenFailure,
+        mt::CR_STR sentenceClipboardGlobalLockFailure,
+        mt::CR_STR sentenceClipboardGlobalAllocFailure,
+        mt::CR_STR sentenceClipboardGetDataFailure,
+        mt::CR_STR sentenceClipboardCopySucceed,
+        mt::CR_STR sentenceClipboardPasteSucceed,
         mt::CR_STR emptyInputThisSentence,
-        mt::CR_STR emptyOutputAllSentence,
+        mt::CR_STR emptyInputDescendantsSentence,
         mt::CR_STR emptyOutputThisSentence,
-        mt::CR_STR emptyWriteOutputThisSentence,
+        mt::CR_STR emptyOutputDescendantsSentence,
+        mt::CR_STR emptyOutputNamedSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
@@ -203,10 +199,8 @@ namespace cli_menu {
         mt::CR_STR programDoneSentence,
         mt::CR_STR resetInputThisSentence,
         mt::CR_STR resetInputDescendantsSentence,
-        mt::CR_STR resetInputAllSentence,
         mt::CR_STR resetOutputThisSentence,
-        mt::CR_STR resetOutputDescendantsSentence,
-        mt::CR_STR resetOutputAllSentence
+        mt::CR_STR resetOutputDescendantsSentence
       );
 
       static void printResponse(
@@ -236,13 +230,13 @@ namespace cli_menu {
         std::string switchModifyTerm,
         std::string switchSelectTerm,
         std::string viewInputThisTerm,
-        std::string viewInputAllTerm,
+        std::string viewInputDescendantsTerm,
         std::string viewOutputThisTerm,
-        std::string viewOutputAllTerm,
+        std::string viewOutputDescendantsTerm,
         std::string resetInputThisTerm,
-        std::string resetInputAllTerm,
+        std::string resetInputDescendantsTerm,
         std::string resetOutputThisTerm,
-        std::string resetOutputAllTerm,
+        std::string resetOutputDescendantsTerm,
         std::string copyOutputTerm,
         std::string pasteInputTerm,
         std::string parentBackTerm,
@@ -274,13 +268,12 @@ namespace cli_menu {
       static std::string getYesOrNoLabel();
     };
 
-    struct ageCommand {
+    struct ageCreator {
 
       static void setStringifiedTypes(
         mt::CR_STR wordStringifiedType,
         mt::CR_STR numberStringifiedType,
-        mt::CR_STR booleanStringifiedType,
-        mt::CR_STR outputStringifiedType
+        mt::CR_STR booleanStringifiedType
       );
 
       static std::string getStringifiedType(

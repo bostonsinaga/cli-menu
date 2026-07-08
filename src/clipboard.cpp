@@ -6,112 +6,80 @@
 
 namespace cli_menu {
 
-  std::string Clipboard::pasteText() {
-
-    // activate clipboard
-    if (!OpenClipboard(nullptr)) {
-      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
-      return "";
-    }
-
-    /** Get clipboard data */
-
-    HANDLE hData = GetClipboardData(CF_TEXT);
-
-    if (!hData) {
-      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GET_FAILURE);
-      CloseClipboard();
-      return "";
-    }
-
-    /** Convert 'hData' to string */
-
-    char *pszText = static_cast<char*>(GlobalLock(hData));
-
-    if (!pszText) {
-      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_LOCK_FAILURE);
-    }
-    else GlobalUnlock(hData);
-
-    // copy for safety
-    std::string pasted = std::string(pszText);
-
-    // done with clipboard
-    CloseClipboard();
-
-    Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_PASTE_SUCCEED);
-    return pasted;
-  }
-
-  void Clipboard::copyText(mt::CR_STR text) {
-    if (text.empty()) {
-      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_COPY_FAILURE);
-    }
-    else {
-      // activate clipboard
-      if (!OpenClipboard(nullptr)) {
-        Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
-        return;
-      }
-
-      // empty previous data in clipboard
+  void Clipboard::copy(
+    mt::CR_UI formatID,
+    const void* pData,
+    mt::CR_SZ size
+  ) {
+    if (OpenClipboard(nullptr)) {
       EmptyClipboard();
+      HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, size);
 
-      // allocate global memory for text
-      HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+      if (hGlob) {
+        void *pMem = GlobalLock(hGlob);
 
-      if (!hGlob) {
-        Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_MEMORY_ALLOCATION_FAILURE);
-        CloseClipboard();
-        return;
-      }
-
-      // copy text to memory
-      memcpy(GlobalLock(hGlob), text.c_str(), text.size() + 1);
-      GlobalUnlock(hGlob);
-
-      // set data to clipboard with text format
-      SetClipboardData(CF_TEXT, hGlob);
-
-      // done with clipboard
-      CloseClipboard();
-      Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_COPY_SUCCEED);
-    }
-  }
-
-  mt::VEC_LD Clipboard::pasteNumbers() {
-    return mt_uti::Scanner::parseNumbers<mt::LD>(pasteText());
-  }
-
-  mt::VEC_BOL Clipboard::pasteConditions() {
-
-    mt::VEC_BOL conditions;
-    bool pushed = false;
-
-    mt::VEC_STR textVec {""};
-    std::string text = pasteText();
-
-    // truncated by spaces
-    for (mt::CR_CH ch : text) {
-
-      if (mt_uti::StrTool::isWhitespace(ch)) {
-        if (!pushed) {
-          textVec.push_back("");
-          pushed = true;
+        if (pMem) {
+          memcpy(pMem, pData, size);
+          GlobalUnlock(hGlob);
+          SetClipboardData(formatID, hGlob);
+          Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_COPY_SUCCEED);
+        }
+        else {
+          GlobalFree(hGlob);
+          Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE);
         }
       }
-      else {
-        textVec.back() += ch;
-        pushed = false;
+      else Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE);
+
+      CloseClipboard();
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
+  }
+
+  void Clipboard::paste(
+    mt::CR_UI formatID,
+    mt::CR<std::function<void(void*)>> usePMem
+  ) {
+    bool succeeded = false;
+
+    if (OpenClipboard(nullptr)) {
+      HANDLE hData = GetClipboardData(formatID);
+
+      if (hData) {
+        void *pMem = GlobalLock(hData);
+
+        if (pMem) {
+          succeeded = true;
+          usePMem(pMem);
+          GlobalUnlock(hData);
+          Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_PASTE_SUCCEED);
+        }
+        else {
+          GlobalFree(hData);
+          Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE);
+        }
       }
-    }
+      else Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_GET_DATA_FAILURE);
 
-    // parse booleans
-    for (mt::CR_STR str : textVec) {
-      conditions.push_back(Langu::ageBooleanizer::test(str));
+      CloseClipboard();
     }
+    else Langu::ageMessage::printResponse(SENTENCE_CLIPBOARD_OPEN_FAILURE);
+  }
 
-    return conditions;
+  /** Text Special */
+
+  void Clipboard::copyText(std::string *strPtr) {
+    Clipboard::copy(CF_TEXT, strPtr, strPtr->length());
+  }
+
+  std::string Clipboard::pasteText() {
+    std::string str;
+
+    Clipboard::paste(CF_TEXT, [&](void *pMem) {
+      str = static_cast<char*>(pMem);
+    });
+
+    return str;
   }
 }
 

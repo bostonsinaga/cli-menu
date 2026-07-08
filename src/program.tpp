@@ -1,8 +1,6 @@
 #ifndef __CLI_MENU__PROGRAM_TPP__
 #define __CLI_MENU__PROGRAM_TPP__
 
-#include <csignal>
-
 namespace cli_menu {
 
   ProgramVersion::ProgramVersion(
@@ -40,11 +38,11 @@ namespace cli_menu {
     + Langu::ageProgram::getLabel(PROGRAM_LABEL_LINK) + ": " + url;
   }
 
-  template <CommandType T>
+  template <ParameterType T>
   Program<T> *Program<T>::create(
     mt::CR_STR keyword_in,
     const ProgramAbout &about_in,
-    COMMAND_CALLBACK callback_in
+    mt::CR<CODE_CALLBACK> callback_in
   ) {
     Program<T> *program = new Program<T>(
       keyword_in, about_in, callback_in
@@ -54,11 +52,11 @@ namespace cli_menu {
     return program;
   }
 
-  template <CommandType T>
+  template <ParameterType T>
   void Program<T>::run(mt::CR_INT argc, char *argv[]) {
 
     // register signal handler for Ctrl+C (SIGINT)
-    std::signal(SIGINT, Control::setInterruptedCtrlC);
+    Control::registerInterruptedCtrlC();
 
     // in case this method is called more than once
     Command::raws.clear();
@@ -99,7 +97,7 @@ namespace cli_menu {
     }
 
     // delete this and its descendants
-    Command::destroy();
+    this->destroy();
   }
 }
 

@@ -5,10 +5,15 @@
 
 namespace cli_menu {
 
+  CODE_CALLBACK Command::defaultCallback = [](Command *self)
+  ->COMMAND_CALLBACK_CODE {
+    return COMMAND_CALLBACK_DONE;
+  };
+
   Command::Command(
     mt::CR_STR keyword_in,
     mt::CR_STR description_in,
-    COMMAND_CALLBACK callback_in
+    mt::CR<CODE_CALLBACK> callback_in
   ) {
     keyword = keyword_in;
     description = description_in;
@@ -32,11 +37,11 @@ namespace cli_menu {
   std::string Command::generateSequentialRootNames() {
     std::string sequentialNames;
 
-    bubble([&](mt_ds::LinkedList *node)->bool {
+    bubble([&](mt_ds::LinkedList *current)->bool {
 
-      sequentialNames = (static_cast<Command*>(node)->getParent() ?
-        static_cast<Command*>(node)->hyphens : ""
-      ) + static_cast<Command*>(node)->keyword + ' ' + sequentialNames;
+      sequentialNames = (static_cast<Command*>(current)->getParent() ?
+        static_cast<Command*>(current)->hyphens : ""
+      ) + static_cast<Command*>(current)->keyword + ' ' + sequentialNames;
 
       return true;
     });
@@ -48,8 +53,6 @@ namespace cli_menu {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
 
-    if (dialogued) printWelcome();
-
     /**
      * The string vector will 'pop_back()'
      * until it is empty to stop this loop.
@@ -59,15 +62,15 @@ namespace cli_menu {
       // find first child of the same keyword with 'raws.back()'
       if (getChildren()) {
         firstChild = static_cast<Command*>(getChildren())
-        ->findEach([](Command *command)->bool {
-          return command->testHyphens(Command::raws.back());
+        ->findEach([](Command *current)->bool {
+          return current->testHyphens(Command::raws.back());
         });
       }
 
       // find first neighbor of the same keyword with 'raws.back()'
       if (!firstChild) {
-        firstNeighbor = findEach([&](Command *command)->bool {
-          return command != this && command->testHyphens(Command::raws.back());
+        firstNeighbor = findEach([&](Command *current)->bool {
+          return current != this && current->testHyphens(Command::raws.back());
         });
       }
 
@@ -96,19 +99,19 @@ namespace cli_menu {
           Command::interruptionDialogued = true;
           return dialog();
         }
-        else { // go to other command
+        else { // go to other node
 
           // the required boolean automatically has value 'true'
           if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_INPUT_BOOLEAN) {
-            pushInputUnormap("1");
+            strargv("1");
           }
 
           if (firstChild) return firstChild->match();
           return firstNeighbor->match();
         }
       }
-      else { // push argument to 'Data::Input'
-        pushInputUnormap(Command::raws.back());
+      else { // push argument to 'input' vector
+        strargv(Command::raws.back());
         Command::raws.pop_back();
       }
     }
@@ -141,8 +144,8 @@ namespace cli_menu {
 
       // find first required child
       Command *firstRequiredChild = static_cast<Command*>(getChildren()->head())
-      ->findEach([](Command *command)->bool {
-        return command->required.first;
+      ->findEach([](Command *current)->bool {
+        return current->required.first;
       });
 
       // go to first required child
@@ -198,7 +201,10 @@ namespace cli_menu {
     std::string seqNames = generateSequentialRootNames();
     std::string rawstr;
 
-    // outline or fill style
+    // initial message
+    printWelcome();
+
+    // outline or fill style    
     Console::logStylishHeader(seqNames, editing);
 
     while (Control::cinDialogInput(rawstr, editing)) {
@@ -271,59 +277,39 @@ namespace cli_menu {
       }
       // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {
-        Data::Input::print(this);
+        printInput();
       }
-      // VIEW ALL INPUTS
-      else if (Control::viewInputAllTest(rawstr)) {
-        Data::Input::printAll();
+      // VIEW DESCENDANT INPUTS
+      else if (Control::viewInputDescendantsTest(rawstr)) {
+        printDescendantInputs();
       }
       // VIEW THIS OUTPUT
       else if (Control::viewOutputThisTest(rawstr)) {
-        Data::Output::print(this);
+        printOutput();
       }
-      // VIEW ALL OUTPUTS
-      else if (Control::viewOutputAllTest(rawstr)) {
-        Data::Output::printAll();
+      // VIEW DESCENDANT OUTPUTS
+      else if (Control::viewOutputDescendantsTest(rawstr)) {
+        printDescendantOutputs();
       }
-      // RESET THIS & DESCENDANT INPUTS
+      // RESET THIS INPUT
       else if (Control::resetInputThisTest(rawstr)) {
-        resetDescendants(
-          [](Command *command)->bool { return command->resetInputUnormap(); },
-          {
-            SENTENCE_RESET_INPUT_THIS,
-            SENTENCE_RESET_INPUT_DESCENDANTS,
-            SENTENCE_EMPTY_INPUT_THIS
-          }
-        );
+        resetInput();
       }
-      // RESET ALL INPUTS
-      else if (Control::resetInputAllTest(rawstr)) {
-        if (Data::Input::clearAll()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_ALL);
-        }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_ALL);
+      // RESET DESCENDANT INPUTS
+      else if (Control::resetInputDescendantsTest(rawstr)) {
+        resetDescendantInputs();
       }
-      // RESET THIS & DESCENDANT OUTPUTS
+      // RESET THIS OUTPUT
       else if (Control::resetOutputThisTest(rawstr)) {
-        resetDescendants(
-          [](Command *command)->bool { return command->resetOutput(); },
-          {
-            SENTENCE_RESET_OUTPUT_THIS,
-            SENTENCE_RESET_OUTPUT_DESCENDANTS,
-            SENTENCE_EMPTY_OUTPUT_THIS
-          }
-        );
+        resetOutput();
       }
-      // RESET ALL OUTPUTS
-      else if (Control::resetOutputAllTest(rawstr)) {
-        if (Data::Output::clearAll()) {
-          Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_ALL);
-        }
-        else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_ALL);
+      // RESET DESCENDANT OUTPUTS
+      else if (Control::resetOutputDescendantsTest(rawstr)) {
+        resetDescendantOutputs();
       }
       // CLIPBOARD COPY OUTPUT
       else if (Control::copyOutputTest(rawstr)) {
-        Clipboard::copyText(Data::Output::concat(this));
+        clipboardOutputCopy();
       }
       // CLIPBOARD PASTE INPUT
       else if (Control::pasteInputTest(rawstr)) {
@@ -347,12 +333,8 @@ namespace cli_menu {
       }
       // WILD VALUE
       else {
-        // push argument to 'Data::Input'
-        if (editing) {
-          pushInputUnormap(rawstr);
-        }
-        // selection (match in dialog)
-        else {
+        if (editing) strargv(rawstr);
+        else { // selection (match in dialog)
           Command *lastCom = goDown(rawstr);
           if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
         }
@@ -387,8 +369,8 @@ namespace cli_menu {
     // go to children level
     else if (hasChildren()) {
       return static_cast<Command*>(getChildren()->head())
-      ->findEach([](Command *command)->bool {
-        return !command->pseudo;
+      ->findEach([](Command *current)->bool {
+        return !current->pseudo;
       })->dialog();
     }
     // no children warning
@@ -408,8 +390,9 @@ namespace cli_menu {
     else if (!strictParentHasRequired()) {
 
       Command *firstRequiredChild = hasChildren() ?
-      static_cast<Command*>(getChildren()->head())->findEach([](Command *command)->bool {
-        return command->required.first;
+      static_cast<Command*>(getChildren()->head())
+      ->findEach([](Command *current)->bool {
+        return current->required.first;
       }) : nullptr;
 
       // cannot skip the required children
@@ -427,17 +410,17 @@ namespace cli_menu {
   }
 
   COMMAND_CALLBACK_CODE Command::forEachInOutCallbacks(
-    mt::CR<CONDITION_CALLBACK> asWhatCallback
+    mt::CR<BOOL_CALLBACK> asWhatCallback
   ) {
     COMMAND_CALLBACK_CODE callbackCode;
     bool anyError = false, anyCanceled = false;
 
     if (hasChildren()) {
       getChildren()->forEach(
-        [&](mt_ds::LinkedList *node)->bool {
+        [&](mt_ds::LinkedList *current)->bool {
 
-          if (asWhatCallback(static_cast<Command*>(node))) {
-            callbackCode = static_cast<Command*>(node)->callback(static_cast<Command*>(node));
+          if (asWhatCallback(static_cast<Command*>(current))) {
+            callbackCode = static_cast<Command*>(current)->callback(static_cast<Command*>(current));
 
             if (callbackCode == COMMAND_CALLBACK_ERROR) {
               anyError = true;
@@ -461,7 +444,7 @@ namespace cli_menu {
     if (!asInput && !asOutput) {
       // input
       COMMAND_CALLBACK_CODE inputCallbackCode = forEachInOutCallbacks(
-        [](Command *command)->bool { return command->asInput; }
+        [](Command *current)->bool { return current->asInput; }
       );
 
       // process
@@ -470,7 +453,7 @@ namespace cli_menu {
 
       // output
       COMMAND_CALLBACK_CODE outputCallbackCode = forEachInOutCallbacks(
-        [](Command *command)->bool { return command->asOutput; }
+        [](Command *current)->bool { return current->asOutput; }
       );
 
       if (inputCallbackCode != COMMAND_CALLBACK_DONE) {
@@ -492,8 +475,8 @@ namespace cli_menu {
       COMMAND_CODE propagatingCode;
       COMMAND_CALLBACK_CODE callbackCode;
 
-      bubble([&](mt_ds::LinkedList *node)->bool {
-        callbackCode = static_cast<Command*>(node)->triggerCallbacks();
+      bubble([&](mt_ds::LinkedList *current)->bool {
+        callbackCode = static_cast<Command*>(current)->triggerCallbacks();
 
         if (callbackCode == COMMAND_CALLBACK_ERROR) {
           propagatingCode = COMMAND_ERROR;
@@ -505,7 +488,7 @@ namespace cli_menu {
         }
         else propagatingCode = COMMAND_DONE;
 
-        return static_cast<Command*>(node)->propagation;
+        return static_cast<Command*>(current)->propagation;
       });
 
       return setStatus(propagatingCode);
@@ -556,8 +539,8 @@ namespace cli_menu {
 
     // find first child by keyword possibility at back of string vector
     Command *firstSelected = getChildren() ? static_cast<Command*>(getChildren())
-    ->findEach([](Command *command)->bool {
-      return command->testHyphens(Command::raws.back());
+    ->findEach([](Command *current)->bool {
+      return current->testHyphens(Command::raws.back());
     }) : nullptr;
 
     // match in dialog
@@ -567,7 +550,7 @@ namespace cli_menu {
       Command::raws.pop_back();
       additionalRaws.pop_back();
 
-      // still on the current command
+      // still on the current node
       if (firstSelected->pseudo) {
         firstSelected->igniteCallbacks();
       }
@@ -577,7 +560,7 @@ namespace cli_menu {
 
         /**
          * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
-         * from terminating when selecting a command followed by its pseudo-child.
+         * from terminating when selecting a node followed by its pseudo-child.
          */
         if (lastCom->getStatusCode() != COMMAND_ONGOING &&
           lastCom->getStatusCode() != COMMAND_PSEUDO_SILENT
@@ -611,8 +594,8 @@ namespace cli_menu {
   Command *Command::goToNeighbor(mt::CR<DIRECTION> direction) {
 
     // find first ortho neighbor
-    Command *firstOrthoNeighbor = findEach([&](Command *command)->bool {
-      return command != this && !command->pseudo;
+    Command *firstOrthoNeighbor = findEach([&](Command *current)->bool {
+      return current != this && !current->pseudo;
     }, direction);
 
     if (firstOrthoNeighbor) {
@@ -669,7 +652,7 @@ namespace cli_menu {
   ) {
     Console::logString(
       std::string(numberOfIndents, ' ') + keyword + " ["
-      + Langu::ageCommand::getStringifiedType(stringifiedTypeIndex)
+      + Langu::ageCreator::getStringifiedType(stringifiedTypeIndex)
       + ']' + (required.first ? '*' : '\0') + '\n',
       Console::messageColors[consoleCode]
     );
@@ -683,10 +666,10 @@ namespace cli_menu {
     if (hasChildren()) {
 
       // print children keyword
-      getChildren()->head()->forEach([&](mt_ds::LinkedList *node)->bool {
+      getChildren()->head()->forEach([&](mt_ds::LinkedList *current)->bool {
 
-        if (!static_cast<Command*>(node)->pseudo) {
-          static_cast<Command*>(node)->printKeyword(consoleCode, numberOfIndents);
+        if (!static_cast<Command*>(current)->pseudo) {
+          static_cast<Command*>(current)->printKeyword(consoleCode, numberOfIndents);
         }
 
         return true;
@@ -708,21 +691,20 @@ namespace cli_menu {
 
   void Command::printInterruptionDialoguedResponse() {
     Langu::ageMessage::printResponse(required.first?
-      SENTENCE_ARGUMENT_REQUIRED:
-      SENTENCE_INTERRUPTION_DIALOG
+      SENTENCE_ARGUMENT_REQUIRED : SENTENCE_INTERRUPTION_DIALOG
     );
   }
 
   Command *Command::findEach(
-    mt::CR<CONDITION_CALLBACK> condition,
+    mt::CR<BOOL_CALLBACK> condition,
     mt::CR<DIRECTION> direction
   ) {
     Command *found = nullptr;
 
-    forEach([&](mt_ds::LinkedList *node)->bool {
+    forEach([&](mt_ds::LinkedList *current)->bool {
 
-      if (condition(static_cast<Command*>(node))) {
-        found = static_cast<Command*>(node);
+      if (condition(static_cast<Command*>(current))) {
+        found = static_cast<Command*>(current);
         return false;
       }
 
@@ -734,8 +716,8 @@ namespace cli_menu {
 
   Command *Command::strictParentHasRequired() {
 
-    Command *found = findEach([&](Command *command)->bool {
-      return command->required.first && !command->pseudo;
+    Command *found = findEach([&](Command *current)->bool {
+      return current->required.first && !current->pseudo;
     });
 
     if (found) {
@@ -783,80 +765,6 @@ namespace cli_menu {
     }
 
     sterilized = true;
-  }
-
-  void Command::resetDescendants(
-    mt::CR<CONDITION_CALLBACK> resetMethod,
-    mt::CR_ARR<SENTENCE_CODE, 3> sentenceCodes
-  ) {
-    bool hasResetThis = resetMethod(this);
-    bool hasResetDescendants = false;
-
-    // reset down to the leaves
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *node)->bool {
-          hasResetDescendants = resetMethod(static_cast<Command*>(node));
-          return true;
-        }
-      );
-    }
-
-    // print messages
-    enum { _sentence_this, _sentence_descendants, _sentence_empty };
-
-    if (hasResetThis) {
-      Langu::ageMessage::printResponse(sentenceCodes[_sentence_this]);
-    }
-    else if (hasResetDescendants) {
-      Langu::ageMessage::printResponse(sentenceCodes[_sentence_descendants]);
-    }
-    else Langu::ageMessage::printResponse(sentenceCodes[_sentence_empty]);
-  }
-
-  bool Command::resetOutput() {
-
-    if (Data::Output::has(this)) {
-      Data::Output::erase(this);
-      return true;
-    }
-
-    return false;
-  }
-
-  /** Belows are declared in 'data.hpp' */
-
-  void Data::Input::print(Command *command) {
-    if (command && !command->printInput()) {
-      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
-    }
-  }
-
-  void Data::Input::printAll() {
-    Data::printType<std::string>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_WORD), words
-    );
-
-    Data::printType<mt::LD>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_NUMBER), numbers
-    );
-
-    Data::printType<bool>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_INPUT_BOOLEAN), booleans
-    );
-  }
-
-  void Data::Output::print(Command *command) {
-    if (Output::numberOf(command)) {
-      Data::printVector<std::string>(texts[command], false);
-    }
-    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
-  }
-
-  void Data::Output::printAll() {
-    Data::printType<std::string>(
-      Langu::ageCommand::getStringifiedType(STRINGIFIED_TYPE_OUTPUT_TEXT), texts
-    );
   }
 }
 

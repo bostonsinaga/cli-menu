@@ -2,7 +2,6 @@
 #define __CLI_MENU__COMMAND_HPP__
 
 #include "clipboard.hpp"
-#include "data.hpp"
 
 namespace cli_menu {
 
@@ -31,14 +30,15 @@ namespace cli_menu {
     COMMAND_CALLBACK_CANCELED
   };
 
-  typedef std::function<COMMAND_CALLBACK_CODE(Command*)> COMMAND_CALLBACK;
-  typedef std::function<bool(Command*)> CONDITION_CALLBACK;
+  class Command;
+
+  typedef std::function<COMMAND_CALLBACK_CODE(Command*)> CODE_CALLBACK;
+  typedef std::function<void(Command*)> VOID_CALLBACK;
+  typedef std::function<bool(Command*)> BOOL_CALLBACK;
 
   class Command : public mt_ds::GeneralTree {
   protected:
-    inline static COMMAND_CALLBACK defaultCallback = [](Command *current)->COMMAND_CALLBACK_CODE {
-      return COMMAND_CALLBACK_DONE;
-    };
+    static CODE_CALLBACK defaultCallback;
 
   private:
     int pseudosCount = 0;
@@ -67,7 +67,7 @@ namespace cli_menu {
     };
 
     // return false to stop the program 
-    COMMAND_CALLBACK callback = Command::defaultCallback;
+    CODE_CALLBACK callback = Command::defaultCallback;
 
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
@@ -78,7 +78,7 @@ namespace cli_menu {
      * if there is no 'asInput' or 'asOutput' condition from the children.
      */
     COMMAND_CALLBACK_CODE forEachInOutCallbacks(
-      mt::CR<CONDITION_CALLBACK> asWhatCallback
+      mt::CR<BOOL_CALLBACK> asWhatCallback
     );
 
     /**
@@ -99,20 +99,14 @@ namespace cli_menu {
     Command *goDown(mt::CR_STR input);
     Command *goToNeighbor(mt::CR<DIRECTION> direction);
 
-    // an error message in dialog when switching mode / moving position
-    void printInterruptionDialoguedResponse();
-
-    // find one desired command in this level with given condition
-    Command *findEach(
-      mt::CR<CONDITION_CALLBACK> condition,
-      mt::CR<DIRECTION> direction = RIGHT
-    );
-
     /**
      * Check whether strict parent has incomplete required child.
      * If so, print error and return the first found.
      */
     Command *strictParentHasRequired();
+
+    // an error message in dialog when switching mode / moving position
+    void printInterruptionDialoguedResponse();
 
     // input is expected as e.g. '--foo' or '-goo'
     bool testHyphens(mt::CR_STR input) {
@@ -126,15 +120,6 @@ namespace cli_menu {
     bool hasChildren() {
       return numberOfChildren() - pseudosCount > 0;
     }
-
-    // reset this 'Data' and its descendants 'Data'
-    void resetDescendants(
-      mt::CR<CONDITION_CALLBACK> resetMethod,
-      mt::CR_ARR<SENTENCE_CODE, 3> sentenceCodes
-    );
-
-    // output only stores string
-    bool resetOutput();
 
   protected:
     // changeable and initial reference
@@ -153,13 +138,22 @@ namespace cli_menu {
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
-      COMMAND_CALLBACK callback_in
+      mt::CR<CODE_CALLBACK> callback_in
     );
 
-    // modify this 'Data::Input'
+    /** End user generated data */
+
     virtual void clipboardInputPaste() {}
-    virtual void pushInputUnormap(mt::CR_STR input) {}
-    virtual bool resetInputUnormap() { return false; }
+    virtual void clipboardOutputCopy() {}
+    virtual void strargv(mt::CR_STR raw) {}
+    virtual void printInput() {}
+    virtual void printOutput() {}
+    virtual void printDescendantInputs() {}
+    virtual void printDescendantOutputs() {}
+    virtual void resetInput() {}
+    virtual void resetOutput() {}
+    virtual void resetDescendantInputs() {}
+    virtual void resetDescendantOutputs() {}
 
   public:
     Command() = delete;
@@ -173,6 +167,12 @@ namespace cli_menu {
 
     // extended runtime input
     Command *dialog();
+
+    // find one desired command in this level with given condition
+    Command *findEach(
+      mt::CR<BOOL_CALLBACK> condition,
+      mt::CR<DIRECTION> direction = RIGHT
+    );
 
     // member variable access
     const bool isRequired() const { return required.first; }
@@ -264,9 +264,6 @@ namespace cli_menu {
       mt::CR_SZ numberOfIndents,
       mt::CR_BOL displayAtLeafWarning
     );
-
-    // print unordered map values associated with this
-    virtual bool printInput() { return false; }
   };
 }
 
