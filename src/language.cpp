@@ -10,7 +10,7 @@ namespace cli_menu {
   //_________|
 
   bool Langu::ageManager::hasISOCode(mt::CR_STR existingISOCode) {
-    return mt::STRUNORMAP_FOUND<mt::ARR_STR<Langu::xMessage::totalSentences>>(
+    return mt::STRUNORMAP_FOUND<mt::ARR_STR<SENTENCES_TOTAL>>(
       Langu::xMessage::sentences, existingISOCode
     );
   }
@@ -45,7 +45,7 @@ namespace cli_menu {
   // MESSAGE |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xMessage::totalSentences>> Langu::xMessage::sentences = {{"en", {    
+  mt::STRUNORMAP<mt::ARR_STR<SENTENCES_TOTAL>> Langu::xMessage::sentences = {{"en", {    
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
@@ -122,7 +122,7 @@ namespace cli_menu {
     "descendant outputs are removed"
   }}};
 
-  CONSOLE_CODE Langu::xMessage::consoleCodes[Langu::xMessage::totalSentences] = {
+  CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCES_TOTAL] = {
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
@@ -320,29 +320,32 @@ namespace cli_menu {
   // CONTROL |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xControl::totalCodes>> Langu::xControl::terms = {{"en", {
+  mt::STRUNORMAP<mt::ARR_STR<CONTROLS_TOTAL>> Langu::xControl::terms = {{"en", {
     "show this help",
     "show controller list",
-    "enter the children level",
+    "enter children level",
     "execute callbacks",
-    "show list of children",
+    "show children list",
     "go to next neighbor",
     "go to previous neighbor",
     "modify this input",
     "select another node",
+    "clear terminal screen",
     "view this input",
-    "view all inputs",
+    "view descendant inputs",
     "view this output",
-    "view all outputs",
+    "view descendant outputs",
     "reset this input",
-    "reset all inputs",
+    "reset descendant inputs",
     "reset this output",
-    "reset all outputs",
+    "reset descendant outputs",
+    "reset this data",
+    "reset descendant data",
     "copy text from this output",
     "paste text into this input",
     "back to parent level",
     "back to root level",
-    "exit the program"
+    "exit program"
   }}};
 
   mt::STRUNORMAP_STR
@@ -359,6 +362,7 @@ namespace cli_menu {
     std::string neighborPreviousTerm,
     std::string switchModifyTerm,
     std::string switchSelectTerm,
+    std::string clearScreenTerm,
     std::string viewInputThisTerm,
     std::string viewInputDescendantsTerm,
     std::string viewOutputThisTerm,
@@ -367,6 +371,8 @@ namespace cli_menu {
     std::string resetInputDescendantsTerm,
     std::string resetOutputThisTerm,
     std::string resetOutputDescendantsTerm,
+    std::string resetDataThisTerm,
+    std::string resetDataDescendantsTerm,
     std::string copyOutputTerm,
     std::string pasteInputTerm,
     std::string parentBackTerm,
@@ -382,6 +388,7 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFY] = switchModifyTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CLEAR_SCREEN] = clearScreenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_DESCENDANTS] = viewInputDescendantsTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;
@@ -390,6 +397,8 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_DESCENDANTS] = resetInputDescendantsTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_THIS] = resetOutputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_DESCENDANTS] = resetOutputDescendantsTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_DATA_THIS] = resetDataThisTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_DATA_DESCENDANTS] = resetDataDescendantsTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COPY_OUTPUT] = copyOutputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PASTE_INPUT] = pasteInputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PARENT_BACK] = parentBackTerm;
@@ -460,10 +469,10 @@ namespace cli_menu {
   }
 
   //_________|
-  // COMMAND |
+  // CREATOR |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xCreator::totalTypes>>
+  mt::STRUNORMAP<mt::ARR_STR<CREATOR_TYPES_TOTAL>>
   Langu::xCreator::stringifiedTypes = {{"en", {
     "WORD", "NUMBER", "BOOLEAN"
   }}};
@@ -497,7 +506,7 @@ namespace cli_menu {
   // PROGRAM |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xProgram::totalLabels>>
+  mt::STRUNORMAP<mt::ARR_STR<PROGRAM_LABELS_TOTAL>>
   Langu::xProgram::labels = {{"en", {
     "Version", "Author", "Link"
   }}};
@@ -531,7 +540,7 @@ namespace cli_menu {
   // PRESET |
   //________|
 
-  mt::STRUNORMAP<mt::ARR_STR<Langu::xPreset::totalKeywords>>
+  mt::STRUNORMAP<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>>
   Langu::xPreset::keywords = {{"en", {
     "in", "out", "help", "list"
   }}},
@@ -552,19 +561,19 @@ namespace cli_menu {
   ) {
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_IN] = inKeyword;
+    [PRESET_KEYWORD_IN] = inKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_OUT] = outKeyword;
+    [PRESET_KEYWORD_OUT] = outKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_HELP] = helpKeyword;
+    [PRESET_KEYWORD_HELP] = helpKeyword;
 
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
-    [PRESET_LIST] = listKeyword;
+    [PRESET_KEYWORD_LIST] = listKeyword;
   }
 
   void Langu::agePreset::setDescription(
@@ -575,30 +584,30 @@ namespace cli_menu {
   ) {
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
-    [PRESET_IN] = inDescription;
+    [PRESET_KEYWORD_IN] = inDescription;
 
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
-    [PRESET_OUT] = outDescription;
+    [PRESET_KEYWORD_OUT] = outDescription;
 
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
-    [PRESET_HELP] = helpDescription;
+    [PRESET_KEYWORD_HELP] = helpDescription;
 
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
-    [PRESET_LIST] = listDescription;
+    [PRESET_KEYWORD_LIST] = listDescription;
   }
 
   std::string Langu::agePreset::getKeyword(
-    const PRESET_CODE &code
+    const PRESET_KEYWORD_CODE &code
   ) {
     return Langu::xPreset::keywords
     [Langu::xManager::currentISOCode][code];
   }
 
   std::string Langu::agePreset::getDescription(
-    const PRESET_CODE &code
+    const PRESET_KEYWORD_CODE &code
   ) {
     return Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode][code];

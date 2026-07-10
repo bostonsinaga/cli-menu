@@ -48,8 +48,7 @@ namespace cli_menu {
   enum STRINGIFIED_TYPE_COMMAND_CODE {
     STRINGIFIED_TYPE_INPUT_WORD,
     STRINGIFIED_TYPE_INPUT_NUMBER,
-    STRINGIFIED_TYPE_INPUT_BOOLEAN,
-    STRINGIFIED_TYPE_OUTPUT_TEXT
+    STRINGIFIED_TYPE_INPUT_BOOLEAN
   };
 
   /**
@@ -66,6 +65,7 @@ namespace cli_menu {
     CONTROL_NEIGHBOR_PREVIOUS,
     CONTROL_SWITCH_MODIFY,
     CONTROL_SWITCH_SELECT,
+    CONTROL_CLEAR_SCREEN,
     CONTROL_VIEW_INPUT_THIS,
     CONTROL_VIEW_INPUT_DESCENDANTS,
     CONTROL_VIEW_OUTPUT_THIS,
@@ -74,6 +74,8 @@ namespace cli_menu {
     CONTROL_RESET_INPUT_DESCENDANTS,
     CONTROL_RESET_OUTPUT_THIS,
     CONTROL_RESET_OUTPUT_DESCENDANTS,
+    CONTROL_RESET_DATA_THIS,
+    CONTROL_RESET_DATA_DESCENDANTS,
     CONTROL_COPY_OUTPUT,
     CONTROL_PASTE_INPUT,
     CONTROL_PARENT_BACK,
@@ -88,12 +90,18 @@ namespace cli_menu {
     PROGRAM_LABEL_LINK
   };
 
-  enum PRESET_CODE {
-    PRESET_IN,
-    PRESET_OUT,
-    PRESET_HELP,
-    PRESET_LIST
+  enum PRESET_KEYWORD_CODE {
+    PRESET_KEYWORD_IN,
+    PRESET_KEYWORD_OUT,
+    PRESET_KEYWORD_HELP,
+    PRESET_KEYWORD_LIST
   };
+
+  constexpr int SENTENCES_TOTAL = 37;
+  constexpr int CONTROLS_TOTAL = 25;
+  constexpr int CREATOR_TYPES_TOTAL = 3;
+  constexpr int PROGRAM_LABELS_TOTAL = 3;
+  constexpr int PRESET_KEYWORDS_TOTAL = 4;
 
   class Langu final {
   private:
@@ -106,15 +114,13 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static constexpr int totalSentences = 40;
-      static mt::STRUNORMAP<mt::ARR_STR<totalSentences>> sentences;
-      static CONSOLE_CODE consoleCodes[totalSentences];
+      static mt::STRUNORMAP<mt::ARR_STR<SENTENCES_TOTAL>> sentences;
+      static CONSOLE_CODE consoleCodes[SENTENCES_TOTAL];
       static mt::STRUNORMAP_STR welcomeToString;
     };
 
     struct xControl {
-      static constexpr int totalCodes = 22;
-      static mt::STRUNORMAP<mt::ARR_STR<totalCodes>> terms;
+      static mt::STRUNORMAP<mt::ARR_STR<CONTROLS_TOTAL>> terms;
 
       static mt::STRUNORMAP_STR
         abbreviationsTitle,
@@ -127,18 +133,15 @@ namespace cli_menu {
     };
 
     struct xCreator {
-      static constexpr int totalTypes = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<totalTypes>> stringifiedTypes;
+      static mt::STRUNORMAP<mt::ARR_STR<CREATOR_TYPES_TOTAL>> stringifiedTypes;
     };
 
     struct xProgram {
-      static constexpr int totalLabels = 3;
-      static mt::STRUNORMAP<mt::ARR_STR<totalLabels>> labels;
+      static mt::STRUNORMAP<mt::ARR_STR<PROGRAM_LABELS_TOTAL>> labels;
     };
 
     struct xPreset {
-      static constexpr int totalKeywords = 4;
-      static mt::STRUNORMAP<mt::ARR_STR<totalKeywords>> keywords, descriptions;
+      static mt::STRUNORMAP<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>> keywords, descriptions;
     };
 
   public:
@@ -229,6 +232,7 @@ namespace cli_menu {
         std::string neighborPreviousTerm,
         std::string switchModifyTerm,
         std::string switchSelectTerm,
+        std::string cleanScreenTerm,
         std::string viewInputThisTerm,
         std::string viewInputDescendantsTerm,
         std::string viewOutputThisTerm,
@@ -237,6 +241,8 @@ namespace cli_menu {
         std::string resetInputDescendantsTerm,
         std::string resetOutputThisTerm,
         std::string resetOutputDescendantsTerm,
+        std::string resetDataThisTerm,
+        std::string resetDataDescendantsTerm,
         std::string copyOutputTerm,
         std::string pasteInputTerm,
         std::string parentBackTerm,
@@ -314,11 +320,11 @@ namespace cli_menu {
       );
 
       static std::string getKeyword(
-        const PRESET_CODE &code
+        const PRESET_KEYWORD_CODE &code
       );
 
       static std::string getDescription(
-        const PRESET_CODE &code
+        const PRESET_KEYWORD_CODE &code
       );
     };
   };
