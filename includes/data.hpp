@@ -11,6 +11,7 @@ namespace cli_menu {
     mt::VEC<T> values;
     T latest();
 
+    // stringified boolean is based on 'mt_uti::Booleanizer'
     virtual mt::VEC_STR stringify(mt::CR_STR separator = "\n");
 
     virtual void print(

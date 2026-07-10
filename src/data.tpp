@@ -18,19 +18,34 @@ namespace cli_menu {
   mt::VEC_STR Data<T>::stringify(mt::CR_STR separator) {
     mt::VEC_STR stringified;
 
-    for (int i = 0 ; i < values.size(); i++) {
+    // boolean
+    if constexpr (std::is_same_v<T, bool>) {
+      std::string boolStr;
+      mt::CR_PAIR<mt::VEC_STR> boolTerms = Langu::ageBooleanizer::getTerms();
 
-      if constexpr (std::is_same_v<T, bool>) {
-        if (values[i]) stringified.push_back("true" + separator);
-        else stringified.push_back("false" + separator);
+      for (int i = 0 ; i < values.size(); i++) {
+        if (values[i]) {
+          if (boolTerms.first.empty()) boolStr = '1';
+          else boolStr = boolTerms.first[0];
+        }
+        else {
+          if (boolTerms.second.empty()) boolStr = '0';
+          else boolStr = boolTerms.second[0];
+        }
+
+        stringified.push_back(boolStr + separator);
       }
-      else if constexpr (mt::inspector::isLetter<T>()) {
-        stringified.push_back(values[i] + separator);
+    }
+    else { // letter and number
+      for (int i = 0 ; i < values.size(); i++) {
+        if constexpr (mt::inspector::isLetter<T>()) {
+          stringified.push_back(values[i] + separator);
+        }
+        else if constexpr (mt::inspector::isNumber<T>()) {
+          stringified.push_back(std::to_string(values[i]) + separator);
+        }
+        else break;
       }
-      else if constexpr (mt::inspector::isNumber<T>()) {
-        stringified.push_back(std::to_string(values[i]) + separator);
-      }
-      else break;
     }
 
     return stringified;
