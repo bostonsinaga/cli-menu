@@ -182,25 +182,26 @@ namespace cli_menu {
     );
 
     while (Control::cinDialogInput(rawstr, true)) {
-      // no
-      if (Control::neighborPreviousTest(rawstr)) {
-        break;
-      }
-      else if ( // yes
-        Control::childrenEnterTest(rawstr) ||
+      // yes
+      if (Control::childrenEnterTest(rawstr) ||
+        Control::childrenExecuteTest(rawstr) ||
         Control::neighborNextTest(rawstr)
       ) {
         return BOOLEAN_INSTANT_QUESTION_YES;
       }
-      else if ( // cancel
-        Control::parentBackTest(rawstr) ||        
+      // no
+      else if (Control::neighborPreviousTest(rawstr)) {
+        break;
+      }
+      // cancel
+      else if (Control::parentBackTest(rawstr) ||
+        Control::rootBackTest(rawstr) ||
         Control::programQuitTest(rawstr)
       ) {
         return BOOLEAN_INSTANT_QUESTION_CANCELED;
       }
       // help
-      else if (
-        Control::commandHelpTest(rawstr) ||
+      else if (Control::commandHelpTest(rawstr) ||
         Control::controllerListTest(rawstr)
       ) {
         Control::printBooleanAvailableValues(true, 2);
@@ -210,17 +211,20 @@ namespace cli_menu {
         Control::printBooleanAvailableValues(false, 0);
       }
       else if ( // forbidden
-        Control::switchModifyTest(rawstr)           ||
-        Control::switchSelectTest(rawstr)           ||
-        Control::viewInputThisTest(rawstr)          ||
-        Control::viewInputDescendantsTest(rawstr)   ||
-        Control::viewOutputThisTest(rawstr)         ||
-        Control::viewOutputDescendantsTest(rawstr)  ||
-        Control::resetInputThisTest(rawstr)         ||
-        Control::resetInputDescendantsTest(rawstr)  ||
-        Control::resetOutputThisTest(rawstr)        ||
+        Control::switchModifyTest(rawstr) ||
+        Control::switchSelectTest(rawstr) ||
+        Control::clearScreenTest(rawstr) ||
+        Control::viewInputThisTest(rawstr) ||
+        Control::viewInputDescendantsTest(rawstr) ||
+        Control::viewOutputThisTest(rawstr) ||
+        Control::viewOutputDescendantsTest(rawstr) ||
+        Control::resetInputThisTest(rawstr) ||
+        Control::resetInputDescendantsTest(rawstr) ||
+        Control::resetOutputThisTest(rawstr) ||
         Control::resetOutputDescendantsTest(rawstr) ||
-        Control::copyOutputTest(rawstr)             ||
+        Control::resetDataThisTest(rawstr) ||
+        Control::resetDataDescendantsTest(rawstr) ||
+        Control::copyOutputTest(rawstr) ||
         Control::pasteInputTest(rawstr)
       ) {
         Langu::ageMessage::printResponse(
