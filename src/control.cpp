@@ -27,11 +27,10 @@ namespace cli_menu {
     }
 
     // find a match with pattern ' abc123 \t'
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < Control::totalSymbols; j++) {
-
-        if (str == symbols[j][i].first) {
-          sharedEnum = static_cast<CONTROL_CODE>(symbols[j][i].second);
+    for (int i = 0; i < CONTROLS_TOTAL; i++) {
+      for (int j = 0; j < 2; j++) {
+        if (!str.empty() && str == symbols[i][j]) {
+          sharedEnum = static_cast<CONTROL_CODE>(i);
           return sharedEnum;
         }
       }
@@ -77,6 +76,10 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_SWITCH_SELECT;
   }
 
+  bool Control::clearScreenTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CLEAR_SCREEN;
+  }
+
   bool Control::viewInputThisTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_THIS;
   }
@@ -107,6 +110,14 @@ namespace cli_menu {
 
   bool Control::resetOutputDescendantsTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_RESET_OUTPUT_DESCENDANTS;
+  }
+
+  bool Control::resetDataThisTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_DATA_THIS;
+  }
+
+  bool Control::resetDataDescendantsTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_RESET_DATA_DESCENDANTS;
   }
 
   bool Control::copyOutputTest(mt::CR_STR rawstr) {
@@ -140,26 +151,20 @@ namespace cli_menu {
       );
     }
 
-    // include lowercase and uppercase symbols that have different codes
-    std::vector<const std::string*> onlySymbols;
-
-    for (int i = 0; i < Control::totalSymbols; i++) {
-      onlySymbols.push_back(&Control::symbols[i][0].first);
-
-      if (Control::symbols[i][0].second != Control::symbols[i][1].second) {
-        onlySymbols.push_back(&Control::symbols[i][1].first);
-      }
-    }
-
     // display terms in rows
-    for (int i = 0; i < onlySymbols.size(); i++) {
+    for (int i = 0; i < CONTROLS_TOTAL; i++) {
 
       std::cout << std::string(numberOfIndents, ' ');
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
 
       Console::logString(
-        *onlySymbols[i] + " = " + curterm + '\n',
+        Control::symbols[i][0],
         Console::messageColors[CONSOLE_HINT_2]
+      );
+
+      Console::logString(
+        " = " + curterm + '\n',
+        Console::messageColors[CONSOLE_HINT_3]
       );
     }
 
@@ -180,54 +185,65 @@ namespace cli_menu {
 
     mt::CR_PAIR<mt::VEC_STR> boolTerms = Langu::ageBooleanizer::getTerms();
 
-    /** True Terms */
+    // shortener lambda
+    std::function<void(mt::CR_CH)> printSign = [&](mt::CR_CH sign) {
 
-    std::cout << std::string(numberOfIndents, ' ');
-
-    for (int i = 0; i < boolTerms.first.size(); i++) {
       Console::logString(
-        boolTerms.first[i] + ", ",
+        std::string(numberOfIndents, ' ') + sign,
         Console::messageColors[CONSOLE_HINT_2]
       );
-    }
 
-    Console::logString(
-      symbols[CONTROL_CHILDREN_ENTER][0].first + ", ",
-      Console::messageColors[CONSOLE_HINT_2]
-    );
+      Console::logString(" = ", Console::messageColors[CONSOLE_HINT_3]);
+    };
 
-    Console::logString(
-      symbols[CONTROL_NEIGHBOR_NEXT][0].first + ", ",
-      Console::messageColors[CONSOLE_HINT_2]
-    );
-
-    // number is not zero
-    Console::logString(
-      "n != 0\n",
-      Console::messageColors[CONSOLE_HINT_2]
-    );
+    // shortener lambda
+    std::function<void(mt::CR<CONTROL_CODE>)> printCode = [&](mt::CR<CONTROL_CODE> code) {
+      Console::logString(
+        symbols[code][0] + ' ',
+        Console::messageColors[CONSOLE_HINT_3]
+      );
+    };
 
     /** False Terms */
 
-    std::cout << std::string(numberOfIndents, ' ');
+    printSign('0');
 
     for (int i = 0; i < boolTerms.second.size(); i++) {
       Console::logString(
-        boolTerms.second[i] + ", ",
-        Console::messageColors[CONSOLE_HINT_2]
+        boolTerms.second[i] + ' ',
+        Console::messageColors[CONSOLE_HINT_3]
       );
     }
 
-    Console::logString(
-      symbols[CONTROL_NEIGHBOR_PREVIOUS][0].first + ", ",
-      Console::messageColors[CONSOLE_HINT_2]
+    printCode(CONTROL_NEIGHBOR_PREVIOUS);
+
+    Console::logString( // number is zero
+      "n==0\n", Console::messageColors[CONSOLE_HINT_3]
     );
 
-    // number is zero
-    Console::logString(
-      "n == 0\n\n",
-      Console::messageColors[CONSOLE_HINT_2]
+    /** True Terms */
+
+    printSign('1');
+
+    for (int i = 0; i < boolTerms.first.size(); i++) {
+      Console::logString(
+        boolTerms.first[i] + ' ',
+        Console::messageColors[CONSOLE_HINT_3]
+      );
+    }
+
+    printCode(CONTROL_CHILDREN_ENTER);
+    printCode(CONTROL_NEIGHBOR_NEXT);
+
+    Console::logString( // number is not zero
+      "n!=0\n", Console::messageColors[CONSOLE_HINT_3]
     );
+
+    // cancel terms
+    printSign('x');
+    printCode(CONTROL_PARENT_BACK);
+    printCode(CONTROL_PROGRAM_QUIT);
+    std::cout << "\n\n";
   }
 
   /** Interrupted 'Ctrl+C' Interactions */
