@@ -275,6 +275,10 @@ namespace cli_menu {
           Console::logStylishHeader(seqNames, editing);
         }
       }
+      // CLEAR TERMINAL SCREEN
+      else if (Control::clearScreenTest(rawstr)) {
+        Console::clearScreen();
+      }
       // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {
         printInput();
@@ -305,6 +309,16 @@ namespace cli_menu {
       }
       // RESET DESCENDANT OUTPUTS
       else if (Control::resetOutputDescendantsTest(rawstr)) {
+        resetDescendantOutputs();
+      }
+      // RESET THIS DATA
+      else if (Control::resetDataThisTest(rawstr)) {
+        resetInput();
+        resetOutput();
+      }
+      // RESET DESCENDANT DATA
+      else if (Control::resetDataDescendantsTest(rawstr)) {
+        resetDescendantInputs();
         resetDescendantOutputs();
       }
       // CLIPBOARD COPY OUTPUT
