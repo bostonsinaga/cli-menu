@@ -97,6 +97,11 @@ namespace cli_menu {
       const CONSOLE_CODE &code,
       mt::CR_STR reason
     );
+
+    // clear the terminal screen
+    static void clearScreen() {
+      std::cout << "\033[2J\033[3J\033[H" << std::flush;
+    }
   };
 }
 
