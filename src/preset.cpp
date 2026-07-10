@@ -9,8 +9,8 @@ namespace cli_menu {
   void Preset::applyHelp(Creator *owner) {
 
     Boolean *help = owner->addBoolean(
-      Langu::agePreset::getKeyword(PRESET_HELP),
-      Langu::agePreset::getDescription(PRESET_HELP),
+      Langu::agePreset::getKeyword(PRESET_KEYWORD_HELP),
+      Langu::agePreset::getDescription(PRESET_KEYWORD_HELP),
       [](Command *self)->COMMAND_CALLBACK_CODE {
         static_cast<Command*>(self->getParent())->printHelp();
         return COMMAND_CALLBACK_DONE;
@@ -26,8 +26,8 @@ namespace cli_menu {
   void Preset::applyList(Creator *owner) {
 
     Boolean *list = owner->addBoolean(
-      Langu::agePreset::getKeyword(PRESET_LIST),
-      Langu::agePreset::getDescription(PRESET_LIST),
+      Langu::agePreset::getKeyword(PRESET_KEYWORD_LIST),
+      Langu::agePreset::getDescription(PRESET_KEYWORD_LIST),
       [](Command *self)->COMMAND_CALLBACK_CODE {
         static_cast<Command*>(self->getParent())->printList(CONSOLE_HINT_2, 0, true);
         return COMMAND_CALLBACK_DONE;
@@ -93,8 +93,8 @@ namespace cli_menu {
     mt::CR<CODE_CALLBACK> callback
   ) {
     Word *in = owner->addWord(
-      Langu::agePreset::getKeyword(PRESET_IN),
-      Langu::agePreset::getDescription(PRESET_IN),
+      Langu::agePreset::getKeyword(PRESET_KEYWORD_IN),
+      Langu::agePreset::getDescription(PRESET_KEYWORD_IN),
       callback
     );
 
@@ -223,8 +223,8 @@ namespace cli_menu {
     mt::CR<CODE_CALLBACK> callback
   ) {
     Word *out = owner->addWord(
-      Langu::agePreset::getKeyword(PRESET_OUT),
-      Langu::agePreset::getDescription(PRESET_OUT),
+      Langu::agePreset::getKeyword(PRESET_KEYWORD_OUT),
+      Langu::agePreset::getDescription(PRESET_KEYWORD_OUT),
       callback
     );
 
@@ -250,7 +250,7 @@ namespace cli_menu {
             [&](mt_ds::LinkedList *current)->bool {
 
               if (static_cast<Command*>(current)->getKeyword()
-                == Langu::agePreset::getKeyword(PRESET_IN)
+                == Langu::agePreset::getKeyword(PRESET_KEYWORD_IN)
               ) {
                 filename = dynamic_cast<ParameterWord*>(current)->input.values.back();
                 return false;
