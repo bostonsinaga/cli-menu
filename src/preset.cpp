@@ -6,7 +6,7 @@
 
 namespace cli_menu {
 
-  void Preset::applyHelp(Creator *owner) {
+  void Preset::applyHelp(Parameter *owner) {
 
     Boolean *help = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_HELP),
@@ -23,7 +23,7 @@ namespace cli_menu {
     }
   }
 
-  void Preset::applyList(Creator *owner) {
+  void Preset::applyList(Parameter *owner) {
 
     Boolean *list = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_LIST),
@@ -40,14 +40,14 @@ namespace cli_menu {
     }
   }
 
-  void Creator::setPresetHelpList() {
+  void Parameter::setPresetHelpList() {
     Preset::applyHelp(this);
     Preset::applyList(this);
   }
 
   /** FILE OPERATIONS */
 
-  void Preset::File::completePathWildcards(ParameterWord *param) {
+  void Preset::File::completePathWildcards(Command *self) {
 
     std::string pattern;
     WIN32_FIND_DATAA findFileData;
@@ -56,8 +56,8 @@ namespace cli_menu {
     std::string::size_type lastSlashIndex;
     std::string basePath;
 
-    for (int i = 0; i < param->input.values.size(); i++) {
-      pattern = param->input.values[i];
+    for (int i = 0; i < Data::getWordsSize(self); i++) {
+      pattern = Data::xgetWord(self, i);
 
       if (pattern.find('*') != std::string::npos ||
         pattern.find('?') != std::string::npos
@@ -71,12 +71,12 @@ namespace cli_menu {
 
         // expand wildcard pattern to path with filename
         if (hFind != INVALID_HANDLE_VALUE) {
-          param->input.values.pop_back();
+          Data::xpopWord(self);
           i--;
 
           do {
             if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-              param->input.values.push_back(basePath + findFileData.cFileName);
+              Data::xpushWord(self, basePath + findFileData.cFileName);
               i++;
             }
           } while (FindNextFileA(hFind, &findFileData) != 0);
@@ -88,7 +88,7 @@ namespace cli_menu {
   }
 
   void Preset::File::applyCustomIn(
-    Creator *owner,
+    Parameter *owner,
     mt::CR_BOL isRequired,
     mt::CR<CODE_CALLBACK> callback
   ) {
@@ -105,7 +105,7 @@ namespace cli_menu {
   }
 
   void Preset::File::applyTextIn(
-    Creator *owner,
+    Parameter *owner,
     mt::CR_BOL isRequired
   ) {
     applyCustomIn(
@@ -114,22 +114,19 @@ namespace cli_menu {
         bool found = false;
         std::string filename;
 
-        // convert 'Command' to 'ParameterWord'
-        ParameterWord *selfWord = dynamic_cast<ParameterWord*>(self),
-          *parentWord = dynamic_cast<ParameterWord*>(self->getParent());
-
         // complete paths inside the input
-        completePathWildcards(selfWord);
+        completePathWildcards(self);
 
         // read multiple files
-        for (int i = 0; i < selfWord->input.values.size(); i++) {
-          filename = selfWord->input.values[i];
+        for (int i = 0; i < Data::getWordsSize(self); i++) {
+          filename = Data::xgetWord(self, i);
 
           if (mt::FS::is_regular_file(filename)) {
             found = true;
 
             // read file content
-            parentWord->output.values.push_back(
+            Data::xpushText(
+              static_cast<Command*>(self->getParent()),
               mt_uti::Scanner::readFileString(filename)
             );
           }
@@ -139,7 +136,7 @@ namespace cli_menu {
           );
         }
 
-        if (found || !selfWord->input.values.size()) {
+        if (found || Data::isWordsEmpty(self)) {
           return COMMAND_CALLBACK_DONE;
         }
 
@@ -149,13 +146,11 @@ namespace cli_menu {
   }
 
   COMMAND_CALLBACK_CODE Preset::File::useTextOut(
-    ParameterWord *owner,
+    Command *owner,
     std::string filename
   ) {
     if (!filename.empty()) {
-      std::string outputText = mt_uti::StrTool::joinVector(
-        owner->output.values, "\n"
-      );
+      std::string outputText = Data::stringifyTexts(owner);
 
       if (!outputText.empty()) {
         BOOLEAN_INSTANT_QUESTION_CODE
@@ -218,7 +213,7 @@ namespace cli_menu {
   }
 
   void Preset::File::applyCustomOut(
-    Creator *owner,
+    Parameter *owner,
     mt::CR_BOL isRequired,
     mt::CR<CODE_CALLBACK> callback
   ) {
@@ -235,13 +230,13 @@ namespace cli_menu {
   }
 
   void Preset::File::applyTextOutFallback(
-    Creator *owner,
+    Parameter *owner,
     mt::CR_BOL isRequired
   ) {
     applyCustomOut(
       owner, isRequired,
       [](Command *self)->COMMAND_CALLBACK_CODE {
-        std::string filename = dynamic_cast<ParameterWord*>(self)->input.latest();
+        std::string filename = Data::getWord(self);
 
         if (filename.empty()) {
 
@@ -252,7 +247,7 @@ namespace cli_menu {
               if (static_cast<Command*>(current)->getKeyword()
                 == Langu::agePreset::getKeyword(PRESET_KEYWORD_IN)
               ) {
-                filename = dynamic_cast<ParameterWord*>(current)->input.values.back();
+                filename = Data::getWord(static_cast<Command*>(current));
                 return false;
               }
 
@@ -267,9 +262,7 @@ namespace cli_menu {
           }
         }
 
-        COMMAND_CALLBACK_CODE callbackCode = useTextOut(
-          dynamic_cast<ParameterWord*>(self), filename
-        );
+        COMMAND_CALLBACK_CODE callbackCode = useTextOut(self, filename);
 
         // file write failed message
         if (callbackCode == COMMAND_CALLBACK_ERROR) {
@@ -281,14 +274,14 @@ namespace cli_menu {
     );
   }
 
-  void Preset::File::applyTextOutOptional(Creator *owner) {
+  void Preset::File::applyTextOutOptional(Parameter *owner) {
     applyCustomOut(
       owner, false,
       [](Command *self)->COMMAND_CALLBACK_CODE {
 
         useTextOut(
-          dynamic_cast<ParameterWord*>(self->getParent()),
-          dynamic_cast<ParameterWord*>(self)->input.latest()
+          static_cast<Command*>(self->getParent()),
+          Data::getWord(self)
         );
 
         return COMMAND_CALLBACK_DONE;

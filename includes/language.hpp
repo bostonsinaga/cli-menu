@@ -114,34 +114,34 @@ namespace cli_menu {
     };
 
     struct xMessage {
-      static mt::STRUNORMAP<mt::ARR_STR<SENTENCES_TOTAL>> sentences;
+      static mt::UNORMAP_STR<mt::ARR_STR<SENTENCES_TOTAL>> sentences;
       static CONSOLE_CODE consoleCodes[SENTENCES_TOTAL];
-      static mt::STRUNORMAP_STR welcomeToString;
+      static mt::UNORMAP_STR<std::string> welcomeToString;
     };
 
     struct xControl {
-      static mt::STRUNORMAP<mt::ARR_STR<CONTROLS_TOTAL>> terms;
+      static mt::UNORMAP_STR<mt::ARR_STR<CONTROLS_TOTAL>> terms;
 
-      static mt::STRUNORMAP_STR
+      static mt::UNORMAP_STR<std::string>
         abbreviationsTitle,
         booleanAvailableValuesTitle;
     };
 
     struct xBooleanizer {
       inline static mt_uti::Booleanizer object;
-      static mt::STRUNORMAP_STR yesOrNoLabel;
+      static mt::UNORMAP_STR<std::string> yesOrNoLabel;
     };
 
     struct xCreator {
-      static mt::STRUNORMAP<mt::ARR_STR<CREATOR_TYPES_TOTAL>> stringifiedTypes;
+      static mt::UNORMAP_STR<mt::ARR_STR<CREATOR_TYPES_TOTAL>> stringifiedTypes;
     };
 
     struct xProgram {
-      static mt::STRUNORMAP<mt::ARR_STR<PROGRAM_LABELS_TOTAL>> labels;
+      static mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABELS_TOTAL>> labels;
     };
 
     struct xPreset {
-      static mt::STRUNORMAP<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>> keywords, descriptions;
+      static mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>> keywords, descriptions;
     };
 
   public:

@@ -1,4 +1,4 @@
-void initFilter (cm::Creator *cli_log) {
+void initFilter (cm::Parameter *cli_log) {
 
   cm::Boolean *cli_filter = cli_log->addBoolean(
     "filter",

@@ -5,9 +5,58 @@
 
 namespace cli_menu {
 
-  /** CREATOR */
+  /** PARAMETER */
 
-  void Creator::replaceExistingChildByKeyword(Command *newChild) {
+  void Parameter::clipboardInputPaste() {
+    strargv(Clipboard::pasteText());
+  }
+
+  void Parameter::clipboardOutputCopy() {
+    if (Data::isTextsEmpty(this)) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+    }
+    else Clipboard::copyText(&Data::getText(this));
+  }
+
+  void Parameter::printOutput() {
+    if (Data::isTextsEmpty(this)) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+    }
+    else Data::printTexts(this, CONSOLE_HINT_1, 0);
+  }
+
+  void Parameter::printDescendantOutputs() {
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
+          Data::printTexts(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
+          return true;
+        }
+      );
+    }
+  }
+
+  void Parameter::resetOutput() {
+    Data::resetTexts(this);
+    Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
+  }
+
+  void Parameter::resetDescendantOutputs() {
+
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          Data::resetTexts(static_cast<Command*>(current));
+          return true;
+        }
+      );
+    }
+
+    Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_DESCENDANTS);
+  }
+
+  void Parameter::replaceExistingChildByKeyword(Command *newChild) {
     Command *willDestroyed = nullptr;
 
     // find existing keyword
@@ -22,7 +71,7 @@ namespace cli_menu {
     addChild(newChild);
   }
 
-  Word *Creator::addWord(
+  Word *Parameter::addWord(
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb,
@@ -37,7 +86,7 @@ namespace cli_menu {
     return nullptr;
   }
 
-  Number *Creator::addNumber(
+  Number *Parameter::addNumber(
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb,
@@ -52,7 +101,7 @@ namespace cli_menu {
     return nullptr;
   }
 
-  Boolean *Creator::addBoolean(
+  Boolean *Parameter::addBoolean(
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb,
@@ -73,21 +122,58 @@ namespace cli_menu {
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb
-  ) : Command(keyw, desc, calb),
-    ParameterWord(keyw, desc, calb),
-    Creator(keyw, desc, calb)
-  {
-    this->hyphens = "-";
-    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
+  ) : Parameter(keyw, desc, calb) {
+    hyphens = "-";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_WORD;
+    Data::registerWords(this);
   }
 
-  void Word::clipboardInputPaste() {
-    strargv(Clipboard::pasteText());
+  void Word::destroy() {
+    Data::unregisterWords(this);
+    Command::destroy();
+  }
+
+  void Word::printInput() {
+    if (Data::isWordsEmpty(this)) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+    }
+    else Data::printWords(this, CONSOLE_HINT_1, 0);
+  }
+
+  void Word::printDescendantInputs() {
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
+          Data::printWords(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
+          return true;
+        }
+      );
+    }
+  }
+
+  void Word::resetInput() {
+    Data::resetWords(this);
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+  }
+
+  void Word::resetDescendantInputs() {
+
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          Data::resetWords(static_cast<Command*>(current));
+          return true;
+        }
+      );
+    }
+
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
   }
 
   void Word::strargv(mt::CR_STR raw) {
-    this->required.first = false;
-    this->input.values.push_back(raw);
+    required.first = false;
+    Data::xpushWord(this, raw);
   }
 
   /** NUMBER */
@@ -96,29 +182,58 @@ namespace cli_menu {
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb
-  ) : Command(keyw, desc, calb),
-    ParameterNumber(keyw, desc, calb),
-    Creator(keyw, desc, calb)
-  {
-    this->hyphens = "-";
-    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
+  ) : Parameter(keyw, desc, calb) {
+    hyphens = "-";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_NUMBER;
+    Data::registerNumbers(this);
   }
 
-  void Number::clipboardInputPaste() {
-    this->required.first = false;
-    std::string textPasted = Clipboard::pasteText();
+  void Number::destroy() {
+    Data::unregisterNumbers(this);
+    Command::destroy();
+  }
 
-    mt_uti::VecTool<double>::concatCopy(
-      this->input.values, mt_uti::Scanner::parseNumbers<double>(textPasted)
-    );
+  void Number::printInput() {
+    if (Data::isNumbersEmpty(this)) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+    }
+    else Data::printNumbers(this, CONSOLE_HINT_1, 0);
+  }
+
+  void Number::printDescendantInputs() {
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
+          Data::printNumbers(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
+          return true;
+        }
+      );
+    }
+  }
+
+  void Number::resetInput() {
+    Data::resetNumbers(this);
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+  }
+
+  void Number::resetDescendantInputs() {
+
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          Data::resetNumbers(static_cast<Command*>(current));
+          return true;
+        }
+      );
+    }
+
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
   }
 
   void Number::strargv(mt::CR_STR raw) {
-    this->required.first = false;
-
-    mt_uti::VecTool<double>::concatCopy(
-      this->input.values, mt_uti::Scanner::parseNumbers<double>(raw)
-    );
+    required.first = false;
+    Data::addNumbers(this, mt_uti::Scanner::parseNumbers<double>(raw));
   }
 
   /** BOOLEAN */
@@ -127,16 +242,19 @@ namespace cli_menu {
     mt::CR_STR keyw,
     mt::CR_STR desc,
     mt::CR<CODE_CALLBACK> calb
-  ) : Command(keyw, desc, calb),
-    ParameterBoolean(keyw, desc, calb),
-    Creator(keyw, desc, calb)
-  {
-    this->hyphens = "--";
-    this->stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
+  ) : Parameter(keyw, desc, calb) {
+    hyphens = "--";
+    stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
+    Data::registerBooleans(this);
+  }
+
+  void Boolean::destroy() {
+    Data::unregisterBooleans(this);
+    Command::destroy();
   }
 
   void Boolean::clipboardInputPaste() {
-    this->required.first = false;
+    required.first = false;
 
     bool pushed = false;
     mt::VEC_BOL conditions;
@@ -163,12 +281,50 @@ namespace cli_menu {
       conditions.push_back(Langu::ageBooleanizer::test(str));
     }
 
-    mt_uti::VecTool<bool>::concatCopy(this->input.values, conditions);
+    Data::addBooleans(this, conditions);
+  }
+
+  void Boolean::printInput() {
+    if (Data::isBooleansEmpty(this)) {
+      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+    }
+    else Data::printBooleans(this, CONSOLE_HINT_1, 0);
+  }
+
+  void Boolean::printDescendantInputs() {
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
+          Data::printBooleans(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
+          return true;
+        }
+      );
+    }
+  }
+
+  void Boolean::resetInput() {
+    Data::resetBooleans(this);
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+  }
+
+  void Boolean::resetDescendantInputs() {
+
+    if (getChildren()) {
+      getChildren()->traverse(
+        [&](mt_ds::LinkedList *current)->bool {
+          Data::resetBooleans(static_cast<Command*>(current));
+          return true;
+        }
+      );
+    }
+
+    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
   }
 
   void Boolean::strargv(mt::CR_STR raw) {
-    this->required.first = false;
-    this->input.values.push_back(Langu::ageBooleanizer::test(raw));
+    required.first = false;
+    Data::xpushBoolean(this, Langu::ageBooleanizer::test(raw));
   }
 
   BOOLEAN_INSTANT_QUESTION_CODE Boolean::instantQuestion(

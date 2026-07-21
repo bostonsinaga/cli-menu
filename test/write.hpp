@@ -1,4 +1,4 @@
-void initWrite(cm::Creator *cli_log) {
+void initWrite(cm::Parameter *cli_log) {
 
   cm::Boolean *cli_write = cli_log->addBoolean(
     "write",

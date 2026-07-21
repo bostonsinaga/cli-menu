@@ -5,19 +5,706 @@
 
 namespace cli_menu {
 
-  template <class T>
-  class Data {
-  public:
-    mt::VEC<T> values;
-    T latest();
+  class Command;
 
-    // stringified boolean is based on 'mt_uti::Booleanizer'
-    virtual mt::VEC_STR stringify(mt::CR_STR separator = "\n");
+  /** Unordered Map Structs */
 
-    virtual void print(
+  struct TextMaps {
+    mt::UNORMAP<Command*, mt::PAIR2<int, mt::VEC_STR>> comvec;
+    mt::PAIR2<int, mt::VEC_STR> empvec;
+    mt::VEC_STR defvec;
+  };
+
+  struct WordMaps {
+    mt::UNORMAP<Command*, mt::PAIR2<int, mt::VEC_STR>> comvec;
+    mt::PAIR2<int, mt::VEC_STR> empvec;
+    mt::VEC_STR defvec;
+  };
+
+  struct NumberMaps {
+    mt::UNORMAP<Command*, mt::PAIR2<int, mt::VEC_DBL>> comvec;
+    mt::PAIR2<int, mt::VEC_DBL> empvec;
+    mt::VEC_DBL defvec;
+  };
+
+  struct BooleanMaps {
+    mt::UNORMAP<Command*, mt::PAIR2<int, mt::VEC_BOL>> comvec;
+    mt::PAIR2<int, mt::VEC_BOL> empvec;
+    mt::VEC_BOL defvec;
+  };
+
+  /** Type Template Constraints */
+
+  template <typename T>
+  concept UNORMAP_COMVEC_TYPE =
+    std::is_same_v<T, TextMaps> || std::is_same_v<T, WordMaps> ||
+    std::is_same_v<T, NumberMaps> || std::is_same_v<T, BooleanMaps>;
+
+  template <typename T>
+  concept PRIMITIVE_TYPE =
+    std::is_same_v<T, std::string> ||
+    std::is_same_v<T, double> ||
+    std::is_same_v<T, bool>;
+
+  class Data final {
+  private:
+    inline static TextMaps textMaps {{}, {}, {""}};
+    inline static WordMaps wordMaps {{}, {}, {""}};
+    inline static NumberMaps numberMaps {{}, {}, {0}};
+    inline static BooleanMaps booleanMaps {{}, {}, {false}};
+
+    /** Register Vector */
+
+    inline static void registerTexts(Command *comkey) {
+      textMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerWords(Command *comkey) {
+      wordMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerNumbers(Command *comkey) {
+      numberMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerBooleans(Command *comkey) {
+      booleanMaps.comvec[comkey] = {0, {}};
+    }
+
+    /** Unregister Vector */
+
+    inline static void unregisterTexts(Command *comkey) {
+      textMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterWords(Command *comkey) {
+      wordMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterNumbers(Command *comkey) {
+      numberMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterBooleans(Command *comkey) {
+      booleanMaps.comvec.erase(comkey);
+    }
+
+    /** Reusable Template Methods */
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static T &use();
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static bool has(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static bool isEmpty(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static mt::VEC<U>::reference get(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static mt::VEC<U>::reference get(
+      Command *comkey,
+      int &index
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static void set(
+      Command *comkey,
+      mt::CR<U> value
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static void set(
+      Command *comkey,
+      mt::CR<U> value,
+      int &index
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static void replace(
+      Command *comkey,
+      mt::CR_VEC<U> values
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static void add(
+      Command *comkey,
+      mt::CR_VEC<U> values
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static void push(
+      Command *comkey,
+      mt::CR<U> value
+    );
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static U pop(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static void select(
+      Command *comkey,
+      mt::CR_INT direction
+    );
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static std::string stringify(
+      Command *comkey,
+      mt::CR_STR separator
+    );
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static void print(
+      Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
       mt::CR_SZ numberOfIndents
     );
+
+    /** User Classes */
+
+    friend class Word;
+    friend class Number;
+    friend class Boolean;
+
+  public:
+    Data() = delete;
+
+    /** Check Key Existence */
+
+    inline static bool hasTexts(Command *comkey) {
+      return has<TextMaps>(comkey);
+    }
+
+    inline static bool hasWords(Command *comkey) {
+      return has<WordMaps>(comkey);
+    }
+
+    inline static bool hasNumbers(Command *comkey) {
+      return has<NumberMaps>(comkey);
+    }
+
+    inline static bool hasBooleans(Command *comkey) {
+      return has<BooleanMaps>(comkey);
+    }
+
+    /** Check Empty Vector */
+
+    inline static bool isTextsEmpty(Command *comkey) {
+      return isEmpty<TextMaps>(comkey);
+    }
+
+    inline static bool isWordsEmpty(Command *comkey) {
+      return isEmpty<WordMaps>(comkey);
+    }
+
+    inline static bool isNumbersEmpty(Command *comkey) {
+      return isEmpty<NumberMaps>(comkey);
+    }
+
+    inline static bool isBooleansEmpty(Command *comkey) {
+      return isEmpty<BooleanMaps>(comkey);
+    }
+
+    /** Count Vector Size */
+
+    inline static size_t getTextsSize(Command *comkey) {
+      return hasTexts(comkey) ? textMaps.comvec[comkey].second.size() : 0;
+    }
+
+    inline static size_t getWordsSize(Command *comkey) {
+      return hasWords(comkey) ? wordMaps.comvec[comkey].second.size() : 0;
+    }
+
+    inline static size_t getNumbersSize(Command *comkey) {
+      return hasNumbers(comkey) ? numberMaps.comvec[comkey].second.size() : 0;
+    }
+
+    inline static size_t getBooleansSize(Command *comkey) {
+      return hasBooleans(comkey) ? booleanMaps.comvec[comkey].second.size() : 0;
+    }
+
+    /** Get Recent Single Value */
+
+    inline static mt::VEC_STR::reference getText(Command *comkey) {
+      return get<TextMaps, std::string>(comkey);
+    }
+
+    inline static mt::VEC_STR::reference getWord(Command *comkey) {
+      return get<WordMaps, std::string>(comkey);
+    }
+
+    inline static mt::VEC_DBL::reference getNumber(Command *comkey) {
+      return get<NumberMaps, double>(comkey);
+    }
+
+    inline static mt::VEC_BOL::reference getBoolean(Command *comkey) {
+      return get<BooleanMaps, bool>(comkey);
+    }
+
+    /** Get Single Value At Index (Safe) */
+
+    inline static mt::VEC_STR::reference getText(
+      Command *comkey,
+      int index
+    ) {
+      return get<TextMaps, std::string>(comkey, index);
+    }
+
+    inline static mt::VEC_STR::reference getWord(
+      Command *comkey,
+      int index
+    ) {
+      return get<WordMaps, std::string>(comkey, index);
+    }
+
+    inline static mt::VEC_DBL::reference getNumber(
+      Command *comkey,
+      int index
+    ) {
+      return get<NumberMaps, double>(comkey, index);
+    }
+
+    inline static mt::VEC_BOL::reference getBoolean(
+      Command *comkey,
+      int index
+    ) {
+      return get<BooleanMaps, bool>(comkey, index);
+    }
+
+    /** Get Single Value At Index (Unsafe) */
+
+    inline static mt::VEC_STR::reference xgetText(
+      Command *comkey,
+      mt::CR_INT index
+    ) {
+      return textMaps.comvec[comkey].second[index];
+    }
+
+    inline static mt::VEC_STR::reference xgetWord(
+      Command *comkey,
+      mt::CR_INT index
+    ) {
+      return wordMaps.comvec[comkey].second[index];
+    }
+
+    inline static mt::VEC_DBL::reference xgetNumber(
+      Command *comkey,
+      mt::CR_INT index
+    ) {
+      return numberMaps.comvec[comkey].second[index];
+    }
+
+    inline static mt::VEC_BOL::reference xgetBoolean(
+      Command *comkey,
+      mt::CR_INT index
+    ) {
+      return booleanMaps.comvec[comkey].second[index];
+    }
+
+    /** Get Vector Reference (Unsafe) */
+
+    inline static mt::VEC_STR &xgetTexts(Command *comkey) {
+      return textMaps.comvec[comkey].second;
+    }
+
+    inline static mt::VEC_STR &xgetWords(Command *comkey) {
+      return wordMaps.comvec[comkey].second;
+    }
+
+    inline static mt::VEC_DBL &xgetNumbers(Command *comkey) {
+      return numberMaps.comvec[comkey].second;
+    }
+
+    inline static mt::VEC_BOL &xgetBooleans(Command *comkey) {
+      return booleanMaps.comvec[comkey].second;
+    }
+
+    /** Set Recent Single Value */
+
+    inline static void setText(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      set<TextMaps, std::string>(comkey, value);
+    }
+
+    inline static void setWord(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      set<WordMaps, std::string>(comkey, value);
+    }
+
+    inline static void setNumber(
+      Command *comkey,
+      mt::CR_DBL value
+    ) {
+      set<NumberMaps, double>(comkey, value);
+    }
+
+    inline static void setBoolean(
+      Command *comkey,
+      mt::CR_BOL value
+    ) {
+      set<BooleanMaps, bool>(comkey, value);
+    }
+
+    /** Set Single Value At Index (Safe) */
+
+    inline static void setText(
+      Command *comkey,
+      mt::CR_STR value,
+      int index
+    ) {
+      set<TextMaps, std::string>(comkey, value, index);
+    }
+
+    inline static void setWord(
+      Command *comkey,
+      mt::CR_STR value,
+      int index
+    ) {
+      set<WordMaps, std::string>(comkey, value, index);
+    }
+
+    inline static void setNumber(
+      Command *comkey,
+      mt::CR_DBL value,
+      int index
+    ) {
+      set<NumberMaps, double>(comkey, value, index);
+    }
+
+    inline static void setBoolean(
+      Command *comkey,
+      mt::CR_BOL value,
+      int index
+    ) {
+      set<BooleanMaps, bool>(comkey, value, index);
+    }
+
+    /** Set Single Value At Index (Unsafe) */
+
+    inline static void xsetText(
+      Command *comkey,
+      mt::CR_STR value,
+      mt::CR_INT index
+    ) {
+      textMaps.comvec[comkey].second[index] = value;
+    }
+
+    inline static void xsetWord(
+      Command *comkey,
+      mt::CR_STR value,
+      mt::CR_INT index
+    ) {
+      wordMaps.comvec[comkey].second[index] = value;
+    }
+
+    inline static void xsetNumber(
+      Command *comkey,
+      mt::CR_DBL value,
+      mt::CR_INT index
+    ) {
+      numberMaps.comvec[comkey].second[index] = value;
+    }
+
+    inline static void xsetBoolean(
+      Command *comkey,
+      mt::CR_BOL value,
+      mt::CR_INT index
+    ) {
+      booleanMaps.comvec[comkey].second[index] = value;
+    }
+
+    /** Set Default Value */
+
+    inline static void setDefaultText(mt::CR_STR value) {
+      textMaps.defvec.back() = value;
+    }
+
+    inline static void setDefaultWord(mt::CR_STR value) {
+      wordMaps.defvec.back() = value;
+    }
+
+    inline static void setDefaultNumber(mt::CR_DBL value) {
+      numberMaps.defvec.back() = value;
+    }
+
+    inline static void setDefaultBoolean(mt::CR_BOL value) {
+      booleanMaps.defvec.back() = value;
+    }
+
+    /** Replace Vector */
+
+    inline static void replaceTexts(
+      Command *comkey,
+      mt::CR_VEC_STR values
+    ) {
+      replace<TextMaps, std::string>(comkey, values);
+    }
+
+    inline static void replaceWords(
+      Command *comkey,
+      mt::CR_VEC_STR values
+    ) {
+      replace<WordMaps, std::string>(comkey, values);
+    }
+
+    inline static void replaceNumbers(
+      Command *comkey,
+      mt::CR_VEC_DBL values
+    ) {
+      replace<NumberMaps, double>(comkey, values);
+    }
+
+    inline static void replaceBooleans(
+      Command *comkey,
+      mt::CR_VEC_BOL values
+    ) {
+      replace<BooleanMaps, bool>(comkey, values);
+    }
+
+    /** Add Multiple Values */
+
+    inline static void addTexts(
+      Command *comkey,
+      mt::CR_VEC_STR values
+    ) {
+      add<TextMaps, std::string>(comkey, values);
+    }
+
+    inline static void addWords(
+      Command *comkey,
+      mt::CR_VEC_STR values
+    ) {
+      add<WordMaps, std::string>(comkey, values);
+    }
+
+    inline static void addNumbers(
+      Command *comkey,
+      mt::CR_VEC_DBL values
+    ) {
+      add<NumberMaps, double>(comkey, values);
+    }
+
+    inline static void addBooleans(
+      Command *comkey,
+      mt::CR_VEC_BOL values
+    ) {
+      add<BooleanMaps, bool>(comkey, values);
+    }
+
+    /** Push Value (Safe) */
+
+    inline static void pushText(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      push<TextMaps, std::string>(comkey, value);
+    }
+
+    inline static void pushWord(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      push<WordMaps, std::string>(comkey, value);
+    }
+
+    inline static void pushNumber(
+      Command *comkey,
+      mt::CR_DBL value
+    ) {
+      push<NumberMaps, double>(comkey, value);
+    }
+
+    inline static void pushBoolean(
+      Command *comkey,
+      mt::CR_BOL value
+    ) {
+      push<BooleanMaps, bool>(comkey, value);
+    }
+
+    /** Push Value (Unsafe) */
+
+    inline static void xpushText(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      textMaps.comvec[comkey].second.push_back(value);
+    }
+
+    inline static void xpushWord(
+      Command *comkey,
+      mt::CR_STR value
+    ) {
+      wordMaps.comvec[comkey].second.push_back(value);
+    }
+
+    inline static void xpushNumber(
+      Command *comkey,
+      mt::CR_DBL value
+    ) {
+      numberMaps.comvec[comkey].second.push_back(value);
+    }
+
+    inline static void xpushBoolean(
+      Command *comkey,
+      mt::CR_BOL value
+    ) {
+      booleanMaps.comvec[comkey].second.push_back(value);
+    }
+
+    /** Pop Value (Safe) */
+
+    inline static std::string popText(Command *comkey) {
+      return pop<TextMaps, std::string>(comkey);
+    }
+
+    inline static std::string popWord(Command *comkey) {
+      return pop<WordMaps, std::string>(comkey);
+    }
+
+    inline static double popNumber(Command *comkey) {
+      return pop<NumberMaps, double>(comkey);
+    }
+
+    inline static bool popBoolean(Command *comkey) {
+      return pop<BooleanMaps, bool>(comkey);
+    }
+
+    /** Pop Value (Unsafe) */
+
+    inline static void xpopText(Command *comkey) {
+      textMaps.comvec[comkey].second.pop_back();
+    }
+
+    inline static void xpopWord(Command *comkey) {
+      wordMaps.comvec[comkey].second.pop_back();
+    }
+
+    inline static void xpopNumber(Command *comkey) {
+      numberMaps.comvec[comkey].second.pop_back();
+    }
+
+    inline static void xpopBoolean(Command *comkey) {
+      booleanMaps.comvec[comkey].second.pop_back();
+    }
+
+    /** Reset Vector */
+
+    inline static void resetTexts(Command *comkey) {
+      if (hasTexts(comkey)) textMaps.comvec[comkey].second.clear();
+    }
+
+    inline static void resetWords(Command *comkey) {
+      if (hasWords(comkey)) wordMaps.comvec[comkey].second.clear();
+    }
+
+    inline static void resetNumbers(Command *comkey) {
+      if (hasNumbers(comkey)) numberMaps.comvec[comkey].second.clear();
+    }
+
+    inline static void resetBooleans(Command *comkey) {
+      if (hasBooleans(comkey)) booleanMaps.comvec[comkey].second.clear();
+    }
+
+    /** Select Member By Direction */
+
+    inline static void selectText(
+      Command *comkey,
+      mt::CR_INT direction
+    ) {
+      select<TextMaps>(comkey, direction);
+    }
+
+    inline static void selectWord(
+      Command *comkey,
+      mt::CR_INT direction
+    ) {
+      select<WordMaps>(comkey, direction);
+    }
+
+    inline static void selectNumber(
+      Command *comkey,
+      mt::CR_INT direction
+    ) {
+      select<NumberMaps>(comkey, direction);
+    }
+
+    inline static void selectBoolean(
+      Command *comkey,
+      mt::CR_INT direction
+    ) {
+      select<BooleanMaps>(comkey, direction);
+    }
+
+    /** Convert Vector Into String */
+
+    inline static std::string stringifyTexts(
+      Command *comkey,
+      mt::CR_STR separator = "\n"
+    ) {
+      return stringify<TextMaps>(comkey, separator);
+    }
+
+    inline static std::string stringifyWords(
+      Command *comkey,
+      mt::CR_STR separator = "\n"
+    ) {
+      return stringify<WordMaps>(comkey, separator);
+    }
+
+    inline static std::string stringifyNumbers(
+      Command *comkey,
+      mt::CR_STR separator = "\n"
+    ) {
+      return stringify<NumberMaps>(comkey, separator);
+    }
+
+    // stringified boolean is based on 'mt_uti::Booleanizer'
+    inline static std::string stringifyBooleans(
+      Command *comkey,
+      mt::CR_STR separator = "\n"
+    ) {
+      return stringify<BooleanMaps>(comkey, separator);
+    }
+
+    /** Print Stringified Vector */
+
+    inline static void printTexts(
+      Command *comkey,
+      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_SZ numberOfIndents
+    ) {
+      print<TextMaps>(comkey, consoleCode, numberOfIndents);
+    }
+
+    inline static void printWords(
+      Command *comkey,
+      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_SZ numberOfIndents
+    ) {
+      print<WordMaps>(comkey, consoleCode, numberOfIndents);
+    }
+
+    inline static void printNumbers(
+      Command *comkey,
+      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_SZ numberOfIndents
+    ) {
+      print<NumberMaps>(comkey, consoleCode, numberOfIndents);
+    }
+
+    inline static void printBooleans(
+      Command *comkey,
+      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_SZ numberOfIndents
+    ) {
+      print<BooleanMaps>(comkey, consoleCode, numberOfIndents);
+    }
   };
 }
 

@@ -96,7 +96,7 @@ namespace cli_menu {
     Command *backTo(mt_ds::GeneralTree *topCommand);
     Command *enter();
     Command *execute();
-    Command *goDown(mt::CR_STR input);
+    Command *goDown(mt::CR_STR raw);
     Command *goToNeighbor(mt::CR<DIRECTION> direction);
 
     /**
@@ -108,9 +108,9 @@ namespace cli_menu {
     // an error message in dialog when switching mode / moving position
     void printInterruptionDialoguedResponse();
 
-    // input is expected as e.g. '--foo' or '-goo'
-    bool testHyphens(mt::CR_STR input) {
-      return hyphens + keyword == input;
+    // raw is expected as e.g. '--foo' or '-goo'
+    bool testHyphens(mt::CR_STR raw) {
+      return hyphens + keyword == raw;
     }
 
     /**

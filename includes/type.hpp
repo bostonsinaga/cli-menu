@@ -8,43 +8,9 @@ namespace cli_menu {
 
   /** PARAMETER */
 
-  template <class T, class U>
-  class Parameter : virtual public Command {
-  private:
-    void clipboardOutputCopy() override;
-    void printInput() override;
-    void printOutput() override;
-    void printDescendantInputs() override;
-    void printDescendantOutputs() override;
-    void resetInput() override;
-    void resetOutput() override;
-    void resetDescendantInputs() override;
-    void resetDescendantOutputs() override;
-
-  protected:
-    Parameter(
-      mt::CR_STR keyw,
-      mt::CR_STR desc,
-      mt::CR<CODE_CALLBACK> calb
-    ) : Command(keyw, desc, calb) {}
-
-  public:
-    Parameter() = delete;
-
-    // generated data
-    Data<T> input;  // in dialog or match
-    Data<U> output; // after callback
-  };
-
-  /** CREATOR */
-
   class Word;
   class Number;
   class Boolean;
-
-  typedef Parameter<std::string, std::string> ParameterWord;
-  typedef Parameter<double, std::string> ParameterNumber;
-  typedef Parameter<bool, std::string> ParameterBoolean;
 
   template <typename T>
   concept ParameterType =
@@ -52,13 +18,20 @@ namespace cli_menu {
     std::is_same_v<T, Number> ||
     std::is_same_v<T, Boolean>;
 
-  class Creator : virtual public Command {
+  class Parameter : public Command {
   protected:
-    Creator(
+    Parameter(
       mt::CR_STR keyw,
       mt::CR_STR desc,
       mt::CR<CODE_CALLBACK> calb
     ) : Command(keyw, desc, calb) {}
+
+    void clipboardInputPaste() override;
+    void clipboardOutputCopy() override;
+    void printOutput() override;
+    void printDescendantOutputs() override;
+    void resetOutput() override;
+    void resetDescendantOutputs() override;
 
     /**
      * Avoid keyword duplication (will destroy existing child
@@ -70,7 +43,7 @@ namespace cli_menu {
     void replaceExistingChildByKeyword(Command *newChild);
 
   public:
-    Creator() = delete;
+    Parameter() = delete;
 
     Word *addWord(
       mt::CR_STR keyw,
@@ -99,9 +72,13 @@ namespace cli_menu {
 
   /** WORD */
 
-  class Word : public ParameterWord, public Creator {
+  class Word : public Parameter {
   protected:
-    void clipboardInputPaste() override;
+    void destroy() override;
+    void printInput() override;
+    void printDescendantInputs() override;
+    void resetInput() override;
+    void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;
 
     Word(
@@ -110,7 +87,7 @@ namespace cli_menu {
       mt::CR<CODE_CALLBACK> calb
     );
 
-    friend class Creator;
+    friend class Parameter;
 
   public:
     Word() = delete;
@@ -118,9 +95,13 @@ namespace cli_menu {
 
   /** NUMBER */
 
-  class Number : public ParameterNumber, public Creator {
+  class Number : public Parameter {
   protected:
-    void clipboardInputPaste() override;
+    void destroy() override;
+    void printInput() override;
+    void printDescendantInputs() override;
+    void resetInput() override;
+    void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;
 
     Number(
@@ -129,7 +110,7 @@ namespace cli_menu {
       mt::CR<CODE_CALLBACK> calb
     );
 
-    friend class Creator;
+    friend class Parameter;
 
   public:
     Number() = delete;
@@ -143,9 +124,14 @@ namespace cli_menu {
     BOOLEAN_INSTANT_QUESTION_CANCELED
   };
 
-  class Boolean : public ParameterBoolean, public Creator {
+  class Boolean : public Parameter {
   protected:
+    void destroy() override;
     void clipboardInputPaste() override;
+    void printInput() override;
+    void printDescendantInputs() override;
+    void resetInput() override;
+    void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;
 
     Boolean(
@@ -154,7 +140,7 @@ namespace cli_menu {
       mt::CR<CODE_CALLBACK> calb
     );
 
-    friend class Creator;
+    friend class Parameter;
 
   public:
     Boolean() = delete;
@@ -167,5 +153,4 @@ namespace cli_menu {
   };
 }
 
-#include "type.tpp"
 #endif // __CLI_MENU__TYPE_HPP__

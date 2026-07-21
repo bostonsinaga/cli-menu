@@ -1,4 +1,4 @@
-void initRead(cm::Creator *cli_log) {
+void initRead(cm::Parameter *cli_log) {
 
   cm::Boolean *cli_read = cli_log->addBoolean(
     "read",

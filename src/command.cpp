@@ -110,7 +110,7 @@ namespace cli_menu {
           return firstNeighbor->match();
         }
       }
-      else { // push argument to 'input' vector
+      else { // push argument to 'Data' unordered map vector
         strargv(Command::raws.back());
         Command::raws.pop_back();
       }
@@ -522,14 +522,14 @@ namespace cli_menu {
   }
 
   // always in selection mode
-  Command *Command::goDown(mt::CR_STR input) {
+  Command *Command::goDown(mt::CR_STR raw) {
 
     bool spaceFound = false;
     mt::VEC_STR additionalRaws = {""};
     Command::phaseCode = COMMAND_PHASE_MATCH_IN_DIALOG;
 
-    // split input into the string vector using spaces as delimiters
-    for (mt::CR_CH ch : input) {
+    // split 'raw' into the string vector using spaces as delimiters
+    for (mt::CR_CH ch : raw) {
 
       if (mt_uti::StrTool::isWhitespace(ch)) {
         if (!spaceFound) {

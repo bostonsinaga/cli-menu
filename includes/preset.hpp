@@ -8,20 +8,20 @@ namespace cli_menu {
   class Preset final {
   public:
     // these are owned by all commands by default
-    static void applyHelp(Creator *owner);
-    static void applyList(Creator *owner);
+    static void applyHelp(Parameter *owner);
+    static void applyList(Parameter *owner);
 
     class File final {
     private:
       // get multiple filenames from wildcard pattern
-      static void completePathWildcards(ParameterWord *param);
+      static void completePathWildcards(Command *self);
 
       /**
        * Write output string into a text file.
        * Used as part of the 'applyTextOut..' callback.
        */
       static COMMAND_CALLBACK_CODE useTextOut(
-        ParameterWord *owner,
+        Command *owner,
         std::string filename
       );
 
@@ -30,7 +30,7 @@ namespace cli_menu {
        * Read text file with custom handler.
        */
       static void applyCustomIn(
-        Creator *owner,
+        Parameter *owner,
         mt::CR_BOL isRequired,
         mt::CR<CODE_CALLBACK> callback
       );
@@ -43,7 +43,7 @@ namespace cli_menu {
        * the callback will return true without displaying error message.
        */
       static void applyTextIn(
-        Creator *owner,
+        Parameter *owner,
         mt::CR_BOL isRequired
       );
 
@@ -51,7 +51,7 @@ namespace cli_menu {
        * Write text file with custom handler.
        */
       static void applyCustomOut(
-        Creator *owner,
+        Parameter *owner,
         mt::CR_BOL isRequired,
         mt::CR<CODE_CALLBACK> callback
       );
@@ -65,7 +65,7 @@ namespace cli_menu {
        * with 'fileOutDefaultExtension' as its extension.
        */
       static void applyTextOutFallback(
-        Creator *owner,
+        Parameter *owner,
         mt::CR_BOL isRequired
       );
 
@@ -77,7 +77,7 @@ namespace cli_menu {
        * 
        * The node will not be required.
        */
-      static void applyTextOutOptional(Creator *owner);
+      static void applyTextOutOptional(Parameter *owner);
     };
   };
 }

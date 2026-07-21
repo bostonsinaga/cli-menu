@@ -46,8 +46,7 @@ namespace cli_menu {
       mt::CR_STR keyword_in,
       const ProgramAbout &about_in,
       mt::CR<CODE_CALLBACK> callback_in
-    ) : Command(keyword_in, "", callback_in),
-      T(keyword_in, "", callback_in)
+    ) : T(keyword_in, "", callback_in)
     {
       this->description = about_in.stringify();
     }

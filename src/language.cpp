@@ -10,9 +10,7 @@ namespace cli_menu {
   //_________|
 
   bool Langu::ageManager::hasISOCode(mt::CR_STR existingISOCode) {
-    return mt::STRUNORMAP_FOUND<mt::ARR_STR<SENTENCES_TOTAL>>(
-      Langu::xMessage::sentences, existingISOCode
-    );
+    return Langu::xMessage::sentences.find(existingISOCode) != Langu::xMessage::sentences.end();
   }
 
   void Langu::ageManager::selectISOCode(mt::CR_STR existingISOCode) {
@@ -45,7 +43,7 @@ namespace cli_menu {
   // MESSAGE |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<SENTENCES_TOTAL>> Langu::xMessage::sentences = {{"en", {    
+  mt::UNORMAP_STR<mt::ARR_STR<SENTENCES_TOTAL>> Langu::xMessage::sentences = {{"en", {    
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
@@ -310,7 +308,7 @@ namespace cli_menu {
     );
   }
 
-  mt::STRUNORMAP_STR Langu::xMessage::welcomeToString = {{"en", "Welcome to "}};
+  mt::UNORMAP_STR<std::string> Langu::xMessage::welcomeToString = {{"en", "Welcome to "}};
 
   std::string Langu::ageMessage::getWelcomeToString() {
     return Langu::xMessage::welcomeToString[Langu::xManager::currentISOCode];
@@ -320,7 +318,7 @@ namespace cli_menu {
   // CONTROL |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<CONTROLS_TOTAL>> Langu::xControl::terms = {{"en", {
+  mt::UNORMAP_STR<mt::ARR_STR<CONTROLS_TOTAL>> Langu::xControl::terms = {{"en", {
     "show this help",
     "show controller list",
     "enter children level",
@@ -348,7 +346,7 @@ namespace cli_menu {
     "exit program"
   }}};
 
-  mt::STRUNORMAP_STR
+  mt::UNORMAP_STR<std::string>
     Langu::xControl::abbreviationsTitle = {{"en", "Controller List"}},
     Langu::xControl::booleanAvailableValuesTitle = {{"en", "Boolean Available Values"}};
 
@@ -430,7 +428,7 @@ namespace cli_menu {
   // BOOLEANIZER |
   //_____________|
 
-  mt::STRUNORMAP_STR Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
+  mt::UNORMAP_STR<std::string> Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
 
   void Langu::ageBooleanizer::setTerms(
     mt::CR_VEC_STR existingTrueTerms,
@@ -472,7 +470,7 @@ namespace cli_menu {
   // CREATOR |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<CREATOR_TYPES_TOTAL>>
+  mt::UNORMAP_STR<mt::ARR_STR<CREATOR_TYPES_TOTAL>>
   Langu::xCreator::stringifiedTypes = {{"en", {
     "WORD", "NUMBER", "BOOLEAN"
   }}};
@@ -506,7 +504,7 @@ namespace cli_menu {
   // PROGRAM |
   //_________|
 
-  mt::STRUNORMAP<mt::ARR_STR<PROGRAM_LABELS_TOTAL>>
+  mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABELS_TOTAL>>
   Langu::xProgram::labels = {{"en", {
     "Version", "Author", "Link"
   }}};
@@ -540,7 +538,7 @@ namespace cli_menu {
   // PRESET |
   //________|
 
-  mt::STRUNORMAP<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>>
+  mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>>
   Langu::xPreset::keywords = {{"en", {
     "in", "out", "help", "list"
   }}},
