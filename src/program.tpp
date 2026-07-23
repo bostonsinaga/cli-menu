@@ -81,12 +81,14 @@ namespace cli_menu {
         break;
       }
       else if (lastNode->getStatusCode() == COMMAND_DONE) {
+        printWelcome(lastNode);
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_DONE);
       }
       else if (lastNode->getStatusCode() == COMMAND_CANCELED) {
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_CANCELED);
       }
       else if (lastNode->getStatusCode() == COMMAND_ERROR) {
+        printWelcome(lastNode);
         Langu::ageMessage::printResponse(SENTENCE_PROGRAM_ERROR);
       }
 
@@ -98,6 +100,29 @@ namespace cli_menu {
 
     // delete this and its descendants
     this->destroy();
+  }
+
+  template <ParameterType T>
+  void Program<T>::printWelcome(Command *lastNode) {
+    static bool displayed = false;
+
+    if (!displayed && lastNode->isDialogued()) {
+      displayed = true;
+      Command *root = static_cast<Command*>(this->getRoot());
+
+      // keyword
+      Console::logString(
+        Langu::ageMessage::getWelcomeToString() +
+        mt_uti::StrTool::copyStringToUppercase(root->getKeyword()) + Console::getNL(),
+        Console::messageColors[CONSOLE_HINT_1]
+      );
+
+      // description
+      Console::logItalicString(
+        root->getDescription() + Console::getNL(),
+        Console::messageColors[CONSOLE_HINT_2]
+      );
+    }
   }
 }
 

@@ -79,6 +79,34 @@ namespace cli_menu {
        */
       static void applyTextOutOptional(Parameter *owner);
     };
+
+    /**
+     * For displaying color presets.
+     * Show their names and RGB values.
+     */
+    class ColorSet final {
+    public:
+      inline static int spacing = 1;
+
+    private:
+      static Color highlights[COLOR_TOTAL];
+
+      static std::string stringify(
+        const COLOR_CODE &code,
+        CR_CLR foreground,
+        CR_CLR background
+      );
+
+      static void print();
+
+      inline static std::string getSpacing() {
+        return std::string(spacing, ' ');
+      }
+
+    public:
+      // this owned by a 'Program' by default
+      static void apply(Parameter *owner);
+    };
   };
 }
 

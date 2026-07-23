@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__PROGRAM_HPP__
 #define __CLI_MENU__PROGRAM_HPP__
 
-#include "type.hpp"
+#include "preset.hpp"
 
 namespace cli_menu {
 
@@ -49,7 +49,11 @@ namespace cli_menu {
     ) : T(keyword_in, "", callback_in)
     {
       this->description = about_in.stringify();
+      Preset::ColorSet::apply(this);
     }
+
+    // displayed once
+    void printWelcome(Command *lastNode);
 
   public:
     Program() = delete;

@@ -5,42 +5,43 @@
 
 namespace cli_menu {
 
-  const Color
-    Color::AZURE(0, 127, 255),
-    Color::BLACK(0, 0, 0),
-    Color::BLUE(0, 0, 255),
-    Color::BROWN(165, 42, 42),
-    Color::CANARY(255, 255, 153),
-    Color::CHARTREUSE(127, 255, 0),
-    Color::CHOCOLATE(210, 105, 30),
-    Color::CRIMSON(220, 20, 60),
-    Color::CYAN(0, 255, 255),
-    Color::FOREST_GREEN(34, 139, 34),
-    Color::GOLD(255, 215, 0),
-    Color::GRAY(128, 128, 128),
-    Color::GREEN(0, 255, 0),
-    Color::LIGHT_BLUE(173, 216, 230),
-    Color::LIGHT_GREEN(144, 238, 144),
-    Color::LIME(191, 255, 0),
-    Color::MAGENTA(255, 0, 255),
-    Color::MAROON(128, 0, 0),
-    Color::MINT(62, 180, 137),
-    Color::NAVY_BLUE(0, 0, 128),
-    Color::OLIVE(128, 128, 0),
-    Color::ORANGE(255, 165, 0),
-    Color::PINK(255, 192, 203),
-    Color::PURPLE(128, 0, 128),
-    Color::RED(255, 0, 0),
-    Color::ROYAL_BLUE(0, 95, 223),
-    Color::SALMON(255, 140, 105),
-    Color::SILVER(192, 192, 192),
-    Color::SKY_BLUE(135, 206, 235),
-    Color::TEAL(0, 128, 128),
-    Color::VIOLET(238, 130, 238),
-    Color::WENGE(100, 84, 82),
-    Color::WHEAT(245, 222, 179),
-    Color::WHITE(255, 255, 255),
-    Color::YELLOW(255, 255, 0);
+  Color Color::set[COLOR_TOTAL] = {
+    {0, 127, 255},    // AZURE
+    {0, 0, 0},        // BLACK
+    {0, 0, 255},      // BLUE
+    {165, 42, 42},    // BROWN
+    {255, 255, 153},  // CANARY
+    {127, 255, 0},    // CHARTREUSE
+    {210, 105, 30},   // CHOCOLATE
+    {220, 20, 60},    // CRIMSON
+    {0, 255, 255},    // CYAN
+    {34, 139, 34},    // FOREST_GREEN
+    {255, 215, 0},    // GOLD
+    {128, 128, 128},  // GRAY
+    {0, 255, 0},      // GREEN
+    {173, 216, 230},  // LIGHT_BLUE
+    {144, 238, 144},  // LIGHT_GREEN
+    {191, 255, 0},    // LIME
+    {255, 0, 255},    // MAGENTA
+    {128, 0, 0},      // MAROON
+    {62, 180, 137},   // MINT
+    {0, 0, 128},      // NAVY_BLUE
+    {128, 128, 0},    // OLIVE
+    {255, 165, 0},    // ORANGE
+    {255, 192, 203},  // PINK
+    {128, 0, 128},    // PURPLE
+    {255, 0, 0},      // RED
+    {0, 95, 223},     // ROYAL_BLUE
+    {255, 140, 105},  // SALMON
+    {192, 192, 192},  // SILVER
+    {135, 206, 235},  // SKY_BLUE
+    {0, 128, 128},    // TEAL
+    {238, 130, 238},  // VIOLET
+    {100, 84, 82},    // WENGE
+    {245, 222, 179},  // WHEAT
+    {255, 255, 255},  // WHITE
+    {255, 255, 0}     // YELLOW
+  };
 
   const std::string
     Color::antidote = "\x1b[0m",
@@ -48,14 +49,23 @@ namespace cli_menu {
     Color::underline = "\x1b[4m";
 
   Color::Color(
-    mt::CR_INT r_in,
-    mt::CR_INT g_in,
-    mt::CR_INT b_in
+    mt::CR_SZ r_in,
+    mt::CR_SZ g_in,
+    mt::CR_SZ b_in
   ) {
     unset = false;
-    r = std::abs(r_in) % 256;
-    g = std::abs(g_in) % 256;
-    b = std::abs(b_in) % 256;
+    r = r_in % 256;
+    g = g_in % 256;
+    b = b_in % 256;
+  }
+
+  bool Color::operator=(CR_CLR comparison) const {
+    return (this == &comparison || (
+      unset == comparison.unset &&
+      r == comparison.r &&
+      g == comparison.g &&
+      b == comparison.b
+    ));
   }
 
   void Color::setUnset() {
@@ -315,58 +325,6 @@ namespace cli_menu {
     return getString(
       text, underline, foreground, background
     );
-  }
-
-  /** UTILS */
-
-  bool Color::areEqual(CR_CLR color_1, CR_CLR color_2) {
-    if (&color_1 == &color_2 || (
-      color_1.unset == color_2.unset &&
-      color_1.r == color_2.r &&
-      color_1.g == color_2.g &&
-      color_1.b == color_2.b
-    )) { return true; }
-    return false;
-  }
-
-  void Color::printPresets() {
-    std::cout
-      << Color::getUnderlineString("PRESET COLORS:\n", Color::WHITE, Color::GRAY)
-      << Color::getString(" azure        \n", Color::AZURE, Color::WHITE)
-      << Color::getString(" black        \n", Color::BLACK, Color::WHITE)
-      << Color::getString(" blue         \n", Color::BLUE, Color::WHITE)
-      << Color::getString(" brown        \n", Color::BROWN, Color::WHITE)
-      << Color::getString(" canary       \n", Color::CANARY, Color::GRAY)
-      << Color::getString(" chartreuse   \n", Color::CHARTREUSE, Color::GRAY)
-      << Color::getString(" chocolate    \n", Color::CHOCOLATE, Color::WHITE)
-      << Color::getString(" crimson      \n", Color::CRIMSON, Color::WHITE)
-      << Color::getString(" cyan         \n", Color::CYAN, Color::GRAY)
-      << Color::getString(" forest_green \n", Color::FOREST_GREEN, Color::WHITE)
-      << Color::getString(" gold         \n", Color::GOLD, Color::WHITE)
-      << Color::getString(" gray         \n", Color::GRAY, Color::WHITE)
-      << Color::getString(" green        \n", Color::GREEN, Color::WHITE)
-      << Color::getString(" light_blue   \n", Color::LIGHT_BLUE, Color::GRAY)
-      << Color::getString(" light_green  \n", Color::LIGHT_GREEN, Color::GRAY)
-      << Color::getString(" lime         \n", Color::LIME, Color::GRAY)
-      << Color::getString(" magenta      \n", Color::MAGENTA, Color::WHITE)
-      << Color::getString(" maroon       \n", Color::MAROON, Color::WHITE)
-      << Color::getString(" mint         \n", Color::MINT, Color::WHITE)
-      << Color::getString(" navy_blue    \n", Color::NAVY_BLUE, Color::WHITE)
-      << Color::getString(" olive        \n", Color::OLIVE, Color::WHITE)
-      << Color::getString(" orange       \n", Color::ORANGE, Color::WHITE)
-      << Color::getString(" pink         \n", Color::PINK, Color::GRAY)
-      << Color::getString(" purple       \n", Color::PURPLE, Color::WHITE)
-      << Color::getString(" red          \n", Color::RED, Color::WHITE)
-      << Color::getString(" royal_blue   \n", Color::ROYAL_BLUE, Color::WHITE)
-      << Color::getString(" salmon       \n", Color::SALMON, Color::WHITE)
-      << Color::getString(" silver       \n", Color::SILVER, Color::GRAY)
-      << Color::getString(" sky_blue     \n", Color::SKY_BLUE, Color::GRAY)
-      << Color::getString(" teal         \n", Color::TEAL, Color::WHITE)
-      << Color::getString(" violet       \n", Color::VIOLET, Color::GRAY)
-      << Color::getString(" wenge        \n", Color::WENGE, Color::WHITE)
-      << Color::getString(" wheat        \n", Color::WHEAT, Color::GRAY)
-      << Color::getString(" white        \n", Color::WHITE, Color::GRAY)
-      << Color::getString(" yellow       \n", Color::YELLOW, Color::GRAY);
   }
 }
 

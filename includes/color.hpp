@@ -5,12 +5,24 @@
 
 namespace cli_menu {
 
+  enum COLOR_CODE {
+    AZURE, BLACK, BLUE, BROWN, CANARY,
+    CHARTREUSE, CHOCOLATE, CRIMSON, CYAN, FOREST_GREEN,
+    GOLD, GRAY, GREEN, LIGHT_BLUE, LIGHT_GREEN,
+    LIME, MAGENTA, MAROON, MINT, NAVY_BLUE,
+    OLIVE, ORANGE, PINK, PURPLE, RED,
+    ROYAL_BLUE, SALMON, SILVER, SKY_BLUE, TEAL,
+    VIOLET, WENGE, WHEAT, WHITE, YELLOW
+  };
+
+  constexpr int COLOR_TOTAL = 35;
+
   class Color;
   typedef const Color& CR_CLR;
 
   class Color {
   private:
-    int r = 0, g = 0, b = 0;
+    size_t r = 0, g = 0, b = 0;
     bool unset = true;
 
     static const std::string
@@ -47,27 +59,23 @@ namespace cli_menu {
     );
 
   public:
-    static const Color
-      AZURE, BLACK, BLUE, BROWN,
-      CANARY, CHARTREUSE, CHOCOLATE, CRIMSON,
-      CYAN, FOREST_GREEN, GOLD, GRAY,
-      GREEN, LIGHT_BLUE, LIGHT_GREEN, LIME,
-      MAGENTA, MAROON, MINT, NAVY_BLUE,
-      OLIVE, ORANGE, PINK, PURPLE,
-      RED, ROYAL_BLUE, SALMON, SILVER,
-      SKY_BLUE, TEAL, VIOLET, WENGE,
-      WHEAT, WHITE, YELLOW;
-
-    Color() {/** For unset RGB */}
+    static Color set[COLOR_TOTAL];
 
     Color(
-      mt::CR_INT r_in,
-      mt::CR_INT g_in,
-      mt::CR_INT b_in
+      mt::CR_SZ r_in,
+      mt::CR_SZ g_in,
+      mt::CR_SZ b_in
     );
 
+    bool operator=(CR_CLR comparison) const;
     const bool isUnset() const { return unset; }
     void setUnset();
+
+    /** GET RGB VALUE */
+
+    inline size_t getR() const { return r; }
+    inline size_t getG() const { return g; }
+    inline size_t getB() const { return b; }
 
     /** OPENED STRINGS */
 
@@ -142,9 +150,6 @@ namespace cli_menu {
       CR_CLR foreground,
       CR_CLR background
     );
-
-    static bool areEqual(CR_CLR color_1, CR_CLR color_2);
-    static void printPresets();
   };
 }
 

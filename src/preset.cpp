@@ -7,6 +7,7 @@
 namespace cli_menu {
 
   void Preset::applyHelp(Parameter *owner) {
+    if (!owner) return;
 
     Boolean *help = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_HELP),
@@ -24,6 +25,7 @@ namespace cli_menu {
   }
 
   void Preset::applyList(Parameter *owner) {
+    if (!owner) return;
 
     Boolean *list = owner->addBoolean(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_LIST),
@@ -92,6 +94,8 @@ namespace cli_menu {
     mt::CR_BOL isRequired,
     mt::CR<CODE_CALLBACK> callback
   ) {
+    if (!owner) return;
+
     Word *in = owner->addWord(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_IN),
       Langu::agePreset::getDescription(PRESET_KEYWORD_IN),
@@ -217,6 +221,8 @@ namespace cli_menu {
     mt::CR_BOL isRequired,
     mt::CR<CODE_CALLBACK> callback
   ) {
+    if (!owner) return;
+
     Word *out = owner->addWord(
       Langu::agePreset::getKeyword(PRESET_KEYWORD_OUT),
       Langu::agePreset::getDescription(PRESET_KEYWORD_OUT),
@@ -287,6 +293,58 @@ namespace cli_menu {
         return COMMAND_CALLBACK_DONE;
       }
     );
+  }
+
+  Color Preset::ColorSet::highlights[COLOR_TOTAL] = {
+    Color::set[WHITE], Color::set[WHITE], Color::set[WHITE], Color::set[WHITE], Color::set[GRAY],
+    Color::set[GRAY], Color::set[WHITE], Color::set[WHITE], Color::set[GRAY], Color::set[WHITE],
+    Color::set[WHITE], Color::set[WHITE], Color::set[WHITE], Color::set[GRAY], Color::set[GRAY],
+    Color::set[GRAY], Color::set[WHITE], Color::set[WHITE], Color::set[WHITE], Color::set[WHITE],
+    Color::set[WHITE], Color::set[WHITE], Color::set[GRAY], Color::set[WHITE], Color::set[WHITE],
+    Color::set[WHITE], Color::set[WHITE], Color::set[GRAY], Color::set[GRAY], Color::set[WHITE],
+    Color::set[GRAY], Color::set[WHITE], Color::set[GRAY], Color::set[GRAY], Color::set[GRAY]
+  };
+
+  std::string Preset::ColorSet::stringify(
+    const COLOR_CODE &code,
+    CR_CLR foreground,
+    CR_CLR background
+  ) {
+    std::string str = getSpacing() + Langu::ageColorSet::getName(code) + getSpacing();
+    str += std::to_string(foreground.getR()) + getSpacing();
+    str += std::to_string(foreground.getG()) + getSpacing();
+    str += std::to_string(foreground.getB()) + getSpacing();
+    return Color::getString(str, foreground, background) + Console::getNL();
+  }
+
+  void Preset::ColorSet::print() {
+    std::cout << Color::getUnderlineString(
+      getSpacing() + Langu::ageColorSet::getTitle() + getSpacing() + Console::getNL(),
+      Color::set[WHITE],
+      Color::set[GRAY]
+    );
+
+    for (int i = 0; i < COLOR_TOTAL; i++) {
+      std::cout << stringify(static_cast<COLOR_CODE>(i), Color::set[i], highlights[i]);
+    }
+  }
+
+  void Preset::ColorSet::apply(Parameter *owner) {
+    if (!owner) return;
+
+    Boolean *colorSet = owner->addBoolean(
+      Langu::agePreset::getKeyword(PRESET_KEYWORD_COLOR_SET),
+      Langu::agePreset::getDescription(PRESET_KEYWORD_COLOR_SET),
+      [](Command *self)->COMMAND_CALLBACK_CODE {
+        ColorSet::print();
+        return COMMAND_CALLBACK_DONE;
+      }, false
+    );
+
+    if (colorSet) {
+      colorSet->makePseudo();
+      colorSet->makeSterilized();
+    }
   }
 }
 
