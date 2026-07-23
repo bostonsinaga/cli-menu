@@ -243,9 +243,6 @@ namespace cli_menu {
     // accumulate keywords up to root
     std::string generateSequentialRootNames();
 
-    // displayed once
-    void printWelcome();
-
     // print keyword, description, and children keywords
     void printHelp();
 

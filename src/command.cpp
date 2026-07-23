@@ -198,11 +198,7 @@ namespace cli_menu {
 
   Command *Command::dialog() {
     Command::phaseCode = COMMAND_PHASE_DIALOG;
-    std::string seqNames = generateSequentialRootNames();
-    std::string rawstr;
-
-    // initial message
-    printWelcome();
+    std::string rawstr, seqNames = generateSequentialRootNames();
 
     // outline or fill style    
     Console::logStylishHeader(seqNames, editing);
@@ -250,10 +246,8 @@ namespace cli_menu {
         else { // switch to edit mode
           editing = true;
           Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_MODIFICATION);
+          Console::logStylishHeader(seqNames, editing);
         }
-
-        // reprint sequential root names
-        Console::logStylishHeader(seqNames, editing);
       }
       // SELECT COMMAND
       else if (Control::switchSelectTest(rawstr)) {
@@ -266,13 +260,11 @@ namespace cli_menu {
           if (editing) {
             editing = false;
             Langu::ageMessage::printResponse(SENTENCE_MODE_SWITCH_TO_SELECTION);
+            Console::logStylishHeader(seqNames, editing);
           }
           else { // repeating control warning
             Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
           }
-
-          // reprint sequential root names
-          Console::logStylishHeader(seqNames, editing);
         }
       }
       // CLEAR TERMINAL SCREEN
@@ -626,34 +618,12 @@ namespace cli_menu {
     return setStatus(COMMAND_ONGOING);
   }
 
-  void Command::printWelcome() {
-    static bool displayed = false;
-
-    if (!displayed) {
-      Command *root = static_cast<Command*>(getRoot());
-      displayed = true;
-
-      // keyword
-      Console::logString(
-        '\n' + Langu::ageMessage::getWelcomeToString() +
-        mt_uti::StrTool::copyStringToUppercase(root->keyword) + '\n',
-        Console::messageColors[CONSOLE_HINT_1]
-      );
-
-      // description
-      Console::logItalicString(
-        root->description + "\n\n",
-        Console::messageColors[CONSOLE_HINT_2]
-      );
-    }
-  }
-
   void Command::printHelp() {
     printKeyword(CONSOLE_HINT_1, 0);
 
     // description
     Console::logItalicString(
-      description + '\n',
+      description + Console::getNL(),
       Console::messageColors[CONSOLE_HINT_2]
     );
 
@@ -666,8 +636,8 @@ namespace cli_menu {
   ) {
     Console::logString(
       std::string(numberOfIndents, ' ') + keyword + " ["
-      + Langu::ageCreator::getStringifiedType(stringifiedTypeIndex)
-      + ']' + (required.first ? '*' : '\0') + '\n',
+      + Langu::ageParameter::getStringifiedType(stringifiedTypeIndex)
+      + ']' + (required.first ? '*' : '\0') + Console::getNL(),
       Console::messageColors[consoleCode]
     );
   }
@@ -693,13 +663,6 @@ namespace cli_menu {
     else if (displayAtLeafWarning) {
       Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
       return;
-    }
-
-    // additional newline only at runtime
-    if (Command::phaseCode == COMMAND_PHASE_DIALOG ||
-      Command::phaseCode == COMMAND_PHASE_MATCH_IN_DIALOG
-    ) {
-      std::cout << std::endl;
     }
   }
 
