@@ -21,21 +21,25 @@ namespace cli_menu {
 
   void Langu::ageManager::addISOCode(mt::CR_STR newISOCode) {
     Langu::xMessage::sentences[newISOCode] = {};
+    Langu::xColorSet::title[newISOCode] = {};
+    Langu::xColorSet::names[newISOCode] = {};
     Langu::xControl::terms[newISOCode] = {};
     Langu::xControl::abbreviationsTitle[newISOCode] = {};
     Langu::xControl::booleanAvailableValuesTitle[newISOCode] = {};
     Langu::xBooleanizer::object.addTerms(newISOCode, {}, {});
-    Langu::xCreator::stringifiedTypes[newISOCode] = {};
+    Langu::xParameter::stringifiedTypes[newISOCode] = {};
     Langu::xProgram::labels[newISOCode] = {};
   }
 
   void Langu::ageManager::removeISOCode(mt::CR_STR existingISOCode) {
     Langu::xMessage::sentences.erase(existingISOCode);
+    Langu::xColorSet::title.erase(existingISOCode);
+    Langu::xColorSet::names.erase(existingISOCode);
     Langu::xControl::terms.erase(existingISOCode);
     Langu::xControl::abbreviationsTitle.erase(existingISOCode);
     Langu::xControl::booleanAvailableValuesTitle.erase(existingISOCode);
     Langu::xBooleanizer::object.removeTerms(existingISOCode);
-    Langu::xCreator::stringifiedTypes.erase(existingISOCode);
+    Langu::xParameter::stringifiedTypes.erase(existingISOCode);
     Langu::xProgram::labels.erase(existingISOCode);
   }
 
@@ -43,7 +47,7 @@ namespace cli_menu {
   // MESSAGE |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<SENTENCES_TOTAL>> Langu::xMessage::sentences = {{"en", {    
+  mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {    
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
@@ -120,7 +124,7 @@ namespace cli_menu {
     "descendant outputs are removed"
   }}};
 
-  CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCES_TOTAL] = {
+  CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
     // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
@@ -308,17 +312,123 @@ namespace cli_menu {
     );
   }
 
-  mt::UNORMAP_STR<std::string> Langu::xMessage::welcomeToString = {{"en", "Welcome to "}};
+  mt::UNORMAP_STR<std::string> Langu::xMessage::welcomeToString = {{
+    Langu::defaultISOCode, "Welcome to "
+  }};
 
   std::string Langu::ageMessage::getWelcomeToString() {
     return Langu::xMessage::welcomeToString[Langu::xManager::currentISOCode];
+  }
+
+  //___________|
+  // COLOR SET |
+  //___________|
+
+  mt::UNORMAP_STR<std::string> Langu::xColorSet::title = {{
+    Langu::defaultISOCode, "PRESET COLORS:"
+  }};
+
+  mt::UNORMAP_STR<mt::ARR_STR<COLOR_TOTAL>> Langu::xColorSet::names = {{ Langu::defaultISOCode, {
+    "AZURE", "BLACK", "BLUE", "BROWN", "CANARY",
+    "CHARTREUSE", "CHOCOLATE", "CRIMSON", "CYAN", "FOREST_GREEN",
+    "GOLD", "GRAY", "GREEN", "LIGHT_BLUE", "LIGHT_GREEN",
+    "LIME", "MAGENTA", "MAROON", "MINT", "NAVY_BLUE",
+    "OLIVE", "ORANGE", "PINK", "PURPLE", "RED",
+    "ROYAL_BLUE", "SALMON", "SILVER", "SKY_BLUE", "TEAL",
+    "VIOLET", "WENGE", "WHEAT", "WHITE", "YELLOW"
+  }}};
+
+  void Langu::ageColorSet::setTitle(mt::CR_STR title) {
+    Langu::xColorSet::title[Langu::xManager::currentISOCode] = title;
+  }
+
+  void Langu::ageColorSet::setNames(
+    mt::CR_STR azureName,
+    mt::CR_STR blackName,
+    mt::CR_STR blueName,
+    mt::CR_STR brownName,
+    mt::CR_STR canaryName,
+    mt::CR_STR chartreuseName,
+    mt::CR_STR chocolateName,
+    mt::CR_STR crimsonName,
+    mt::CR_STR cyanName,
+    mt::CR_STR forestgreenName,
+    mt::CR_STR goldName,
+    mt::CR_STR grayName,
+    mt::CR_STR greenName,
+    mt::CR_STR lightblueName,
+    mt::CR_STR lightgreenName,
+    mt::CR_STR limeName,
+    mt::CR_STR magentaName,
+    mt::CR_STR maroonName,
+    mt::CR_STR mintName,
+    mt::CR_STR navyblueName,
+    mt::CR_STR oliveName,
+    mt::CR_STR orangeName,
+    mt::CR_STR pinkName,
+    mt::CR_STR purpleName,
+    mt::CR_STR redName,
+    mt::CR_STR royalblueName,
+    mt::CR_STR salmonName,
+    mt::CR_STR silverName,
+    mt::CR_STR skyblueName,
+    mt::CR_STR tealName,
+    mt::CR_STR violetName,
+    mt::CR_STR wengeName,
+    mt::CR_STR wheatName,
+    mt::CR_STR whiteName,
+    mt::CR_STR yellowName
+  ) {
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][AZURE] = azureName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][BLACK] = blackName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][BLUE] = blueName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][BROWN] = brownName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][CANARY] = canaryName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][CHARTREUSE] = chartreuseName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][CHOCOLATE] = chocolateName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][CRIMSON] = crimsonName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][CYAN] = cyanName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][FOREST_GREEN] = forestgreenName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][GOLD] = goldName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][GRAY] = grayName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][GREEN] = greenName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][LIGHT_BLUE] = lightblueName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][LIGHT_GREEN] = lightgreenName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][LIME] = limeName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][MAGENTA] = magentaName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][MAROON] = maroonName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][MINT] = mintName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][NAVY_BLUE] = navyblueName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][OLIVE] = oliveName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][ORANGE] = orangeName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][PINK] = pinkName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][PURPLE] = purpleName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][RED] = redName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][ROYAL_BLUE] = royalblueName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][SALMON] = salmonName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][SILVER] = silverName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][SKY_BLUE] = skyblueName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][TEAL] = tealName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][VIOLET] = violetName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][WENGE] = wengeName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][WHEAT] = wheatName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][WHITE] = whiteName;
+    Langu::xColorSet::names[Langu::xManager::currentISOCode][YELLOW] = yellowName;
+  }
+
+  std::string Langu::ageColorSet::getTitle() {
+    return Langu::xColorSet::title[Langu::xManager::currentISOCode];
+  }
+
+  std::string Langu::ageColorSet::getName(const COLOR_CODE &code) {
+    return Langu::xColorSet::names[Langu::xManager::currentISOCode][code];
   }
 
   //_________|
   // CONTROL |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<CONTROLS_TOTAL>> Langu::xControl::terms = {{"en", {
+  mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> Langu::xControl::terms = {{ Langu::defaultISOCode, {
     "show this help",
     "show controller list",
     "enter children level",
@@ -347,35 +457,35 @@ namespace cli_menu {
   }}};
 
   mt::UNORMAP_STR<std::string>
-    Langu::xControl::abbreviationsTitle = {{"en", "Controller List"}},
-    Langu::xControl::booleanAvailableValuesTitle = {{"en", "Boolean Available Values"}};
+    Langu::xControl::abbreviationsTitle = {{ Langu::defaultISOCode, "Controller List" }},
+    Langu::xControl::booleanAvailableValuesTitle = {{ Langu::defaultISOCode, "Boolean Available Values" }};
 
   void Langu::ageControl::setTerms(
-    std::string commandHelpTerm,
-    std::string controllerListTerm,
-    std::string childrenEnterTerm,
-    std::string childrenExecuteTerm,
-    std::string childrenListTerm,
-    std::string neighborNextTerm,
-    std::string neighborPreviousTerm,
-    std::string switchModifyTerm,
-    std::string switchSelectTerm,
-    std::string clearScreenTerm,
-    std::string viewInputThisTerm,
-    std::string viewInputDescendantsTerm,
-    std::string viewOutputThisTerm,
-    std::string viewOutputDescendantsTerm,
-    std::string resetInputThisTerm,
-    std::string resetInputDescendantsTerm,
-    std::string resetOutputThisTerm,
-    std::string resetOutputDescendantsTerm,
-    std::string resetDataThisTerm,
-    std::string resetDataDescendantsTerm,
-    std::string copyOutputTerm,
-    std::string pasteInputTerm,
-    std::string parentBackTerm,
-    std::string rootBackTerm,
-    std::string programQuitTerm
+    mt::CR_STR commandHelpTerm,
+    mt::CR_STR controllerListTerm,
+    mt::CR_STR childrenEnterTerm,
+    mt::CR_STR childrenExecuteTerm,
+    mt::CR_STR childrenListTerm,
+    mt::CR_STR neighborNextTerm,
+    mt::CR_STR neighborPreviousTerm,
+    mt::CR_STR switchModifyTerm,
+    mt::CR_STR switchSelectTerm,
+    mt::CR_STR clearScreenTerm,
+    mt::CR_STR viewInputThisTerm,
+    mt::CR_STR viewInputDescendantsTerm,
+    mt::CR_STR viewOutputThisTerm,
+    mt::CR_STR viewOutputDescendantsTerm,
+    mt::CR_STR resetInputThisTerm,
+    mt::CR_STR resetInputDescendantsTerm,
+    mt::CR_STR resetOutputThisTerm,
+    mt::CR_STR resetOutputDescendantsTerm,
+    mt::CR_STR resetDataThisTerm,
+    mt::CR_STR resetDataDescendantsTerm,
+    mt::CR_STR copyOutputTerm,
+    mt::CR_STR pasteInputTerm,
+    mt::CR_STR parentBackTerm,
+    mt::CR_STR rootBackTerm,
+    mt::CR_STR programQuitTerm
   ) {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CONTROLLER_LIST] = controllerListTerm;
@@ -428,7 +538,7 @@ namespace cli_menu {
   // BOOLEANIZER |
   //_____________|
 
-  mt::UNORMAP_STR<std::string> Langu::xBooleanizer::yesOrNoLabel = {{"en", "Y/n"}};
+  mt::UNORMAP_STR<std::string> Langu::xBooleanizer::yesOrNoLabel = {{ Langu::defaultISOCode, "Y/n" }};
 
   void Langu::ageBooleanizer::setTerms(
     mt::CR_VEC_STR existingTrueTerms,
@@ -466,37 +576,37 @@ namespace cli_menu {
     return Langu::xBooleanizer::yesOrNoLabel[Langu::xManager::currentISOCode];
   }
 
-  //_________|
-  // CREATOR |
-  //_________|
+  //___________|
+  // PARAMETER |
+  //___________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<CREATOR_TYPES_TOTAL>>
-  Langu::xCreator::stringifiedTypes = {{"en", {
+  mt::UNORMAP_STR<mt::ARR_STR<PARAMETER_TYPE_TOTAL>>
+  Langu::xParameter::stringifiedTypes = {{ Langu::defaultISOCode, {
     "WORD", "NUMBER", "BOOLEAN"
   }}};
 
-  void Langu::ageCreator::setStringifiedTypes(
+  void Langu::ageParameter::setStringifiedTypes(
     mt::CR_STR wordStringifiedType,
     mt::CR_STR numberStringifiedType,
     mt::CR_STR booleanStringifiedType
   ) {
-    Langu::xCreator::stringifiedTypes
+    Langu::xParameter::stringifiedTypes
     [Langu::xManager::currentISOCode]
     [STRINGIFIED_TYPE_INPUT_WORD] = wordStringifiedType;
 
-    Langu::xCreator::stringifiedTypes
+    Langu::xParameter::stringifiedTypes
     [Langu::xManager::currentISOCode]
     [STRINGIFIED_TYPE_INPUT_NUMBER] = numberStringifiedType;
 
-    Langu::xCreator::stringifiedTypes
+    Langu::xParameter::stringifiedTypes
     [Langu::xManager::currentISOCode]
     [STRINGIFIED_TYPE_INPUT_BOOLEAN] = booleanStringifiedType;
   }
 
-  std::string Langu::ageCreator::getStringifiedType(
+  std::string Langu::ageParameter::getStringifiedType(
     const STRINGIFIED_TYPE_COMMAND_CODE &code
   ) {
-    return Langu::xCreator::stringifiedTypes
+    return Langu::xParameter::stringifiedTypes
     [Langu::xManager::currentISOCode][code];
   }
 
@@ -504,8 +614,8 @@ namespace cli_menu {
   // PROGRAM |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABELS_TOTAL>>
-  Langu::xProgram::labels = {{"en", {
+  mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABEL_TOTAL>>
+  Langu::xProgram::labels = {{ Langu::defaultISOCode, {
     "Version", "Author", "Link"
   }}};
 
@@ -538,14 +648,15 @@ namespace cli_menu {
   // PRESET |
   //________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>>
-  Langu::xPreset::keywords = {{"en", {
-    "in", "out", "help", "list"
+  mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORD_TOTAL>>
+  Langu::xPreset::keywords = {{ Langu::defaultISOCode, {
+    "in", "out", "help", "list", "color-set"
   }}},
-  Langu::xPreset::descriptions = {{"en", {
+  Langu::xPreset::descriptions = {{ Langu::defaultISOCode, {
     "Enter input filename",
     "Enter output filename",
-    "", ""
+    "", "",
+    "Print preset colors"
   }}};
 
   std::string Langu::agePreset::fileOutDefaultExtension = ".txt";
@@ -555,7 +666,8 @@ namespace cli_menu {
     mt::CR_STR inKeyword,
     mt::CR_STR outKeyword,
     mt::CR_STR helpKeyword,
-    mt::CR_STR listKeyword
+    mt::CR_STR listKeyword,
+    mt::CR_STR colorSetKeyword
   ) {
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
@@ -572,13 +684,18 @@ namespace cli_menu {
     Langu::xPreset::keywords
     [Langu::xManager::currentISOCode]
     [PRESET_KEYWORD_LIST] = listKeyword;
+
+    Langu::xPreset::keywords
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_COLOR_SET] = colorSetKeyword;
   }
 
   void Langu::agePreset::setDescription(
     mt::CR_STR inDescription,
     mt::CR_STR outDescription,
     mt::CR_STR helpDescription,
-    mt::CR_STR listDescription
+    mt::CR_STR listDescription,
+    mt::CR_STR colorSetDescription
   ) {
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
@@ -595,6 +712,10 @@ namespace cli_menu {
     Langu::xPreset::descriptions
     [Langu::xManager::currentISOCode]
     [PRESET_KEYWORD_LIST] = listDescription;
+
+    Langu::xPreset::descriptions
+    [Langu::xManager::currentISOCode]
+    [PRESET_KEYWORD_COLOR_SET] = colorSetDescription;
   }
 
   std::string Langu::agePreset::getKeyword(

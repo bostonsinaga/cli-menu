@@ -94,33 +94,41 @@ namespace cli_menu {
     PRESET_KEYWORD_IN,
     PRESET_KEYWORD_OUT,
     PRESET_KEYWORD_HELP,
-    PRESET_KEYWORD_LIST
+    PRESET_KEYWORD_LIST,
+    PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCES_TOTAL = 37;
-  constexpr int CONTROLS_TOTAL = 25;
-  constexpr int CREATOR_TYPES_TOTAL = 3;
-  constexpr int PROGRAM_LABELS_TOTAL = 3;
-  constexpr int PRESET_KEYWORDS_TOTAL = 4;
+  constexpr int SENTENCE_TOTAL = 37;
+  constexpr int CONTROL_TOTAL = 25;
+  constexpr int PARAMETER_TYPE_TOTAL = 3;
+  constexpr int PROGRAM_LABEL_TOTAL = 3;
+  constexpr int PRESET_KEYWORD_TOTAL = 5;
 
   class Langu final {
   private:
+    inline static const std::string defaultISOCode = "en";
+
     struct xManager {
       inline static std::string
-        // default english
-        currentISOCode = "en",
+        // default is english
+        currentISOCode = defaultISOCode,
         // will be replaced with text
         placeholder = "$";
     };
 
     struct xMessage {
-      static mt::UNORMAP_STR<mt::ARR_STR<SENTENCES_TOTAL>> sentences;
-      static CONSOLE_CODE consoleCodes[SENTENCES_TOTAL];
+      static mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> sentences;
+      static CONSOLE_CODE consoleCodes[SENTENCE_TOTAL];
       static mt::UNORMAP_STR<std::string> welcomeToString;
     };
 
+    struct xColorSet {
+      static mt::UNORMAP_STR<std::string> title;
+      static mt::UNORMAP_STR<mt::ARR_STR<COLOR_TOTAL>> names;
+    };
+
     struct xControl {
-      static mt::UNORMAP_STR<mt::ARR_STR<CONTROLS_TOTAL>> terms;
+      static mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> terms;
 
       static mt::UNORMAP_STR<std::string>
         abbreviationsTitle,
@@ -132,16 +140,16 @@ namespace cli_menu {
       static mt::UNORMAP_STR<std::string> yesOrNoLabel;
     };
 
-    struct xCreator {
-      static mt::UNORMAP_STR<mt::ARR_STR<CREATOR_TYPES_TOTAL>> stringifiedTypes;
+    struct xParameter {
+      static mt::UNORMAP_STR<mt::ARR_STR<PARAMETER_TYPE_TOTAL>> stringifiedTypes;
     };
 
     struct xProgram {
-      static mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABELS_TOTAL>> labels;
+      static mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABEL_TOTAL>> labels;
     };
 
     struct xPreset {
-      static mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORDS_TOTAL>> keywords, descriptions;
+      static mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORD_TOTAL>> keywords, descriptions;
     };
 
   public:
@@ -165,7 +173,6 @@ namespace cli_menu {
     };
 
     struct ageMessage {
-
       static void setSentences(
         mt::CR_STR argumentRequiredSentence,
         mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
@@ -220,34 +227,78 @@ namespace cli_menu {
       static std::string getWelcomeToString();
     };
 
-    struct ageControl {
+    struct ageColorSet {
+      static void setTitle(mt::CR_STR title);
 
+      static void setNames(
+        mt::CR_STR azureName,
+        mt::CR_STR blackName,
+        mt::CR_STR blueName,
+        mt::CR_STR brownName,
+        mt::CR_STR canaryName,
+        mt::CR_STR chartreuseName,
+        mt::CR_STR chocolateName,
+        mt::CR_STR crimsonName,
+        mt::CR_STR cyanName,
+        mt::CR_STR forestgreenName,
+        mt::CR_STR goldName,
+        mt::CR_STR grayName,
+        mt::CR_STR greenName,
+        mt::CR_STR lightblueName,
+        mt::CR_STR lightgreenName,
+        mt::CR_STR limeName,
+        mt::CR_STR magentaName,
+        mt::CR_STR maroonName,
+        mt::CR_STR mintName,
+        mt::CR_STR navyblueName,
+        mt::CR_STR oliveName,
+        mt::CR_STR orangeName,
+        mt::CR_STR pinkName,
+        mt::CR_STR purpleName,
+        mt::CR_STR redName,
+        mt::CR_STR royalblueName,
+        mt::CR_STR salmonName,
+        mt::CR_STR silverName,
+        mt::CR_STR skyblueName,
+        mt::CR_STR tealName,
+        mt::CR_STR violetName,
+        mt::CR_STR wengeName,
+        mt::CR_STR wheatName,
+        mt::CR_STR whiteName,
+        mt::CR_STR yellowName
+      );
+
+      static std::string getTitle();
+      static std::string getName(const COLOR_CODE &code);
+    };
+
+    struct ageControl {
       static void setTerms(
-        std::string commandHelpTerm,
-        std::string controllerListTerm,
-        std::string childrenEnterTerm,
-        std::string childrenExecuteTerm,
-        std::string childrenListTerm,
-        std::string neighborNextTerm,
-        std::string neighborPreviousTerm,
-        std::string switchModifyTerm,
-        std::string switchSelectTerm,
-        std::string cleanScreenTerm,
-        std::string viewInputThisTerm,
-        std::string viewInputDescendantsTerm,
-        std::string viewOutputThisTerm,
-        std::string viewOutputDescendantsTerm,
-        std::string resetInputThisTerm,
-        std::string resetInputDescendantsTerm,
-        std::string resetOutputThisTerm,
-        std::string resetOutputDescendantsTerm,
-        std::string resetDataThisTerm,
-        std::string resetDataDescendantsTerm,
-        std::string copyOutputTerm,
-        std::string pasteInputTerm,
-        std::string parentBackTerm,
-        std::string rootBackTerm,
-        std::string programQuitTerm
+        mt::CR_STR commandHelpTerm,
+        mt::CR_STR controllerListTerm,
+        mt::CR_STR childrenEnterTerm,
+        mt::CR_STR childrenExecuteTerm,
+        mt::CR_STR childrenListTerm,
+        mt::CR_STR neighborNextTerm,
+        mt::CR_STR neighborPreviousTerm,
+        mt::CR_STR switchModifyTerm,
+        mt::CR_STR switchSelectTerm,
+        mt::CR_STR cleanScreenTerm,
+        mt::CR_STR viewInputThisTerm,
+        mt::CR_STR viewInputDescendantsTerm,
+        mt::CR_STR viewOutputThisTerm,
+        mt::CR_STR viewOutputDescendantsTerm,
+        mt::CR_STR resetInputThisTerm,
+        mt::CR_STR resetInputDescendantsTerm,
+        mt::CR_STR resetOutputThisTerm,
+        mt::CR_STR resetOutputDescendantsTerm,
+        mt::CR_STR resetDataThisTerm,
+        mt::CR_STR resetDataDescendantsTerm,
+        mt::CR_STR copyOutputTerm,
+        mt::CR_STR pasteInputTerm,
+        mt::CR_STR parentBackTerm,
+        mt::CR_STR rootBackTerm,
+        mt::CR_STR programQuitTerm
       );
 
       static void setAbbreviationsTitle(mt::CR_STR title);
@@ -259,7 +310,6 @@ namespace cli_menu {
     };
 
     struct ageBooleanizer {
-
       static void setTerms(
         mt::CR_VEC_STR existingTrueTerms,
         mt::CR_VEC_STR existingFalseTerms
@@ -274,8 +324,7 @@ namespace cli_menu {
       static std::string getYesOrNoLabel();
     };
 
-    struct ageCreator {
-
+    struct ageParameter {
       static void setStringifiedTypes(
         mt::CR_STR wordStringifiedType,
         mt::CR_STR numberStringifiedType,
@@ -288,7 +337,6 @@ namespace cli_menu {
     };
 
     struct ageProgram {
-
       static void setLabels(
         mt::CR_STR versionLabel,
         mt::CR_STR authorLabel,
@@ -301,7 +349,6 @@ namespace cli_menu {
     };
 
     struct agePreset {
-
       static std::string fileOutDefaultExtension;
       static mt::PAIR_STR fileOutBracketsForNumbering;
 
@@ -309,14 +356,16 @@ namespace cli_menu {
         mt::CR_STR inKeyword,
         mt::CR_STR outKeyword,
         mt::CR_STR helpKeyword,
-        mt::CR_STR listKeyword
+        mt::CR_STR listKeyword,
+        mt::CR_STR colorSetKeyword
       );
 
       static void setDescription(
         mt::CR_STR inDescription,
         mt::CR_STR outDescription,
         mt::CR_STR helpDescription,
-        mt::CR_STR listDescription
+        mt::CR_STR listDescription,
+        mt::CR_STR colorSetDescription
       );
 
       static std::string getKeyword(
