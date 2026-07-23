@@ -6,19 +6,19 @@
 namespace cli_menu {
 
   Color Console::messageColors[Console::totalStatus] = {
-    Color::RED,
-    Color::YELLOW,
-    Color::BLUE,
-    Color::SKY_BLUE,
-    Color::AZURE,
-    Color::GREEN,
-    Color::ORANGE
+    Color::set[RED],
+    Color::set[YELLOW],
+    Color::set[CYAN],
+    Color::set[SKY_BLUE],
+    Color::set[AZURE],
+    Color::set[GREEN],
+    Color::set[ORANGE]
   };
 
-  Color Console::boundaryModifyColor = Color::WHITE,
-    Console::boundarySelectionColor = Color::SILVER,
-    Console::boxModifyColors[2] = {Color::WHITE, Color::MINT},
-    Console::boxSelectionColors[2] = {Color::WHITE, Color::TEAL};
+  Color Console::boundaryModifyColor = Color::set[WHITE],
+    Console::boundarySelectionColor = Color::set[SILVER],
+    Console::boxModifyColors[2] = {Color::set[WHITE], Color::set[MINT]},
+    Console::boxSelectionColors[2] = {Color::set[WHITE], Color::set[TEAL]};
 
   /** NORMAL */
 
@@ -100,7 +100,7 @@ namespace cli_menu {
 
   void Console::logBoundaryLine(mt::CR_BOL editing) {
     Console::logString(
-      "\n" + std::string(boundaryCharactersAmount, boundaryCharacter) + '\n',
+      std::string(boundaryCharactersAmount, boundaryCharacter) + getNL(),
       chooseBoundaryColor(editing)
     );
   }
@@ -111,11 +111,7 @@ namespace cli_menu {
   ) {
     if (Console::outlineStyle) {
       Console::logBoundaryLine(editing);
-
-      Console::logString(
-        title, chooseBoundaryColor(editing)
-      );
-
+      Console::logString(title + getNL(), chooseBoundaryColor(editing));
       Console::logBoundaryLine(editing);
     }
     // filled style
@@ -127,7 +123,7 @@ namespace cli_menu {
       }
 
       Console::logString(
-        ' ' + title + fillerSpaces + '\n',
+        ' ' + title + fillerSpaces + getNL(),
         editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
         editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
       );
@@ -139,7 +135,7 @@ namespace cli_menu {
     mt::CR_STR reason
   ) {
     Console::logString(
-      listPointStyle + ' ' + reason + '\n',
+      listPointStyle + ' ' + reason + getNL(),
       Console::messageColors[code]
     );
   }

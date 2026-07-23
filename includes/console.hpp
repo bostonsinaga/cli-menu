@@ -22,6 +22,15 @@ namespace cli_menu {
     inline static size_t boundaryCharactersAmount = 45;
     inline static std::string listPointStyle = ">";
     inline static bool outlineStyle = true;
+    inline static size_t nlCount = 1;
+
+    inline static std::string getNL() {
+      return std::string(nlCount, '\n');
+    }
+
+    inline static void printNL() {
+      std::cout << std::string(nlCount, '\n');
+    }
 
     static Color messageColors[totalStatus];
 

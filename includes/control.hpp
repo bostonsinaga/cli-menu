@@ -15,7 +15,7 @@ namespace cli_menu {
      * Uppercase symbol that have a different code from its left lowercase symbol
      * will be 1 level below it when displayed in the 'printAbbreviations' method.
      */
-    inline static const std::string symbols[CONTROLS_TOTAL][2] = {
+    inline static const std::string symbols[CONTROL_TOTAL][2] = {
       {":h",   ""}, // CONTROL_COMMAND_HELP
       {":H",   ""}, // CONTROL_CONTROLLER_LIST
       {":e",   ""}, // CONTROL_CHILDREN_ENTER

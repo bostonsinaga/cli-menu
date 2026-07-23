@@ -27,7 +27,7 @@ namespace cli_menu {
     }
 
     // find a match with pattern ' abc123 \t'
-    for (int i = 0; i < CONTROLS_TOTAL; i++) {
+    for (int i = 0; i < CONTROL_TOTAL; i++) {
       for (int j = 0; j < 2; j++) {
         if (!str.empty() && str == symbols[i][j]) {
           sharedEnum = static_cast<CONTROL_CODE>(i);
@@ -152,7 +152,7 @@ namespace cli_menu {
     }
 
     // display terms in rows
-    for (int i = 0; i < CONTROLS_TOTAL; i++) {
+    for (int i = 0; i < CONTROL_TOTAL; i++) {
 
       std::cout << std::string(numberOfIndents, ' ');
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
@@ -169,7 +169,7 @@ namespace cli_menu {
     }
 
     // additional newline
-    std::cout << std::endl;
+    Console::printNL();
   }
 
   void Control::printBooleanAvailableValues(
@@ -243,7 +243,7 @@ namespace cli_menu {
     printSign('x');
     printCode(CONTROL_PARENT_BACK);
     printCode(CONTROL_PROGRAM_QUIT);
-    std::cout << "\n\n";
+    Console::printNL();
   }
 
   /** Interrupted 'Ctrl+C' Interactions */
