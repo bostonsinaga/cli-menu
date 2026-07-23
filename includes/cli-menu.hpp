@@ -9,8 +9,8 @@
 #include "clipboard.hpp"
 #include "command.hpp"
 #include "type.hpp"
-#include "program.hpp"
 #include "preset.hpp"
+#include "program.hpp"
 
 namespace cm = cli_menu;
 
