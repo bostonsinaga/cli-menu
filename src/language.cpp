@@ -650,7 +650,7 @@ namespace cli_menu {
 
   mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORD_TOTAL>>
   Langu::xPreset::keywords = {{ Langu::defaultISOCode, {
-    "in", "out", "help", "list", "color-set"
+    "in", "out", "help", "list", "colors"
   }}},
   Langu::xPreset::descriptions = {{ Langu::defaultISOCode, {
     "Enter input filename",

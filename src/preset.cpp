@@ -305,7 +305,7 @@ namespace cli_menu {
     Color::set[GRAY], Color::set[WHITE], Color::set[GRAY], Color::set[GRAY], Color::set[GRAY]
   };
 
-  std::string Preset::ColorSet::stringify(
+  mt::PAIR2<std::string, size_t> Preset::ColorSet::stringify(
     const COLOR_CODE &code,
     CR_CLR foreground,
     CR_CLR background
@@ -314,18 +314,45 @@ namespace cli_menu {
     str += std::to_string(foreground.getR()) + getSpacing();
     str += std::to_string(foreground.getG()) + getSpacing();
     str += std::to_string(foreground.getB()) + getSpacing();
-    return Color::getString(str, foreground, background) + Console::getNL();
+
+    return {
+      Color::getString(str, foreground, background),
+      str.length()
+    };
   }
 
   void Preset::ColorSet::print() {
+    mt::PAIR2<std::string, size_t> rgbnames[COLOR_TOTAL];
+    size_t longest = 0;
+
+    // find longest name with its RGB value
+    for (int i = 0; i < COLOR_TOTAL; i++) {
+      rgbnames[i] = stringify(static_cast<COLOR_CODE>(i), Color::set[i], highlights[i]);
+      if (longest < rgbnames[i].second) longest = rgbnames[i].second;
+    }
+
+    // print title
+    std::string title = getSpacing() + Langu::ageColorSet::getTitle() + getSpacing();
+
     std::cout << Color::getUnderlineString(
-      getSpacing() + Langu::ageColorSet::getTitle() + getSpacing() + Console::getNL(),
-      Color::set[WHITE],
-      Color::set[GRAY]
+      title, Color::set[WHITE], Color::set[GRAY]
     );
 
+    std::cout << Color::getUnderlineString(
+      std::string(longest - title.length(), ' ') + Console::getNL(),
+      Color::set[WHITE], Color::set[GRAY]
+    );
+
+    // also print colored spaces equally
     for (int i = 0; i < COLOR_TOTAL; i++) {
-      std::cout << stringify(static_cast<COLOR_CODE>(i), Color::set[i], highlights[i]);
+      std::cout << rgbnames[i].first;
+
+      std::cout << Color::getString(
+        std::string(longest - rgbnames[i].second, ' '),
+        Color::set[i], highlights[i]
+      );
+
+      std::cout << Console::getNL();
     }
   }
 
