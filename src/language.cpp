@@ -313,7 +313,7 @@ namespace cli_menu {
   }
 
   mt::UNORMAP_STR<std::string> Langu::xMessage::welcomeToString = {{
-    Langu::defaultISOCode, "Welcome to "
+    Langu::defaultISOCode, "Welcome to"
   }};
 
   std::string Langu::ageMessage::getWelcomeToString() {
@@ -325,7 +325,7 @@ namespace cli_menu {
   //___________|
 
   mt::UNORMAP_STR<std::string> Langu::xColorSet::title = {{
-    Langu::defaultISOCode, "PRESET COLORS:"
+    Langu::defaultISOCode, "PRESET COLORS"
   }};
 
   mt::UNORMAP_STR<mt::ARR_STR<COLOR_TOTAL>> Langu::xColorSet::names = {{ Langu::defaultISOCode, {

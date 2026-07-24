@@ -174,6 +174,9 @@ namespace cli_menu {
       mt::CR<DIRECTION> direction = RIGHT
     );
 
+    // 2 level indentation depths
+    inline static size_t indents[2] {0, 2};
+
     // member variable access
     const bool isRequired() const { return required.first; }
     const std::string getHyphens() const { return hyphens; }

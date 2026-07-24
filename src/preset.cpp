@@ -332,7 +332,7 @@ namespace cli_menu {
     }
 
     // print title
-    std::string title = getSpacing() + Langu::ageColorSet::getTitle() + getSpacing();
+    std::string title = getSpacing() + Langu::ageColorSet::getTitle() + ':' + getSpacing();
 
     std::cout << Color::getUnderlineString(
       title, Color::set[WHITE], Color::set[GRAY]

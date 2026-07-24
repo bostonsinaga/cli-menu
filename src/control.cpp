@@ -146,7 +146,7 @@ namespace cli_menu {
   ) {
     if (titleDisplayed) {
       Console::logItalicString(
-        Langu::ageControl::getAbbreviationsTitle() + ":\n",
+        Langu::ageControl::getAbbreviationsTitle() + ':' + Console::getNL(),
         Console::messageColors[CONSOLE_HINT_1]
       );
     }
@@ -163,13 +163,10 @@ namespace cli_menu {
       );
 
       Console::logString(
-        " = " + curterm + '\n',
+        " = " + curterm + Console::getNL(),
         Console::messageColors[CONSOLE_HINT_3]
       );
     }
-
-    // additional newline
-    Console::printNL();
   }
 
   void Control::printBooleanAvailableValues(
@@ -178,7 +175,7 @@ namespace cli_menu {
   ) {
     if (titleDisplayed) {
       Console::logItalicString(
-        Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
+        Langu::ageControl::getBooleanAvailableValuesTitle() + ':' + Console::getNL(),
         Console::messageColors[CONSOLE_HINT_1]
       );
     }
@@ -218,7 +215,7 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_PREVIOUS);
 
     Console::logString( // number is zero
-      "n==0\n", Console::messageColors[CONSOLE_HINT_3]
+      "n==0" + Console::getNL(), Console::messageColors[CONSOLE_HINT_3]
     );
 
     /** True Terms */
@@ -236,7 +233,7 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_NEXT);
 
     Console::logString( // number is not zero
-      "n!=0\n", Console::messageColors[CONSOLE_HINT_3]
+      "n!=0" + Console::getNL(), Console::messageColors[CONSOLE_HINT_3]
     );
 
     // cancel terms
