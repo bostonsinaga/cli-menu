@@ -53,42 +53,6 @@ namespace cli_menu {
     inline static NumberMaps numberMaps {{}, {}, {0}};
     inline static BooleanMaps booleanMaps {{}, {}, {false}};
 
-    /** Register Vector */
-
-    inline static void registerTexts(Command *comkey) {
-      textMaps.comvec[comkey] = {0, {}};
-    }
-
-    inline static void registerWords(Command *comkey) {
-      wordMaps.comvec[comkey] = {0, {}};
-    }
-
-    inline static void registerNumbers(Command *comkey) {
-      numberMaps.comvec[comkey] = {0, {}};
-    }
-
-    inline static void registerBooleans(Command *comkey) {
-      booleanMaps.comvec[comkey] = {0, {}};
-    }
-
-    /** Unregister Vector */
-
-    inline static void unregisterTexts(Command *comkey) {
-      textMaps.comvec.erase(comkey);
-    }
-
-    inline static void unregisterWords(Command *comkey) {
-      wordMaps.comvec.erase(comkey);
-    }
-
-    inline static void unregisterNumbers(Command *comkey) {
-      numberMaps.comvec.erase(comkey);
-    }
-
-    inline static void unregisterBooleans(Command *comkey) {
-      booleanMaps.comvec.erase(comkey);
-    }
-
     /** Reusable Template Methods */
 
     template <UNORMAP_COMVEC_TYPE T>
@@ -162,14 +126,44 @@ namespace cli_menu {
       mt::CR_SZ numberOfIndents
     );
 
-    /** User Classes */
-
-    friend class Word;
-    friend class Number;
-    friend class Boolean;
-
   public:
     Data() = delete;
+
+    /** Register Vector */
+
+    inline static void registerTexts(Command *comkey) {
+      textMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerWords(Command *comkey) {
+      wordMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerNumbers(Command *comkey) {
+      numberMaps.comvec[comkey] = {0, {}};
+    }
+
+    inline static void registerBooleans(Command *comkey) {
+      booleanMaps.comvec[comkey] = {0, {}};
+    }
+
+    /** Unregister Vector */
+
+    inline static void unregisterTexts(Command *comkey) {
+      textMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterWords(Command *comkey) {
+      wordMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterNumbers(Command *comkey) {
+      numberMaps.comvec.erase(comkey);
+    }
+
+    inline static void unregisterBooleans(Command *comkey) {
+      booleanMaps.comvec.erase(comkey);
+    }
 
     /** Check Key Existence */
 
