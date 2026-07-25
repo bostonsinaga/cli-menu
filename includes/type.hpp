@@ -1,7 +1,6 @@
 #ifndef __CLI_MENU__TYPE_HPP__
 #define __CLI_MENU__TYPE_HPP__
 
-#include "data.hpp"
 #include "command.hpp"
 
 namespace cli_menu {
@@ -74,7 +73,6 @@ namespace cli_menu {
 
   class Word : public Parameter {
   protected:
-    void destroy() override;
     void printInput() override;
     void printDescendantInputs() override;
     void resetInput() override;
@@ -91,13 +89,13 @@ namespace cli_menu {
 
   public:
     Word() = delete;
+    void destroy() override;
   };
 
   /** NUMBER */
 
   class Number : public Parameter {
   protected:
-    void destroy() override;
     void printInput() override;
     void printDescendantInputs() override;
     void resetInput() override;
@@ -114,6 +112,7 @@ namespace cli_menu {
 
   public:
     Number() = delete;
+    void destroy() override;
   };
 
   /** BOOLEAN */
@@ -126,7 +125,6 @@ namespace cli_menu {
 
   class Boolean : public Parameter {
   protected:
-    void destroy() override;
     void clipboardInputPaste() override;
     void printInput() override;
     void printDescendantInputs() override;
@@ -144,6 +142,7 @@ namespace cli_menu {
 
   public:
     Boolean() = delete;
+    void destroy() override;
 
     // ask yes or no
     static BOOLEAN_INSTANT_QUESTION_CODE instantQuestion(

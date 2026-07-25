@@ -18,6 +18,7 @@ namespace cli_menu {
     keyword = keyword_in;
     description = description_in;
     if (callback_in) callback = callback_in;
+    Data::registerTexts(this);
   }
 
   void Command::registerAsInput() {

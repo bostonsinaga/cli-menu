@@ -1,6 +1,7 @@
 #ifndef __CLI_MENU__COMMAND_HPP__
 #define __CLI_MENU__COMMAND_HPP__
 
+#include "data.hpp"
 #include "clipboard.hpp"
 
 namespace cli_menu {
@@ -157,6 +158,7 @@ namespace cli_menu {
 
   public:
     Command() = delete;
+    void destroy() override { Data::unregisterTexts(this); }
 
     /**
      * Entry point to dialog interactions.
