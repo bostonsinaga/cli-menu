@@ -6,6 +6,10 @@
 namespace cli_menu {
 
   class Preset final {
+  private:
+    // set command to pseudo, sterilized, and has no data
+    static void hide(Command *command);
+
   public:
     // these are owned by all commands by default
     static void applyHelp(Parameter *owner);
@@ -14,7 +18,7 @@ namespace cli_menu {
     class File final {
     private:
       // get multiple filenames from wildcard pattern
-      static void completePathWildcards(Command *self);
+      static void completePathWildcards(Command *command);
 
       /**
        * Write output string into a text file.

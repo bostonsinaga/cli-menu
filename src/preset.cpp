@@ -6,6 +6,15 @@
 
 namespace cli_menu {
 
+  void Preset::hide(Command *command) {
+    if (command) {
+      command->makePseudo();
+      command->makeSterilized();
+      Data::unregisterWords(command);
+      Data::unregisterTexts(command);
+    }
+  }
+
   void Preset::applyHelp(Parameter *owner) {
     if (!owner) return;
 
@@ -18,10 +27,7 @@ namespace cli_menu {
       }, false
     );
 
-    if (help) {
-      help->makePseudo();
-      help->makeSterilized();
-    }
+    hide(help);
   }
 
   void Preset::applyList(Parameter *owner) {
@@ -36,10 +42,7 @@ namespace cli_menu {
       }, false
     );
 
-    if (list) {
-      list->makePseudo();
-      list->makeSterilized();
-    }
+    hide(list);
   }
 
   void Parameter::setPresetHelpList() {
@@ -49,7 +52,7 @@ namespace cli_menu {
 
   /** FILE OPERATIONS */
 
-  void Preset::File::completePathWildcards(Command *self) {
+  void Preset::File::completePathWildcards(Command *command) {
 
     std::string pattern;
     WIN32_FIND_DATAA findFileData;
@@ -58,8 +61,8 @@ namespace cli_menu {
     std::string::size_type lastSlashIndex;
     std::string basePath;
 
-    for (int i = 0; i < Data::getWordsSize(self); i++) {
-      pattern = Data::xgetWord(self, i);
+    for (int i = 0; i < Data::getWordsSize(command); i++) {
+      pattern = Data::xgetWord(command, i);
 
       if (pattern.find('*') != std::string::npos ||
         pattern.find('?') != std::string::npos
@@ -73,12 +76,12 @@ namespace cli_menu {
 
         // expand wildcard pattern to path with filename
         if (hFind != INVALID_HANDLE_VALUE) {
-          Data::xpopWord(self);
+          Data::xpopWord(command);
           i--;
 
           do {
             if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-              Data::xpushWord(self, basePath + findFileData.cFileName);
+              Data::xpushWord(command, basePath + findFileData.cFileName);
               i++;
             }
           } while (FindNextFileA(hFind, &findFileData) != 0);
@@ -368,10 +371,7 @@ namespace cli_menu {
       }, false
     );
 
-    if (colorSet) {
-      colorSet->makePseudo();
-      colorSet->makeSterilized();
-    }
+    hide(colorSet);
   }
 }
 
