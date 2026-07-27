@@ -24,6 +24,9 @@ namespace cli_menu {
     inline static bool outlineStyle = true;
     inline static size_t nlCount = 1;
 
+    // 2 level indentation depths
+    inline static size_t indents[2] {0, 2};
+
     inline static std::string getNL() {
       return std::string(nlCount, '\n');
     }
