@@ -211,8 +211,8 @@ namespace cli_menu {
       }
       // CONTROLLER LIST
       else if (Control::controllerListTest(rawstr)) {
-        Control::printAbbreviations(true, Command::indents[1]);
-        Control::printBooleanAvailableValues(true, Command::indents[1]);
+        Control::printAbbreviations(true, Console::indents[1]);
+        Control::printBooleanAvailableValues(true, Console::indents[1]);
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
@@ -226,7 +226,7 @@ namespace cli_menu {
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
-        printList(CONSOLE_HINT_2, Command::indents[0], true);
+        printList(CONSOLE_HINT_2, Console::indents[0], true);
       }
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
@@ -620,7 +620,7 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    printKeyword(CONSOLE_HINT_1, Command::indents[0]);
+    printKeyword(CONSOLE_HINT_1, Console::indents[0]);
 
     // description
     Console::logItalicString(
@@ -628,7 +628,7 @@ namespace cli_menu {
       Console::messageColors[CONSOLE_HINT_2]
     );
 
-    printList(CONSOLE_HINT_3, Command::indents[1], false);
+    printList(CONSOLE_HINT_3, Console::indents[1], false);
   }
 
   void Command::printKeyword(
