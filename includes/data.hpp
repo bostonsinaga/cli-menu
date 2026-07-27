@@ -108,6 +108,9 @@ namespace cli_menu {
     static U pop(Command *comkey);
 
     template <UNORMAP_COMVEC_TYPE T>
+    static void reset(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
     static void select(
       Command *comkey,
       mt::CR_INT direction
@@ -125,6 +128,8 @@ namespace cli_menu {
       mt::CR<CONSOLE_CODE> consoleCode,
       mt::CR_SZ numberOfIndents
     );
+
+    friend class Parameter;
 
   public:
     Data() = delete;
@@ -590,19 +595,19 @@ namespace cli_menu {
     /** Reset Vector */
 
     inline static void resetTexts(Command *comkey) {
-      if (hasTexts(comkey)) textMaps.comvec[comkey].second.clear();
+      reset<TextMaps>(comkey);
     }
 
     inline static void resetWords(Command *comkey) {
-      if (hasWords(comkey)) wordMaps.comvec[comkey].second.clear();
+      reset<WordMaps>(comkey);
     }
 
     inline static void resetNumbers(Command *comkey) {
-      if (hasNumbers(comkey)) numberMaps.comvec[comkey].second.clear();
+      reset<NumberMaps>(comkey);
     }
 
     inline static void resetBooleans(Command *comkey) {
-      if (hasBooleans(comkey)) booleanMaps.comvec[comkey].second.clear();
+      reset<BooleanMaps>(comkey);
     }
 
     /** Select Member By Direction */

@@ -139,6 +139,12 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T>
+  void Data::reset(Command *comkey) {
+    T &unormap = use<T>();
+    if (has<T>(comkey)) unormap.comvec[comkey].second.clear();
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
   void Data::select(
     Command *comkey,
     mt::CR_INT direction
