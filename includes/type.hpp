@@ -25,12 +25,26 @@ namespace cli_menu {
       mt::CR<CODE_CALLBACK> calb
     ) : Command(keyw, desc, calb) {}
 
+    /** Input & Output Methods */
+
     void clipboardInputPaste() override;
     void clipboardOutputCopy() override;
     void printOutput() override;
     void printDescendantOutputs() override;
     void resetOutput() override;
     void resetDescendantOutputs() override;
+
+    template <UNORMAP_COMVEC_TYPE T>
+    void printInput_temp();
+
+    template <UNORMAP_COMVEC_TYPE T>
+    void printDescendantInputs_temp();
+
+    template <UNORMAP_COMVEC_TYPE T>
+    void resetInput_temp();
+
+    template <UNORMAP_COMVEC_TYPE T>
+    void resetDescendantInputs_temp();
 
     /**
      * Avoid keyword duplication (will destroy existing child
@@ -152,4 +166,5 @@ namespace cli_menu {
   };
 }
 
+#include "type.tpp"
 #endif // __CLI_MENU__TYPE_HPP__

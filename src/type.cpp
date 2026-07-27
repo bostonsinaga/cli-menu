@@ -134,41 +134,19 @@ namespace cli_menu {
   }
 
   void Word::printInput() {
-    if (Data::isWordsEmpty(this)) {
-      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
-    }
-    else Data::printWords(this, CONSOLE_HINT_1, 0);
+    printInput_temp<WordMaps>();
   }
 
   void Word::printDescendantInputs() {
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
-          Data::printWords(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
-          return true;
-        }
-      );
-    }
+    printDescendantInputs_temp<WordMaps>();
   }
 
   void Word::resetInput() {
-    Data::resetWords(this);
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    resetInput_temp<WordMaps>();
   }
 
   void Word::resetDescendantInputs() {
-
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          Data::resetWords(static_cast<Command*>(current));
-          return true;
-        }
-      );
-    }
-
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
+    resetDescendantInputs_temp<WordMaps>();
   }
 
   void Word::strargv(mt::CR_STR raw) {
@@ -194,41 +172,19 @@ namespace cli_menu {
   }
 
   void Number::printInput() {
-    if (Data::isNumbersEmpty(this)) {
-      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
-    }
-    else Data::printNumbers(this, CONSOLE_HINT_1, 0);
+    printInput_temp<NumberMaps>();
   }
 
   void Number::printDescendantInputs() {
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
-          Data::printNumbers(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
-          return true;
-        }
-      );
-    }
+    printDescendantInputs_temp<NumberMaps>();
   }
 
   void Number::resetInput() {
-    Data::resetNumbers(this);
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    resetInput_temp<NumberMaps>();
   }
 
   void Number::resetDescendantInputs() {
-
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          Data::resetNumbers(static_cast<Command*>(current));
-          return true;
-        }
-      );
-    }
-
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
+    resetDescendantInputs_temp<NumberMaps>();
   }
 
   void Number::strargv(mt::CR_STR raw) {
@@ -285,41 +241,19 @@ namespace cli_menu {
   }
 
   void Boolean::printInput() {
-    if (Data::isBooleansEmpty(this)) {
-      Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
-    }
-    else Data::printBooleans(this, CONSOLE_HINT_1, 0);
+    printInput_temp<BooleanMaps>();
   }
 
   void Boolean::printDescendantInputs() {
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
-          Data::printBooleans(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
-          return true;
-        }
-      );
-    }
+    printDescendantInputs_temp<BooleanMaps>();
   }
 
   void Boolean::resetInput() {
-    Data::resetBooleans(this);
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    resetInput_temp<BooleanMaps>();
   }
 
   void Boolean::resetDescendantInputs() {
-
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-          Data::resetBooleans(static_cast<Command*>(current));
-          return true;
-        }
-      );
-    }
-
-    Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
+    resetDescendantInputs_temp<BooleanMaps>();
   }
 
   void Boolean::strargv(mt::CR_STR raw) {
