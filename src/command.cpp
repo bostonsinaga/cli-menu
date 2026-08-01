@@ -18,7 +18,6 @@ namespace cli_menu {
     keyword = keyword_in;
     description = description_in;
     if (callback_in) callback = callback_in;
-    Data::registerTexts(this);
   }
 
   void Command::registerAsInput() {
@@ -211,8 +210,8 @@ namespace cli_menu {
       }
       // CONTROLLER LIST
       else if (Control::controllerListTest(rawstr)) {
-        Control::printAbbreviations(true, Console::indents[1]);
-        Control::printBooleanAvailableValues(true, Console::indents[1]);
+        Control::printAbbreviations(true, IndentBranched());
+        Control::printBooleanAvailableValues(true, IndentBranched());
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
@@ -226,7 +225,7 @@ namespace cli_menu {
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
-        printList(CONSOLE_HINT_2, Console::indents[0], true);
+        printList(CONSOLE_HINT_2, IndentSticked(), true);
       }
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
@@ -620,32 +619,32 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    printKeyword(CONSOLE_HINT_1, Console::indents[0]);
+    printKeyword(CONSOLE_HINT_1, IndentSticked());
 
     // description
     Console::logItalicString(
-      description + Console::getNL(),
+      description + '\n',
       Console::messageColors[CONSOLE_HINT_2]
     );
 
-    printList(CONSOLE_HINT_3, Console::indents[1], false);
+    printList(CONSOLE_HINT_3, IndentBranched(), false);
   }
 
   void Command::printKeyword(
     mt::CR<CONSOLE_CODE> consoleCode,
-    mt::CR_SZ numberOfIndents
+    CR_Indent indent
   ) {
     Console::logString(
-      std::string(numberOfIndents, ' ') + keyword + " ["
+      indent.get() + keyword + " ["
       + Langu::ageParameter::getStringifiedType(stringifiedTypeIndex)
-      + ']' + (required.first ? '*' : '\0') + Console::getNL(),
+      + ']' + (required.first ? '*' : '\0') + '\n',
       Console::messageColors[consoleCode]
     );
   }
 
   void Command::printList(
     mt::CR<CONSOLE_CODE> consoleCode,
-    mt::CR_SZ numberOfIndents,
+    CR_Indent indent,
     mt::CR_BOL displayAtLeafWarning
   ) {
     if (hasChildren()) {
@@ -654,7 +653,7 @@ namespace cli_menu {
       getChildren()->head()->forEach([&](mt_ds::LinkedList *current)->bool {
 
         if (!static_cast<Command*>(current)->pseudo) {
-          static_cast<Command*>(current)->printKeyword(consoleCode, numberOfIndents);
+          static_cast<Command*>(current)->printKeyword(consoleCode, indent);
         }
 
         return true;

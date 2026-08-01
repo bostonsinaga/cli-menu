@@ -142,19 +142,18 @@ namespace cli_menu {
 
   void Control::printAbbreviations(
     mt::CR_BOL titleDisplayed,
-    mt::CR_SZ numberOfIndents
+    CR_Indent indent
   ) {
     if (titleDisplayed) {
       Console::logItalicString(
-        Langu::ageControl::getAbbreviationsTitle() + ':' + Console::getNL(),
+        Langu::ageControl::getAbbreviationsTitle() + ":\n",
         Console::messageColors[CONSOLE_HINT_1]
       );
     }
 
     // display terms in rows
     for (int i = 0; i < CONTROL_TOTAL; i++) {
-
-      std::cout << std::string(numberOfIndents, ' ');
+      std::cout << indent.get();
       std::string curterm = Langu::ageControl::getTerm(static_cast<CONTROL_CODE>(i));
 
       Console::logString(
@@ -163,7 +162,7 @@ namespace cli_menu {
       );
 
       Console::logString(
-        " = " + curterm + Console::getNL(),
+        " = " + curterm + '\n',
         Console::messageColors[CONSOLE_HINT_3]
       );
     }
@@ -171,11 +170,11 @@ namespace cli_menu {
 
   void Control::printBooleanAvailableValues(
     mt::CR_BOL titleDisplayed,
-    mt::CR_SZ numberOfIndents
+    CR_Indent indent
   ) {
     if (titleDisplayed) {
       Console::logItalicString(
-        Langu::ageControl::getBooleanAvailableValuesTitle() + ':' + Console::getNL(),
+        Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
         Console::messageColors[CONSOLE_HINT_1]
       );
     }
@@ -186,7 +185,7 @@ namespace cli_menu {
     std::function<void(mt::CR_CH)> printSign = [&](mt::CR_CH sign) {
 
       Console::logString(
-        std::string(numberOfIndents, ' ') + sign,
+        indent.get() + sign,
         Console::messageColors[CONSOLE_HINT_2]
       );
 
@@ -215,7 +214,7 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_PREVIOUS);
 
     Console::logString( // number is zero
-      "n==0" + Console::getNL(), Console::messageColors[CONSOLE_HINT_3]
+      "n==0\n", Console::messageColors[CONSOLE_HINT_3]
     );
 
     /** True Terms */
@@ -233,14 +232,14 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_NEXT);
 
     Console::logString( // number is not zero
-      "n!=0" + Console::getNL(), Console::messageColors[CONSOLE_HINT_3]
+      "n!=0\n", Console::messageColors[CONSOLE_HINT_3]
     );
 
     // cancel terms
     printSign('x');
     printCode(CONTROL_PARENT_BACK);
     printCode(CONTROL_PROGRAM_QUIT);
-    Console::printNL();
+    std::cout << std::endl;
   }
 
   /** Interrupted 'Ctrl+C' Interactions */

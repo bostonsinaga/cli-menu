@@ -23,7 +23,9 @@ namespace cli_menu {
       mt::CR_STR keyw,
       mt::CR_STR desc,
       mt::CR<CODE_CALLBACK> calb
-    ) : Command(keyw, desc, calb) {}
+    ) : Command(keyw, desc, calb) {
+      Data::registerTexts(this);
+    }
 
     /** Input & Output Methods */
 
@@ -57,6 +59,7 @@ namespace cli_menu {
 
   public:
     Parameter() = delete;
+    void destroy() override { Data::unregisterTexts(this); }
 
     Word *addWord(
       mt::CR_STR keyw,

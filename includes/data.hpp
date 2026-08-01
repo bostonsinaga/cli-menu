@@ -59,6 +59,12 @@ namespace cli_menu {
     static T &use();
 
     template <UNORMAP_COMVEC_TYPE T>
+    static void ragister(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static void unragister(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
     static bool has(Command *comkey);
 
     template <UNORMAP_COMVEC_TYPE T>
@@ -126,7 +132,7 @@ namespace cli_menu {
     static void print(
       Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     );
 
     friend class Parameter;
@@ -137,37 +143,37 @@ namespace cli_menu {
     /** Register Vector */
 
     inline static void registerTexts(Command *comkey) {
-      textMaps.comvec[comkey] = {0, {}};
+      ragister<TextMaps>(comkey);
     }
 
     inline static void registerWords(Command *comkey) {
-      wordMaps.comvec[comkey] = {0, {}};
+      ragister<WordMaps>(comkey);
     }
 
     inline static void registerNumbers(Command *comkey) {
-      numberMaps.comvec[comkey] = {0, {}};
+      ragister<NumberMaps>(comkey);
     }
 
     inline static void registerBooleans(Command *comkey) {
-      booleanMaps.comvec[comkey] = {0, {}};
+      ragister<BooleanMaps>(comkey);
     }
 
     /** Unregister Vector */
 
     inline static void unregisterTexts(Command *comkey) {
-      textMaps.comvec.erase(comkey);
+      unragister<TextMaps>(comkey);
     }
 
     inline static void unregisterWords(Command *comkey) {
-      wordMaps.comvec.erase(comkey);
+      unragister<WordMaps>(comkey);
     }
 
     inline static void unregisterNumbers(Command *comkey) {
-      numberMaps.comvec.erase(comkey);
+      unragister<NumberMaps>(comkey);
     }
 
     inline static void unregisterBooleans(Command *comkey) {
-      booleanMaps.comvec.erase(comkey);
+      unragister<BooleanMaps>(comkey);
     }
 
     /** Check Key Existence */
@@ -676,33 +682,33 @@ namespace cli_menu {
     inline static void printTexts(
       Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     ) {
-      print<TextMaps>(comkey, consoleCode, numberOfIndents);
+      print<TextMaps>(comkey, consoleCode, indent);
     }
 
     inline static void printWords(
       Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     ) {
-      print<WordMaps>(comkey, consoleCode, numberOfIndents);
+      print<WordMaps>(comkey, consoleCode, indent);
     }
 
     inline static void printNumbers(
       Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     ) {
-      print<NumberMaps>(comkey, consoleCode, numberOfIndents);
+      print<NumberMaps>(comkey, consoleCode, indent);
     }
 
     inline static void printBooleans(
       Command *comkey,
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     ) {
-      print<BooleanMaps>(comkey, consoleCode, numberOfIndents);
+      print<BooleanMaps>(comkey, consoleCode, indent);
     }
   };
 }

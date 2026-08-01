@@ -12,6 +12,18 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T>
+  void Data::ragister(Command *comkey) {
+    T &unormap = use<T>();
+    unormap.comvec[comkey] = {0, {}};
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
+  void Data::unragister(Command *comkey) {
+    T &unormap = use<T>();
+    unormap.comvec.erase(comkey);
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
   bool Data::has(Command *comkey) {
     T &unormap = use<T>();
     return unormap.comvec.find(comkey) != unormap.comvec.end();
@@ -208,13 +220,11 @@ namespace cli_menu {
   void Data::print(
     Command *comkey,
     mt::CR<CONSOLE_CODE> consoleCode,
-    mt::CR_SZ numberOfIndents
+    CR_Indent indent
   ) {
     if (has<T>(comkey)) {
-      std::string indents = std::string(numberOfIndents, ' ');
-
       Console::logString(
-        indents + stringify<T>(comkey, '\n' + indents),
+        indent.get() + stringify<T>(comkey, '\n' + indent.get()),
         Console::messageColors[consoleCode]
       );
     }

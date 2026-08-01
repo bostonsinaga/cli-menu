@@ -37,7 +37,11 @@ namespace cli_menu {
       Langu::agePreset::getKeyword(PRESET_KEYWORD_LIST),
       Langu::agePreset::getDescription(PRESET_KEYWORD_LIST),
       [](Command *self)->COMMAND_CALLBACK_CODE {
-        static_cast<Command*>(self->getParent())->printList(CONSOLE_HINT_2, 0, true);
+
+        static_cast<Command*>(self->getParent())->printList(
+          CONSOLE_HINT_2, IndentSticked(), true
+        );
+
         return COMMAND_CALLBACK_DONE;
       }, false
     );
@@ -337,25 +341,25 @@ namespace cli_menu {
     // print title
     std::string title = getSpacing() + Langu::ageColorSet::getTitle() + ':' + getSpacing();
 
-    std::cout << Color::getUnderlineString(
+    Console::logUnderlineString(
       title, Color::set[WHITE], Color::set[GRAY]
     );
 
-    std::cout << Color::getUnderlineString(
-      std::string(longest - title.length(), ' ') + Console::getNL(),
+    Console::logUnderlineString(
+      std::string(longest - title.length(), ' ') + '\n',
       Color::set[WHITE], Color::set[GRAY]
     );
 
-    // also print colored spaces equally
+    // print colored spaces with vertical alignment
     for (int i = 0; i < COLOR_TOTAL; i++) {
       std::cout << rgbnames[i].first;
 
-      std::cout << Color::getString(
+      Console::logString(
         std::string(longest - rgbnames[i].second, ' '),
         Color::set[i], highlights[i]
       );
 
-      std::cout << Console::getNL();
+      std::cout << std::endl;
     }
   }
 

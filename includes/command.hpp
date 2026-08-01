@@ -158,7 +158,6 @@ namespace cli_menu {
 
   public:
     Command() = delete;
-    void destroy() override { Data::unregisterTexts(this); }
 
     /**
      * Entry point to dialog interactions.
@@ -255,13 +254,13 @@ namespace cli_menu {
      */
     void printKeyword(
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     );
 
     // print children keywords
     void printList(
       mt::CR<CONSOLE_CODE> consoleCode,
-      mt::CR_SZ numberOfIndents,
+      CR_Indent indent,
       mt::CR_BOL displayAtLeafWarning
     );
   };

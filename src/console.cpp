@@ -100,7 +100,7 @@ namespace cli_menu {
 
   void Console::logBoundaryLine(mt::CR_BOL editing) {
     Console::logString(
-      std::string(boundaryCharactersAmount, boundaryCharacter) + getNL(),
+      std::string(boundaryCharactersAmount, boundaryCharacter) + '\n',
       chooseBoundaryColor(editing)
     );
   }
@@ -111,7 +111,7 @@ namespace cli_menu {
   ) {
     if (Console::outlineStyle) {
       Console::logBoundaryLine(editing);
-      Console::logString(title + getNL(), chooseBoundaryColor(editing));
+      Console::logString(title + '\n', chooseBoundaryColor(editing));
       Console::logBoundaryLine(editing);
     }
     // filled style
@@ -123,7 +123,7 @@ namespace cli_menu {
       }
 
       Console::logString(
-        ' ' + title + fillerSpaces + getNL(),
+        ' ' + title + fillerSpaces + '\n',
         editing ? Console::boxModifyColors[0] : Console::boxSelectionColors[0],
         editing ? Console::boxModifyColors[1] : Console::boxSelectionColors[1]
       );
@@ -135,7 +135,7 @@ namespace cli_menu {
     mt::CR_STR reason
   ) {
     Console::logString(
-      listPointStyle + ' ' + reason + getNL(),
+      listPointStyle + ' ' + reason + '\n',
       Console::messageColors[code]
     );
   }

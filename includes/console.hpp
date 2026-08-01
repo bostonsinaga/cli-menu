@@ -11,6 +11,47 @@ namespace cli_menu {
     CONSOLE_CORRECT, CONSOLE_CANCEL
   };
 
+  /** Global Indentation Control */
+
+  class Indent {
+  public:
+    inline virtual std::string get() const { return ""; }
+    inline virtual void set(mt::CR_SZ number_in) {}
+  };
+
+  class IndentSticked : public Indent {
+  private:
+    inline static size_t number = 0;
+
+  public:
+    inline void set(mt::CR_SZ number_in) override {
+      IndentSticked::number = number_in;
+    }
+
+    inline std::string get() const override {
+      return std::string(IndentSticked::number, ' ');
+    }
+  };
+
+  class IndentBranched : public Indent {
+  private:
+    inline static size_t number = 2;
+
+  public:
+    inline void set(mt::CR_SZ number_in) override {
+      IndentBranched::number = number_in;
+    }
+
+    inline std::string get() const override {
+      return std::string(IndentBranched::number, ' ');
+    }
+  };
+
+  typedef const Indent& CR_Indent;
+
+  /**
+   * Display styled text to terminal.
+   */
   class Console {
   private:
     static constexpr int totalStatus = 7;
@@ -22,19 +63,6 @@ namespace cli_menu {
     inline static size_t boundaryCharactersAmount = 45;
     inline static std::string listPointStyle = ">";
     inline static bool outlineStyle = true;
-    inline static size_t nlCount = 1;
-
-    // 2 level indentation depths
-    inline static size_t indents[2] {0, 2};
-
-    inline static std::string getNL() {
-      return std::string(nlCount, '\n');
-    }
-
-    inline static void printNL() {
-      std::cout << std::string(nlCount, '\n');
-    }
-
     static Color messageColors[totalStatus];
 
     static Color

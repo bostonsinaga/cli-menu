@@ -113,13 +113,13 @@ namespace cli_menu {
       // keyword
       Console::logString(
         Langu::ageMessage::getWelcomeToString() + ' ' +
-        mt_uti::StrTool::copyStringToUppercase(root->getKeyword()) + Console::getNL(),
+        mt_uti::StrTool::copyStringToUppercase(root->getKeyword()) + '\n',
         Console::messageColors[CONSOLE_HINT_1]
       );
 
       // description
       Console::logItalicString(
-        root->getDescription() + Console::getNL(),
+        root->getDescription() + '\n',
         Console::messageColors[CONSOLE_HINT_2]
       );
     }

@@ -80,12 +80,12 @@ namespace cli_menu {
 
     static void printAbbreviations(
       mt::CR_BOL titleDisplayed,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     );
 
     static void printBooleanAvailableValues(
       mt::CR_BOL titleDisplayed,
-      mt::CR_SZ numberOfIndents
+      CR_Indent indent
     );
 
     static const CONTROL_CODE& getSharedEnum() {

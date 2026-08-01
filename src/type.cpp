@@ -22,15 +22,15 @@ namespace cli_menu {
     if (Data::isTextsEmpty(this)) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
     }
-    else Data::printTexts(this, CONSOLE_HINT_1, 0);
+    else Data::printTexts(this, CONSOLE_HINT_1, IndentSticked());
   }
 
   void Parameter::printDescendantOutputs() {
     if (getChildren()) {
       getChildren()->traverse(
         [&](mt_ds::LinkedList *current)->bool {
-          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, 0);
-          Data::printTexts(static_cast<Command*>(current), CONSOLE_HINT_2, 2);
+          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, IndentSticked());
+          Data::printTexts(static_cast<Command*>(current), CONSOLE_HINT_2, IndentBranched());
           return true;
         }
       );
@@ -204,11 +204,6 @@ namespace cli_menu {
     Data::registerBooleans(this);
   }
 
-  void Boolean::destroy() {
-    Data::unregisterBooleans(this);
-    Command::destroy();
-  }
-
   void Boolean::clipboardInputPaste() {
     required.first = false;
 
@@ -238,6 +233,11 @@ namespace cli_menu {
     }
 
     Data::addBooleans(this, conditions);
+  }
+
+  void Boolean::destroy() {
+    Data::unregisterBooleans(this);
+    Command::destroy();
   }
 
   void Boolean::printInput() {
@@ -294,11 +294,11 @@ namespace cli_menu {
       else if (Control::commandHelpTest(rawstr) ||
         Control::controllerListTest(rawstr)
       ) {
-        Control::printBooleanAvailableValues(true, 2);
+        Control::printBooleanAvailableValues(true, IndentBranched());
       }
       // list
       else if (Control::childrenListTest(rawstr)) {
-        Control::printBooleanAvailableValues(false, 0);
+        Control::printBooleanAvailableValues(false, IndentSticked());
       }
       else if ( // forbidden
         Control::switchModifyTest(rawstr) ||
