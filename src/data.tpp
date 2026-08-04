@@ -191,7 +191,7 @@ namespace cli_menu {
 
       // false term
       std::string falseTerm = "0";
-      if (!terms.second.empty()) trueTerm = terms.second[0];
+      if (!terms.second.empty()) falseTerm = terms.second[0];
 
       for (const auto& [com, vec] : unormap.comvec) {
         for (mt::CR_BOL v : vec.second) {
@@ -219,14 +219,23 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   void Data::print(
     Command *comkey,
-    mt::CR<CONSOLE_CODE> consoleCode,
+    mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
     CR_Indent indent
   ) {
     if (has<T>(comkey)) {
-      Console::logString(
-        indent.get() + stringify<T>(comkey, '\n' + indent.get()),
-        Console::messageColors[consoleCode]
-      );
+      int index = 0;
+      std::string text = indent.get();
+
+      // data empty
+      if (use<T>().comvec[comkey].second.empty()) {
+        index = 1;
+        text += "...\n";
+      }
+      else { // data exist
+        text += stringify<T>(comkey, '\n' + indent.get());
+      }
+
+      Console::logString(text, Console::messageColors[consoleCodes[index]]);
     }
   }
 }

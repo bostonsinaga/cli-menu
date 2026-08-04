@@ -128,10 +128,11 @@ namespace cli_menu {
       mt::CR_STR separator
     );
 
+    // the 'consoleCodes' consist of exist and empty vector representation code
     template <UNORMAP_COMVEC_TYPE T>
     static void print(
       Command *comkey,
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
       CR_Indent indent
     );
 
@@ -139,6 +140,11 @@ namespace cli_menu {
 
   public:
     Data() = delete;
+
+    // predefined console code array for 'print' argument
+    inline static mt::ARR<CONSOLE_CODE, 2>
+      ConsoleCodeSticked { CONSOLE_HINT_1, CONSOLE_HINT_2 },
+      ConsoleCodeBranched { CONSOLE_HINT_3, CONSOLE_HINT_2 };
 
     /** Register Vector */
 
@@ -681,34 +687,34 @@ namespace cli_menu {
 
     inline static void printTexts(
       Command *comkey,
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
       CR_Indent indent
     ) {
-      print<TextMaps>(comkey, consoleCode, indent);
+      print<TextMaps>(comkey, consoleCodes, indent);
     }
 
     inline static void printWords(
       Command *comkey,
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
       CR_Indent indent
     ) {
-      print<WordMaps>(comkey, consoleCode, indent);
+      print<WordMaps>(comkey, consoleCodes, indent);
     }
 
     inline static void printNumbers(
       Command *comkey,
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
       CR_Indent indent
     ) {
-      print<NumberMaps>(comkey, consoleCode, indent);
+      print<NumberMaps>(comkey, consoleCodes, indent);
     }
 
     inline static void printBooleans(
       Command *comkey,
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
       CR_Indent indent
     ) {
-      print<BooleanMaps>(comkey, consoleCode, indent);
+      print<BooleanMaps>(comkey, consoleCodes, indent);
     }
   };
 }
