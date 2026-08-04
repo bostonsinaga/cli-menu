@@ -15,9 +15,7 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_COPY_SUCCEED,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
     SENTENCE_EMPTY_INPUT_THIS,
-    SENTENCE_EMPTY_INPUT_DESCENDANTS,
     SENTENCE_EMPTY_OUTPUT_THIS,
-    SENTENCE_EMPTY_OUTPUT_DESCENDANTS,
     SENTENCE_EMPTY_OUTPUT_NAMED,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
@@ -32,7 +30,6 @@ namespace cli_menu {
     SENTENCE_PARAMETER_ALONE,
     SENTENCE_PARAMETER_AT_LEAF,
     SENTENCE_PARAMETER_AT_ROOT,
-    SENTENCE_PARAMETER_NOT_FOUND,
     SENTENCE_PARAMETER_REQUIRED,
     SENTENCE_PARENT_STRICT,
     SENTENCE_PROGRAM_TERMINATED,
@@ -67,9 +64,9 @@ namespace cli_menu {
     CONTROL_SWITCH_SELECT,
     CONTROL_CLEAR_SCREEN,
     CONTROL_VIEW_INPUT_THIS,
-    CONTROL_VIEW_INPUT_DESCENDANTS,
+    CONTROL_VIEW_INPUT_CHILDREN,
     CONTROL_VIEW_OUTPUT_THIS,
-    CONTROL_VIEW_OUTPUT_DESCENDANTS,
+    CONTROL_VIEW_OUTPUT_CHILDREN,
     CONTROL_RESET_INPUT_THIS,
     CONTROL_RESET_INPUT_DESCENDANTS,
     CONTROL_RESET_OUTPUT_THIS,
@@ -98,7 +95,7 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 37;
+  constexpr int SENTENCE_TOTAL = 34;
   constexpr int CONTROL_TOTAL = 25;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
@@ -183,9 +180,7 @@ namespace cli_menu {
         mt::CR_STR sentenceClipboardCopySucceed,
         mt::CR_STR sentenceClipboardPasteSucceed,
         mt::CR_STR emptyInputThisSentence,
-        mt::CR_STR emptyInputDescendantsSentence,
         mt::CR_STR emptyOutputThisSentence,
-        mt::CR_STR emptyOutputDescendantsSentence,
         mt::CR_STR emptyOutputNamedSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
@@ -200,7 +195,6 @@ namespace cli_menu {
         mt::CR_STR parameterAloneSentence,
         mt::CR_STR parameterAtLeafSentence,
         mt::CR_STR parameterAtRootSentence,
-        mt::CR_STR parameterNotFoundSentence,
         mt::CR_STR parameterRequiredSentence,
         mt::CR_STR parentStrictSentence,
         mt::CR_STR programTerminatedSentence,
@@ -285,9 +279,9 @@ namespace cli_menu {
         mt::CR_STR switchSelectTerm,
         mt::CR_STR cleanScreenTerm,
         mt::CR_STR viewInputThisTerm,
-        mt::CR_STR viewInputDescendantsTerm,
+        mt::CR_STR viewInputChildrenTerm,
         mt::CR_STR viewOutputThisTerm,
-        mt::CR_STR viewOutputDescendantsTerm,
+        mt::CR_STR viewOutputChildrenTerm,
         mt::CR_STR resetInputThisTerm,
         mt::CR_STR resetInputDescendantsTerm,
         mt::CR_STR resetOutputThisTerm,

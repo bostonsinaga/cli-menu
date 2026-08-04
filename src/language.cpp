@@ -66,12 +66,8 @@ namespace cli_menu {
     "pasted from clipboard",
     // SENTENCE_EMPTY_INPUT_THIS
     "this input is empty",
-    // SENTENCE_EMPTY_INPUT_DESCENDANTS
-    "descendant inputs are empty",
     // SENTENCE_EMPTY_OUTPUT_THIS
     "this output is empty",
-    // SENTENCE_EMPTY_OUTPUT_DESCENDANTS
-    "descendant outputs are empty",
     // SENTENCE_EMPTY_OUTPUT_NAMED
     "output inside '$' is empty",
     // SENTENCE_FILE_OVERWRITE_QUESTION
@@ -85,7 +81,7 @@ namespace cli_menu {
     // SENTENCE_INTERRUPTION_DIALOG
     "prohibited until the remaining direct inputs are processed",
     // SENTENCE_KEYWORD_NOT_FOUND
-    "'$' not found",
+    "'$' is not found",
     // SENTENCE_MODE_ALREADY_MODIFYING
     "already in edit mode",
     // SENTENCE_MODE_ALREADY_SELECTING
@@ -100,8 +96,6 @@ namespace cli_menu {
     "this node does not contain any children",
     // SENTENCE_PARAMETER_AT_ROOT
     "there are no more parents above",
-    // SENTENCE_PARAMETER_NOT_FOUND
-    "parameter not found",
     // SENTENCE_PARAMETER_REQUIRED
     "'$' needs explicit arguments",
     // SENTENCE_PARENT_STRICT
@@ -143,11 +137,7 @@ namespace cli_menu {
     CONSOLE_HINT_1,
     // SENTENCE_EMPTY_INPUT_THIS
     CONSOLE_WARNING,
-    // SENTENCE_EMPTY_INPUT_DESCENDANTS
-    CONSOLE_WARNING,
     // SENTENCE_EMPTY_OUTPUT_THIS
-    CONSOLE_WARNING,
-    // SENTENCE_EMPTY_OUTPUT_DESCENDANTS
     CONSOLE_WARNING,
     // SENTENCE_EMPTY_OUTPUT_NAMED
     CONSOLE_ERROR,
@@ -177,8 +167,6 @@ namespace cli_menu {
     CONSOLE_WARNING,
     // SENTENCE_PARAMETER_AT_ROOT
     CONSOLE_WARNING,
-    // SENTENCE_PARAMETER_NOT_FOUND
-    CONSOLE_ERROR,
     // SENTENCE_PARAMETER_REQUIRED
     CONSOLE_ERROR,
     // SENTENCE_PARENT_STRICT
@@ -211,9 +199,7 @@ namespace cli_menu {
     mt::CR_STR sentenceClipboardCopySucceed,
     mt::CR_STR sentenceClipboardPasteSucceed,
     mt::CR_STR emptyInputThisSentence,
-    mt::CR_STR emptyInputDescendantsSentence,
     mt::CR_STR emptyOutputThisSentence,
-    mt::CR_STR emptyOutputDescendantsSentence,
     mt::CR_STR emptyOutputNamedSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
@@ -228,7 +214,6 @@ namespace cli_menu {
     mt::CR_STR parameterAloneSentence,
     mt::CR_STR parameterAtLeafSentence,
     mt::CR_STR parameterAtRootSentence,
-    mt::CR_STR parameterNotFoundSentence,
     mt::CR_STR parameterRequiredSentence,
     mt::CR_STR parentStrictSentence,
     mt::CR_STR programTerminatedSentence,
@@ -249,9 +234,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = sentenceClipboardCopySucceed;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = sentenceClipboardPasteSucceed;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_THIS] = emptyInputThisSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_DESCENDANTS] = emptyInputDescendantsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_THIS] = emptyOutputThisSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_DESCENDANTS] = emptyOutputDescendantsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_NAMED] = emptyOutputNamedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
@@ -266,7 +249,6 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_ALONE] = parameterAloneSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_LEAF] = parameterAtLeafSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_AT_ROOT] = parameterAtRootSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_NOT_FOUND] = parameterNotFoundSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARAMETER_REQUIRED] = parameterRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PARENT_STRICT] = parentStrictSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_PROGRAM_TERMINATED] = programTerminatedSentence;
@@ -472,9 +454,9 @@ namespace cli_menu {
     mt::CR_STR switchSelectTerm,
     mt::CR_STR clearScreenTerm,
     mt::CR_STR viewInputThisTerm,
-    mt::CR_STR viewInputDescendantsTerm,
+    mt::CR_STR viewInputChildrenTerm,
     mt::CR_STR viewOutputThisTerm,
-    mt::CR_STR viewOutputDescendantsTerm,
+    mt::CR_STR viewOutputChildrenTerm,
     mt::CR_STR resetInputThisTerm,
     mt::CR_STR resetInputDescendantsTerm,
     mt::CR_STR resetOutputThisTerm,
@@ -498,9 +480,9 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CLEAR_SCREEN] = clearScreenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_DESCENDANTS] = viewInputDescendantsTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_CHILDREN] = viewInputChildrenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_DESCENDANTS] = viewOutputDescendantsTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_CHILDREN] = viewOutputChildrenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_THIS] = resetInputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_INPUT_DESCENDANTS] = resetInputDescendantsTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_OUTPUT_THIS] = resetOutputThisTerm;

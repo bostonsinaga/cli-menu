@@ -8,28 +8,27 @@ namespace cli_menu {
     if (Data::isEmpty<T>(this)) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
     }
-    else Data::print<T>(this, CONSOLE_HINT_1, IndentSticked());
+    else Data::print<T>(this, Data::ConsoleCodeSticked, IndentSticked());
   }
 
   template <UNORMAP_COMVEC_TYPE T>
-  void Parameter::printDescendantInputs_temp() {
+  void Parameter::printChildrenInputs_temp() {
     if (getChildren()) {
-      getChildren()->traverse(
+      getChildren()->head()->forEach(
         [&](mt_ds::LinkedList *current)->bool {
 
           if (!static_cast<Command*>(current)->isPseudo()) {
+            std::cout << '\r';
 
             static_cast<Command*>(current)->printKeyword(
               CONSOLE_HINT_1, IndentSticked()
             );
 
-            if constexpr (std::is_same_v<T, WordMaps>) {
-              Data::print<T>(
-                static_cast<Command*>(current),
-                CONSOLE_HINT_2,
-                IndentBranched()
-              );
-            }
+            Data::print<T>(
+              static_cast<Command*>(current),
+              Data::ConsoleCodeBranched,
+              IndentBranched()
+            );
           }
 
           return true;

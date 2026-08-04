@@ -84,16 +84,16 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_THIS;
   }
 
-  bool Control::viewInputDescendantsTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_DESCENDANTS;
+  bool Control::viewInputChildrenTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_INPUT_CHILDREN;
   }
 
   bool Control::viewOutputThisTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_THIS;
   }
 
-  bool Control::viewOutputDescendantsTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_DESCENDANTS;
+  bool Control::viewOutputChildrenTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_VIEW_OUTPUT_CHILDREN;
   }
 
   bool Control::resetInputThisTest(mt::CR_STR rawstr) {

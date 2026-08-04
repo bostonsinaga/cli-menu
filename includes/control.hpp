@@ -27,9 +27,9 @@ namespace cli_menu {
       {":s", ":S"}, // CONTROL_SWITCH_SELECT
       {":p", ":P"}, // CONTROL_CLEAR_SCREEN
       {":i",   ""}, // CONTROL_VIEW_INPUT_THIS
-      {":I",   ""}, // CONTROL_VIEW_INPUT_DESCENDANTS
+      {":I",   ""}, // CONTROL_VIEW_INPUT_CHILDREN
       {":o",   ""}, // CONTROL_VIEW_OUTPUT_THIS
-      {":O",   ""}, // CONTROL_VIEW_OUTPUT_DESCENDANTS
+      {":O",   ""}, // CONTROL_VIEW_OUTPUT_CHILDREN
       {":r",   ""}, // CONTROL_RESET_INPUT_THIS
       {":R",   ""}, // CONTROL_RESET_INPUT_DESCENDANTS
       {":w",   ""}, // CONTROL_RESET_OUTPUT_THIS
@@ -63,9 +63,9 @@ namespace cli_menu {
     static bool switchSelectTest(mt::CR_STR rawstr);
     static bool clearScreenTest(mt::CR_STR rawstr);
     static bool viewInputThisTest(mt::CR_STR rawstr);
-    static bool viewInputDescendantsTest(mt::CR_STR rawstr);
+    static bool viewInputChildrenTest(mt::CR_STR rawstr);
     static bool viewOutputThisTest(mt::CR_STR rawstr);
-    static bool viewOutputDescendantsTest(mt::CR_STR rawstr);
+    static bool viewOutputChildrenTest(mt::CR_STR rawstr);
     static bool resetInputThisTest(mt::CR_STR rawstr);
     static bool resetInputDescendantsTest(mt::CR_STR rawstr);
     static bool resetOutputThisTest(mt::CR_STR rawstr);

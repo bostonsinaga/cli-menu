@@ -32,7 +32,7 @@ namespace cli_menu {
     void clipboardInputPaste() override;
     void clipboardOutputCopy() override;
     void printOutput() override;
-    void printDescendantOutputs() override;
+    void printChildrenOutputs() override;
     void resetOutput() override;
     void resetDescendantOutputs() override;
 
@@ -40,7 +40,7 @@ namespace cli_menu {
     void printInput_temp();
 
     template <UNORMAP_COMVEC_TYPE T>
-    void printDescendantInputs_temp();
+    void printChildrenInputs_temp();
 
     template <UNORMAP_COMVEC_TYPE T>
     void resetInput_temp();
@@ -91,7 +91,7 @@ namespace cli_menu {
   class Word : public Parameter {
   protected:
     void printInput() override;
-    void printDescendantInputs() override;
+    void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;
@@ -114,7 +114,7 @@ namespace cli_menu {
   class Number : public Parameter {
   protected:
     void printInput() override;
-    void printDescendantInputs() override;
+    void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;
@@ -144,7 +144,7 @@ namespace cli_menu {
   protected:
     void clipboardInputPaste() override;
     void printInput() override;
-    void printDescendantInputs() override;
+    void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
     void strargv(mt::CR_STR raw) override;

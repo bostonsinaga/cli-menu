@@ -22,15 +22,22 @@ namespace cli_menu {
     if (Data::isTextsEmpty(this)) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
     }
-    else Data::printTexts(this, CONSOLE_HINT_1, IndentSticked());
+    else Data::printTexts(this, Data::ConsoleCodeSticked, IndentSticked());
   }
 
-  void Parameter::printDescendantOutputs() {
+  void Parameter::printChildrenOutputs() {
     if (getChildren()) {
       getChildren()->traverse(
         [&](mt_ds::LinkedList *current)->bool {
+
           static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, IndentSticked());
-          Data::printTexts(static_cast<Command*>(current), CONSOLE_HINT_2, IndentBranched());
+
+          Data::printTexts(
+            static_cast<Command*>(current),
+            Data::ConsoleCodeBranched,
+            IndentBranched()
+          );
+
           return true;
         }
       );
@@ -137,8 +144,8 @@ namespace cli_menu {
     printInput_temp<WordMaps>();
   }
 
-  void Word::printDescendantInputs() {
-    printDescendantInputs_temp<WordMaps>();
+  void Word::printChildrenInputs() {
+    printChildrenInputs_temp<WordMaps>();
   }
 
   void Word::resetInput() {
@@ -175,8 +182,8 @@ namespace cli_menu {
     printInput_temp<NumberMaps>();
   }
 
-  void Number::printDescendantInputs() {
-    printDescendantInputs_temp<NumberMaps>();
+  void Number::printChildrenInputs() {
+    printChildrenInputs_temp<NumberMaps>();
   }
 
   void Number::resetInput() {
@@ -244,8 +251,8 @@ namespace cli_menu {
     printInput_temp<BooleanMaps>();
   }
 
-  void Boolean::printDescendantInputs() {
-    printDescendantInputs_temp<BooleanMaps>();
+  void Boolean::printChildrenInputs() {
+    printChildrenInputs_temp<BooleanMaps>();
   }
 
   void Boolean::resetInput() {
@@ -305,9 +312,9 @@ namespace cli_menu {
         Control::switchSelectTest(rawstr) ||
         Control::clearScreenTest(rawstr) ||
         Control::viewInputThisTest(rawstr) ||
-        Control::viewInputDescendantsTest(rawstr) ||
+        Control::viewInputChildrenTest(rawstr) ||
         Control::viewOutputThisTest(rawstr) ||
-        Control::viewOutputDescendantsTest(rawstr) ||
+        Control::viewOutputChildrenTest(rawstr) ||
         Control::resetInputThisTest(rawstr) ||
         Control::resetInputDescendantsTest(rawstr) ||
         Control::resetOutputThisTest(rawstr) ||
