@@ -275,17 +275,17 @@ namespace cli_menu {
       else if (Control::viewInputThisTest(rawstr)) {
         printInput();
       }
-      // VIEW DESCENDANT INPUTS
-      else if (Control::viewInputDescendantsTest(rawstr)) {
-        printDescendantInputs();
+      // VIEW CHILDREN INPUTS
+      else if (Control::viewInputChildrenTest(rawstr)) {
+        printChildrenInputs();
       }
       // VIEW THIS OUTPUT
       else if (Control::viewOutputThisTest(rawstr)) {
         printOutput();
       }
-      // VIEW DESCENDANT OUTPUTS
-      else if (Control::viewOutputDescendantsTest(rawstr)) {
-        printDescendantOutputs();
+      // VIEW CHILDREN OUTPUTS
+      else if (Control::viewOutputChildrenTest(rawstr)) {
+        printChildrenOutputs();
       }
       // RESET THIS INPUT
       else if (Control::resetInputThisTest(rawstr)) {
@@ -517,7 +517,7 @@ namespace cli_menu {
   Command *Command::goDown(mt::CR_STR raw) {
 
     bool spaceFound = false;
-    mt::VEC_STR additionalRaws = {""};
+    mt::VEC_STR additionalRaws[2] = {{""}, {}};
     Command::phaseCode = COMMAND_PHASE_MATCH_IN_DIALOG;
 
     // split 'raw' into the string vector using spaces as delimiters
@@ -526,69 +526,88 @@ namespace cli_menu {
       if (mt_uti::StrTool::isWhitespace(ch)) {
         if (!spaceFound) {
           spaceFound = true;
-          additionalRaws.push_back("");
+          additionalRaws[0].push_back("");
         }
       }
       else {
         spaceFound = false;
-        additionalRaws.back() += ch;
+        additionalRaws[0].back() += ch;
       }
+    }
+
+    // clean 'additionalRaws' from spaces or empty string
+    for (mt::CR_STR str : additionalRaws[0]) {
+      if (!mt_uti::StrTool::isWhitespaces(str) && str != "") {
+        additionalRaws[1].push_back(str);
+      }
+    }
+
+    // user presses enter without any effect
+    if (additionalRaws[1].empty()) {
+      return setStatus(COMMAND_ONGOING);
     }
 
     // reverse additional raws order
-    std::reverse(additionalRaws.begin(), additionalRaws.end());
+    std::reverse(additionalRaws[1].begin(), additionalRaws[1].end());
 
     // insert to back of main raws
     mt_uti::VecTool<std::string>::concatCopy(
-      Command::raws, additionalRaws
+      Command::raws, additionalRaws[1]
     );
 
     // find first child by keyword possibility at back of string vector
-    Command *firstSelected = getChildren() ? static_cast<Command*>(getChildren())
-    ->findEach([](Command *current)->bool {
-      return current->testHyphens(Command::raws.back());
-    }) : nullptr;
+    if (getChildren()) {
+      Command *firstSelected = static_cast<Command*>(getChildren())
+      ->findEach([](Command *current)->bool {
+        return current->testHyphens(Command::raws.back());
+      });
 
-    // match in dialog
-    if (firstSelected) {
+      // match in dialog
+      if (firstSelected) {
 
-      // pop back detected keyword
-      Command::raws.pop_back();
-      additionalRaws.pop_back();
+        // pop back detected keyword
+        Command::raws.pop_back();
+        additionalRaws[1].pop_back();
 
-      // still on the current node
-      if (firstSelected->pseudo) {
-        firstSelected->igniteCallbacks();
+        // still on the current node
+        if (firstSelected->pseudo) {
+          firstSelected->igniteCallbacks();
+        }
+        // move to child
+        else if (!strictParentHasRequired()) {
+          Command *lastCom = firstSelected->match();
+
+          /**
+          * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
+          * from terminating when selecting a node followed by its pseudo-child.
+          */
+          if (lastCom->getStatusCode() != COMMAND_ONGOING &&
+            lastCom->getStatusCode() != COMMAND_PSEUDO_SILENT
+          ) return lastCom;
+        }
       }
-      // move to child
-      else if (!strictParentHasRequired()) {
-        Command *lastCom = firstSelected->match();
-
-        /**
-         * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
-         * from terminating when selecting a node followed by its pseudo-child.
-         */
-        if (lastCom->getStatusCode() != COMMAND_ONGOING &&
-          lastCom->getStatusCode() != COMMAND_PSEUDO_SILENT
-        ) return lastCom;
+      else {
+        // child not found
+        if (hasChildren()) {
+          Langu::ageMessage::printTemplateResponse(
+            SENTENCE_KEYWORD_NOT_FOUND,
+            Command::raws.back()
+          );
+        }
+        else { // this is a leaf
+          Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
+        }
       }
     }
-    else {
-      // child not found
-      if (hasChildren()) {
-        Langu::ageMessage::printResponse(SENTENCE_PARAMETER_NOT_FOUND);
-      }
-      else { // this is a leaf
-        Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
-      }
-    }
+    // absolutely no children
+    else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
 
     // remove the recently added strings
-    if (!additionalRaws.empty()) {
+    if (!additionalRaws[1].empty()) {
       mt_uti::VecTool<std::string>::eraseIntervalStable(
         Command::raws,
         {
-          Command::raws.size() - additionalRaws.size(),
+          Command::raws.size() - additionalRaws[1].size(),
           Command::raws.size() - 1
         }
       );

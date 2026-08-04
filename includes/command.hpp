@@ -149,8 +149,8 @@ namespace cli_menu {
     virtual void strargv(mt::CR_STR raw) {}
     virtual void printInput() {}
     virtual void printOutput() {}
-    virtual void printDescendantInputs() {}
-    virtual void printDescendantOutputs() {}
+    virtual void printChildrenInputs() {}
+    virtual void printChildrenOutputs() {}
     virtual void resetInput() {}
     virtual void resetOutput() {}
     virtual void resetDescendantInputs() {}
