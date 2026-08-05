@@ -413,14 +413,14 @@ namespace cli_menu {
   mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> Langu::xControl::terms = {{ Langu::defaultISOCode, {
     "show this help",
     "show controller list",
-    "enter children level",
-    "execute callbacks",
     "show children list",
+    "clear terminal screen",
     "go to next neighbor",
     "go to previous neighbor",
+    "enter children level",
+    "execute callbacks",
     "modify this input",
     "select another node",
-    "clear terminal screen",
     "view this input",
     "view descendant inputs",
     "view this output",
@@ -445,14 +445,14 @@ namespace cli_menu {
   void Langu::ageControl::setTerms(
     mt::CR_STR commandHelpTerm,
     mt::CR_STR controllerListTerm,
-    mt::CR_STR childrenEnterTerm,
-    mt::CR_STR childrenExecuteTerm,
     mt::CR_STR childrenListTerm,
+    mt::CR_STR clearScreenTerm,
     mt::CR_STR neighborNextTerm,
     mt::CR_STR neighborPreviousTerm,
+    mt::CR_STR childrenEnterTerm,
+    mt::CR_STR childrenExecuteTerm,
     mt::CR_STR switchModifyTerm,
     mt::CR_STR switchSelectTerm,
-    mt::CR_STR clearScreenTerm,
     mt::CR_STR viewInputThisTerm,
     mt::CR_STR viewInputChildrenTerm,
     mt::CR_STR viewOutputThisTerm,
@@ -471,14 +471,14 @@ namespace cli_menu {
   ) {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COMMAND_HELP] = commandHelpTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CONTROLLER_LIST] = controllerListTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_EXECUTE] = childrenExecuteTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_LIST] = childrenListTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CLEAR_SCREEN] = clearScreenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_NEXT] = neighborNextTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_EXECUTE] = childrenExecuteTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFY] = switchModifyTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CLEAR_SCREEN] = clearScreenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_CHILDREN] = viewInputChildrenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;

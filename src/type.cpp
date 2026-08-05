@@ -308,9 +308,9 @@ namespace cli_menu {
         Control::printBooleanAvailableValues(false, IndentSticked());
       }
       else if ( // forbidden
+        Control::clearScreenTest(rawstr) ||
         Control::switchModifyTest(rawstr) ||
         Control::switchSelectTest(rawstr) ||
-        Control::clearScreenTest(rawstr) ||
         Control::viewInputThisTest(rawstr) ||
         Control::viewInputChildrenTest(rawstr) ||
         Control::viewOutputThisTest(rawstr) ||

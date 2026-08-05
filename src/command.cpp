@@ -213,19 +213,13 @@ namespace cli_menu {
         Control::printAbbreviations(true, IndentBranched());
         Control::printBooleanAvailableValues(true, IndentBranched());
       }
-      // ENTER CHILDREN
-      else if (Control::childrenEnterTest(rawstr)) {        
-        Command *lastCom = enter();
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
-      }
-      // EXECUTE CALLBACKS
-      else if (Control::childrenExecuteTest(rawstr)) {        
-        Command *lastCom = execute();
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
-      }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
         printList(CONSOLE_HINT_2, IndentSticked(), true);
+      }
+      // CLEAR TERMINAL SCREEN
+      else if (Control::clearScreenTest(rawstr)) {
+        Console::clearScreen();
       }
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
@@ -235,6 +229,16 @@ namespace cli_menu {
       // PREVIOUS NEIGHBOR
       else if (Control::neighborPreviousTest(rawstr)) {
         Command *lastCom = goToNeighbor(LEFT);
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+      }
+      // ENTER CHILDREN
+      else if (Control::childrenEnterTest(rawstr)) {        
+        Command *lastCom = enter();
+        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+      }
+      // EXECUTE CALLBACKS
+      else if (Control::childrenExecuteTest(rawstr)) {        
+        Command *lastCom = execute();
         if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
       }
       // MODIFY INPUT
@@ -266,10 +270,6 @@ namespace cli_menu {
             Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
           }
         }
-      }
-      // CLEAR TERMINAL SCREEN
-      else if (Control::clearScreenTest(rawstr)) {
-        Console::clearScreen();
       }
       // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {

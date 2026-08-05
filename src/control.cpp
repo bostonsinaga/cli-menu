@@ -48,16 +48,12 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_CONTROLLER_LIST;
   }
 
-  bool Control::childrenEnterTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_ENTER;
-  }
-
-  bool Control::childrenExecuteTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_EXECUTE;
-  }
-
   bool Control::childrenListTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_CHILDREN_LIST;
+  }
+
+  bool Control::clearScreenTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CLEAR_SCREEN;
   }
 
   bool Control::neighborNextTest(mt::CR_STR rawstr) {
@@ -68,16 +64,20 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_NEIGHBOR_PREVIOUS;
   }
 
+  bool Control::childrenEnterTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_ENTER;
+  }
+
+  bool Control::childrenExecuteTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_CHILDREN_EXECUTE;
+  }
+
   bool Control::switchModifyTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_SWITCH_MODIFY;
   }
 
   bool Control::switchSelectTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_SWITCH_SELECT;
-  }
-
-  bool Control::clearScreenTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_CLEAR_SCREEN;
   }
 
   bool Control::viewInputThisTest(mt::CR_STR rawstr) {

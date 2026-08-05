@@ -18,14 +18,14 @@ namespace cli_menu {
     inline static const std::string symbols[CONTROL_TOTAL][2] = {
       {":h",   ""}, // CONTROL_COMMAND_HELP
       {":H",   ""}, // CONTROL_CONTROLLER_LIST
-      {":e",   ""}, // CONTROL_CHILDREN_ENTER
-      {":E",   ""}, // CONTROL_CHILDREN_EXECUTE
       {":l", ":L"}, // CONTROL_CHILDREN_LIST
+      {"::", "::"}, // CONTROL_CLEAR_SCREEN
       {":>",   ""}, // CONTROL_NEIGHBOR_NEXT
       {":<",   ""}, // CONTROL_NEIGHBOR_PREVIOUS
+      {":e",   ""}, // CONTROL_CHILDREN_ENTER
+      {":E",   ""}, // CONTROL_CHILDREN_EXECUTE
       {":m", ":M"}, // CONTROL_SWITCH_MODIFY
       {":s", ":S"}, // CONTROL_SWITCH_SELECT
-      {":p", ":P"}, // CONTROL_CLEAR_SCREEN
       {":i",   ""}, // CONTROL_VIEW_INPUT_THIS
       {":I",   ""}, // CONTROL_VIEW_INPUT_CHILDREN
       {":o",   ""}, // CONTROL_VIEW_OUTPUT_THIS
@@ -37,7 +37,7 @@ namespace cli_menu {
       {":x",   ""}, // CONTROL_RESET_DATA_THIS
       {":X",   ""}, // CONTROL_RESET_DATA_DESCENDANTS
       {":c", ":C"}, // CONTROL_COPY_OUTPUT
-      {":v", ":V"}, // CONTROL_PASTE_INPUT
+      {":p", ":P"}, // CONTROL_PASTE_INPUT
       {":b",   ""}, // CONTROL_PARENT_BACK
       {":B",   ""}, // CONTROL_ROOT_BACK
       {":q", ":Q"}  // CONTROL_PROGRAM_QUIT
@@ -57,11 +57,11 @@ namespace cli_menu {
     static bool childrenEnterTest(mt::CR_STR rawstr);
     static bool childrenExecuteTest(mt::CR_STR rawstr);
     static bool childrenListTest(mt::CR_STR rawstr);
+    static bool clearScreenTest(mt::CR_STR rawstr);
     static bool neighborNextTest(mt::CR_STR rawstr);
     static bool neighborPreviousTest(mt::CR_STR rawstr);
     static bool switchModifyTest(mt::CR_STR rawstr);
     static bool switchSelectTest(mt::CR_STR rawstr);
-    static bool clearScreenTest(mt::CR_STR rawstr);
     static bool viewInputThisTest(mt::CR_STR rawstr);
     static bool viewInputChildrenTest(mt::CR_STR rawstr);
     static bool viewOutputThisTest(mt::CR_STR rawstr);
