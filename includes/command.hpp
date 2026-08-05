@@ -12,8 +12,7 @@ namespace cli_menu {
     COMMAND_DONE,
     COMMAND_CANCELED,
     COMMAND_TERMINATED,
-    COMMAND_TERMINATED_SILENT,
-    COMMAND_PSEUDO_SILENT,
+    COMMAND_PSEUDO,
     COMMAND_ONGOING
   };
 
@@ -43,7 +42,7 @@ namespace cli_menu {
 
   private:
     int pseudosCount = 0;
-    static constexpr int totalCommandCodes = 7;
+    static constexpr int totalCommandCodes = 6;
 
     bool editing = true,
       pseudo = false,
@@ -55,17 +54,8 @@ namespace cli_menu {
 
     inline static COMMAND_PHASE_CODE phaseCode = COMMAND_PHASE_MATCH;
 
-    // this code (7th) always set before moving to another command
-    COMMAND_CODE statusCodes[totalCommandCodes + 1] = {
-      COMMAND_ERROR,
-      COMMAND_DONE,
-      COMMAND_CANCELED,
-      COMMAND_TERMINATED,
-      COMMAND_TERMINATED_SILENT,
-      COMMAND_PSEUDO_SILENT,
-      COMMAND_ONGOING,
-      COMMAND_ONGOING
-    };
+    // this code always set before moving to another command
+    COMMAND_CODE statusCode = COMMAND_ONGOING;
 
     // return false to stop the program 
     CODE_CALLBACK callback = Command::defaultCallback;
@@ -90,7 +80,10 @@ namespace cli_menu {
     COMMAND_CALLBACK_CODE triggerCallbacks();
 
     // return this command with its status set
-    Command *setStatus(mt::CR<COMMAND_CODE> code);
+    Command *setStatus(mt::CR<COMMAND_CODE> code) {
+      statusCode = code;
+      return this;
+    }
 
     // after dialog interactions
     Command *igniteCallbacks();
@@ -180,12 +173,7 @@ namespace cli_menu {
     const std::string getHyphens() const { return hyphens; }
     const std::string getKeyword() const { return keyword; }
     const std::string getDescription() const { return description; }
-
-    // status code to be displayed after callback
-    const COMMAND_CODE getStatusCode() const;
-
-    // set status code done/error assign values to 'COMMAND_ONGOING'
-    void silentStatus(mt::CR_VEC<COMMAND_CODE> onlyCodes = {});
+    const COMMAND_CODE getStatusCode() const { return statusCode; };
 
     /**
      * Will not open dialog to complete the required.
@@ -219,7 +207,9 @@ namespace cli_menu {
      * to be able to call the 'igniteCallbacks'.
      * Only applies to non-pseudo commands.
      */
-    void makeRequired();
+    void makeRequired() {
+      if (!pseudo) required = { true, true };
+    }
 
     /**
      * Make all the required descendants must be

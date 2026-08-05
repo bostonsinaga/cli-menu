@@ -71,9 +71,7 @@ namespace cli_menu {
     Command *lastNode = Program<T>::match();
 
     while (true) {
-      if (lastNode->getStatusCode() == COMMAND_PSEUDO_SILENT ||
-        lastNode->getStatusCode() == COMMAND_TERMINATED_SILENT
-      ) {
+      if (lastNode->getStatusCode() == COMMAND_PSEUDO) {
         break;
       }
       else if (lastNode->getStatusCode() == COMMAND_TERMINATED) {

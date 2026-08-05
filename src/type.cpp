@@ -137,7 +137,7 @@ namespace cli_menu {
 
   void Word::destroy() {
     Data::unregisterWords(this);
-    Command::destroy();
+    Parameter::destroy();
   }
 
   void Word::printInput() {
@@ -175,7 +175,7 @@ namespace cli_menu {
 
   void Number::destroy() {
     Data::unregisterNumbers(this);
-    Command::destroy();
+    Parameter::destroy();
   }
 
   void Number::printInput() {
@@ -244,7 +244,7 @@ namespace cli_menu {
 
   void Boolean::destroy() {
     Data::unregisterBooleans(this);
-    Command::destroy();
+    Parameter::destroy();
   }
 
   void Boolean::printInput() {

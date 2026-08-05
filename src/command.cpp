@@ -81,7 +81,7 @@ namespace cli_menu {
         // pseudo-child callbacks and program ends at initial match
         if (firstChild && firstChild->pseudo) {
           firstChild->triggerCallbacks();
-          return setStatus(COMMAND_PSEUDO_SILENT);
+          return setStatus(COMMAND_PSEUDO);
         }
         /**
          * The match will be paused until arguments are given from the dialog.
@@ -165,37 +165,6 @@ namespace cli_menu {
     return igniteCallbacks();
   }
 
-  const COMMAND_CODE Command::getStatusCode() const {
-    return statusCodes[totalCommandCodes];
-  }
-
-  void Command::silentStatus(mt::CR_VEC<COMMAND_CODE> onlyCodes) {
-    // silent all
-    if (onlyCodes.empty()) {
-      statusCodes[COMMAND_ERROR] = COMMAND_ONGOING;
-      statusCodes[COMMAND_DONE] = COMMAND_ONGOING;
-      statusCodes[COMMAND_CANCELED] = COMMAND_ONGOING;
-      statusCodes[COMMAND_TERMINATED] = COMMAND_TERMINATED_SILENT;
-    }
-    // silent some
-    else for (mt::CR<COMMAND_CODE> code : onlyCodes) {
-      if (code == COMMAND_ERROR ||
-        code == COMMAND_DONE ||
-        code == COMMAND_CANCELED
-      ) {
-        statusCodes[code] = COMMAND_ONGOING;
-      }
-      else if (code == COMMAND_TERMINATED) {
-        statusCodes[COMMAND_TERMINATED] = COMMAND_TERMINATED_SILENT;
-      }
-    }
-  }
-
-  Command *Command::setStatus(mt::CR<COMMAND_CODE> code) {
-    statusCodes[totalCommandCodes] = statusCodes[code];
-    return this;
-  }
-
   Command *Command::dialog() {
     Command::phaseCode = COMMAND_PHASE_DIALOG;
     std::string rawstr, seqNames = generateSequentialRootNames();
@@ -224,22 +193,22 @@ namespace cli_menu {
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
         Command *lastCom = goToNeighbor(RIGHT);
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // PREVIOUS NEIGHBOR
       else if (Control::neighborPreviousTest(rawstr)) {
         Command *lastCom = goToNeighbor(LEFT);
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // ENTER CHILDREN
       else if (Control::childrenEnterTest(rawstr)) {        
         Command *lastCom = enter();
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // EXECUTE CALLBACKS
       else if (Control::childrenExecuteTest(rawstr)) {        
         Command *lastCom = execute();
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // MODIFY INPUT
       else if (Control::switchModifyTest(rawstr)) {
@@ -325,13 +294,13 @@ namespace cli_menu {
       // BACK TO PARENT
       else if (Control::parentBackTest(rawstr)) {
         Command *lastCom = backTo(getParent());
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // BACK TO ROOT
       else if (Control::rootBackTest(rawstr)) {
         mt_ds::GeneralTree *root = getRoot();
         Command *lastCom = backTo(root == this ? nullptr : root);
-        if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
       }
       // EXIT PROGRAM
       else if (Control::programQuitTest(rawstr)) {
@@ -342,7 +311,7 @@ namespace cli_menu {
         if (editing) strargv(rawstr);
         else { // selection (match in dialog)
           Command *lastCom = goDown(rawstr);
-          if (lastCom->getStatusCode() != COMMAND_ONGOING) return lastCom;
+          if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
         }
       }
     }
@@ -578,11 +547,11 @@ namespace cli_menu {
           Command *lastCom = firstSelected->match();
 
           /**
-          * Exclude the return of 'COMMAND_PSEUDO_SILENT' to prevent the program
+          * Exclude the return of 'COMMAND_PSEUDO' to prevent the program
           * from terminating when selecting a node followed by its pseudo-child.
           */
-          if (lastCom->getStatusCode() != COMMAND_ONGOING &&
-            lastCom->getStatusCode() != COMMAND_PSEUDO_SILENT
+          if (lastCom->statusCode != COMMAND_ONGOING &&
+            lastCom->statusCode != COMMAND_PSEUDO
           ) return lastCom;
         }
       }
@@ -747,10 +716,6 @@ namespace cli_menu {
       required = { false, false };
       static_cast<Command*>(getParent())->pseudosCount++;
     }
-  }
-
-  void Command::makeRequired() {
-    if (!pseudo) required = { true, true };
   }
 
   void Command::makeSterilized(mt::CR_BOL becomeLeaf) {
