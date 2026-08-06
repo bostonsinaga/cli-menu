@@ -189,6 +189,7 @@ namespace cli_menu {
       // CLEAR TERMINAL SCREEN
       else if (Control::clearScreenTest(rawstr)) {
         Console::clearScreen();
+        Console::logStylishHeader(seqNames, editing);
       }
       // NEXT NEIGHBOR
       else if (Control::neighborNextTest(rawstr)) {
@@ -573,10 +574,12 @@ namespace cli_menu {
 
     // remove the recently added strings
     if (!additionalRaws[1].empty()) {
+      int rawsSizeDiff = additionalRaws[1].size() - Command::raws.size();
+
       mt_uti::VecTool<std::string>::eraseIntervalStable(
         Command::raws,
         {
-          Command::raws.size() - additionalRaws[1].size(),
+          Command::raws.size() - additionalRaws[1].size() + rawsSizeDiff,
           Command::raws.size() - 1
         }
       );
