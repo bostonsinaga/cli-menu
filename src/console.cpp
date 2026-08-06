@@ -99,7 +99,7 @@ namespace cli_menu {
 
   void Console::logBoundaryLine(mt::CR_BOL editing) {
     logString(
-      std::string(boundaryCharactersAmount, boundaryCharacter) + '\n',
+      std::string(maxCharacters, boundaryCharacter) + '\n',
       chooseBoundaryColor(editing)
     );
   }
@@ -117,8 +117,8 @@ namespace cli_menu {
     else {
       std::string fillerSpaces;
 
-      if (title.length() < boundaryCharactersAmount) {
-        fillerSpaces = std::string(boundaryCharactersAmount - title.length() - 1, ' ');
+      if (title.length() < maxCharacters) {
+        fillerSpaces = std::string(maxCharacters - title.length() - 1, ' ');
       }
 
       logString(
@@ -137,6 +137,13 @@ namespace cli_menu {
       listPointStyle + ' ' + reason + '\n',
       messageColors[code]
     );
+  }
+
+  std::string Console::limitText(mt::CR_STR str) {
+    if (str.length() > maxCharacters) {
+      return str.substr(0, maxCharacters) + tripleDots;
+    }
+    return str;
   }
 }
 

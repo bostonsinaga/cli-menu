@@ -59,9 +59,9 @@ namespace cli_menu {
   public:
     Console() = delete;
 
+    inline static size_t maxCharacters = 45;
     inline static char boundaryCharacter = '-';
-    inline static size_t boundaryCharactersAmount = 45;
-    inline static std::string listPointStyle = ">";
+    inline static std::string listPointStyle = ">", tripleDots = "...";
     inline static bool outlineStyle = true;
     static Color messageColors[totalStatus];
 
@@ -137,6 +137,9 @@ namespace cli_menu {
       const CONSOLE_CODE &code,
       mt::CR_STR reason
     );
+
+    // limit the text to 'maxCharacters' (ended with 'tripleDots')
+    static std::string limitText(mt::CR_STR str);
 
     // clear the terminal screen
     static void clearScreen() {
