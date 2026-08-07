@@ -7,7 +7,7 @@ namespace cli_menu {
 
   enum SENTENCE_CODE {
     SENTENCE_ARGUMENT_REQUIRED,
-    SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER,
+    SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE,
     SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE,
@@ -173,7 +173,7 @@ namespace cli_menu {
     struct ageMessage {
       static void setSentences(
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
+        mt::CR_STR booleanForbiddenControllerSentence,
         mt::CR_STR sentenceClipboardOpenFailure,
         mt::CR_STR sentenceClipboardGlobalLockFailure,
         mt::CR_STR sentenceClipboardGlobalAllocFailure,

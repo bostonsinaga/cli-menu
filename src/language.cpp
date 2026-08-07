@@ -50,8 +50,8 @@ namespace cli_menu {
   mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {    
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
-    // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
-    "forbidden controller on instant boolean question",
+    // SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
+    "controller forbidden on boolean",
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
     "failed to open clipboard",
     // SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE
@@ -123,7 +123,7 @@ namespace cli_menu {
   CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
-    // SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
+    // SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
     CONSOLE_ERROR,
@@ -195,7 +195,7 @@ namespace cli_menu {
 
   void Langu::ageMessage::setSentences(
     mt::CR_STR argumentRequiredSentence,
-    mt::CR_STR booleanInstantQuestionForbiddenControllerSentence,
+    mt::CR_STR booleanForbiddenControllerSentence,
     mt::CR_STR sentenceClipboardOpenFailure,
     mt::CR_STR sentenceClipboardGlobalLockFailure,
     mt::CR_STR sentenceClipboardGlobalAllocFailure,
@@ -231,7 +231,7 @@ namespace cli_menu {
     mt::CR_STR unknownValueSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER] = booleanForbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = sentenceClipboardOpenFailure;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE] = sentenceClipboardGlobalLockFailure;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE] = sentenceClipboardGlobalAllocFailure;
