@@ -99,7 +99,7 @@ namespace cli_menu {
 
   void Console::logBoundaryLine(mt::CR_BOL editing) {
     logString(
-      std::string(maxCharacters, boundaryCharacter) + '\n',
+      std::string(boundaryLineLength, boundaryCharacter) + '\n',
       chooseBoundaryColor(editing)
     );
   }
@@ -117,8 +117,8 @@ namespace cli_menu {
     else {
       std::string fillerSpaces;
 
-      if (title.length() < maxCharacters) {
-        fillerSpaces = std::string(maxCharacters - title.length() - 1, ' ');
+      if (title.length() < boundaryLineLength) {
+        fillerSpaces = std::string(boundaryLineLength - title.length() - 1, ' ');
       }
 
       logString(
@@ -139,11 +139,22 @@ namespace cli_menu {
     );
   }
 
-  std::string Console::limitText(mt::CR_STR str) {
-    if (str.length() > maxCharacters) {
-      return str.substr(0, maxCharacters) + tripleDots;
+  std::string Console::LimitedText::trim(
+    mt::CR_STR text,
+    mt::CR_BOL withTailDots,
+    mt::CR_BOL withRemainingBrackets
+  ) {
+    int remainingLength = text.length() - maxCharacters;
+
+    if (remainingLength > 0) {
+      return text.substr(0, maxCharacters)
+        + (withTailDots ? tailDots : "")
+        + (withRemainingBrackets ? (remainingBrackets[0]
+        + std::to_string(remainingLength)
+        + remainingBrackets[1]) : "");
     }
-    return str;
+
+    return text;
   }
 }
 

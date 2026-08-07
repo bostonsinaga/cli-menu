@@ -59,10 +59,10 @@ namespace cli_menu {
   public:
     Console() = delete;
 
-    inline static size_t maxCharacters = 45;
-    inline static char boundaryCharacter = '-';
-    inline static std::string listPointStyle = ">", tripleDots = "...";
     inline static bool outlineStyle = true;
+    inline static char boundaryCharacter = '-';
+    inline static size_t boundaryLineLength = 45;
+    inline static std::string listPointStyle = ">";
     static Color messageColors[totalStatus];
 
     static Color
@@ -138,13 +138,28 @@ namespace cli_menu {
       mt::CR_STR reason
     );
 
-    // limit the text to 'maxCharacters' (ended with 'tripleDots')
-    static std::string limitText(mt::CR_STR str);
-
     // clear the terminal screen
     static void clearScreen() {
       std::cout << "\033[2J\033[3J\033[H" << std::flush;
     }
+
+    struct LimitedText {
+      inline static size_t maxCharacters = 32;
+
+      inline static std::string
+        tailDots = "...",
+        remainingBrackets[2] {"[+", "]"};
+
+      /**
+       * Limit the text to 'maxCharacters'.
+       * Ended with 'tailDots' and 'remainingBrackets'.
+       */
+      static std::string trim(
+        mt::CR_STR text,
+        mt::CR_BOL withTailDots = true,
+        mt::CR_BOL withRemainingBrackets = true
+      );
+    };
   };
 }
 
