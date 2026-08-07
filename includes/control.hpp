@@ -77,6 +77,7 @@ namespace cli_menu {
     static bool parentBackTest(mt::CR_STR rawstr);
     static bool rootBackTest(mt::CR_STR rawstr);
     static bool programQuitTest(mt::CR_STR rawstr);
+    static bool stringIsController(mt::CR_STR rawstr);
 
     static void printAbbreviations(
       mt::CR_BOL titleDisplayed,

@@ -140,6 +140,22 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_PROGRAM_QUIT;
   }
 
+  bool Control::stringIsController(mt::CR_STR rawstr) {
+    return commandHelpTest(rawstr) || controllerListTest(rawstr) ||
+      childrenEnterTest(rawstr) || childrenExecuteTest(rawstr) ||
+      childrenListTest(rawstr) || clearScreenTest(rawstr) ||
+      neighborNextTest(rawstr) || neighborPreviousTest(rawstr) ||
+      switchModifyTest(rawstr) || switchSelectTest(rawstr) ||
+      viewInputThisTest(rawstr) || viewInputChildrenTest(rawstr) ||
+      viewOutputThisTest(rawstr) || viewOutputChildrenTest(rawstr) ||
+      resetInputThisTest(rawstr) || resetInputDescendantsTest(rawstr) ||
+      resetOutputThisTest(rawstr) || resetOutputDescendantsTest(rawstr) ||
+      resetDataThisTest(rawstr) || resetDataDescendantsTest(rawstr) ||
+      copyOutputTest(rawstr) || pasteInputTest(rawstr) ||
+      parentBackTest(rawstr) || rootBackTest(rawstr) ||
+      programQuitTest(rawstr);
+  }
+
   void Control::printAbbreviations(
     mt::CR_BOL titleDisplayed,
     CR_Indent indent
