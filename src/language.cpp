@@ -81,7 +81,7 @@ namespace cli_menu {
     // SENTENCE_INTERRUPTION_DIALOG
     "prohibited until the remaining direct inputs are processed",
     // SENTENCE_KEYWORD_NOT_FOUND
-    "'$' is not found",
+    "keyword '$' is not found",
     // SENTENCE_MODE_ALREADY_MODIFYING
     "already in edit mode",
     // SENTENCE_MODE_ALREADY_SELECTING
@@ -115,7 +115,9 @@ namespace cli_menu {
     // SENTENCE_RESET_OUTPUT_THIS
     "this output is removed",
     // SENTENCE_RESET_OUTPUT_DESCENDANTS
-    "descendant outputs are removed"
+    "descendant outputs are removed",
+    // SENTENCE_UNKNOWN_VALUE
+    "unknown value '$'"
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
@@ -186,7 +188,9 @@ namespace cli_menu {
     // SENTENCE_RESET_OUTPUT_THIS
     CONSOLE_HINT_1,
     // SENTENCE_RESET_OUTPUT_DESCENDANTS
-    CONSOLE_HINT_1
+    CONSOLE_HINT_1,
+    // SENTENCE_UNKNOWN_VALUE
+    CONSOLE_ERROR
   };
 
   void Langu::ageMessage::setSentences(
@@ -223,7 +227,8 @@ namespace cli_menu {
     mt::CR_STR resetInputThisSentence,
     mt::CR_STR resetInputDescendantsSentence,
     mt::CR_STR resetOutputThisSentence,
-    mt::CR_STR resetOutputDescendantsSentence
+    mt::CR_STR resetOutputDescendantsSentence,
+    mt::CR_STR unknownValueSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER] = booleanInstantQuestionForbiddenControllerSentence;
@@ -259,6 +264,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_DESCENDANTS] = resetInputDescendantsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_THIS] = resetOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_DESCENDANTS] = resetOutputDescendantsSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_UNKNOWN_VALUE] = unknownValueSentence;
   }
 
   void Langu::ageMessage::printResponse(
@@ -541,7 +547,7 @@ namespace cli_menu {
     ] = existingYesOrNoLabel;
   }
 
-  bool Langu::ageBooleanizer::test(mt::CR_STR raw) {
+  mt_uti::BOOLEANIZER_CODE Langu::ageBooleanizer::test(mt::CR_STR raw) {
     return Langu::xBooleanizer::object.test(
       Langu::xManager::currentISOCode, raw
     );

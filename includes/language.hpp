@@ -39,7 +39,8 @@ namespace cli_menu {
     SENTENCE_RESET_INPUT_THIS,
     SENTENCE_RESET_INPUT_DESCENDANTS,
     SENTENCE_RESET_OUTPUT_THIS,
-    SENTENCE_RESET_OUTPUT_DESCENDANTS
+    SENTENCE_RESET_OUTPUT_DESCENDANTS,
+    SENTENCE_UNKNOWN_VALUE
   };
 
   enum STRINGIFIED_TYPE_COMMAND_CODE {
@@ -95,7 +96,7 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 34;
+  constexpr int SENTENCE_TOTAL = 35;
   constexpr int CONTROL_TOTAL = 25;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
@@ -204,7 +205,8 @@ namespace cli_menu {
         mt::CR_STR resetInputThisSentence,
         mt::CR_STR resetInputDescendantsSentence,
         mt::CR_STR resetOutputThisSentence,
-        mt::CR_STR resetOutputDescendantsSentence
+        mt::CR_STR resetOutputDescendantsSentence,
+        mt::CR_STR unknownValueSentence
       );
 
       static void printResponse(
@@ -313,7 +315,7 @@ namespace cli_menu {
         mt::CR_STR existingYesOrNoLabel
       );
 
-      static bool test(mt::CR_STR raw);
+      static mt_uti::BOOLEANIZER_CODE test(mt::CR_STR raw);
       static mt::PAIR<mt::VEC_STR> getTerms();
       static std::string getYesOrNoLabel();
     };
