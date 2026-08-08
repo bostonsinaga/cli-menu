@@ -7,7 +7,6 @@ namespace cli_menu {
 
   enum SENTENCE_CODE {
     SENTENCE_ARGUMENT_REQUIRED,
-    SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE,
     SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE,
@@ -20,6 +19,7 @@ namespace cli_menu {
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
+    SENTENCE_FORBIDDEN_CONTROLLER,
     SENTENCE_FORBIDDEN_HIDDEN_PASTE,
     SENTENCE_INTERRUPTION_DIALOG,
     SENTENCE_KEYWORD_NOT_FOUND,
@@ -173,7 +173,6 @@ namespace cli_menu {
     struct ageMessage {
       static void setSentences(
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR booleanForbiddenControllerSentence,
         mt::CR_STR sentenceClipboardOpenFailure,
         mt::CR_STR sentenceClipboardGlobalLockFailure,
         mt::CR_STR sentenceClipboardGlobalAllocFailure,
@@ -186,6 +185,7 @@ namespace cli_menu {
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
+        mt::CR_STR forbiddenControllerSentence,
         mt::CR_STR forbiddenHiddenPasteSentence,
         mt::CR_STR interruptionDialogSentence,
         mt::CR_STR keywordNotFoundSentence,

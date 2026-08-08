@@ -50,8 +50,6 @@ namespace cli_menu {
   mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {    
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
-    // SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
-    "controller forbidden on boolean",
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
     "failed to open clipboard",
     // SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE
@@ -76,6 +74,8 @@ namespace cli_menu {
     "cannot write file because the path or filename is invalid, permission is not granted, or the disk is full",
     // SENTENCE_FILE_WRITE_SUCCEED
     "output is written to '$'",
+    // SENTENCE_FORBIDDEN_CONTROLLER
+    "forbidden controller '$'",
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     "hidden text pasting is only available on insertion",
     // SENTENCE_INTERRUPTION_DIALOG
@@ -123,8 +123,6 @@ namespace cli_menu {
   CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
-    // SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
-    CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE
@@ -149,6 +147,8 @@ namespace cli_menu {
     CONSOLE_ERROR,
     // SENTENCE_FILE_WRITE_SUCCEED
     CONSOLE_HINT_1,
+    // SENTENCE_FORBIDDEN_CONTROLLER
+    CONSOLE_ERROR,
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
     CONSOLE_WARNING,
     // SENTENCE_INTERRUPTION_DIALOG
@@ -195,7 +195,6 @@ namespace cli_menu {
 
   void Langu::ageMessage::setSentences(
     mt::CR_STR argumentRequiredSentence,
-    mt::CR_STR booleanForbiddenControllerSentence,
     mt::CR_STR sentenceClipboardOpenFailure,
     mt::CR_STR sentenceClipboardGlobalLockFailure,
     mt::CR_STR sentenceClipboardGlobalAllocFailure,
@@ -208,6 +207,7 @@ namespace cli_menu {
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
+    mt::CR_STR forbiddenControllerSentence,
     mt::CR_STR forbiddenHiddenPasteSentence,
     mt::CR_STR interruptionDialogSentence,
     mt::CR_STR keywordNotFoundSentence,
@@ -231,7 +231,6 @@ namespace cli_menu {
     mt::CR_STR unknownValueSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER] = booleanForbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = sentenceClipboardOpenFailure;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE] = sentenceClipboardGlobalLockFailure;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE] = sentenceClipboardGlobalAllocFailure;
@@ -244,6 +243,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_CONTROLLER] = forbiddenControllerSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FORBIDDEN_HIDDEN_PASTE] = forbiddenHiddenPasteSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_INTERRUPTION_DIALOG] = interruptionDialogSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_KEYWORD_NOT_FOUND] = keywordNotFoundSentence;
