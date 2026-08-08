@@ -156,9 +156,9 @@ namespace cli_menu {
     resetDescendantInputs_temp<WordMaps>();
   }
 
-  void Word::strargv(mt::CR_STR raw) {
+  void Word::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    Data::xpushWord(this, raw);
+    Data::xpushWord(this, rawstr);
   }
 
   /** NUMBER */
@@ -194,9 +194,9 @@ namespace cli_menu {
     resetDescendantInputs_temp<NumberMaps>();
   }
 
-  void Number::strargv(mt::CR_STR raw) {
+  void Number::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    Data::addNumbers(this, mt_uti::Scanner::parseNumbers<double>(raw));
+    Data::addNumbers(this, mt_uti::Scanner::parseNumbers<double>(rawstr));
   }
 
   /** BOOLEAN */
@@ -213,30 +213,17 @@ namespace cli_menu {
 
   void Boolean::clipboardInputPaste() {
     required.first = false;
-
-    bool pushed = false;
     mt::VEC_BOL conditions;
-    mt::VEC_STR textVector {""};
-    std::string textPasted = Clipboard::pasteText();
+    mt_uti::BOOLEANIZER_CODE code;
+    mt::VEC_STR vec = mt_uti::StrTool::whitespaceSlice(Clipboard::pasteText());
 
-    // truncated by spaces
-    for (mt::CR_CH ch : textPasted) {
+    // parse only booleans
+    for (mt::CR_STR str : vec) {
+      code = Boolean::avoidStringTest(str);
 
-      if (mt_uti::StrTool::isWhitespace(ch)) {
-        if (!pushed) {
-          textVector.push_back("");
-          pushed = true;
-        }
+      if (code != mt_uti::BOOLEANIZER_OTHER) {
+        conditions.push_back(code);
       }
-      else {
-        textVector.back() += ch;
-        pushed = false;
-      }
-    }
-
-    // parse booleans
-    for (mt::CR_STR str : textVector) {
-      conditions.push_back(Langu::ageBooleanizer::test(str));
     }
 
     Data::addBooleans(this, conditions);
@@ -263,9 +250,45 @@ namespace cli_menu {
     resetDescendantInputs_temp<BooleanMaps>();
   }
 
-  void Boolean::strargv(mt::CR_STR raw) {
+  void Boolean::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    Data::xpushBoolean(this, Langu::ageBooleanizer::test(raw));
+    mt_uti::BOOLEANIZER_CODE code = Boolean::avoidStringTest(rawstr);
+
+    if (code != mt_uti::BOOLEANIZER_OTHER) {
+      Data::xpushBoolean(this, code);
+    }
+  }
+
+  mt_uti::BOOLEANIZER_CODE Boolean::avoidStringTest(mt::CR_STR rawstr) {
+
+    // booleanizer test
+    mt_uti::BOOLEANIZER_CODE code = Langu::ageBooleanizer::test(rawstr);
+
+    if (code == mt_uti::BOOLEANIZER_OTHER) {
+      // controllers as yes
+      if (Control::childrenEnterTest(rawstr) ||
+        Control::childrenExecuteTest(rawstr) ||
+        Control::neighborNextTest(rawstr)
+      ) {
+        code = mt_uti::BOOLEANIZER_TRUE;
+      }
+      // controller as no
+      else if (Control::neighborPreviousTest(rawstr)) {
+        code = mt_uti::BOOLEANIZER_FALSE;
+      }
+      // forbidden controllers
+      else if (Control::stringIsController(rawstr)) {
+        Langu::ageMessage::printResponse(
+          SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
+        );
+      }
+      // unknown value
+      else Langu::ageMessage::printTemplateResponse(
+        SENTENCE_UNKNOWN_VALUE, Console::LimitedText::trim(rawstr)
+      );
+    }
+
+    return code;
   }
 
   BOOLEAN_INSTANT_QUESTION_CODE Boolean::instantQuestion(
@@ -279,63 +302,38 @@ namespace cli_menu {
     );
 
     while (Control::cinDialogInput(rawstr, true)) {
-      // yes
-      if (Control::childrenEnterTest(rawstr) ||
-        Control::childrenExecuteTest(rawstr) ||
-        Control::neighborNextTest(rawstr)
-      ) {
-        return BOOLEAN_INSTANT_QUESTION_YES;
-      }
-      // no
-      else if (Control::neighborPreviousTest(rawstr)) {
-        break;
-      }
       // cancel
-      else if (Control::parentBackTest(rawstr) ||
+      if (Control::parentBackTest(rawstr) ||
         Control::rootBackTest(rawstr) ||
         Control::programQuitTest(rawstr)
       ) {
-        return BOOLEAN_INSTANT_QUESTION_CANCELED;
+        break;
       }
-      // help
+      // show help
       else if (Control::commandHelpTest(rawstr) ||
         Control::controllerListTest(rawstr)
       ) {
         Control::printBooleanAvailableValues(true, IndentBranched());
       }
-      // list
+      // show list
       else if (Control::childrenListTest(rawstr)) {
         Control::printBooleanAvailableValues(false, IndentSticked());
       }
-      else if ( // forbidden
-        Control::clearScreenTest(rawstr) ||
-        Control::switchModifyTest(rawstr) ||
-        Control::switchSelectTest(rawstr) ||
-        Control::viewInputThisTest(rawstr) ||
-        Control::viewInputChildrenTest(rawstr) ||
-        Control::viewOutputThisTest(rawstr) ||
-        Control::viewOutputChildrenTest(rawstr) ||
-        Control::resetInputThisTest(rawstr) ||
-        Control::resetInputDescendantsTest(rawstr) ||
-        Control::resetOutputThisTest(rawstr) ||
-        Control::resetOutputDescendantsTest(rawstr) ||
-        Control::resetDataThisTest(rawstr) ||
-        Control::resetDataDescendantsTest(rawstr) ||
-        Control::copyOutputTest(rawstr) ||
-        Control::pasteInputTest(rawstr)
-      ) {
-        Langu::ageMessage::printResponse(
-          SENTENCE_BOOLEAN_INSTANT_QUESTION_FORBIDDEN_CONTROLLER
-        );
+      else {
+        mt_uti::BOOLEANIZER_CODE code = Boolean::avoidStringTest(rawstr);
+
+        // no
+        if (code == mt_uti::BOOLEANIZER_FALSE) {
+          return BOOLEAN_INSTANT_QUESTION_NO;
+        }
+        // yes
+        else if (code == mt_uti::BOOLEANIZER_TRUE) {
+          return BOOLEAN_INSTANT_QUESTION_YES;
+        }
       }
-      // yes
-      else if (Langu::ageBooleanizer::test(rawstr)) {
-        return BOOLEAN_INSTANT_QUESTION_YES;
-      }
-      else break; // no
     }
 
-    return BOOLEAN_INSTANT_QUESTION_NO;
+    return BOOLEAN_INSTANT_QUESTION_CANCELED;
   }
 }
 

@@ -94,7 +94,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR raw) override;
+    void strargv(mt::CR_STR rawstr) override;
 
     Word(
       mt::CR_STR keyw,
@@ -117,7 +117,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR raw) override;
+    void strargv(mt::CR_STR rawstr) override;
 
     Number(
       mt::CR_STR keyw,
@@ -147,7 +147,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR raw) override;
+    void strargv(mt::CR_STR rawstr) override;
 
     Boolean(
       mt::CR_STR keyw,
@@ -161,10 +161,13 @@ namespace cli_menu {
     Boolean() = delete;
     void destroy() override;
 
-    // ask yes or no
+    // extended booleanizer test with controllers accepted
+    static mt_uti::BOOLEANIZER_CODE avoidStringTest(mt::CR_STR rawstr);
+
+    // interface ask yes or no (cancelable)
     static BOOLEAN_INSTANT_QUESTION_CODE instantQuestion(
-      const SENTENCE_CODE &responseCode,  // the 'xMessage::sentences[responseCode]' is expected
-      mt::CR_STR replacementText          // to have 'xManager::placeholder' that will be replaced by 'replacementText'.
+      const SENTENCE_CODE &responseCode,
+      mt::CR_STR replacementText
     );
   };
 }
