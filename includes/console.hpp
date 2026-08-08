@@ -59,6 +59,11 @@ namespace cli_menu {
   public:
     Console() = delete;
 
+    // predefined console codes for indentation coloring
+    inline static mt::ARR<CONSOLE_CODE, 2>
+      StickedCodes { CONSOLE_HINT_1, CONSOLE_HINT_2 },
+      BranchedCodes { CONSOLE_HINT_3, CONSOLE_HINT_2 };
+
     inline static bool outlineStyle = true;
     inline static char boundaryCharacter = '-';
     inline static size_t boundaryLineLength = 45;

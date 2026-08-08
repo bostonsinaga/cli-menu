@@ -141,11 +141,6 @@ namespace cli_menu {
   public:
     Data() = delete;
 
-    // predefined console code array for 'print' argument
-    inline static mt::ARR<CONSOLE_CODE, 2>
-      ConsoleCodeSticked { CONSOLE_HINT_1, CONSOLE_HINT_2 },
-      ConsoleCodeBranched { CONSOLE_HINT_3, CONSOLE_HINT_2 };
-
     /** Register Vector */
 
     inline static void registerTexts(Command *comkey) {
