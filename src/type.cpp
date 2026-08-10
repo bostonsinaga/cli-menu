@@ -207,12 +207,12 @@ namespace cli_menu {
         // forbidden controllers
         if (Control::stringIsController(str)) {
           Langu::ageMessage::printTemplateResponse(
-            SENTENCE_FORBIDDEN_CONTROLLER, str
+            SENTENCE_FORBIDDEN_CONTROLLER, {str}
           );
         }
         // unknown value
         else Langu::ageMessage::printTemplateResponse(
-          SENTENCE_UNKNOWN_VALUE, Console::LimitedText::trim(str)
+          SENTENCE_UNKNOWN_VALUE, {Console::LimitedText::trim(str)}
         );
       }
       else mt_uti::VecTool<double>::concatCut(numbers[1], numbers[0]);
@@ -292,12 +292,12 @@ namespace cli_menu {
       // forbidden controllers
       else if (Control::stringIsController(rawstr)) {
         Langu::ageMessage::printTemplateResponse(
-          SENTENCE_FORBIDDEN_CONTROLLER, rawstr
+          SENTENCE_FORBIDDEN_CONTROLLER, {rawstr}
         );
       }
       // unknown value
       else Langu::ageMessage::printTemplateResponse(
-        SENTENCE_UNKNOWN_VALUE, Console::LimitedText::trim(rawstr)
+        SENTENCE_UNKNOWN_VALUE, {Console::LimitedText::trim(rawstr)}
       );
     }
 
@@ -311,7 +311,7 @@ namespace cli_menu {
     std::string rawstr;
 
     Langu::ageMessage::printTemplateResponse(
-      responseCode, replacementText, true
+      responseCode, {replacementText}, true
     );
 
     while (Control::cinDialogInput(rawstr, true)) {

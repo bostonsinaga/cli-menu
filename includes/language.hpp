@@ -6,6 +6,7 @@
 namespace cli_menu {
 
   enum SENTENCE_CODE {
+    SENTENCE_ARGUMENT_ADDED,
     SENTENCE_ARGUMENT_REQUIRED,
     SENTENCE_CLIPBOARD_OPEN_FAILURE,
     SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE,
@@ -96,7 +97,7 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 35;
+  constexpr int SENTENCE_TOTAL = 36;
   constexpr int CONTROL_TOTAL = 25;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
@@ -172,6 +173,7 @@ namespace cli_menu {
 
     struct ageMessage {
       static void setSentences(
+        mt::CR_STR argumentAddedSentence,
         mt::CR_STR argumentRequiredSentence,
         mt::CR_STR sentenceClipboardOpenFailure,
         mt::CR_STR sentenceClipboardGlobalLockFailure,
@@ -216,7 +218,7 @@ namespace cli_menu {
 
       static void printTemplateResponse(
         const SENTENCE_CODE &responseCode,
-        mt::CR_STR replacementText,
+        mt::VEC_STR replacementTexts,
         mt::CR_BOL withYesOrNoLabel = false
       );
 

@@ -142,8 +142,7 @@ namespace cli_menu {
             );
           }
           else Langu::ageMessage::printTemplateResponse(
-            SENTENCE_KEYWORD_NOT_FOUND,
-            filename
+            SENTENCE_KEYWORD_NOT_FOUND, {filename}
           );
         }
 
@@ -208,15 +207,14 @@ namespace cli_menu {
           outputText, filename, false
         )) {
           Langu::ageMessage::printTemplateResponse(
-            SENTENCE_FILE_WRITE_SUCCEED,
-            filename
+            SENTENCE_FILE_WRITE_SUCCEED, {filename}
           );
 
           return COMMAND_CALLBACK_DONE;
         }
       }
       else Langu::ageMessage::printTemplateResponse(
-        SENTENCE_EMPTY_OUTPUT_NAMED, owner->getKeyword()
+        SENTENCE_EMPTY_OUTPUT_NAMED, {owner->getKeyword()}
       );
     }
 
@@ -279,7 +277,9 @@ namespace cli_menu {
 
         // file write failed message
         if (callbackCode == COMMAND_CALLBACK_ERROR) {
-          Langu::ageMessage::printResponse(SENTENCE_FILE_WRITE_FAILURE);
+          Langu::ageMessage::printTemplateResponse(
+            SENTENCE_FILE_WRITE_FAILURE, {filename}
+          );
         }
 
         return callbackCode;

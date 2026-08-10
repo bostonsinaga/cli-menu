@@ -93,7 +93,7 @@ namespace cli_menu {
         ) {
           Langu::ageMessage::printTemplateResponse(
             SENTENCE_PARAMETER_REQUIRED,
-            keyword
+            {keyword}
           );
 
           Command::interruptionDialogued = true;
@@ -121,7 +121,7 @@ namespace cli_menu {
 
       Langu::ageMessage::printTemplateResponse(
         SENTENCE_PARAMETER_REQUIRED,
-        keyword
+        {keyword}
       );
 
       if (dialogued) return dialog();
@@ -153,7 +153,7 @@ namespace cli_menu {
 
         Langu::ageMessage::printTemplateResponse(
           SENTENCE_PARAMETER_REQUIRED,
-          firstRequiredChild->keyword
+          {firstRequiredChild->keyword}
         );
 
         if (dialogued) return firstRequiredChild->dialog();
@@ -376,7 +376,7 @@ namespace cli_menu {
 
         Langu::ageMessage::printTemplateResponse(
           SENTENCE_PARAMETER_REQUIRED,
-          firstRequiredChild->keyword
+          {firstRequiredChild->keyword}
         );
       }
       else return igniteCallbacks();
@@ -561,7 +561,7 @@ namespace cli_menu {
         if (hasChildren()) {
           Langu::ageMessage::printTemplateResponse(
             SENTENCE_KEYWORD_NOT_FOUND,
-            Command::raws.back()
+            {Command::raws.back()}
           );
         }
         else { // this is a leaf

@@ -47,7 +47,9 @@ namespace cli_menu {
   // MESSAGE |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {    
+  mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {
+    // SENTENCE_ARGUMENT_ADDED
+    "$ arguments added to '$'",
     // SENTENCE_ARGUMENT_REQUIRED
     "prohibited without explicit arguments",
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
@@ -71,7 +73,7 @@ namespace cli_menu {
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
-    "cannot write file because the path or filename is invalid, permission is not granted, or the disk is full",
+    "cannot write output to '$'",
     // SENTENCE_FILE_WRITE_SUCCEED
     "output is written to '$'",
     // SENTENCE_FORBIDDEN_CONTROLLER
@@ -121,6 +123,8 @@ namespace cli_menu {
   }}};
 
   CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
+    // SENTENCE_ARGUMENT_ADDED
+    CONSOLE_CORRECT,
     // SENTENCE_ARGUMENT_REQUIRED
     CONSOLE_ERROR,
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
@@ -194,6 +198,7 @@ namespace cli_menu {
   };
 
   void Langu::ageMessage::setSentences(
+    mt::CR_STR argumentAddedSentence,
     mt::CR_STR argumentRequiredSentence,
     mt::CR_STR sentenceClipboardOpenFailure,
     mt::CR_STR sentenceClipboardGlobalLockFailure,
@@ -230,6 +235,7 @@ namespace cli_menu {
     mt::CR_STR resetOutputDescendantsSentence,
     mt::CR_STR unknownValueSentence
   ) {
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_ADDED] = argumentAddedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = sentenceClipboardOpenFailure;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE] = sentenceClipboardGlobalLockFailure;
@@ -280,20 +286,42 @@ namespace cli_menu {
 
   void Langu::ageMessage::printTemplateResponse(
     const SENTENCE_CODE &responseCode,
-    mt::CR_STR replacementText,
+    mt::VEC_STR replacementTexts,
     mt::CR_BOL withYesOrNoLabel
   ) {
     std::string templateString = Langu::xMessage::sentences
       [Langu::xManager::currentISOCode][responseCode];
 
-    size_t foundIndex = templateString.find(xManager::placeholder);
+    size_t startPosition = 0;
+    mt::VEC_SZ foundIndexes;
 
-    // insert 'replacementText' into placeholder
-    if (foundIndex != std::string::npos) {
-      templateString = templateString.substr(0, foundIndex) + replacementText
-        + templateString.substr(foundIndex + xManager::placeholder.length());
+    do { // find all occurrence indexes of the placeholder
+      foundIndexes.push_back(
+        templateString.find(xManager::placeholder, startPosition + 1)
+      );
+
+      // set checkpoint
+      startPosition = foundIndexes.back();
+
+    } while (startPosition != std::string::npos);
+
+    // the last must be 'std::npos'
+    foundIndexes.pop_back();
+
+    // erase excessive 'foundIndexes' over 'replacementTexts'
+    if (foundIndexes.size() > replacementTexts.size()) {
+      mt_uti::VecTool<size_t>::eraseIntervalStable(
+        foundIndexes, { replacementTexts.size(), foundIndexes.size() - 1 }
+      );
     }
 
+    // insert each 'replacementTexts' into placeholder
+    for (int i = 0; i < foundIndexes.size(); i++) {
+      templateString = templateString.substr(0, foundIndexes[i]) + replacementTexts[i]
+        + templateString.substr(foundIndexes[i] + xManager::placeholder.length());
+    }
+
+    // print replaced placeholder string
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
       templateString + (withYesOrNoLabel ? " " + Langu::ageBooleanizer::getYesOrNoLabel() : "")
