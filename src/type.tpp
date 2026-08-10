@@ -8,7 +8,7 @@ namespace cli_menu {
     if (Data::isEmpty<T>(this)) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
     }
-    else Data::print<T>(this, Data::ConsoleCodeSticked, IndentSticked());
+    else Data::print<T>(this, Console::StickedCodes, IndentSticked());
   }
 
   template <UNORMAP_COMVEC_TYPE T>
@@ -26,7 +26,7 @@ namespace cli_menu {
 
             Data::print<T>(
               static_cast<Command*>(current),
-              Data::ConsoleCodeBranched,
+              Console::BranchedCodes,
               IndentBranched()
             );
           }

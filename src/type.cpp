@@ -22,7 +22,7 @@ namespace cli_menu {
     if (Data::isTextsEmpty(this)) {
       Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
     }
-    else Data::printTexts(this, Data::ConsoleCodeSticked, IndentSticked());
+    else Data::printTexts(this, Console::StickedCodes, IndentSticked());
   }
 
   void Parameter::printChildrenOutputs() {
@@ -34,7 +34,7 @@ namespace cli_menu {
 
           Data::printTexts(
             static_cast<Command*>(current),
-            Data::ConsoleCodeBranched,
+            Console::BranchedCodes,
             IndentBranched()
           );
 
@@ -158,7 +158,7 @@ namespace cli_menu {
 
   void Word::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    Data::xpushWord(this, rawstr);
+    Data::addWords(this, mt_uti::StrTool::whitespaceSliceExceptQuotes(rawstr));
   }
 
   /** NUMBER */
@@ -196,7 +196,29 @@ namespace cli_menu {
 
   void Number::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    Data::addNumbers(this, mt_uti::Scanner::parseNumbers<double>(rawstr));
+    mt::VEC_DBL numbers[2];
+    mt::VEC_STR vecstr = mt_uti::StrTool::whitespaceSlice(rawstr);
+
+    // parse only numbers
+    for (mt::CR_STR str : vecstr) {
+      numbers[0] = mt_uti::Scanner::parseNumbers<double>(str);
+
+      if (numbers[0].empty()) {
+        // forbidden controllers
+        if (Control::stringIsController(str)) {
+          Langu::ageMessage::printTemplateResponse(
+            SENTENCE_FORBIDDEN_CONTROLLER, str
+          );
+        }
+        // unknown value
+        else Langu::ageMessage::printTemplateResponse(
+          SENTENCE_UNKNOWN_VALUE, Console::LimitedText::trim(str)
+        );
+      }
+      else mt_uti::VecTool<double>::concatCut(numbers[1], numbers[0]);
+    }
+
+    Data::addNumbers(this, numbers[1]);
   }
 
   /** BOOLEAN */
@@ -209,24 +231,6 @@ namespace cli_menu {
     hyphens = "--";
     stringifiedTypeIndex = STRINGIFIED_TYPE_INPUT_BOOLEAN;
     Data::registerBooleans(this);
-  }
-
-  void Boolean::clipboardInputPaste() {
-    required.first = false;
-    mt::VEC_BOL conditions;
-    mt_uti::BOOLEANIZER_CODE code;
-    mt::VEC_STR vec = mt_uti::StrTool::whitespaceSlice(Clipboard::pasteText());
-
-    // parse only booleans
-    for (mt::CR_STR str : vec) {
-      code = Boolean::avoidStringTest(str);
-
-      if (code != mt_uti::BOOLEANIZER_OTHER) {
-        conditions.push_back(code);
-      }
-    }
-
-    Data::addBooleans(this, conditions);
   }
 
   void Boolean::destroy() {
@@ -252,14 +256,23 @@ namespace cli_menu {
 
   void Boolean::strargv(mt::CR_STR rawstr) {
     required.first = false;
-    mt_uti::BOOLEANIZER_CODE code = Boolean::avoidStringTest(rawstr);
+    mt::VEC_BOL conditions;
+    mt_uti::BOOLEANIZER_CODE bolcode;
+    mt::VEC_STR vecstr = mt_uti::StrTool::whitespaceSlice(rawstr);
 
-    if (code != mt_uti::BOOLEANIZER_OTHER) {
-      Data::xpushBoolean(this, code);
+    // parse only booleans
+    for (mt::CR_STR str : vecstr) {
+      bolcode = Boolean::controllerTest(str);
+
+      if (bolcode != mt_uti::BOOLEANIZER_OTHER) {
+        conditions.push_back(bolcode);
+      }
     }
+
+    Data::addBooleans(this, conditions);
   }
 
-  mt_uti::BOOLEANIZER_CODE Boolean::avoidStringTest(mt::CR_STR rawstr) {
+  mt_uti::BOOLEANIZER_CODE Boolean::controllerTest(mt::CR_STR rawstr) {
 
     // booleanizer test
     mt_uti::BOOLEANIZER_CODE code = Langu::ageBooleanizer::test(rawstr);
@@ -278,8 +291,8 @@ namespace cli_menu {
       }
       // forbidden controllers
       else if (Control::stringIsController(rawstr)) {
-        Langu::ageMessage::printResponse(
-          SENTENCE_BOOLEAN_FORBIDDEN_CONTROLLER
+        Langu::ageMessage::printTemplateResponse(
+          SENTENCE_FORBIDDEN_CONTROLLER, rawstr
         );
       }
       // unknown value
@@ -320,7 +333,7 @@ namespace cli_menu {
         Control::printBooleanAvailableValues(false, IndentSticked());
       }
       else {
-        mt_uti::BOOLEANIZER_CODE code = Boolean::avoidStringTest(rawstr);
+        mt_uti::BOOLEANIZER_CODE code = Boolean::controllerTest(rawstr);
 
         // no
         if (code == mt_uti::BOOLEANIZER_FALSE) {

@@ -142,7 +142,6 @@ namespace cli_menu {
 
   class Boolean : public Parameter {
   protected:
-    void clipboardInputPaste() override;
     void printInput() override;
     void printChildrenInputs() override;
     void resetInput() override;
@@ -162,7 +161,7 @@ namespace cli_menu {
     void destroy() override;
 
     // extended booleanizer test with controllers accepted
-    static mt_uti::BOOLEANIZER_CODE avoidStringTest(mt::CR_STR rawstr);
+    static mt_uti::BOOLEANIZER_CODE controllerTest(mt::CR_STR rawstr);
 
     // interface ask yes or no (cancelable)
     static BOOLEAN_INSTANT_QUESTION_CODE instantQuestion(
