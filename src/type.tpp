@@ -56,6 +56,18 @@ namespace cli_menu {
 
     Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_DESCENDANTS);
   }
+
+  template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+  void Parameter::strargv_temp(mt::CR_VEC<U> vec) {
+    required.first = false;
+    Data::add<T>(this, vec);
+
+    if (!vec.empty()) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_ARGUMENT_ADDED, { std::to_string(vec.size()), keyword }
+      );
+    }
+  }
 }
 
 #endif // __CLI_MENU__TYPE_TPP__

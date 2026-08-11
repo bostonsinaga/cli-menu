@@ -8,7 +8,7 @@ namespace cli_menu {
   /** PARAMETER */
 
   void Parameter::clipboardInputPaste() {
-    strargv(Clipboard::pasteText());
+    strargv({Clipboard::pasteText()});
   }
 
   void Parameter::clipboardOutputCopy() {
@@ -156,9 +156,17 @@ namespace cli_menu {
     resetDescendantInputs_temp<WordMaps>();
   }
 
-  void Word::strargv(mt::CR_STR rawstr) {
-    required.first = false;
-    Data::addWords(this, mt_uti::StrTool::whitespaceSliceExceptQuotes(rawstr));
+  void Word::strargv(mt::CR_VEC_STR rawstrs) {
+    mt::VEC_STR vecstr;
+
+    // strings slicing in vector
+    for (mt::CR_STR str : rawstrs) {
+      mt_uti::VecTool<std::string>::concatCopy(
+        vecstr, mt_uti::StrTool::whitespaceSliceExceptQuotes(str)
+      );
+    }
+
+    strargv_temp<WordMaps, std::string>(vecstr);
   }
 
   /** NUMBER */
@@ -194,10 +202,16 @@ namespace cli_menu {
     resetDescendantInputs_temp<NumberMaps>();
   }
 
-  void Number::strargv(mt::CR_STR rawstr) {
-    required.first = false;
+  void Number::strargv(mt::CR_VEC_STR rawstrs) {
     mt::VEC_DBL numbers[2];
-    mt::VEC_STR vecstr = mt_uti::StrTool::whitespaceSlice(rawstr);
+    mt::VEC_STR vecstr;
+
+    // strings slicing in vector
+    for (mt::CR_STR str : rawstrs) {
+      mt_uti::VecTool<std::string>::concatCopy(
+        vecstr, mt_uti::StrTool::whitespaceSlice(str)
+      );
+    }
 
     // parse only numbers
     for (mt::CR_STR str : vecstr) {
@@ -218,7 +232,7 @@ namespace cli_menu {
       else mt_uti::VecTool<double>::concatCut(numbers[1], numbers[0]);
     }
 
-    Data::addNumbers(this, numbers[1]);
+    strargv_temp<NumberMaps, double>(numbers[1]);
   }
 
   /** BOOLEAN */
@@ -254,11 +268,17 @@ namespace cli_menu {
     resetDescendantInputs_temp<BooleanMaps>();
   }
 
-  void Boolean::strargv(mt::CR_STR rawstr) {
-    required.first = false;
+  void Boolean::strargv(mt::CR_VEC_STR rawstrs) {
     mt::VEC_BOL conditions;
     mt_uti::BOOLEANIZER_CODE bolcode;
-    mt::VEC_STR vecstr = mt_uti::StrTool::whitespaceSlice(rawstr);
+    mt::VEC_STR vecstr;
+
+    // strings slicing in vector
+    for (mt::CR_STR str : rawstrs) {
+      mt_uti::VecTool<std::string>::concatCopy(
+        vecstr, mt_uti::StrTool::whitespaceSlice(str)
+      );
+    }
 
     // parse only booleans
     for (mt::CR_STR str : vecstr) {
@@ -269,7 +289,7 @@ namespace cli_menu {
       }
     }
 
-    Data::addBooleans(this, conditions);
+    strargv_temp<BooleanMaps, bool>(conditions);
   }
 
   mt_uti::BOOLEANIZER_CODE Boolean::controllerTest(mt::CR_STR rawstr) {

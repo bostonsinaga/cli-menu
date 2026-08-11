@@ -48,6 +48,9 @@ namespace cli_menu {
     template <UNORMAP_COMVEC_TYPE T>
     void resetDescendantInputs_temp();
 
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    void strargv_temp(mt::CR_VEC<U> vec);
+
     /**
      * Avoid keyword duplication (will destroy existing child
      * if the keyword is the same as the new child keyword).
@@ -94,7 +97,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR rawstr) override;
+    void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Word(
       mt::CR_STR keyw,
@@ -117,7 +120,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR rawstr) override;
+    void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Number(
       mt::CR_STR keyw,
@@ -146,7 +149,7 @@ namespace cli_menu {
     void printChildrenInputs() override;
     void resetInput() override;
     void resetDescendantInputs() override;
-    void strargv(mt::CR_STR rawstr) override;
+    void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Boolean(
       mt::CR_STR keyw,
