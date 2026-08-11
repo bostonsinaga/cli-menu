@@ -57,7 +57,7 @@ namespace cli_menu {
     // this code always set before moving to another command
     COMMAND_CODE statusCode = COMMAND_ONGOING;
 
-    // return false to stop the program 
+    // return false to stop the program
     CODE_CALLBACK callback = Command::defaultCallback;
 
     // prohibit controllers after match
@@ -139,7 +139,7 @@ namespace cli_menu {
 
     virtual void clipboardInputPaste() {}
     virtual void clipboardOutputCopy() {}
-    virtual void strargv(mt::CR_STR raw) {}
+    virtual void strargv(mt::CR_VEC_STR rawstrs) {}
     virtual void printInput() {}
     virtual void printOutput() {}
     virtual void printChildrenInputs() {}

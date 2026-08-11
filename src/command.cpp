@@ -53,6 +53,9 @@ namespace cli_menu {
     Command *firstNeighbor = nullptr,
       *firstChild = nullptr;
 
+    // strings that are not detected as keyword will become this arguments
+    mt::VEC_STR argvraws;
+
     /**
      * The string vector will 'pop_back()'
      * until it is empty to stop this loop.
@@ -76,6 +79,9 @@ namespace cli_menu {
 
       // keyword is detected
       if (firstChild || firstNeighbor) {
+
+        // push arguments to 'Data::unormap::comvec'
+        if (!argvraws.empty()) strargv(argvraws);
         Command::raws.pop_back();
 
         // pseudo-child callbacks and program ends at initial match
@@ -103,18 +109,21 @@ namespace cli_menu {
 
           // the required boolean automatically has value 'true'
           if (required.first && stringifiedTypeIndex == STRINGIFIED_TYPE_INPUT_BOOLEAN) {
-            strargv("1");
+            strargv({"1"});
           }
 
           if (firstChild) return firstChild->match();
           return firstNeighbor->match();
         }
       }
-      else { // push argument to 'Data' unordered map vector
-        strargv(Command::raws.back());
+      else { // push to arguments buffer
+        argvraws.push_back(Command::raws.back());
         Command::raws.pop_back();
       }
     }
+
+    // push arguments to 'Data::unormap::comvec'
+    if (!argvraws.empty()) strargv(argvraws);
 
     // uncompleted required this
     if (required.first) {
@@ -309,7 +318,7 @@ namespace cli_menu {
       }
       // WILD VALUE
       else {
-        if (editing) strargv(rawstr);
+        if (editing) strargv({rawstr});
         else { // selection (match in dialog)
           Command *lastCom = goDown(rawstr);
           if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
