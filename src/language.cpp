@@ -292,7 +292,7 @@ namespace cli_menu {
     std::string templateString = Langu::xMessage::sentences
       [Langu::xManager::currentISOCode][responseCode];
 
-    size_t startPosition = 0;
+    int startPosition = -1;
     mt::VEC_SZ foundIndexes;
 
     do { // find all occurrence indexes of the placeholder
