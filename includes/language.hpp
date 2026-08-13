@@ -169,6 +169,12 @@ namespace cli_menu {
       static void changePlaceholder(mt::CR_STR newPlaceholder) {
         xManager::placeholder = newPlaceholder;
       }
+
+      // insert each replacement into each placeholder
+      static std::string replaceTemplateString(
+        mt::CR_STR templateString,
+        mt::VEC_STR replacementStrings
+      );
     };
 
     struct ageMessage {
@@ -218,7 +224,7 @@ namespace cli_menu {
 
       static void printTemplateResponse(
         const SENTENCE_CODE &responseCode,
-        mt::VEC_STR replacementTexts,
+        mt::VEC_STR replacementStrings,
         mt::CR_BOL withYesOrNoLabel = false
       );
 

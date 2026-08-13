@@ -43,6 +43,52 @@ namespace cli_menu {
     Langu::xProgram::labels.erase(existingISOCode);
   }
 
+  std::string Langu::ageManager::replaceTemplateString(
+    mt::CR_STR templateString,
+    mt::VEC_STR replacementStrings
+  ) {
+    size_t startPosition = std::string::npos;
+    mt::VEC_SZ foundIndexes;
+
+    do { // find all occurrence indexes of the placeholder
+      foundIndexes.push_back(
+        templateString.find(Langu::xManager::placeholder, startPosition + 1)
+      );
+
+      // next slice initial index
+      startPosition = foundIndexes.back();
+
+    } while (startPosition != std::string::npos);
+
+    // the last must be 'std::npos'
+    foundIndexes.pop_back();
+
+    // erase excessive 'foundIndexes' over 'replacementStrings'
+    if (foundIndexes.size() > replacementStrings.size()) {
+      mt_uti::VecTool<size_t>::eraseIntervalStable(
+        foundIndexes, { replacementStrings.size(), foundIndexes.size() - 1 }
+      );
+    }
+
+    // copy for return
+    std::string replacedString;
+    startPosition = 0;
+
+    for (int i = 0; i < foundIndexes.size(); i++) {
+
+      // insert each replacement into each placeholder
+      replacedString += templateString.substr(
+        startPosition, foundIndexes[i] - startPosition
+      ) + replacementStrings[i];
+
+      // next slice initial index
+      startPosition = foundIndexes[i] + Langu::xManager::placeholder.length();
+    }
+
+    // add the rest
+    return replacedString + templateString.substr(startPosition);
+  }
+
   //_________|
   // MESSAGE |
   //_________|
@@ -286,45 +332,15 @@ namespace cli_menu {
 
   void Langu::ageMessage::printTemplateResponse(
     const SENTENCE_CODE &responseCode,
-    mt::VEC_STR replacementTexts,
+    mt::VEC_STR replacementStrings,
     mt::CR_BOL withYesOrNoLabel
   ) {
-    std::string templateString = Langu::xMessage::sentences
-      [Langu::xManager::currentISOCode][responseCode];
-
-    int startPosition = -1;
-    mt::VEC_SZ foundIndexes;
-
-    do { // find all occurrence indexes of the placeholder
-      foundIndexes.push_back(
-        templateString.find(xManager::placeholder, startPosition + 1)
-      );
-
-      // set checkpoint
-      startPosition = foundIndexes.back();
-
-    } while (startPosition != std::string::npos);
-
-    // the last must be 'std::npos'
-    foundIndexes.pop_back();
-
-    // erase excessive 'foundIndexes' over 'replacementTexts'
-    if (foundIndexes.size() > replacementTexts.size()) {
-      mt_uti::VecTool<size_t>::eraseIntervalStable(
-        foundIndexes, { replacementTexts.size(), foundIndexes.size() - 1 }
-      );
-    }
-
-    // insert each 'replacementTexts' into placeholder
-    for (int i = 0; i < foundIndexes.size(); i++) {
-      templateString = templateString.substr(0, foundIndexes[i]) + replacementTexts[i]
-        + templateString.substr(foundIndexes[i] + xManager::placeholder.length());
-    }
-
-    // print replaced placeholder string
     Console::logResponse(
       Langu::xMessage::consoleCodes[responseCode],
-      templateString + (withYesOrNoLabel ? " " + Langu::ageBooleanizer::getYesOrNoLabel() : "")
+      Langu::ageManager::replaceTemplateString(
+        Langu::xMessage::sentences[Langu::xManager::currentISOCode][responseCode],
+        replacementStrings
+      ) + (withYesOrNoLabel ? " " + Langu::ageBooleanizer::getYesOrNoLabel() : "")
     );
   }
 
