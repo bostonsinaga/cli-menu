@@ -252,7 +252,7 @@ namespace cli_menu {
       }
       // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {
-        printInput();
+        printInput(true);
       }
       // VIEW CHILDREN INPUTS
       else if (Control::viewInputChildrenTest(rawstr)) {
@@ -260,7 +260,7 @@ namespace cli_menu {
       }
       // VIEW THIS OUTPUT
       else if (Control::viewOutputThisTest(rawstr)) {
-        printOutput();
+        printOutput(true);
       }
       // VIEW CHILDREN OUTPUTS
       else if (Control::viewOutputChildrenTest(rawstr)) {
@@ -268,7 +268,7 @@ namespace cli_menu {
       }
       // RESET THIS INPUT
       else if (Control::resetInputThisTest(rawstr)) {
-        resetInput();
+        resetInput(true);
       }
       // RESET DESCENDANT INPUTS
       else if (Control::resetInputDescendantsTest(rawstr)) {
@@ -276,7 +276,7 @@ namespace cli_menu {
       }
       // RESET THIS OUTPUT
       else if (Control::resetOutputThisTest(rawstr)) {
-        resetOutput();
+        resetOutput(true);
       }
       // RESET DESCENDANT OUTPUTS
       else if (Control::resetOutputDescendantsTest(rawstr)) {
@@ -284,8 +284,8 @@ namespace cli_menu {
       }
       // RESET THIS DATA
       else if (Control::resetDataThisTest(rawstr)) {
-        resetInput();
-        resetOutput();
+        resetInput(true);
+        resetOutput(true);
       }
       // RESET DESCENDANT DATA
       else if (Control::resetDataDescendantsTest(rawstr)) {

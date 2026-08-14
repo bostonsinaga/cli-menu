@@ -107,14 +107,6 @@ namespace cli_menu {
       return hyphens + keyword == raw;
     }
 
-    /**
-     * The number of children is reduced by the
-     * number of pseudo-commands to ignoring them.
-     */
-    bool hasChildren() {
-      return numberOfChildren() - pseudosCount > 0;
-    }
-
   protected:
     // changeable and initial reference
     mt::PAIR_BOL required = {false, false};
@@ -129,25 +121,34 @@ namespace cli_menu {
      */
     inline static mt::VEC_STR raws = {};
 
+    // only constructable via 'Parameter' inheritors
     Command(
       mt::CR_STR keyword_in,
       mt::CR_STR description_in,
       mt::CR<CODE_CALLBACK> callback_in
     );
 
+    /**
+     * The number of children is reduced by the
+     * number of pseudo-commands to ignoring them.
+     */
+    bool hasChildren() {
+      return numberOfChildren() - pseudosCount > 0;
+    }
+
     /** End user generated data */
 
     virtual void clipboardInputPaste() {}
     virtual void clipboardOutputCopy() {}
-    virtual void strargv(mt::CR_VEC_STR rawstrs) {}
-    virtual void printInput() {}
-    virtual void printOutput() {}
+    virtual void printInput(mt::CR_BOL withDesignedSticked) {}
+    virtual void printOutput(mt::CR_BOL withDesignedSticked) {}
     virtual void printChildrenInputs() {}
     virtual void printChildrenOutputs() {}
-    virtual void resetInput() {}
-    virtual void resetOutput() {}
+    virtual void resetInput(mt::CR_BOL withMessage) {}
+    virtual void resetOutput(mt::CR_BOL withMessage) {}
     virtual void resetDescendantInputs() {}
     virtual void resetDescendantOutputs() {}
+    virtual void strargv(mt::CR_VEC_STR rawstrs) {}
 
   public:
     Command() = delete;

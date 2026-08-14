@@ -31,25 +31,27 @@ namespace cli_menu {
 
     void clipboardInputPaste() override;
     void clipboardOutputCopy() override;
-    void printOutput() override;
-    void printChildrenOutputs() override;
-    void resetOutput() override;
-    void resetDescendantOutputs() override;
+    void printOutput(mt::CR_BOL withDesignedSticked) override;
+    void resetOutput(mt::CR_BOL withMessage) override;
 
-    template <UNORMAP_COMVEC_TYPE T>
-    void printInput_temp();
+    void displayChildrenData(mt::CR_BOL inputOrOutput);
+    void cleanDescendantData(mt::CR_BOL inputOrOutput);
 
-    template <UNORMAP_COMVEC_TYPE T>
-    void printChildrenInputs_temp();
+    void printChildrenInputs() override {
+      displayChildrenData(true);
+    }
 
-    template <UNORMAP_COMVEC_TYPE T>
-    void resetInput_temp();
+    void printChildrenOutputs() override {
+      displayChildrenData(false);
+    }
 
-    template <UNORMAP_COMVEC_TYPE T>
-    void resetDescendantInputs_temp();
+    void resetDescendantInputs() override {
+      cleanDescendantData(true);
+    }
 
-    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
-    void strargv_temp(mt::CR_VEC<U> vec);
+    void resetDescendantOutputs() override {
+      cleanDescendantData(false);
+    }
 
     /**
      * Avoid keyword duplication (will destroy existing child
@@ -93,10 +95,8 @@ namespace cli_menu {
 
   class Word : public Parameter {
   protected:
-    void printInput() override;
-    void printChildrenInputs() override;
-    void resetInput() override;
-    void resetDescendantInputs() override;
+    void printInput(mt::CR_BOL withDesignedSticked) override;
+    void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Word(
@@ -116,10 +116,8 @@ namespace cli_menu {
 
   class Number : public Parameter {
   protected:
-    void printInput() override;
-    void printChildrenInputs() override;
-    void resetInput() override;
-    void resetDescendantInputs() override;
+    void printInput(mt::CR_BOL withDesignedSticked) override;    
+    void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Number(
@@ -145,10 +143,8 @@ namespace cli_menu {
 
   class Boolean : public Parameter {
   protected:
-    void printInput() override;
-    void printChildrenInputs() override;
-    void resetInput() override;
-    void resetDescendantInputs() override;
+    void printInput(mt::CR_BOL withDesignedSticked) override;
+    void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;
 
     Boolean(
@@ -174,5 +170,4 @@ namespace cli_menu {
   };
 }
 
-#include "type.tpp"
 #endif // __CLI_MENU__TYPE_HPP__

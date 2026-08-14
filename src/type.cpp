@@ -18,49 +18,62 @@ namespace cli_menu {
     else Clipboard::copyText(&Data::getText(this));
   }
 
-  void Parameter::printOutput() {
-    if (Data::isTextsEmpty(this)) {
-      Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+  void Parameter::printOutput(mt::CR_BOL withDesignedSticked) {
+    if (withDesignedSticked) {
+      if (Data::isTextsEmpty(this)) {
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+      }
+      else Data::printTexts(this, Console::StickedCodes, IndentSticked());
     }
-    else Data::printTexts(this, Console::StickedCodes, IndentSticked());
+    else Data::printTexts(this, Console::BranchedCodes, IndentBranched());
   }
 
-  void Parameter::printChildrenOutputs() {
-    if (getChildren()) {
-      getChildren()->traverse(
-        [&](mt_ds::LinkedList *current)->bool {
-
-          static_cast<Command*>(current)->printKeyword(CONSOLE_HINT_1, IndentSticked());
-
-          Data::printTexts(
-            static_cast<Command*>(current),
-            Console::BranchedCodes,
-            IndentBranched()
-          );
-
-          return true;
-        }
-      );
-    }
-  }
-
-  void Parameter::resetOutput() {
+  void Parameter::resetOutput(mt::CR_BOL withMessage) {
     Data::resetTexts(this);
-    Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
+    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
   }
 
-  void Parameter::resetDescendantOutputs() {
+  void Parameter::displayChildrenData(mt::CR_BOL inputOrOutput) {
+    if (hasChildren()) {
+      getChildren()->head()->forEach(
+        [&](mt_ds::LinkedList *current)->bool {
 
+          // only for ortho node
+          if (!static_cast<Command*>(current)->isPseudo()) {
+            std::cout << '\r';
+
+            static_cast<Command*>(current)->printKeyword(
+              CONSOLE_HINT_1, IndentSticked()
+            );
+
+            // input or output selection
+            if (inputOrOutput) static_cast<Parameter*>(current)->printInput(false);
+            else static_cast<Parameter*>(current)->printOutput(false);
+          }
+
+          return true;
+        }
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
+  }
+
+  void Parameter::cleanDescendantData(mt::CR_BOL inputOrOutput) {
+
+    // reset children down to the leaves
     if (getChildren()) {
       getChildren()->traverse(
         [&](mt_ds::LinkedList *current)->bool {
-          Data::resetTexts(static_cast<Command*>(current));
+          if (inputOrOutput) static_cast<Parameter*>(current)->resetInput(false);
+          else static_cast<Parameter*>(current)->resetOutput(false);
           return true;
         }
       );
     }
 
-    Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_DESCENDANTS);
+    Langu::ageMessage::printResponse(
+      inputOrOutput ? SENTENCE_RESET_INPUT_DESCENDANTS : SENTENCE_RESET_OUTPUT_DESCENDANTS
+    );
   }
 
   void Parameter::replaceExistingChildByKeyword(Command *newChild) {
@@ -140,20 +153,19 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
-  void Word::printInput() {
-    printInput_temp<WordMaps>();
+  void Word::printInput(mt::CR_BOL withDesignedSticked) {
+    if (withDesignedSticked) {
+      if (Data::isWordsEmpty(this)) {
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+      }
+      else Data::printWords(this, Console::StickedCodes, IndentSticked());
+    }
+    else Data::printWords(this, Console::BranchedCodes, IndentBranched());
   }
 
-  void Word::printChildrenInputs() {
-    printChildrenInputs_temp<WordMaps>();
-  }
-
-  void Word::resetInput() {
-    resetInput_temp<WordMaps>();
-  }
-
-  void Word::resetDescendantInputs() {
-    resetDescendantInputs_temp<WordMaps>();
+  void Word::resetInput(mt::CR_BOL withMessage) {
+    Data::resetWords(this);
+    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
   }
 
   void Word::strargv(mt::CR_VEC_STR rawstrs) {
@@ -166,7 +178,16 @@ namespace cli_menu {
       );
     }
 
-    strargv_temp<WordMaps, std::string>(vecstr);
+    // save new arguments
+    required.first = false;
+    Data::addWords(this, vecstr);
+
+    // print number of new arguments
+    if (!vecstr.empty()) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_ARGUMENT_ADDED, { std::to_string(vecstr.size()), keyword }
+      );
+    }
   }
 
   /** NUMBER */
@@ -186,20 +207,19 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
-  void Number::printInput() {
-    printInput_temp<NumberMaps>();
+  void Number::printInput(mt::CR_BOL withDesignedSticked) {
+    if (withDesignedSticked) {
+      if (Data::isNumbersEmpty(this)) {
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+      }
+      else Data::printNumbers(this, Console::StickedCodes, IndentSticked());
+    }
+    else Data::printNumbers(this, Console::BranchedCodes, IndentBranched());
   }
 
-  void Number::printChildrenInputs() {
-    printChildrenInputs_temp<NumberMaps>();
-  }
-
-  void Number::resetInput() {
-    resetInput_temp<NumberMaps>();
-  }
-
-  void Number::resetDescendantInputs() {
-    resetDescendantInputs_temp<NumberMaps>();
+  void Number::resetInput(mt::CR_BOL withMessage) {
+    Data::resetNumbers(this);
+    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
   }
 
   void Number::strargv(mt::CR_VEC_STR rawstrs) {
@@ -232,7 +252,16 @@ namespace cli_menu {
       else mt_uti::VecTool<double>::concatCut(numbers[1], numbers[0]);
     }
 
-    strargv_temp<NumberMaps, double>(numbers[1]);
+    // save new arguments
+    required.first = false;
+    Data::addNumbers(this, numbers[1]);
+
+    // print number of new arguments
+    if (!numbers[1].empty()) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_ARGUMENT_ADDED, { std::to_string(numbers[1].size()), keyword }
+      );
+    }
   }
 
   /** BOOLEAN */
@@ -252,20 +281,19 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
-  void Boolean::printInput() {
-    printInput_temp<BooleanMaps>();
+  void Boolean::printInput(mt::CR_BOL withDesignedSticked) {
+    if (withDesignedSticked) {
+      if (Data::isBooleansEmpty(this)) {
+        Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+      }
+      else Data::printBooleans(this, Console::StickedCodes, IndentSticked());
+    }
+    else Data::printBooleans(this, Console::BranchedCodes, IndentBranched());
   }
 
-  void Boolean::printChildrenInputs() {
-    printChildrenInputs_temp<BooleanMaps>();
-  }
-
-  void Boolean::resetInput() {
-    resetInput_temp<BooleanMaps>();
-  }
-
-  void Boolean::resetDescendantInputs() {
-    resetDescendantInputs_temp<BooleanMaps>();
+  void Boolean::resetInput(mt::CR_BOL withMessage) {
+    Data::resetBooleans(this);
+    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
   }
 
   void Boolean::strargv(mt::CR_VEC_STR rawstrs) {
@@ -289,7 +317,16 @@ namespace cli_menu {
       }
     }
 
-    strargv_temp<BooleanMaps, bool>(conditions);
+    // save new arguments
+    required.first = false;
+    Data::addBooleans(this, conditions);
+
+    // print number of new arguments
+    if (!conditions.empty()) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_ARGUMENT_ADDED, { std::to_string(conditions.size()), keyword }
+      );
+    }
   }
 
   mt_uti::BOOLEANIZER_CODE Boolean::controllerTest(mt::CR_STR rawstr) {

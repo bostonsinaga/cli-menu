@@ -141,7 +141,7 @@ namespace cli_menu {
     // SENTENCE_PARAMETER_ALONE
     "this node has no neighbors",
     // SENTENCE_PARAMETER_AT_LEAF
-    "this node does not contain any children",
+    "this node has no children",
     // SENTENCE_PARAMETER_AT_ROOT
     "there are no more parents above",
     // SENTENCE_PARAMETER_REQUIRED
