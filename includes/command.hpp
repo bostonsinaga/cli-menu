@@ -1,8 +1,10 @@
 #ifndef __CLI_MENU__COMMAND_HPP__
 #define __CLI_MENU__COMMAND_HPP__
 
-#include "data.hpp"
+#include <stack>
 #include "clipboard.hpp"
+#include "control.hpp"
+#include "data.hpp"
 
 namespace cli_menu {
 
@@ -63,6 +65,9 @@ namespace cli_menu {
     // prohibit controllers after match
     inline static bool interruptionDialogued = false;
 
+    // on first time call dialog
+    inline static bool onceDialogued = false;
+
     /**
      * Invoke input or output callbacks.
      * Will return 'COMMAND_CALLBACK_DONE' by default
@@ -80,10 +85,7 @@ namespace cli_menu {
     COMMAND_CALLBACK_CODE triggerCallbacks();
 
     // return this command with its status set
-    Command *setStatus(mt::CR<COMMAND_CODE> code) {
-      statusCode = code;
-      return this;
-    }
+    Command *setStatus(mt::CR<COMMAND_CODE> code);
 
     // after dialog interactions
     Command *igniteCallbacks();
@@ -106,6 +108,14 @@ namespace cli_menu {
     bool testHyphens(mt::CR_STR raw) {
       return hyphens + keyword == raw;
     }
+
+    /** Undo & Redo */
+
+    enum UNREDO_DIRECTION { UNREDO_BACKWARD, UNREDO_FORWARD };
+    inline static std::stack<Command*> unredos[2];
+
+    void remember() { Command::unredos[UNREDO_BACKWARD].push(this); }
+    Command *unredo(mt::CR<UNREDO_DIRECTION> dir);
 
   protected:
     // changeable and initial reference
@@ -156,7 +166,7 @@ namespace cli_menu {
     /**
      * Entry point to dialog interactions.
      * The 'raws' only expected as keywords or arguments.
-     * Note that the 'keyword' is not case sensitive.
+     * Note that the 'keyword' is case sensitive.
      */
     Command *match();
 

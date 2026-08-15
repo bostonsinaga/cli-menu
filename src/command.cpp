@@ -141,12 +141,11 @@ namespace cli_menu {
 
     // uncompleted required neighbors with strict parent
     if (firstRequiredNeighbor) {
-
       if (dialogued) {
+        if (Command::onceDialogued) remember();
         return firstRequiredNeighbor->dialog();
       }
-
-      return setStatus(COMMAND_ERROR);
+      else return setStatus(COMMAND_ERROR);
     }
     // parent may not be strict, but at least one required child must be completed
     else if (hasChildren()) {
@@ -165,8 +164,11 @@ namespace cli_menu {
           {firstRequiredChild->keyword}
         );
 
-        if (dialogued) return firstRequiredChild->dialog();
-        return setStatus(COMMAND_ERROR);
+        if (dialogued) {
+          if (Command::onceDialogued) remember();
+          return firstRequiredChild->dialog();
+        }
+        else return setStatus(COMMAND_ERROR);
       }
     }
 
@@ -175,6 +177,7 @@ namespace cli_menu {
   }
 
   Command *Command::dialog() {
+    Command::onceDialogued = true;
     Command::phaseCode = COMMAND_PHASE_DIALOG;
     std::string rawstr, seqNames = generateSequentialRootNames();
 
@@ -301,6 +304,16 @@ namespace cli_menu {
         if (editing) clipboardInputPaste();
         else Langu::ageMessage::printResponse(SENTENCE_FORBIDDEN_HIDDEN_PASTE);
       }
+      // NODE LEVEL UNDO
+      else if (Control::nodeLevelUndoTest(rawstr)) {
+        Command *lastCom = unredo(UNREDO_BACKWARD);
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
+      }
+      // NODE LEVEL REDO
+      else if (Control::nodeLevelRedoTest(rawstr)) {
+        Command *lastCom = unredo(UNREDO_FORWARD);
+        if (lastCom->statusCode != COMMAND_ONGOING) return lastCom;
+      }
       // BACK TO PARENT
       else if (Control::parentBackTest(rawstr)) {
         Command *lastCom = backTo(getParent());
@@ -336,7 +349,10 @@ namespace cli_menu {
         printInterruptionDialoguedResponse();
       }
       // go back to parent
-      else return static_cast<Command*>(topCommand)->dialog();
+      else {
+        remember();
+        return static_cast<Command*>(topCommand)->dialog();
+      }
     }
     // this is root
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_ROOT);
@@ -353,6 +369,9 @@ namespace cli_menu {
     }
     // go to children level
     else if (hasChildren()) {
+      remember();
+
+      // find ortho child
       return static_cast<Command*>(getChildren()->head())
       ->findEach([](Command *current)->bool {
         return !current->pseudo;
@@ -453,6 +472,11 @@ namespace cli_menu {
     }
 
     return COMMAND_CALLBACK_DONE;
+  }
+
+  Command *Command::setStatus(mt::CR<COMMAND_CODE> code) {
+    statusCode = code;
+    return this;
   }
 
   Command *Command::igniteCallbacks() {
@@ -562,7 +586,10 @@ namespace cli_menu {
           */
           if (lastCom->statusCode != COMMAND_ONGOING &&
             lastCom->statusCode != COMMAND_PSEUDO
-          ) return lastCom;
+          ) {
+            remember();
+            return lastCom;
+          }
         }
       }
       else {
@@ -610,11 +637,28 @@ namespace cli_menu {
         printInterruptionDialoguedResponse();
       }
       // go to neighbor
-      else return static_cast<Command*>(firstOrthoNeighbor)->dialog();
+      else {
+        remember();
+        return static_cast<Command*>(firstOrthoNeighbor)->dialog();
+      }
     }
     // has no neighbors
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_ALONE);
 
+    return setStatus(COMMAND_ONGOING);
+  }
+
+  Command *Command::unredo(mt::CR<UNREDO_DIRECTION> dir) {
+
+    // pop the top one and add this in the opposite direction
+    if (!Command::unredos[dir].empty()) {
+      Command *top = Command::unredos[dir].top();
+      Command::unredos[dir].pop();
+      Command::unredos[!dir].push(this);
+      return top->dialog();
+    }
+
+    Langu::ageMessage::printResponse(SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS);
     return setStatus(COMMAND_ONGOING);
   }
 

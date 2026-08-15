@@ -128,6 +128,14 @@ namespace cli_menu {
     return whitespacesCheck(rawstr) == CONTROL_PASTE_INPUT;
   }
 
+  bool Control::nodeLevelUndoTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_NODE_LEVEL_UNDO;
+  }
+
+  bool Control::nodeLevelRedoTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_NODE_LEVEL_REDO;
+  }
+
   bool Control::parentBackTest(mt::CR_STR rawstr) {
     return whitespacesCheck(rawstr) == CONTROL_PARENT_BACK;
   }
@@ -152,6 +160,7 @@ namespace cli_menu {
       resetOutputThisTest(rawstr) || resetOutputDescendantsTest(rawstr) ||
       resetDataThisTest(rawstr) || resetDataDescendantsTest(rawstr) ||
       copyOutputTest(rawstr) || pasteInputTest(rawstr) ||
+      nodeLevelUndoTest(rawstr) || nodeLevelRedoTest(rawstr) ||
       parentBackTest(rawstr) || rootBackTest(rawstr) ||
       programQuitTest(rawstr);
   }

@@ -14,6 +14,7 @@ namespace cli_menu {
     SENTENCE_CLIPBOARD_GET_DATA_FAILURE,
     SENTENCE_CLIPBOARD_COPY_SUCCEED,
     SENTENCE_CLIPBOARD_PASTE_SUCCEED,
+    SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS,
     SENTENCE_EMPTY_INPUT_THIS,
     SENTENCE_EMPTY_OUTPUT_THIS,
     SENTENCE_EMPTY_OUTPUT_NAMED,
@@ -77,6 +78,8 @@ namespace cli_menu {
     CONTROL_RESET_DATA_DESCENDANTS,
     CONTROL_COPY_OUTPUT,
     CONTROL_PASTE_INPUT,
+    CONTROL_NODE_LEVEL_UNDO,
+    CONTROL_NODE_LEVEL_REDO,
     CONTROL_PARENT_BACK,
     CONTROL_ROOT_BACK,
     CONTROL_PROGRAM_QUIT,
@@ -97,8 +100,8 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 36;
-  constexpr int CONTROL_TOTAL = 25;
+  constexpr int SENTENCE_TOTAL = 37;
+  constexpr int CONTROL_TOTAL = 27;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
   constexpr int PRESET_KEYWORD_TOTAL = 5;
@@ -181,12 +184,13 @@ namespace cli_menu {
       static void setSentences(
         mt::CR_STR argumentAddedSentence,
         mt::CR_STR argumentRequiredSentence,
-        mt::CR_STR sentenceClipboardOpenFailure,
-        mt::CR_STR sentenceClipboardGlobalLockFailure,
-        mt::CR_STR sentenceClipboardGlobalAllocFailure,
-        mt::CR_STR sentenceClipboardGetDataFailure,
-        mt::CR_STR sentenceClipboardCopySucceed,
-        mt::CR_STR sentenceClipboardPasteSucceed,
+        mt::CR_STR clipboardOpenFailureSentence,
+        mt::CR_STR clipboardGlobalLockFailureSentence,
+        mt::CR_STR clipboardGlobalAllocFailureSentence,
+        mt::CR_STR clipboardGetDataFailureSentence,
+        mt::CR_STR clipboardCopySucceedSentence,
+        mt::CR_STR clipboardPasteSucceedSentence,
+        mt::CR_STR commandUnredoNoNewVisitsSentence,
         mt::CR_STR emptyInputThisSentence,
         mt::CR_STR emptyOutputThisSentence,
         mt::CR_STR emptyOutputNamedSentence,
@@ -300,6 +304,8 @@ namespace cli_menu {
         mt::CR_STR resetDataDescendantsTerm,
         mt::CR_STR copyOutputTerm,
         mt::CR_STR pasteInputTerm,
+        mt::CR_STR nodeLevelUndoTerm,
+        mt::CR_STR nodeLevelRedoTerm,
         mt::CR_STR parentBackTerm,
         mt::CR_STR rootBackTerm,
         mt::CR_STR programQuitTerm

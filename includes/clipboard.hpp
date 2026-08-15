@@ -1,7 +1,7 @@
 #ifndef __CLI_MENU__CLIPBOARD_HPP__
 #define __CLI_MENU__CLIPBOARD_HPP__
 
-#include "control.hpp"
+#include "language.hpp"
 
 namespace cli_menu {
 

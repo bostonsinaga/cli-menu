@@ -110,6 +110,8 @@ namespace cli_menu {
     "copied to clipboard",
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     "pasted from clipboard",
+    // SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS
+    "no new nodes have been visited yet",
     // SENTENCE_EMPTY_INPUT_THIS
     "this input is empty",
     // SENTENCE_EMPTY_OUTPUT_THIS
@@ -185,6 +187,8 @@ namespace cli_menu {
     CONSOLE_HINT_1,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
     CONSOLE_HINT_1,
+    // SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS
+    CONSOLE_WARNING,
     // SENTENCE_EMPTY_INPUT_THIS
     CONSOLE_WARNING,
     // SENTENCE_EMPTY_OUTPUT_THIS
@@ -246,12 +250,13 @@ namespace cli_menu {
   void Langu::ageMessage::setSentences(
     mt::CR_STR argumentAddedSentence,
     mt::CR_STR argumentRequiredSentence,
-    mt::CR_STR sentenceClipboardOpenFailure,
-    mt::CR_STR sentenceClipboardGlobalLockFailure,
-    mt::CR_STR sentenceClipboardGlobalAllocFailure,
-    mt::CR_STR sentenceClipboardGetDataFailure,
-    mt::CR_STR sentenceClipboardCopySucceed,
-    mt::CR_STR sentenceClipboardPasteSucceed,
+    mt::CR_STR clipboardOpenFailureSentence,
+    mt::CR_STR clipboardGlobalLockFailureSentence,
+    mt::CR_STR clipboardGlobalAllocFailureSentence,
+    mt::CR_STR clipboardGetDataFailureSentence,
+    mt::CR_STR clipboardCopySucceedSentence,
+    mt::CR_STR clipboardPasteSucceedSentence,
+    mt::CR_STR commandUnredoNoNewVisitsSentence,
     mt::CR_STR emptyInputThisSentence,
     mt::CR_STR emptyOutputThisSentence,
     mt::CR_STR emptyOutputNamedSentence,
@@ -283,12 +288,13 @@ namespace cli_menu {
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_ADDED] = argumentAddedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_REQUIRED] = argumentRequiredSentence;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = sentenceClipboardOpenFailure;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE] = sentenceClipboardGlobalLockFailure;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE] = sentenceClipboardGlobalAllocFailure;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_DATA_FAILURE] = sentenceClipboardGetDataFailure;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = sentenceClipboardCopySucceed;
-    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = sentenceClipboardPasteSucceed;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_OPEN_FAILURE] = clipboardOpenFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE] = clipboardGlobalLockFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE] = clipboardGlobalAllocFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_GET_DATA_FAILURE] = clipboardGetDataFailureSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_COPY_SUCCEED] = clipboardCopySucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_CLIPBOARD_PASTE_SUCCEED] = clipboardPasteSucceedSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS] = commandUnredoNoNewVisitsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_INPUT_THIS] = emptyInputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_THIS] = emptyOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_NAMED] = emptyOutputNamedSentence;
@@ -483,6 +489,8 @@ namespace cli_menu {
     "reset descendant data",
     "copy text from this output",
     "paste text into this input",
+    "undo node level changes",
+    "redo node level changes",
     "back to parent level",
     "back to root level",
     "exit program"
@@ -515,6 +523,8 @@ namespace cli_menu {
     mt::CR_STR resetDataDescendantsTerm,
     mt::CR_STR copyOutputTerm,
     mt::CR_STR pasteInputTerm,
+    mt::CR_STR nodeLevelUndoTerm,
+    mt::CR_STR nodeLevelRedoTerm,
     mt::CR_STR parentBackTerm,
     mt::CR_STR rootBackTerm,
     mt::CR_STR programQuitTerm
@@ -541,6 +551,8 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_RESET_DATA_DESCENDANTS] = resetDataDescendantsTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_COPY_OUTPUT] = copyOutputTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PASTE_INPUT] = pasteInputTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NODE_LEVEL_UNDO] = nodeLevelUndoTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NODE_LEVEL_REDO] = nodeLevelRedoTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PARENT_BACK] = parentBackTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_ROOT_BACK] = rootBackTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_PROGRAM_QUIT] = programQuitTerm;

@@ -19,7 +19,7 @@ namespace cli_menu {
       {":h",   ""}, // CONTROL_COMMAND_HELP
       {":H",   ""}, // CONTROL_CONTROLLER_LIST
       {":l", ":L"}, // CONTROL_CHILDREN_LIST
-      {"::", "::"}, // CONTROL_CLEAR_SCREEN
+      {":v", ":V"}, // CONTROL_CLEAR_SCREEN
       {":>",   ""}, // CONTROL_NEIGHBOR_NEXT
       {":<",   ""}, // CONTROL_NEIGHBOR_PREVIOUS
       {":e",   ""}, // CONTROL_CHILDREN_ENTER
@@ -38,6 +38,8 @@ namespace cli_menu {
       {":X",   ""}, // CONTROL_RESET_DATA_DESCENDANTS
       {":c", ":C"}, // CONTROL_COPY_OUTPUT
       {":p", ":P"}, // CONTROL_PASTE_INPUT
+      {":z", ":Z"}, // CONTROL_NODE_LEVEL_UNDO
+      {":y", ":Y"}, // CONTROL_NODE_LEVEL_REDO
       {":b",   ""}, // CONTROL_PARENT_BACK
       {":B",   ""}, // CONTROL_ROOT_BACK
       {":q", ":Q"}  // CONTROL_PROGRAM_QUIT
@@ -74,6 +76,8 @@ namespace cli_menu {
     static bool resetDataDescendantsTest(mt::CR_STR rawstr);
     static bool copyOutputTest(mt::CR_STR rawstr);
     static bool pasteInputTest(mt::CR_STR rawstr);
+    static bool nodeLevelUndoTest(mt::CR_STR rawstr);
+    static bool nodeLevelRedoTest(mt::CR_STR rawstr);
     static bool parentBackTest(mt::CR_STR rawstr);
     static bool rootBackTest(mt::CR_STR rawstr);
     static bool programQuitTest(mt::CR_STR rawstr);
