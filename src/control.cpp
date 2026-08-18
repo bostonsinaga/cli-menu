@@ -271,7 +271,7 @@ namespace cli_menu {
     );
 
     // cancel terms
-    printSign('x');
+    printSign('X');
     printCode(CONTROL_PARENT_BACK);
     printCode(CONTROL_PROGRAM_QUIT);
     std::cout << std::endl;

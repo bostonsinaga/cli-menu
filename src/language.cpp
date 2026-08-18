@@ -516,7 +516,7 @@ namespace cli_menu {
     Langu::xControl::booleanAvailableValuesDescription = {{
       Langu::xManager::defaultISOCode,
       std::string("Accepts truthy and falsy values as well as a controller. ")
-      + std::string("To cancel, select the 'x' list.")
+      + std::string("For cancelation, pick one of the bottommost list.")
     }};
 
   void Langu::ageControl::setTerms(
