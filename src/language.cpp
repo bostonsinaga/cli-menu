@@ -25,7 +25,9 @@ namespace cli_menu {
     Langu::xColorSet::names[newISOCode] = {};
     Langu::xControl::terms[newISOCode] = {};
     Langu::xControl::abbreviationsTitle[newISOCode] = {};
+    Langu::xControl::abbreviationsDescription[newISOCode] = {};
     Langu::xControl::booleanAvailableValuesTitle[newISOCode] = {};
+    Langu::xControl::booleanAvailableValuesDescription[newISOCode] = {};
     Langu::xBooleanizer::object.addTerms(newISOCode, {}, {});
     Langu::xParameter::stringifiedTypes[newISOCode] = {};
     Langu::xProgram::labels[newISOCode] = {};
@@ -37,7 +39,9 @@ namespace cli_menu {
     Langu::xColorSet::names.erase(existingISOCode);
     Langu::xControl::terms.erase(existingISOCode);
     Langu::xControl::abbreviationsTitle.erase(existingISOCode);
+    Langu::xControl::abbreviationsDescription.erase(existingISOCode);
     Langu::xControl::booleanAvailableValuesTitle.erase(existingISOCode);
+    Langu::xControl::booleanAvailableValuesDescription.erase(existingISOCode);
     Langu::xBooleanizer::object.removeTerms(existingISOCode);
     Langu::xParameter::stringifiedTypes.erase(existingISOCode);
     Langu::xProgram::labels.erase(existingISOCode);
@@ -93,7 +97,7 @@ namespace cli_menu {
   // MESSAGE |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::defaultISOCode, {
+  mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> Langu::xMessage::sentences = {{ Langu::xManager::defaultISOCode, {
     // SENTENCE_ARGUMENT_ADDED
     "$ arguments added to '$'",
     // SENTENCE_ARGUMENT_REQUIRED
@@ -351,7 +355,7 @@ namespace cli_menu {
   }
 
   mt::UNORMAP_STR<std::string> Langu::xMessage::welcomeToString = {{
-    Langu::defaultISOCode, "Welcome to"
+    Langu::xManager::defaultISOCode, "Welcome to"
   }};
 
   std::string Langu::ageMessage::getWelcomeToString() {
@@ -363,10 +367,10 @@ namespace cli_menu {
   //___________|
 
   mt::UNORMAP_STR<std::string> Langu::xColorSet::title = {{
-    Langu::defaultISOCode, "PRESET COLORS"
+    Langu::xManager::defaultISOCode, "PRESET COLORS"
   }};
 
-  mt::UNORMAP_STR<mt::ARR_STR<COLOR_TOTAL>> Langu::xColorSet::names = {{ Langu::defaultISOCode, {
+  mt::UNORMAP_STR<mt::ARR_STR<COLOR_TOTAL>> Langu::xColorSet::names = {{ Langu::xManager::defaultISOCode, {
     "AZURE", "BLACK", "BLUE", "BROWN", "CANARY",
     "CHARTREUSE", "CHOCOLATE", "CRIMSON", "CYAN", "FOREST_GREEN",
     "GOLD", "GRAY", "GREEN", "LIGHT_BLUE", "LIGHT_GREEN",
@@ -458,7 +462,7 @@ namespace cli_menu {
     return Langu::xColorSet::title[Langu::xManager::currentISOCode];
   }
 
-  std::string Langu::ageColorSet::getName(const COLOR_CODE &code) {
+  std::string Langu::ageColorSet::getName(mt::CR<COLOR_CODE> code) {
     return Langu::xColorSet::names[Langu::xManager::currentISOCode][code];
   }
 
@@ -466,7 +470,7 @@ namespace cli_menu {
   // CONTROL |
   //_________|
 
-  mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> Langu::xControl::terms = {{ Langu::defaultISOCode, {
+  mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> Langu::xControl::terms = {{ Langu::xManager::defaultISOCode, {
     "show this help",
     "show controller list",
     "show children list",
@@ -497,8 +501,23 @@ namespace cli_menu {
   }}};
 
   mt::UNORMAP_STR<std::string>
-    Langu::xControl::abbreviationsTitle = {{ Langu::defaultISOCode, "Controller List" }},
-    Langu::xControl::booleanAvailableValuesTitle = {{ Langu::defaultISOCode, "Boolean Available Values" }};
+    Langu::xControl::abbreviationsTitle = {{
+      Langu::xManager::defaultISOCode, "Controller List"
+    }},
+    Langu::xControl::abbreviationsDescription = {{
+      Langu::xManager::defaultISOCode,
+      std::string("Each of them can only be detected if the prompt appears as itself. ")
+      + std::string("When combined with other strings in selection mode, it is treated as a keyword, ")
+      + std::string("whereas in dialog mode, it is treated as a value.")
+    }},
+    Langu::xControl::booleanAvailableValuesTitle = {{
+      Langu::xManager::defaultISOCode, "Boolean Available Values"
+    }},
+    Langu::xControl::booleanAvailableValuesDescription = {{
+      Langu::xManager::defaultISOCode,
+      std::string("Accepts truthy and falsy values as well as a controller. ")
+      + std::string("To cancel, select the 'x' list.")
+    }};
 
   void Langu::ageControl::setTerms(
     mt::CR_STR commandHelpTerm,
@@ -562,11 +581,19 @@ namespace cli_menu {
     Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode] = title;
   }
 
-  void Langu::ageControl::setBooleanAvailableValuesTitle(mt::CR_STR title) {
-    Langu::xControl::booleanAvailableValuesTitle[Langu::xManager::currentISOCode] = title;
+  void Langu::ageControl::setAbbreviationsDescription(mt::CR_STR description) {
+    Langu::xControl::abbreviationsDescription[Langu::xManager::currentISOCode] = description;
   }
 
-  std::string Langu::ageControl::getTerm(const CONTROL_CODE &code) {
+  void Langu::ageControl::setBooleanAvailableValuesTitle(mt::CR_STR description) {
+    Langu::xControl::booleanAvailableValuesTitle[Langu::xManager::currentISOCode] = description;
+  }
+
+  void Langu::ageControl::setBooleanAvailableValuesDescription(mt::CR_STR title) {
+    Langu::xControl::booleanAvailableValuesDescription[Langu::xManager::currentISOCode] = title;
+  }
+
+  std::string Langu::ageControl::getTerm(mt::CR<CONTROL_CODE> code) {
     return Langu::xControl::terms[Langu::xManager::currentISOCode][code];
   }
 
@@ -574,15 +601,25 @@ namespace cli_menu {
     return Langu::xControl::abbreviationsTitle[Langu::xManager::currentISOCode];
   }
 
+  std::string Langu::ageControl::getAbbreviationsDescription() {
+    return Langu::xControl::abbreviationsDescription[Langu::xManager::currentISOCode];
+  }
+
   std::string Langu::ageControl::getBooleanAvailableValuesTitle() {
     return Langu::xControl::booleanAvailableValuesTitle[Langu::xManager::currentISOCode];
+  }
+
+  std::string Langu::ageControl::getBooleanAvailableValuesDescription() {
+    return Langu::xControl::booleanAvailableValuesDescription[Langu::xManager::currentISOCode];
   }
 
   //_____________|
   // BOOLEANIZER |
   //_____________|
 
-  mt::UNORMAP_STR<std::string> Langu::xBooleanizer::yesOrNoLabel = {{ Langu::defaultISOCode, "Y/n" }};
+  mt::UNORMAP_STR<std::string> Langu::xBooleanizer::yesOrNoLabel = {{
+    Langu::xManager::defaultISOCode, "Y/n"
+  }};
 
   void Langu::ageBooleanizer::setTerms(
     mt::CR_VEC_STR existingTrueTerms,
@@ -625,7 +662,7 @@ namespace cli_menu {
   //___________|
 
   mt::UNORMAP_STR<mt::ARR_STR<PARAMETER_TYPE_TOTAL>>
-  Langu::xParameter::stringifiedTypes = {{ Langu::defaultISOCode, {
+  Langu::xParameter::stringifiedTypes = {{ Langu::xManager::defaultISOCode, {
     "WORD", "NUMBER", "BOOLEAN"
   }}};
 
@@ -659,7 +696,7 @@ namespace cli_menu {
   //_________|
 
   mt::UNORMAP_STR<mt::ARR_STR<PROGRAM_LABEL_TOTAL>>
-  Langu::xProgram::labels = {{ Langu::defaultISOCode, {
+  Langu::xProgram::labels = {{ Langu::xManager::defaultISOCode, {
     "Version", "Author", "Link"
   }}};
 
@@ -693,10 +730,10 @@ namespace cli_menu {
   //________|
 
   mt::UNORMAP_STR<mt::ARR_STR<PRESET_KEYWORD_TOTAL>>
-  Langu::xPreset::keywords = {{ Langu::defaultISOCode, {
+  Langu::xPreset::keywords = {{ Langu::xManager::defaultISOCode, {
     "in", "out", "help", "list", "colors"
   }}},
-  Langu::xPreset::descriptions = {{ Langu::defaultISOCode, {
+  Langu::xPreset::descriptions = {{ Langu::xManager::defaultISOCode, {
     "Enter input filename",
     "Enter output filename",
     "", "",

@@ -108,11 +108,10 @@ namespace cli_menu {
 
   class Langu final {
   private:
-    inline static const std::string defaultISOCode = "en";
-
     struct xManager {
       inline static std::string
-        // default is english
+      // default is english
+        defaultISOCode = "en",
         currentISOCode = defaultISOCode,
         // will be replaced with text
         placeholder = "$";
@@ -134,7 +133,9 @@ namespace cli_menu {
 
       static mt::UNORMAP_STR<std::string>
         abbreviationsTitle,
-        booleanAvailableValuesTitle;
+        abbreviationsDescription,
+        booleanAvailableValuesTitle,
+        booleanAvailableValuesDescription;
     };
 
     struct xBooleanizer {
@@ -277,7 +278,7 @@ namespace cli_menu {
       );
 
       static std::string getTitle();
-      static std::string getName(const COLOR_CODE &code);
+      static std::string getName(mt::CR<COLOR_CODE> code);
     };
 
     struct ageControl {
@@ -311,12 +312,16 @@ namespace cli_menu {
         mt::CR_STR programQuitTerm
       );
 
-      static void setAbbreviationsTitle(mt::CR_STR title);
-      static void setBooleanAvailableValuesTitle(mt::CR_STR title);
+      void setAbbreviationsTitle(mt::CR_STR title);
+      void setAbbreviationsDescription(mt::CR_STR description);
+      void setBooleanAvailableValuesTitle(mt::CR_STR title);
+      void setBooleanAvailableValuesDescription(mt::CR_STR description);
 
-      static std::string getTerm(const CONTROL_CODE &code);
+      static std::string getTerm(mt::CR<CONTROL_CODE> code);
       static std::string getAbbreviationsTitle();
+      static std::string getAbbreviationsDescription();
       static std::string getBooleanAvailableValuesTitle();
+      static std::string getBooleanAvailableValuesDescription();
     };
 
     struct ageBooleanizer {
