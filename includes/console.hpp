@@ -149,7 +149,8 @@ namespace cli_menu {
     }
 
     struct LimitedText {
-      inline static size_t maxCharacters = 32;
+      inline static bool wrapping = true;
+      inline static size_t maxCharacters = 45;
 
       inline static std::string
         tailDots = "...",
@@ -164,6 +165,8 @@ namespace cli_menu {
         mt::CR_BOL withTailDots = true,
         mt::CR_BOL withRemainingBrackets = true
       );
+
+      static std::string wrap(mt::CR_STR text);
     };
   };
 }

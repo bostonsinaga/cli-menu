@@ -156,6 +156,27 @@ namespace cli_menu {
 
     return text;
   }
+
+  std::string Console::LimitedText::wrap(mt::CR_STR text) {
+
+    if (wrapping) {
+      mt::VEC_STR wrapped {""},
+        sliced = mt_uti::StrTool::whitespaceSlice(text);
+
+      for (mt::CR_STR str : sliced) {
+
+        if (wrapped.back().length() + str.length() > maxCharacters) {
+          wrapped.push_back("");
+        }
+
+        wrapped.back() += str + ' ';
+      }
+
+      return mt_uti::StrTool::joinVector(wrapped, "\n", false);
+    }
+
+    return text;
+  }
 }
 
 #endif // __CLI_MENU__CONSOLE_CPP__
