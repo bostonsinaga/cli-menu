@@ -166,13 +166,18 @@ namespace cli_menu {
   }
 
   void Control::printAbbreviations(
-    mt::CR_BOL titleDisplayed,
+    mt::CR_BOL withHeader,
     CR_Indent indent
   ) {
-    if (titleDisplayed) {
-      Console::logItalicString(
+    if (withHeader) {
+      Console::logString(
         Langu::ageControl::getAbbreviationsTitle() + ":\n",
         Console::messageColors[CONSOLE_HINT_1]
+      );
+
+      Console::logItalicString(
+        Console::LimitedText::wrap(Langu::ageControl::getAbbreviationsDescription()),
+        Console::messageColors[CONSOLE_HINT_2]
       );
     }
 
@@ -194,21 +199,26 @@ namespace cli_menu {
   }
 
   void Control::printBooleanAvailableValues(
-    mt::CR_BOL titleDisplayed,
+    mt::CR_BOL withHeader,
     CR_Indent indent
   ) {
-    if (titleDisplayed) {
-      Console::logItalicString(
+    if (withHeader) {
+      Console::logString(
         Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
         Console::messageColors[CONSOLE_HINT_1]
       );
+
+      Console::logItalicString(
+        Console::LimitedText::wrap(Langu::ageControl::getBooleanAvailableValuesDescription()),
+        Console::messageColors[CONSOLE_HINT_2]
+      );
     }
 
+    // boolean terms
     mt::CR_PAIR<mt::VEC_STR> boolTerms = Langu::ageBooleanizer::getTerms();
 
-    // shortener lambda
+    // print sign
     std::function<void(mt::CR_CH)> printSign = [&](mt::CR_CH sign) {
-
       Console::logString(
         indent.get() + sign,
         Console::messageColors[CONSOLE_HINT_2]
@@ -217,7 +227,7 @@ namespace cli_menu {
       Console::logString(" = ", Console::messageColors[CONSOLE_HINT_3]);
     };
 
-    // shortener lambda
+    // print code
     std::function<void(mt::CR<CONTROL_CODE>)> printCode = [&](mt::CR<CONTROL_CODE> code) {
       Console::logString(
         symbols[code][0] + ' ',

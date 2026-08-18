@@ -84,12 +84,12 @@ namespace cli_menu {
     static bool stringIsController(mt::CR_STR rawstr);
 
     static void printAbbreviations(
-      mt::CR_BOL titleDisplayed,
+      mt::CR_BOL withHeader,
       CR_Indent indent
     );
 
     static void printBooleanAvailableValues(
-      mt::CR_BOL titleDisplayed,
+      mt::CR_BOL withHeader,
       CR_Indent indent
     );
 
