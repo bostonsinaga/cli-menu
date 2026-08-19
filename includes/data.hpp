@@ -117,7 +117,7 @@ namespace cli_menu {
     static void reset(Command *comkey);
 
     template <UNORMAP_COMVEC_TYPE T>
-    static void select(
+    static bool select(
       Command *comkey,
       mt::CR_INT direction
     );
@@ -128,11 +128,14 @@ namespace cli_menu {
       mt::CR_STR separator
     );
 
-    // the 'consoleCodes' consist of exist and empty vector representation code
+    /**
+     * The 'codes' consist of title, value, and
+     * highlight value from 'CONSOLE_CODE'.
+     */
     template <UNORMAP_COMVEC_TYPE T>
     static void print(
       Command *comkey,
-      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
       CR_Indent indent
     );
 
@@ -229,6 +232,24 @@ namespace cli_menu {
 
     inline static size_t getBooleansSize(Command *comkey) {
       return hasBooleans(comkey) ? booleanMaps.comvec[comkey].second.size() : 0;
+    }
+
+    /** Get Recent Index */
+
+    inline static int getTextIndex(Command *comkey) {
+      return textMaps.comvec[comkey].first;
+    }
+
+    inline static int getWordIndex(Command *comkey) {
+      return wordMaps.comvec[comkey].first;
+    }
+
+    inline static int getNumberIndex(Command *comkey) {
+      return numberMaps.comvec[comkey].first;
+    }
+
+    inline static int getBooleanIndex(Command *comkey) {
+      return booleanMaps.comvec[comkey].first;
     }
 
     /** Get Recent Single Value */
@@ -619,32 +640,32 @@ namespace cli_menu {
 
     /** Select Member By Direction */
 
-    inline static void selectText(
+    inline static bool selectText(
       Command *comkey,
       mt::CR_INT direction
     ) {
-      select<TextMaps>(comkey, direction);
+      return select<TextMaps>(comkey, direction);
     }
 
-    inline static void selectWord(
+    inline static bool selectWord(
       Command *comkey,
       mt::CR_INT direction
     ) {
-      select<WordMaps>(comkey, direction);
+      return select<WordMaps>(comkey, direction);
     }
 
-    inline static void selectNumber(
+    inline static bool selectNumber(
       Command *comkey,
       mt::CR_INT direction
     ) {
-      select<NumberMaps>(comkey, direction);
+      return select<NumberMaps>(comkey, direction);
     }
 
-    inline static void selectBoolean(
+    inline static bool selectBoolean(
       Command *comkey,
       mt::CR_INT direction
     ) {
-      select<BooleanMaps>(comkey, direction);
+      return select<BooleanMaps>(comkey, direction);
     }
 
     /** Convert Vector Into String */
@@ -682,34 +703,34 @@ namespace cli_menu {
 
     inline static void printTexts(
       Command *comkey,
-      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
       CR_Indent indent
     ) {
-      print<TextMaps>(comkey, consoleCodes, indent);
+      print<TextMaps>(comkey, codes, indent);
     }
 
     inline static void printWords(
       Command *comkey,
-      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
       CR_Indent indent
     ) {
-      print<WordMaps>(comkey, consoleCodes, indent);
+      print<WordMaps>(comkey, codes, indent);
     }
 
     inline static void printNumbers(
       Command *comkey,
-      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
       CR_Indent indent
     ) {
-      print<NumberMaps>(comkey, consoleCodes, indent);
+      print<NumberMaps>(comkey, codes, indent);
     }
 
     inline static void printBooleans(
       Command *comkey,
-      mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
       CR_Indent indent
     ) {
-      print<BooleanMaps>(comkey, consoleCodes, indent);
+      print<BooleanMaps>(comkey, codes, indent);
     }
   };
 }

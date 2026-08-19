@@ -157,20 +157,33 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T>
-  void Data::select(
+  bool Data::select(
     Command *comkey,
     mt::CR_INT direction
   ) {
-    if (direction != 0 && has<T>(comkey)) {
-
+    if (has<T>(comkey)) {
       T &unormap = use<T>();
-      int valsign = std::abs(direction) / direction;
-      unormap.comvec[comkey].first += direction;
 
-      while (std::abs(unormap.comvec[comkey].first) >= unormap.comvec[comkey].second.size()) {
-        unormap.comvec[comkey].first -= valsign * unormap.comvec[comkey].second.size();
+      // the vector cannot be empty, but the direction can be empty
+      if (!unormap.comvec[comkey].second.empty()) {
+        unormap.comvec[comkey].first += direction;
+        mt::LLI vecsz = static_cast<mt::LLI>(unormap.comvec[comkey].second.size());
+
+        // positive wrap-around
+        while (unormap.comvec[comkey].first >= vecsz) {
+          unormap.comvec[comkey].first -= vecsz;
+        }
+
+        // negative wrap-around
+        while (unormap.comvec[comkey].first < 0) {
+          unormap.comvec[comkey].first += vecsz;
+        }
+
+        return true;
       }
     }
+
+    return false;
   }
 
   template <UNORMAP_COMVEC_TYPE T>
@@ -193,24 +206,20 @@ namespace cli_menu {
       std::string falseTerm = "0";
       if (!terms.second.empty()) falseTerm = terms.second[0];
 
-      for (const auto& [com, vec] : unormap.comvec) {
-        for (mt::CR_BOL v : vec.second) {
-          if (v) text += trueTerm + separator;
-          else text += falseTerm + separator;
-        }
+      for (mt::CR_BOL val : unormap.comvec[comkey].second) {
+        if (val) text += trueTerm + separator;
+        else text += falseTerm + separator;
       }
     }
-    else for (const auto& [com, vec] : unormap.comvec) {
-      // numbers
-      if constexpr (std::is_same_v<T, NumberMaps>) {
-        for (mt::CR_DBL v : vec.second) {
-          text += std::to_string(v) + separator;
-        }
+    // numbers
+    else if constexpr (std::is_same_v<T, NumberMaps>) {
+      for (mt::CR_DBL val : unormap.comvec[comkey].second) {
+        text += std::to_string(val) + separator;
       }
-      // words
-      else for (mt::CR_STR v : vec.second) {
-        text += v + separator;
-      }
+    }
+    // words or texts
+    else for (mt::CR_STR val : unormap.comvec[comkey].second) {
+      text += val + separator;
     }
 
     return text;
@@ -219,7 +228,7 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   void Data::print(
     Command *comkey,
-    mt::CR_ARR<CONSOLE_CODE, 2> consoleCodes,
+    mt::CR<INDENT_CONSOLE_CODE_SET> codes,
     CR_Indent indent
   ) {
     if (has<T>(comkey)) {
@@ -235,7 +244,7 @@ namespace cli_menu {
         text += stringify<T>(comkey, '\n' + indent.get());
       }
 
-      Console::logString(text, Console::messageColors[consoleCodes[index]]);
+      Console::logString(text, Console::messageColors[codes[index]]);
     }
   }
 }
