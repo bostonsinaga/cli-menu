@@ -47,7 +47,7 @@ namespace cli_menu {
        * the callback will return true without displaying error message.
        */
       static void applyTextIn(
-        Parameter *owner,
+        Word *owner,
         mt::CR_BOL isRequired
       );
 

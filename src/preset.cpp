@@ -39,7 +39,7 @@ namespace cli_menu {
       [](Command *self)->COMMAND_CALLBACK_CODE {
 
         static_cast<Command*>(self->getParent())->printList(
-          CONSOLE_HINT_2, IndentSticked(), true
+          CONLOR_SHALLOW, IndentSticked(), true
         );
 
         return COMMAND_CALLBACK_DONE;
@@ -116,7 +116,7 @@ namespace cli_menu {
   }
 
   void Preset::File::applyTextIn(
-    Parameter *owner,
+    Word *owner,
     mt::CR_BOL isRequired
   ) {
     applyCustomIn(
@@ -135,8 +135,8 @@ namespace cli_menu {
           if (mt::FS::is_regular_file(filename)) {
             found = true;
 
-            // read file content
-            Data::xpushText(
+            // read file content and put it into 'Data'
+            Data::xpushWord(
               static_cast<Command*>(self->getParent()),
               mt_uti::Scanner::readFileString(filename)
             );
