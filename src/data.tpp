@@ -36,7 +36,7 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
-  mt::VEC<U>::reference Data::get(Command *comkey) {
+  mt::VEC<U>::reference Data::getValue(Command *comkey) {
     T &unormap = use<T>();
 
     if (has<T>(comkey)) {
@@ -49,7 +49,7 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
-  mt::VEC<U>::reference Data::get(
+  mt::VEC<U>::reference Data::getValue(
     Command *comkey,
     int &index
   ) {
@@ -189,6 +189,7 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   std::string Data::stringify(
     Command *comkey,
+    mt::CR<ConlorHighlightCodeSet> codeSet,
     mt::CR_STR separator
   ) {
     std::string text;
@@ -198,28 +199,45 @@ namespace cli_menu {
     if constexpr (std::is_same_v<T, BooleanMaps>) {
       mt::PAIR<mt::VEC_STR> terms = Langu::ageBooleanizer::getTerms();
 
-      // true term
+      // stringified truthy
       std::string trueTerm = "1";
       if (!terms.first.empty()) trueTerm = terms.first[0];
 
-      // false term
+      // stringified falsy
       std::string falseTerm = "0";
       if (!terms.second.empty()) falseTerm = terms.second[0];
 
-      for (mt::CR_BOL val : unormap.comvec[comkey].second) {
-        if (val) text += trueTerm + separator;
+      for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
+
+        // select one of the stringified terms
+        if (unormap.comvec[comkey].second[i]) text += trueTerm + separator;
         else text += falseTerm + separator;
+
+        // then colorize it
+        text = Color::getString(
+          text, Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
+        );
       }
     }
     // numbers
     else if constexpr (std::is_same_v<T, NumberMaps>) {
-      for (mt::CR_DBL val : unormap.comvec[comkey].second) {
-        text += std::to_string(val) + separator;
+      for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
+
+        // firstly convert the member to string
+        text += Color::getString(
+          std::to_string(unormap.comvec[comkey].second[i]) + separator,
+          Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
+        );
       }
     }
     // words or texts
-    else for (mt::CR_STR val : unormap.comvec[comkey].second) {
-      text += val + separator;
+    else for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
+
+      // directly pass the member
+      text += Color::getString(
+        unormap.comvec[comkey].second[i] + separator,
+        Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
+      );
     }
 
     return text;
@@ -228,23 +246,27 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   void Data::print(
     Command *comkey,
-    mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-    CR_Indent indent
+    CR_Indent indent,
+    mt::CR<ConlorHighlightCodeSet> codeSet
   ) {
     if (has<T>(comkey)) {
       int index = 0;
       std::string text = indent.get();
 
-      // data empty
+      // data is empty
       if (use<T>().comvec[comkey].second.empty()) {
         index = 1;
-        text += "...\n";
+
+        text += Color::getString(
+          "...\n", Console::messageColors[CONLOR_HINT]
+        );
       }
-      else { // data exist
-        text += stringify<T>(comkey, '\n' + indent.get());
+      else { // data is exist
+        text += stringify<T>(comkey, codeSet, '\n' + indent.get());
       }
 
-      Console::logString(text, Console::messageColors[codes[index]]);
+      // print the stringified out
+      std::cout << text;
     }
   }
 }

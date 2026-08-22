@@ -47,6 +47,14 @@ namespace cli_menu {
     std::is_same_v<T, bool>;
 
   class Data final {
+  public:
+    typedef mt::ARR<CONLOR_CODE, 2> ConlorHighlightCodeSet;
+
+    inline static ConlorHighlightCodeSet
+      ConlorHighlightPlain { CONLOR_PLAIN, CONLOR_PLAIN },
+      ConlorHighlightSticked { CONLOR_SHALLOW, CONLOR_HIGHLIGHT },
+      ConlorHighlightBranched { CONLOR_DEEP, CONLOR_HIGHLIGHT };
+
   private:
     inline static TextMaps textMaps {{}, {}, {""}};
     inline static WordMaps wordMaps {{}, {}, {""}};
@@ -71,10 +79,10 @@ namespace cli_menu {
     static bool isEmpty(Command *comkey);
 
     template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
-    static mt::VEC<U>::reference get(Command *comkey);
+    static mt::VEC<U>::reference getValue(Command *comkey);
 
     template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
-    static mt::VEC<U>::reference get(
+    static mt::VEC<U>::reference getValue(
       Command *comkey,
       int &index
     );
@@ -125,18 +133,15 @@ namespace cli_menu {
     template <UNORMAP_COMVEC_TYPE T>
     static std::string stringify(
       Command *comkey,
+      mt::CR<ConlorHighlightCodeSet> codeSet,
       mt::CR_STR separator
     );
 
-    /**
-     * The 'codes' consist of title, value, and
-     * highlight value from 'CONSOLE_CODE'.
-     */
     template <UNORMAP_COMVEC_TYPE T>
     static void print(
       Command *comkey,
-      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-      CR_Indent indent
+      CR_Indent indent,
+      mt::CR<ConlorHighlightCodeSet> codeSet
     );
 
     friend class Parameter;
@@ -255,19 +260,19 @@ namespace cli_menu {
     /** Get Recent Single Value */
 
     inline static mt::VEC_STR::reference getText(Command *comkey) {
-      return get<TextMaps, std::string>(comkey);
+      return getValue<TextMaps, std::string>(comkey);
     }
 
     inline static mt::VEC_STR::reference getWord(Command *comkey) {
-      return get<WordMaps, std::string>(comkey);
+      return getValue<WordMaps, std::string>(comkey);
     }
 
     inline static mt::VEC_DBL::reference getNumber(Command *comkey) {
-      return get<NumberMaps, double>(comkey);
+      return getValue<NumberMaps, double>(comkey);
     }
 
     inline static mt::VEC_BOL::reference getBoolean(Command *comkey) {
-      return get<BooleanMaps, bool>(comkey);
+      return getValue<BooleanMaps, bool>(comkey);
     }
 
     /** Get Single Value At Index (Safe) */
@@ -276,28 +281,28 @@ namespace cli_menu {
       Command *comkey,
       int index
     ) {
-      return get<TextMaps, std::string>(comkey, index);
+      return getValue<TextMaps, std::string>(comkey, index);
     }
 
     inline static mt::VEC_STR::reference getWord(
       Command *comkey,
       int index
     ) {
-      return get<WordMaps, std::string>(comkey, index);
+      return getValue<WordMaps, std::string>(comkey, index);
     }
 
     inline static mt::VEC_DBL::reference getNumber(
       Command *comkey,
       int index
     ) {
-      return get<NumberMaps, double>(comkey, index);
+      return getValue<NumberMaps, double>(comkey, index);
     }
 
     inline static mt::VEC_BOL::reference getBoolean(
       Command *comkey,
       int index
     ) {
-      return get<BooleanMaps, bool>(comkey, index);
+      return getValue<BooleanMaps, bool>(comkey, index);
     }
 
     /** Get Single Value At Index (Unsafe) */
@@ -672,65 +677,69 @@ namespace cli_menu {
 
     inline static std::string stringifyTexts(
       Command *comkey,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<TextMaps>(comkey, separator);
+      return stringify<TextMaps>(comkey, codeSet, separator);
     }
 
     inline static std::string stringifyWords(
       Command *comkey,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<WordMaps>(comkey, separator);
+      return stringify<WordMaps>(comkey, codeSet, separator);
     }
 
     inline static std::string stringifyNumbers(
       Command *comkey,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<NumberMaps>(comkey, separator);
+      return stringify<NumberMaps>(comkey, codeSet, separator);
     }
 
     // stringified boolean is based on 'mt_uti::Booleanizer'
     inline static std::string stringifyBooleans(
       Command *comkey,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<BooleanMaps>(comkey, separator);
+      return stringify<BooleanMaps>(comkey, codeSet, separator);
     }
 
     /** Print Stringified Vector */
 
     inline static void printTexts(
       Command *comkey,
-      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-      CR_Indent indent
+      CR_Indent indent,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
-      print<TextMaps>(comkey, codes, indent);
+      print<TextMaps>(comkey, indent, codeSet);
     }
 
     inline static void printWords(
       Command *comkey,
-      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-      CR_Indent indent
+      CR_Indent indent,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
-      print<WordMaps>(comkey, codes, indent);
+      print<WordMaps>(comkey, indent, codeSet);
     }
 
     inline static void printNumbers(
       Command *comkey,
-      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-      CR_Indent indent
+      CR_Indent indent,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
-      print<NumberMaps>(comkey, codes, indent);
+      print<NumberMaps>(comkey, indent, codeSet);
     }
 
     inline static void printBooleans(
       Command *comkey,
-      mt::CR<INDENT_CONSOLE_CODE_SET> codes,
-      CR_Indent indent
+      CR_Indent indent,
+      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
-      print<BooleanMaps>(comkey, codes, indent);
+      print<BooleanMaps>(comkey, indent, codeSet);
     }
   };
 }
