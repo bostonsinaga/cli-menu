@@ -18,14 +18,34 @@ namespace cli_menu {
     else Clipboard::copyText(&Data::getText(this));
   }
 
+  void Parameter::selectOutputDown() {
+    if (Data::selectText(this, 1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_OUTPUT_DOWN,
+        {std::to_string(Data::getTextIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+  }
+
+  void Parameter::selectOutputUp() {
+    if (Data::selectText(this, -1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_OUTPUT_UP,
+        {std::to_string(Data::getTextIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
+  }
+
   void Parameter::printOutput(mt::CR_BOL withDesignedSticked) {
     if (withDesignedSticked) {
       if (Data::isTextsEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
       }
-      else Data::printTexts(this, Console::StickedCodes, IndentSticked());
+      else Data::printTexts(this, IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printTexts(this, Console::BranchedCodes, IndentBranched());
+    else Data::printTexts(this, IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Parameter::resetOutput(mt::CR_BOL withMessage) {
@@ -43,7 +63,7 @@ namespace cli_menu {
             std::cout << '\r';
 
             static_cast<Command*>(current)->printKeyword(
-              CONSOLE_HINT_1, IndentSticked()
+              CONLOR_HINT, IndentSticked()
             );
 
             // input or output selection
@@ -54,6 +74,9 @@ namespace cli_menu {
           return true;
         }
       );
+
+      // remove indentation
+      std::cout << '\r';
     }
     else Langu::ageMessage::printResponse(SENTENCE_PARAMETER_AT_LEAF);
   }
@@ -153,14 +176,34 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
+  void Word::selectInputDown() {
+    if (Data::selectWord(this, 1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_DOWN,
+        {std::to_string(Data::getWordIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
+  void Word::selectInputUp() {
+    if (Data::selectWord(this, -1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_UP,
+        {std::to_string(Data::getWordIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
   void Word::printInput(mt::CR_BOL withDesignedSticked) {
     if (withDesignedSticked) {
       if (Data::isWordsEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printWords(this, Console::StickedCodes, IndentSticked());
+      else Data::printWords(this, IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printWords(this, Console::BranchedCodes, IndentBranched());
+    else Data::printWords(this, IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Word::resetInput(mt::CR_BOL withMessage) {
@@ -207,14 +250,34 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
+  void Number::selectInputDown() {
+    if (Data::selectNumber(this, 1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_DOWN,
+        {std::to_string(Data::getNumberIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
+  void Number::selectInputUp() {
+    if (Data::selectNumber(this, -1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_UP,
+        {std::to_string(Data::getNumberIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
   void Number::printInput(mt::CR_BOL withDesignedSticked) {
     if (withDesignedSticked) {
       if (Data::isNumbersEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printNumbers(this, Console::StickedCodes, IndentSticked());
+      else Data::printNumbers(this, IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printNumbers(this, Console::BranchedCodes, IndentBranched());
+    else Data::printNumbers(this, IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Number::resetInput(mt::CR_BOL withMessage) {
@@ -281,14 +344,34 @@ namespace cli_menu {
     Parameter::destroy();
   }
 
+  void Boolean::selectInputDown() {
+    if (Data::selectBoolean(this, 1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_DOWN,
+        {std::to_string(Data::getBooleanIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
+  void Boolean::selectInputUp() {
+    if (Data::selectBoolean(this, -1)) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_SELECT_INPUT_UP,
+        {std::to_string(Data::getBooleanIndex(this))}
+      );
+    }
+    else Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
+  }
+
   void Boolean::printInput(mt::CR_BOL withDesignedSticked) {
     if (withDesignedSticked) {
       if (Data::isBooleansEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printBooleans(this, Console::StickedCodes, IndentSticked());
+      else Data::printBooleans(this, IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printBooleans(this, Console::BranchedCodes, IndentBranched());
+    else Data::printBooleans(this, IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Boolean::resetInput(mt::CR_BOL withMessage) {

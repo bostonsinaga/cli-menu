@@ -196,7 +196,7 @@ namespace cli_menu {
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
-        printList(CONSOLE_HINT_2, IndentSticked(), true);
+        printList(CONLOR_SHALLOW, IndentSticked(), true);
       }
       // CLEAR TERMINAL SCREEN
       else if (Control::clearScreenTest(rawstr)) {
@@ -252,6 +252,22 @@ namespace cli_menu {
             Langu::ageMessage::printResponse(SENTENCE_MODE_ALREADY_SELECTING);
           }
         }
+      }
+      // SELECT INPUT DOWN
+      else if (Control::selectInputDownTest(rawstr)) {
+        selectInputDown();
+      }
+      // SELECT INPUT UP
+      else if (Control::selectInputUpTest(rawstr)) {
+        selectInputUp();
+      }
+      // SELECT OUTPUT DOWN
+      else if (Control::selectOutputDownTest(rawstr)) {
+        selectOutputDown();
+      }
+      // SELECT OUTPUT UP
+      else if (Control::selectOutputUpTest(rawstr)) {
+        selectOutputUp();
       }
       // VIEW THIS INPUT
       else if (Control::viewInputThisTest(rawstr)) {
@@ -663,19 +679,19 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    printKeyword(CONSOLE_HINT_1, IndentSticked());
+    printKeyword(CONLOR_HINT, IndentSticked());
 
     // description
     Console::logItalicString(
       description + '\n',
-      Console::messageColors[CONSOLE_HINT_2]
+      Console::messageColors[CONLOR_DEEP]
     );
 
-    printList(CONSOLE_HINT_3, IndentBranched(), false);
+    printList(CONLOR_SHALLOW, IndentBranched(), false);
   }
 
   void Command::printKeyword(
-    mt::CR<CONSOLE_CODE> consoleCode,
+    mt::CR<CONLOR_CODE> consoleCode,
     CR_Indent indent
   ) {
     Console::logString(
@@ -687,7 +703,7 @@ namespace cli_menu {
   }
 
   void Command::printList(
-    mt::CR<CONSOLE_CODE> consoleCode,
+    mt::CR<CONLOR_CODE> consoleCode,
     CR_Indent indent,
     mt::CR_BOL displayAtLeafWarning
   ) {

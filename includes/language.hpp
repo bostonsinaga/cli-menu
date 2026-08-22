@@ -42,6 +42,10 @@ namespace cli_menu {
     SENTENCE_RESET_INPUT_DESCENDANTS,
     SENTENCE_RESET_OUTPUT_THIS,
     SENTENCE_RESET_OUTPUT_DESCENDANTS,
+    SENTENCE_SELECT_INPUT_DOWN,
+    SENTENCE_SELECT_INPUT_UP,
+    SENTENCE_SELECT_OUTPUT_DOWN,
+    SENTENCE_SELECT_OUTPUT_UP,
     SENTENCE_UNKNOWN_VALUE
   };
 
@@ -64,8 +68,12 @@ namespace cli_menu {
     CONTROL_NEIGHBOR_PREVIOUS,
     CONTROL_CHILDREN_ENTER,
     CONTROL_CHILDREN_EXECUTE,
-    CONTROL_SWITCH_MODIFY,
-    CONTROL_SWITCH_SELECT,
+    CONTROL_SWITCH_MODIFICATION,
+    CONTROL_SWITCH_SELECTION,
+    CONTROL_SELECT_INPUT_DOWN,
+    CONTROL_SELECT_INPUT_UP,
+    CONTROL_SELECT_OUTPUT_DOWN,
+    CONTROL_SELECT_OUTPUT_UP,
     CONTROL_VIEW_INPUT_THIS,
     CONTROL_VIEW_INPUT_CHILDREN,
     CONTROL_VIEW_OUTPUT_THIS,
@@ -100,8 +108,8 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 37;
-  constexpr int CONTROL_TOTAL = 27;
+  constexpr int SENTENCE_TOTAL = 41;
+  constexpr int CONTROL_TOTAL = 31;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
   constexpr int PRESET_KEYWORD_TOTAL = 5;
@@ -119,7 +127,7 @@ namespace cli_menu {
 
     struct xMessage {
       static mt::UNORMAP_STR<mt::ARR_STR<SENTENCE_TOTAL>> sentences;
-      static CONSOLE_CODE consoleCodes[SENTENCE_TOTAL];
+      static CONLOR_CODE consoleCodes[SENTENCE_TOTAL];
       static mt::UNORMAP_STR<std::string> welcomeToString;
     };
 
@@ -219,6 +227,10 @@ namespace cli_menu {
         mt::CR_STR resetInputDescendantsSentence,
         mt::CR_STR resetOutputThisSentence,
         mt::CR_STR resetOutputDescendantsSentence,
+        mt::CR_STR selectInputDownSentence,
+        mt::CR_STR selectInputUpSentence,
+        mt::CR_STR selectOutputDownSentence,
+        mt::CR_STR selectOutputUpSentence,
         mt::CR_STR unknownValueSentence
       );
 
@@ -285,14 +297,18 @@ namespace cli_menu {
       static void setTerms(
         mt::CR_STR commandHelpTerm,
         mt::CR_STR controllerListTerm,
-        mt::CR_STR childrenEnterTerm,
-        mt::CR_STR childrenExecuteTerm,
         mt::CR_STR childrenListTerm,
+        mt::CR_STR clearScreenTerm,
         mt::CR_STR neighborNextTerm,
         mt::CR_STR neighborPreviousTerm,
-        mt::CR_STR switchModifyTerm,
-        mt::CR_STR switchSelectTerm,
-        mt::CR_STR cleanScreenTerm,
+        mt::CR_STR childrenEnterTerm,
+        mt::CR_STR childrenExecuteTerm,
+        mt::CR_STR switchModificationTerm,
+        mt::CR_STR switchSelectionTerm,
+        mt::CR_STR selectInputDownTerm,
+        mt::CR_STR selectInputUpTerm,
+        mt::CR_STR selectOutputDownTerm,
+        mt::CR_STR selectOutputUpTerm,
         mt::CR_STR viewInputThisTerm,
         mt::CR_STR viewInputChildrenTerm,
         mt::CR_STR viewOutputThisTerm,

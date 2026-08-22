@@ -73,11 +73,27 @@ namespace cli_menu {
   }
 
   bool Control::switchModifyTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_SWITCH_MODIFY;
+    return whitespacesCheck(rawstr) == CONTROL_SWITCH_MODIFICATION;
   }
 
   bool Control::switchSelectTest(mt::CR_STR rawstr) {
-    return whitespacesCheck(rawstr) == CONTROL_SWITCH_SELECT;
+    return whitespacesCheck(rawstr) == CONTROL_SWITCH_SELECTION;
+  }
+
+  bool Control::selectInputDownTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SELECT_INPUT_DOWN;
+  }
+
+  bool Control::selectInputUpTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SELECT_INPUT_UP;
+  }
+
+  bool Control::selectOutputDownTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SELECT_OUTPUT_DOWN;
+  }
+
+  bool Control::selectOutputUpTest(mt::CR_STR rawstr) {
+    return whitespacesCheck(rawstr) == CONTROL_SELECT_OUTPUT_UP;
   }
 
   bool Control::viewInputThisTest(mt::CR_STR rawstr) {
@@ -172,12 +188,12 @@ namespace cli_menu {
     if (withHeader) {
       Console::logString(
         Langu::ageControl::getAbbreviationsTitle() + ":\n",
-        Console::messageColors[CONSOLE_HINT_1]
+        Console::messageColors[CONLOR_HINT]
       );
 
       Console::logItalicString(
         Console::LimitedText::wrap(Langu::ageControl::getAbbreviationsDescription()),
-        Console::messageColors[CONSOLE_HINT_2]
+        Console::messageColors[CONLOR_DEEP]
       );
     }
 
@@ -188,12 +204,12 @@ namespace cli_menu {
 
       Console::logString(
         Control::symbols[i][0],
-        Console::messageColors[CONSOLE_HINT_2]
+        Console::messageColors[CONLOR_SHALLOW]
       );
 
       Console::logString(
         " = " + curterm + '\n',
-        Console::messageColors[CONSOLE_HINT_3]
+        Console::messageColors[CONLOR_DEEP]
       );
     }
   }
@@ -205,12 +221,12 @@ namespace cli_menu {
     if (withHeader) {
       Console::logString(
         Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
-        Console::messageColors[CONSOLE_HINT_1]
+        Console::messageColors[CONLOR_HINT]
       );
 
       Console::logItalicString(
         Console::LimitedText::wrap(Langu::ageControl::getBooleanAvailableValuesDescription()),
-        Console::messageColors[CONSOLE_HINT_2]
+        Console::messageColors[CONLOR_DEEP]
       );
     }
 
@@ -221,17 +237,17 @@ namespace cli_menu {
     std::function<void(mt::CR_CH)> printSign = [&](mt::CR_CH sign) {
       Console::logString(
         indent.get() + sign,
-        Console::messageColors[CONSOLE_HINT_2]
+        Console::messageColors[CONLOR_SHALLOW]
       );
 
-      Console::logString(" = ", Console::messageColors[CONSOLE_HINT_3]);
+      Console::logString(" = ", Console::messageColors[CONLOR_DEEP]);
     };
 
     // print code
     std::function<void(mt::CR<CONTROL_CODE>)> printCode = [&](mt::CR<CONTROL_CODE> code) {
       Console::logString(
         symbols[code][0] + ' ',
-        Console::messageColors[CONSOLE_HINT_3]
+        Console::messageColors[CONLOR_DEEP]
       );
     };
 
@@ -242,14 +258,14 @@ namespace cli_menu {
     for (int i = 0; i < boolTerms.second.size(); i++) {
       Console::logString(
         boolTerms.second[i] + ' ',
-        Console::messageColors[CONSOLE_HINT_3]
+        Console::messageColors[CONLOR_DEEP]
       );
     }
 
     printCode(CONTROL_NEIGHBOR_PREVIOUS);
 
     Console::logString( // number is zero
-      "n==0\n", Console::messageColors[CONSOLE_HINT_3]
+      "n==0\n", Console::messageColors[CONLOR_DEEP]
     );
 
     /** True Terms */
@@ -259,7 +275,7 @@ namespace cli_menu {
     for (int i = 0; i < boolTerms.first.size(); i++) {
       Console::logString(
         boolTerms.first[i] + ' ',
-        Console::messageColors[CONSOLE_HINT_3]
+        Console::messageColors[CONLOR_DEEP]
       );
     }
 
@@ -267,7 +283,7 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_NEXT);
 
     Console::logString( // number is not zero
-      "n!=0\n", Console::messageColors[CONSOLE_HINT_3]
+      "n!=0\n", Console::messageColors[CONLOR_DEEP]
     );
 
     // cancel terms

@@ -170,85 +170,101 @@ namespace cli_menu {
     "this output is removed",
     // SENTENCE_RESET_OUTPUT_DESCENDANTS
     "descendant outputs are removed",
+    // SENTENCE_SELECT_INPUT_DOWN
+    "input selected down [$]",
+    // SENTENCE_SELECT_INPUT_UP
+    "input selected up [$]",
+    // SENTENCE_SELECT_OUTPUT_DOWN
+    "output selected down [$]",
+    // SENTENCE_SELECT_OUTPUT_UP
+    "output selected up [$]",
     // SENTENCE_UNKNOWN_VALUE
     "unknown value '$'"
   }}};
 
-  CONSOLE_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
+  CONLOR_CODE Langu::xMessage::consoleCodes[SENTENCE_TOTAL] = {
     // SENTENCE_ARGUMENT_ADDED
-    CONSOLE_CORRECT,
+    CONLOR_CORRECT,
     // SENTENCE_ARGUMENT_REQUIRED
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_CLIPBOARD_OPEN_FAILURE
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_CLIPBOARD_GLOBAL_LOCK_FAILURE
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_CLIPBOARD_GLOBAL_ALLOC_FAILURE
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_CLIPBOARD_GET_DATA_FAILURE
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_CLIPBOARD_COPY_SUCCEED
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_CLIPBOARD_PASTE_SUCCEED
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_COMMAND_UNREDO_NO_NEW_VISITS
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_EMPTY_INPUT_THIS
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_EMPTY_OUTPUT_THIS
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_EMPTY_OUTPUT_NAMED
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_FILE_OVERWRITE_QUESTION
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_FILE_WRITE_FAILURE
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_FILE_WRITE_SUCCEED
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_FORBIDDEN_CONTROLLER
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_FORBIDDEN_HIDDEN_PASTE
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_INTERRUPTION_DIALOG
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_KEYWORD_NOT_FOUND
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_MODE_ALREADY_MODIFYING
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_MODE_ALREADY_SELECTING
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_MODE_SWITCH_TO_MODIFICATION
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_MODE_SWITCH_TO_SELECTION
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_PARAMETER_ALONE
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_PARAMETER_AT_LEAF
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_PARAMETER_AT_ROOT
-    CONSOLE_WARNING,
+    CONLOR_WARNING,
     // SENTENCE_PARAMETER_REQUIRED
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_PARENT_STRICT
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_PROGRAM_TERMINATED
-    CONSOLE_CANCEL,
+    CONLOR_CANCEL,
     // SENTENCE_PROGRAM_ERROR
-    CONSOLE_ERROR,
+    CONLOR_ERROR,
     // SENTENCE_PROGRAM_CANCELED
-    CONSOLE_CANCEL,
+    CONLOR_CANCEL,
     // SENTENCE_PROGRAM_DONE
-    CONSOLE_CORRECT,
+    CONLOR_CORRECT,
     // SENTENCE_RESET_INPUT_THIS
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_RESET_INPUT_DESCENDANTS
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_RESET_OUTPUT_THIS
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
     // SENTENCE_RESET_OUTPUT_DESCENDANTS
-    CONSOLE_HINT_1,
+    CONLOR_HINT,
+    // SENTENCE_SELECT_INPUT_DOWN
+    CONLOR_HINT,
+    // SENTENCE_SELECT_INPUT_UP
+    CONLOR_HINT,
+    // SENTENCE_SELECT_OUTPUT_DOWN
+    CONLOR_HINT,
+    // SENTENCE_SELECT_OUTPUT_UP
+    CONLOR_HINT,
     // SENTENCE_UNKNOWN_VALUE
-    CONSOLE_ERROR
+    CONLOR_ERROR
   };
 
   void Langu::ageMessage::setSentences(
@@ -288,6 +304,10 @@ namespace cli_menu {
     mt::CR_STR resetInputDescendantsSentence,
     mt::CR_STR resetOutputThisSentence,
     mt::CR_STR resetOutputDescendantsSentence,
+    mt::CR_STR selectInputDownSentence,
+    mt::CR_STR selectInputUpSentence,
+    mt::CR_STR selectOutputDownSentence,
+    mt::CR_STR selectOutputUpSentence,
     mt::CR_STR unknownValueSentence
   ) {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_ARGUMENT_ADDED] = argumentAddedSentence;
@@ -326,6 +346,10 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_INPUT_DESCENDANTS] = resetInputDescendantsSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_THIS] = resetOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_RESET_OUTPUT_DESCENDANTS] = resetOutputDescendantsSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_SELECT_INPUT_DOWN] = selectInputDownSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_SELECT_INPUT_UP] = selectInputUpSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_SELECT_OUTPUT_DOWN] = selectOutputDownSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_SELECT_OUTPUT_UP] = selectOutputUpSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_UNKNOWN_VALUE] = unknownValueSentence;
   }
 
@@ -471,33 +495,37 @@ namespace cli_menu {
   //_________|
 
   mt::UNORMAP_STR<mt::ARR_STR<CONTROL_TOTAL>> Langu::xControl::terms = {{ Langu::xManager::defaultISOCode, {
-    "show this help",
-    "show controller list",
-    "show children list",
-    "clear terminal screen",
-    "go to next neighbor",
-    "go to previous neighbor",
-    "enter children level",
-    "execute callbacks",
-    "modify this input",
-    "select another node",
-    "view this input",
-    "view descendant inputs",
-    "view this output",
-    "view descendant outputs",
-    "reset this input",
-    "reset descendant inputs",
-    "reset this output",
-    "reset descendant outputs",
-    "reset this data",
-    "reset descendant data",
-    "copy text from this output",
-    "paste text into this input",
-    "undo node level changes",
-    "redo node level changes",
-    "back to parent level",
-    "back to root level",
-    "exit program"
+    "show this help",             // CONTROL_COMMAND_HELP
+    "show controller list",       // CONTROL_CONTROLLER_LIST
+    "show children list",         // CONTROL_CHILDREN_LIST
+    "clear terminal screen",      // CONTROL_CLEAR_SCREEN
+    "go to next neighbor",        // CONTROL_NEIGHBOR_NEXT
+    "go to previous neighbor",    // CONTROL_NEIGHBOR_PREVIOUS
+    "enter children level",       // CONTROL_CHILDREN_ENTER
+    "execute callbacks",          // CONTROL_CHILDREN_EXECUTE
+    "modify this input",          // CONTROL_SWITCH_MODIFICATION
+    "select another node",        // CONTROL_SWITCH_SELECTION
+    "select input up",            // CONTROL_SELECT_INPUT_DOWN
+    "select input down",          // CONTROL_SELECT_INPUT_UP
+    "select output up",           // CONTROL_SELECT_OUTPUT_DOWN
+    "select output down",         // CONTROL_SELECT_OUTPUT_UP
+    "view this input",            // CONTROL_VIEW_INPUT_THIS
+    "view descendant inputs",     // CONTROL_VIEW_INPUT_CHILDREN
+    "view this output",           // CONTROL_VIEW_OUTPUT_THIS
+    "view descendant outputs",    // CONTROL_VIEW_OUTPUT_CHILDREN
+    "reset this input",           // CONTROL_RESET_INPUT_THIS
+    "reset descendant inputs",    // CONTROL_RESET_INPUT_DESCENDANTS
+    "reset this output",          // CONTROL_RESET_OUTPUT_THIS
+    "reset descendant outputs",   // CONTROL_RESET_OUTPUT_DESCENDANTS
+    "reset this data",            // CONTROL_RESET_DATA_THIS
+    "reset descendant data",      // CONTROL_RESET_DATA_DESCENDANTS
+    "copy text from this output", // CONTROL_COPY_OUTPUT
+    "paste text into this input", // CONTROL_PASTE_INPUT
+    "undo node level changes",    // CONTROL_NODE_LEVEL_UNDO
+    "redo node level changes",    // CONTROL_NODE_LEVEL_REDO
+    "back to parent level",       // CONTROL_PARENT_BACK
+    "back to root level",         // CONTROL_ROOT_BACK
+    "exit program"                // CONTROL_PROGRAM_QUIT
   }}};
 
   mt::UNORMAP_STR<std::string>
@@ -528,8 +556,12 @@ namespace cli_menu {
     mt::CR_STR neighborPreviousTerm,
     mt::CR_STR childrenEnterTerm,
     mt::CR_STR childrenExecuteTerm,
-    mt::CR_STR switchModifyTerm,
-    mt::CR_STR switchSelectTerm,
+    mt::CR_STR switchModificationTerm,
+    mt::CR_STR switchSelectionTerm,
+    mt::CR_STR selectInputDownTerm,
+    mt::CR_STR selectInputUpTerm,
+    mt::CR_STR selectOutputDownTerm,
+    mt::CR_STR selectOutputUpTerm,
     mt::CR_STR viewInputThisTerm,
     mt::CR_STR viewInputChildrenTerm,
     mt::CR_STR viewOutputThisTerm,
@@ -556,8 +588,12 @@ namespace cli_menu {
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_NEIGHBOR_PREVIOUS] = neighborPreviousTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_ENTER] = childrenEnterTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_CHILDREN_EXECUTE] = childrenExecuteTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFY] = switchModifyTerm;
-    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECT] = switchSelectTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_MODIFICATION] = switchModificationTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SWITCH_SELECTION] = switchSelectionTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SELECT_INPUT_DOWN] = selectInputDownTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SELECT_INPUT_UP] = selectInputUpTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SELECT_OUTPUT_DOWN] = selectOutputDownTerm;
+    Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_SELECT_OUTPUT_UP] = selectOutputUpTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_THIS] = viewInputThisTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_INPUT_CHILDREN] = viewInputChildrenTerm;
     Langu::xControl::terms[Langu::xManager::currentISOCode][CONTROL_VIEW_OUTPUT_THIS] = viewOutputThisTerm;

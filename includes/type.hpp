@@ -31,6 +31,8 @@ namespace cli_menu {
 
     void clipboardInputPaste() override;
     void clipboardOutputCopy() override;
+    void selectOutputDown() override;
+    void selectOutputUp() override;
     void printOutput(mt::CR_BOL withDesignedSticked) override;
     void resetOutput(mt::CR_BOL withMessage) override;
 
@@ -95,6 +97,8 @@ namespace cli_menu {
 
   class Word : public Parameter {
   protected:
+    void selectInputDown() override;
+    void selectInputUp() override;
     void printInput(mt::CR_BOL withDesignedSticked) override;
     void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;
@@ -116,6 +120,8 @@ namespace cli_menu {
 
   class Number : public Parameter {
   protected:
+    void selectInputDown() override;
+    void selectInputUp() override;
     void printInput(mt::CR_BOL withDesignedSticked) override;    
     void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;
@@ -143,6 +149,8 @@ namespace cli_menu {
 
   class Boolean : public Parameter {
   protected:
+    void selectInputDown() override;
+    void selectInputUp() override;
     void printInput(mt::CR_BOL withDesignedSticked) override;
     void resetInput(mt::CR_BOL withMessage) override;
     void strargv(mt::CR_VEC_STR rawstrs) override;

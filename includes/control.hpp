@@ -19,17 +19,21 @@ namespace cli_menu {
       {":h",   ""}, // CONTROL_COMMAND_HELP
       {":H",   ""}, // CONTROL_CONTROLLER_LIST
       {":l", ":L"}, // CONTROL_CHILDREN_LIST
-      {":v", ":V"}, // CONTROL_CLEAR_SCREEN
+      {":_",   ""}, // CONTROL_CLEAR_SCREEN
       {":>",   ""}, // CONTROL_NEIGHBOR_NEXT
       {":<",   ""}, // CONTROL_NEIGHBOR_PREVIOUS
       {":e",   ""}, // CONTROL_CHILDREN_ENTER
       {":E",   ""}, // CONTROL_CHILDREN_EXECUTE
-      {":m", ":M"}, // CONTROL_SWITCH_MODIFY
-      {":s", ":S"}, // CONTROL_SWITCH_SELECT
-      {":i",   ""}, // CONTROL_VIEW_INPUT_THIS
-      {":I",   ""}, // CONTROL_VIEW_INPUT_CHILDREN
-      {":o",   ""}, // CONTROL_VIEW_OUTPUT_THIS
-      {":O",   ""}, // CONTROL_VIEW_OUTPUT_CHILDREN
+      {":m", ":M"}, // CONTROL_SWITCH_MODIFICATION
+      {":s", ":S"}, // CONTROL_SWITCH_SELECTION
+      {":i",   ""}, // CONTROL_SELECT_INPUT_DOWN
+      {":I",   ""}, // CONTROL_SELECT_INPUT_UP
+      {":o",   ""}, // CONTROL_SELECT_OUTPUT_DOWN
+      {":O",   ""}, // CONTROL_SELECT_OUTPUT_UP
+      {":v",   ""}, // CONTROL_VIEW_INPUT_THIS
+      {":V",   ""}, // CONTROL_VIEW_INPUT_CHILDREN
+      {":d",   ""}, // CONTROL_VIEW_OUTPUT_THIS
+      {":D",   ""}, // CONTROL_VIEW_OUTPUT_CHILDREN
       {":r",   ""}, // CONTROL_RESET_INPUT_THIS
       {":R",   ""}, // CONTROL_RESET_INPUT_DESCENDANTS
       {":w",   ""}, // CONTROL_RESET_OUTPUT_THIS
@@ -64,6 +68,10 @@ namespace cli_menu {
     static bool neighborPreviousTest(mt::CR_STR rawstr);
     static bool switchModifyTest(mt::CR_STR rawstr);
     static bool switchSelectTest(mt::CR_STR rawstr);
+    static bool selectInputDownTest(mt::CR_STR rawstr);
+    static bool selectInputUpTest(mt::CR_STR rawstr);
+    static bool selectOutputDownTest(mt::CR_STR rawstr);
+    static bool selectOutputUpTest(mt::CR_STR rawstr);
     static bool viewInputThisTest(mt::CR_STR rawstr);
     static bool viewInputChildrenTest(mt::CR_STR rawstr);
     static bool viewOutputThisTest(mt::CR_STR rawstr);

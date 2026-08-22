@@ -6,13 +6,15 @@
 namespace cli_menu {
 
   Color Console::messageColors[Console::totalStatus] = {
-    Color::set[RED],
-    Color::set[YELLOW],
-    Color::set[CYAN],
-    Color::set[SKY_BLUE],
-    Color::set[AZURE],
-    Color::set[GREEN],
-    Color::set[ORANGE]
+    Color(),              // CONLOR_PLAIN
+    Color::set[RED],      // CONLOR_ERROR
+    Color::set[YELLOW],   // CONLOR_WARNING
+    Color::set[CYAN],     // CONLOR_HINT
+    Color::set[SKY_BLUE], // CONLOR_SHALLOW
+    Color::set[AZURE],    // CONLOR_DEEP
+    Color::set[PINK],     // CONLOR_HIGHLIGHT
+    Color::set[GREEN],    // CONLOR_CORRECT
+    Color::set[ORANGE]    // CONLOR_CANCEL
   };
 
   Color Console::boundaryModifyColor = Color::set[WHITE],
@@ -130,7 +132,7 @@ namespace cli_menu {
   }
 
   void Console::logResponse(
-    const CONSOLE_CODE &code,
+    const CONLOR_CODE &code,
     mt::CR_STR reason
   ) {
     logString(

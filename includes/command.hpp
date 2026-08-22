@@ -150,6 +150,10 @@ namespace cli_menu {
 
     virtual void clipboardInputPaste() {}
     virtual void clipboardOutputCopy() {}
+    virtual void selectInputDown() {}
+    virtual void selectInputUp() {}
+    virtual void selectOutputDown() {}
+    virtual void selectOutputUp() {}
     virtual void printInput(mt::CR_BOL withDesignedSticked) {}
     virtual void printOutput(mt::CR_BOL withDesignedSticked) {}
     virtual void printChildrenInputs() {}
@@ -254,13 +258,13 @@ namespace cli_menu {
      * Display '*' for required command.
      */
     void printKeyword(
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR<CONLOR_CODE> consoleCode,
       CR_Indent indent
     );
 
     // print children keywords
     void printList(
-      mt::CR<CONSOLE_CODE> consoleCode,
+      mt::CR<CONLOR_CODE> consoleCode,
       CR_Indent indent,
       mt::CR_BOL displayAtLeafWarning
     );

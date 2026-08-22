@@ -5,10 +5,11 @@
 
 namespace cli_menu {
 
-  enum CONSOLE_CODE {
-    CONSOLE_ERROR, CONSOLE_WARNING,
-    CONSOLE_HINT_1, CONSOLE_HINT_2, CONSOLE_HINT_3,
-    CONSOLE_CORRECT, CONSOLE_CANCEL
+  // console color code
+  enum CONLOR_CODE {
+    CONLOR_PLAIN, CONLOR_ERROR, CONLOR_WARNING,
+    CONLOR_HINT, CONLOR_SHALLOW, CONLOR_DEEP,
+    CONLOR_HIGHLIGHT, CONLOR_CORRECT, CONLOR_CANCEL
   };
 
   /** Global Indentation Control */
@@ -54,15 +55,10 @@ namespace cli_menu {
    */
   class Console {
   private:
-    static constexpr int totalStatus = 7;
+    static constexpr int totalStatus = 9;
 
   public:
     Console() = delete;
-
-    // predefined console codes for indentation coloring
-    inline static mt::ARR<CONSOLE_CODE, 2>
-      StickedCodes { CONSOLE_HINT_1, CONSOLE_HINT_2 },
-      BranchedCodes { CONSOLE_HINT_3, CONSOLE_HINT_2 };
 
     inline static bool outlineStyle = true;
     inline static char boundaryCharacter = '-';
@@ -139,7 +135,7 @@ namespace cli_menu {
      * colored with the predefined 'messageColors'.
      */
     static void logResponse(
-      const CONSOLE_CODE &code,
+      const CONLOR_CODE &code,
       mt::CR_STR reason
     );
 
