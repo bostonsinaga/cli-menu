@@ -60,6 +60,7 @@ namespace cli_menu {
 
   public:
     static Color set[COLOR_TOTAL];
+    Color() {}
 
     Color(
       mt::CR_SZ r_in,
