@@ -39,7 +39,7 @@ namespace cli_menu {
       [](Command *self)->COMMAND_CALLBACK_CODE {
 
         static_cast<Command*>(self->getParent())->printList(
-          CONLOR_SHALLOW, IndentSticked(), true
+          CONLOR_SHALLOW, Console::IndentSticked(), true
         );
 
         return COMMAND_CALLBACK_DONE;
@@ -314,8 +314,8 @@ namespace cli_menu {
 
   mt::PAIR2<std::string, size_t> Preset::ColorSet::stringify(
     const COLOR_CODE &code,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     std::string str = getSpacing() + Langu::ageColorSet::getName(code) + getSpacing();
     str += std::to_string(foreground.getR()) + getSpacing();

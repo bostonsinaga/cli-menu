@@ -17,9 +17,6 @@ namespace cli_menu {
 
   constexpr int COLOR_TOTAL = 35;
 
-  class Color;
-  typedef const Color& CR_CLR;
-
   class Color {
   private:
     size_t r = 0, g = 0, b = 0;
@@ -35,27 +32,27 @@ namespace cli_menu {
 
     static std::string getEscapeCode(
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground,
+      mt::CR<Color> foreground,
       mt::CR_BOL mEnd
     );
 
     static std::string getEscapeCode(
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string getString(
       std::string &text,
       mt::CR_STR styleEscapeCode,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
   public:
@@ -68,7 +65,7 @@ namespace cli_menu {
       mt::CR_SZ b_in
     );
 
-    bool operator=(CR_CLR comparison) const;
+    bool operator=(mt::CR<Color> comparison) const;
     const bool isUnset() const { return unset; }
     void setUnset();
 
@@ -81,30 +78,30 @@ namespace cli_menu {
     /** OPENED STRINGS */
 
     static std::string start(
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string start(
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string startItalic(
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string startItalic(
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string startUnderline(
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string startUnderline(
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string end() { return antidote; }
@@ -113,13 +110,13 @@ namespace cli_menu {
 
     static std::string getString(
       std::string text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string getString(
       std::string text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string getItalicString(
@@ -128,13 +125,13 @@ namespace cli_menu {
 
     static std::string getItalicString(
       std::string text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string getItalicString(
       std::string text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     static std::string getUnderlineString(
@@ -143,13 +140,13 @@ namespace cli_menu {
 
     static std::string getUnderlineString(
       std::string text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static std::string getUnderlineString(
       std::string text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
   };
 }

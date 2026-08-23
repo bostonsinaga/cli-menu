@@ -26,7 +26,7 @@ namespace cli_menu {
 
   void Console::logString(
     mt::CR_STR text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     std::cout << Color::getString(
       text, foreground
@@ -35,8 +35,8 @@ namespace cli_menu {
 
   void Console::logString(
     mt::CR_STR text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     std::cout << Color::getString(
       text, foreground, background
@@ -51,7 +51,7 @@ namespace cli_menu {
 
   void Console::logItalicString(
     mt::CR_STR text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     std::cout << Color::getItalicString(
       text, foreground
@@ -60,8 +60,8 @@ namespace cli_menu {
 
   void Console::logItalicString(
     mt::CR_STR text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     std::cout << Color::getItalicString(
       text, foreground, background
@@ -76,7 +76,7 @@ namespace cli_menu {
 
   void Console::logUnderlineString(
     mt::CR_STR text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     std::cout << Color::getUnderlineString(
       text, foreground
@@ -85,8 +85,8 @@ namespace cli_menu {
 
   void Console::logUnderlineString(
     mt::CR_STR text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     std::cout << Color::getUnderlineString(
       text, foreground, background
@@ -95,7 +95,7 @@ namespace cli_menu {
 
   /** SPECIALS */
 
-  CR_CLR Console::chooseBoundaryColor(mt::CR_BOL editing) {
+  mt::CR<Color> Console::chooseBoundaryColor(mt::CR_BOL editing) {
     return editing ? boundaryModifyColor : boundarySelectionColor;
   }
 

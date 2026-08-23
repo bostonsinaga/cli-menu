@@ -93,12 +93,12 @@ namespace cli_menu {
 
     static void printAbbreviations(
       mt::CR_BOL withHeader,
-      CR_Indent indent
+      mt::CR<Console::Indent> indent
     );
 
     static void printBooleanAvailableValues(
       mt::CR_BOL withHeader,
-      CR_Indent indent
+      mt::CR<Console::Indent> indent
     );
 
     static const CONTROL_CODE& getSharedEnum() {

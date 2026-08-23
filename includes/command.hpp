@@ -259,13 +259,13 @@ namespace cli_menu {
      */
     void printKeyword(
       mt::CR<CONLOR_CODE> consoleCode,
-      CR_Indent indent
+      mt::CR<Console::Indent> indent
     );
 
     // print children keywords
     void printList(
       mt::CR<CONLOR_CODE> consoleCode,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR_BOL displayAtLeafWarning
     );
   };

@@ -59,7 +59,7 @@ namespace cli_menu {
     b = b_in % 256;
   }
 
-  bool Color::operator=(CR_CLR comparison) const {
+  bool Color::operator=(mt::CR<Color> comparison) const {
     return (this == &comparison || (
       unset == comparison.unset &&
       r == comparison.r &&
@@ -163,7 +163,7 @@ namespace cli_menu {
 
   std::string Color::getEscapeCode(
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground,
+    mt::CR<Color> foreground,
     mt::CR_BOL mEnd
   ) {
     std::string code = styleEscapeCode;
@@ -182,8 +182,8 @@ namespace cli_menu {
 
   std::string Color::getEscapeCode(
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     std::string code = getEscapeCode(
       styleEscapeCode, foreground, false
@@ -203,40 +203,40 @@ namespace cli_menu {
   /** OPENED STRINGS */
 
   std::string Color::start(
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getEscapeCode("", foreground, true);
   }
 
   std::string Color::start(
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getEscapeCode("", foreground, background);
   }
 
   std::string Color::startItalic(
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getEscapeCode(italic, foreground, true);
   }
 
   std::string Color::startItalic(
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getEscapeCode(italic, foreground, background);
   }
 
   std::string Color::startUnderline(
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getEscapeCode(underline, foreground, true);
   }
 
   std::string Color::startUnderline(
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getEscapeCode(underline, foreground, background);
   }
@@ -246,7 +246,7 @@ namespace cli_menu {
   std::string Color::getString(
     std::string &text,
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return correctNewlines(
       text,
@@ -257,8 +257,8 @@ namespace cli_menu {
   std::string Color::getString(
     std::string &text,
     mt::CR_STR styleEscapeCode,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return correctNewlines(
       text,
@@ -268,15 +268,15 @@ namespace cli_menu {
 
   std::string Color::getString(
     std::string text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getString(text, "", foreground);
   }
 
   std::string Color::getString(
     std::string text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getString(text, "", foreground, background);
   }
@@ -289,15 +289,15 @@ namespace cli_menu {
 
   std::string Color::getItalicString(
     std::string text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getString(text, italic, foreground);
   }
 
   std::string Color::getItalicString(
     std::string text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getString(
       text, italic, foreground, background
@@ -312,15 +312,15 @@ namespace cli_menu {
 
   std::string Color::getUnderlineString(
     std::string text,
-    CR_CLR foreground
+    mt::CR<Color> foreground
   ) {
     return getString(text, underline, foreground);
   }
 
   std::string Color::getUnderlineString(
     std::string text,
-    CR_CLR foreground,
-    CR_CLR background
+    mt::CR<Color> foreground,
+    mt::CR<Color> background
   ) {
     return getString(
       text, underline, foreground, background

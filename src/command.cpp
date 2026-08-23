@@ -191,12 +191,12 @@ namespace cli_menu {
       }
       // CONTROLLER LIST
       else if (Control::controllerListTest(rawstr)) {
-        Control::printAbbreviations(true, IndentBranched());
-        Control::printBooleanAvailableValues(true, IndentBranched());
+        Control::printAbbreviations(true, Console::IndentBranched());
+        Control::printBooleanAvailableValues(true, Console::IndentBranched());
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
-        printList(CONLOR_SHALLOW, IndentSticked(), true);
+        printList(CONLOR_SHALLOW, Console::IndentSticked(), true);
       }
       // CLEAR TERMINAL SCREEN
       else if (Control::clearScreenTest(rawstr)) {
@@ -679,7 +679,7 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    printKeyword(CONLOR_HINT, IndentSticked());
+    printKeyword(CONLOR_HINT, Console::IndentSticked());
 
     // description
     Console::logItalicString(
@@ -687,12 +687,12 @@ namespace cli_menu {
       Console::messageColors[CONLOR_DEEP]
     );
 
-    printList(CONLOR_SHALLOW, IndentBranched(), false);
+    printList(CONLOR_SHALLOW, Console::IndentBranched(), false);
   }
 
   void Command::printKeyword(
     mt::CR<CONLOR_CODE> consoleCode,
-    CR_Indent indent
+    mt::CR<Console::Indent> indent
   ) {
     Console::logString(
       indent.get() + keyword + " ["
@@ -704,7 +704,7 @@ namespace cli_menu {
 
   void Command::printList(
     mt::CR<CONLOR_CODE> consoleCode,
-    CR_Indent indent,
+    mt::CR<Console::Indent> indent,
     mt::CR_BOL displayAtLeafWarning
   ) {
     if (hasChildren()) {

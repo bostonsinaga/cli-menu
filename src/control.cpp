@@ -183,7 +183,7 @@ namespace cli_menu {
 
   void Control::printAbbreviations(
     mt::CR_BOL withHeader,
-    CR_Indent indent
+    mt::CR<Console::Indent> indent
   ) {
     if (withHeader) {
       Console::logString(
@@ -216,7 +216,7 @@ namespace cli_menu {
 
   void Control::printBooleanAvailableValues(
     mt::CR_BOL withHeader,
-    CR_Indent indent
+    mt::CR<Console::Indent> indent
   ) {
     if (withHeader) {
       Console::logString(

@@ -246,7 +246,7 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   void Data::print(
     Command *comkey,
-    CR_Indent indent,
+    mt::CR<Console::Indent> indent,
     mt::CR<ConlorHighlightCodeSet> codeSet
   ) {
     if (has<T>(comkey)) {

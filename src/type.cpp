@@ -43,9 +43,9 @@ namespace cli_menu {
       if (Data::isTextsEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_OUTPUT_THIS);
       }
-      else Data::printTexts(this, IndentSticked(), Data::ConlorHighlightSticked);
+      else Data::printTexts(this, Console::IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printTexts(this, IndentBranched(), Data::ConlorHighlightBranched);
+    else Data::printTexts(this, Console::IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Parameter::resetOutput(mt::CR_BOL withMessage) {
@@ -63,7 +63,7 @@ namespace cli_menu {
             std::cout << '\r';
 
             static_cast<Command*>(current)->printKeyword(
-              CONLOR_HINT, IndentSticked()
+              CONLOR_HINT, Console::IndentSticked()
             );
 
             // input or output selection
@@ -201,9 +201,9 @@ namespace cli_menu {
       if (Data::isWordsEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printWords(this, IndentSticked(), Data::ConlorHighlightSticked);
+      else Data::printWords(this, Console::IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printWords(this, IndentBranched(), Data::ConlorHighlightBranched);
+    else Data::printWords(this, Console::IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Word::resetInput(mt::CR_BOL withMessage) {
@@ -275,9 +275,9 @@ namespace cli_menu {
       if (Data::isNumbersEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printNumbers(this, IndentSticked(), Data::ConlorHighlightSticked);
+      else Data::printNumbers(this, Console::IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printNumbers(this, IndentBranched(), Data::ConlorHighlightBranched);
+    else Data::printNumbers(this, Console::IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Number::resetInput(mt::CR_BOL withMessage) {
@@ -369,9 +369,9 @@ namespace cli_menu {
       if (Data::isBooleansEmpty(this)) {
         Langu::ageMessage::printResponse(SENTENCE_EMPTY_INPUT_THIS);
       }
-      else Data::printBooleans(this, IndentSticked(), Data::ConlorHighlightSticked);
+      else Data::printBooleans(this, Console::IndentSticked(), Data::ConlorHighlightSticked);
     }
-    else Data::printBooleans(this, IndentBranched(), Data::ConlorHighlightBranched);
+    else Data::printBooleans(this, Console::IndentBranched(), Data::ConlorHighlightBranched);
   }
 
   void Boolean::resetInput(mt::CR_BOL withMessage) {
@@ -466,11 +466,11 @@ namespace cli_menu {
       else if (Control::commandHelpTest(rawstr) ||
         Control::controllerListTest(rawstr)
       ) {
-        Control::printBooleanAvailableValues(true, IndentBranched());
+        Control::printBooleanAvailableValues(true, Console::IndentBranched());
       }
       // show list
       else if (Control::childrenListTest(rawstr)) {
-        Control::printBooleanAvailableValues(false, IndentSticked());
+        Control::printBooleanAvailableValues(false, Console::IndentSticked());
       }
       else {
         mt_uti::BOOLEANIZER_CODE code = Boolean::controllerTest(rawstr);

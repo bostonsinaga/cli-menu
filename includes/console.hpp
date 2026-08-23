@@ -12,44 +12,6 @@ namespace cli_menu {
     CONLOR_HIGHLIGHT, CONLOR_CORRECT, CONLOR_CANCEL
   };
 
-  /** Global Indentation Control */
-
-  class Indent {
-  public:
-    inline virtual std::string get() const { return ""; }
-    inline virtual void set(mt::CR_SZ number_in) {}
-  };
-
-  class IndentSticked : public Indent {
-  private:
-    inline static size_t number = 0;
-
-  public:
-    inline void set(mt::CR_SZ number_in) override {
-      IndentSticked::number = number_in;
-    }
-
-    inline std::string get() const override {
-      return std::string(IndentSticked::number, ' ');
-    }
-  };
-
-  class IndentBranched : public Indent {
-  private:
-    inline static size_t number = 2;
-
-  public:
-    inline void set(mt::CR_SZ number_in) override {
-      IndentBranched::number = number_in;
-    }
-
-    inline std::string get() const override {
-      return std::string(IndentBranched::number, ' ');
-    }
-  };
-
-  typedef const Indent& CR_Indent;
-
   /**
    * Display styled text to terminal.
    */
@@ -59,6 +21,44 @@ namespace cli_menu {
 
   public:
     Console() = delete;
+
+    /** Global Indentation Control */
+
+    class Indent {
+    public:
+      inline virtual std::string get() const { return ""; }
+      inline virtual void set(mt::CR_SZ number_in) {}
+    };
+
+    class IndentSticked : public Indent {
+    private:
+      inline static size_t number = 0;
+
+    public:
+      inline void set(mt::CR_SZ number_in) override {
+        IndentSticked::number = number_in;
+      }
+
+      inline std::string get() const override {
+        return std::string(IndentSticked::number, ' ');
+      }
+    };
+
+    class IndentBranched : public Indent {
+    private:
+      inline static size_t number = 2;
+
+    public:
+      inline void set(mt::CR_SZ number_in) override {
+        IndentBranched::number = number_in;
+      }
+
+      inline std::string get() const override {
+        return std::string(IndentBranched::number, ' ');
+      }
+    };
+
+    /** VARIABLES */
 
     inline static bool outlineStyle = true;
     inline static char boundaryCharacter = '-';
@@ -76,13 +76,13 @@ namespace cli_menu {
 
     static void logString(
       mt::CR_STR text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static void logString(
       mt::CR_STR text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     /** ITALIC */
@@ -91,13 +91,13 @@ namespace cli_menu {
 
     static void logItalicString(
       mt::CR_STR text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static void logItalicString(
       mt::CR_STR text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     /** UNDERLINE */
@@ -106,13 +106,13 @@ namespace cli_menu {
 
     static void logUnderlineString(
       mt::CR_STR text,
-      CR_CLR foreground
+      mt::CR<Color> foreground
     );
 
     static void logUnderlineString(
       mt::CR_STR text,
-      CR_CLR foreground,
-      CR_CLR background
+      mt::CR<Color> foreground,
+      mt::CR<Color> background
     );
 
     /**
@@ -122,7 +122,7 @@ namespace cli_menu {
      * In this class, it serves to distinguish the theme.
      */
 
-    static CR_CLR chooseBoundaryColor(mt::CR_BOL editing);
+    static mt::CR<Color> chooseBoundaryColor(mt::CR_BOL editing);
     static void logBoundaryLine(mt::CR_BOL editing);
 
     static void logStylishHeader(

@@ -140,7 +140,7 @@ namespace cli_menu {
     template <UNORMAP_COMVEC_TYPE T>
     static void print(
       Command *comkey,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR<ConlorHighlightCodeSet> codeSet
     );
 
@@ -712,7 +712,7 @@ namespace cli_menu {
 
     inline static void printTexts(
       Command *comkey,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
       print<TextMaps>(comkey, indent, codeSet);
@@ -720,7 +720,7 @@ namespace cli_menu {
 
     inline static void printWords(
       Command *comkey,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
       print<WordMaps>(comkey, indent, codeSet);
@@ -728,7 +728,7 @@ namespace cli_menu {
 
     inline static void printNumbers(
       Command *comkey,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
       print<NumberMaps>(comkey, indent, codeSet);
@@ -736,7 +736,7 @@ namespace cli_menu {
 
     inline static void printBooleans(
       Command *comkey,
-      CR_Indent indent,
+      mt::CR<Console::Indent> indent,
       mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
     ) {
       print<BooleanMaps>(comkey, indent, codeSet);

@@ -97,8 +97,8 @@ namespace cli_menu {
 
       static mt::PAIR2<std::string, size_t> stringify(
         const COLOR_CODE &code,
-        CR_CLR foreground,
-        CR_CLR background
+        mt::CR<Color> foreground,
+        mt::CR<Color> background
       );
 
       static void print();
