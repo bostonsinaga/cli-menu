@@ -135,10 +135,15 @@ namespace cli_menu {
           if (mt::FS::is_regular_file(filename)) {
             found = true;
 
-            // read file content and put it into 'Data'
+            // read file content
             Data::xpushWord(
               static_cast<Command*>(self->getParent()),
               mt_uti::Scanner::readFileString(filename)
+            );
+
+            // ..and put it into parent 'Data'
+            Langu::ageMessage::printResponse(
+              SENTENCE_FILE_READ_STORED_TO_PARENT_INPUT
             );
           }
           else Langu::ageMessage::printTemplateResponse(
