@@ -124,6 +124,8 @@ namespace cli_menu {
     "output inside '$' is empty",
     // SENTENCE_FILE_READ_NOT_FOUND
     "file '$' is not found",
+    // SENTENCE_FILE_READ_STORED_TO_PARENT_INPUT
+    "content stored to parent as input",
     // SENTENCE_FILE_OVERWRITE_QUESTION
     "are you sure you want to overwrite '$'?",
     // SENTENCE_FILE_WRITE_FAILURE
@@ -211,6 +213,8 @@ namespace cli_menu {
     CONLOR_ERROR,
     // SENTENCE_FILE_READ_NOT_FOUND
     CONLOR_ERROR,
+    // SENTENCE_FILE_READ_STORED_TO_PARENT_INPUT
+    CONLOR_HINT,
     // SENTENCE_FILE_OVERWRITE_QUESTION
     CONLOR_WARNING,
     // SENTENCE_FILE_WRITE_FAILURE
@@ -285,6 +289,7 @@ namespace cli_menu {
     mt::CR_STR emptyOutputThisSentence,
     mt::CR_STR emptyOutputNamedSentence,
     mt::CR_STR fileReadNotFoundSentence,
+    mt::CR_STR fileReadStoredToParentInputSentence,
     mt::CR_STR fileOverwriteQuestionSentence,
     mt::CR_STR fileWriteFailureSentence,
     mt::CR_STR fileWriteSucceedSentence,
@@ -328,6 +333,7 @@ namespace cli_menu {
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_THIS] = emptyOutputThisSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_EMPTY_OUTPUT_NAMED] = emptyOutputNamedSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_READ_NOT_FOUND] = fileReadNotFoundSentence;
+    Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_READ_STORED_TO_PARENT_INPUT] = fileReadStoredToParentInputSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_OVERWRITE_QUESTION] = fileOverwriteQuestionSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_FAILURE] = fileWriteFailureSentence;
     Langu::xMessage::sentences[Langu::xManager::currentISOCode][SENTENCE_FILE_WRITE_SUCCEED] = fileWriteSucceedSentence;

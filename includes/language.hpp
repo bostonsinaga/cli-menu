@@ -19,6 +19,7 @@ namespace cli_menu {
     SENTENCE_EMPTY_OUTPUT_THIS,
     SENTENCE_EMPTY_OUTPUT_NAMED,
     SENTENCE_FILE_READ_NOT_FOUND,
+    SENTENCE_FILE_READ_STORED_TO_PARENT_INPUT,
     SENTENCE_FILE_OVERWRITE_QUESTION,
     SENTENCE_FILE_WRITE_FAILURE,
     SENTENCE_FILE_WRITE_SUCCEED,
@@ -109,7 +110,7 @@ namespace cli_menu {
     PRESET_KEYWORD_COLOR_SET
   };
 
-  constexpr int SENTENCE_TOTAL = 42;
+  constexpr int SENTENCE_TOTAL = 43;
   constexpr int CONTROL_TOTAL = 31;
   constexpr int PARAMETER_TYPE_TOTAL = 3;
   constexpr int PROGRAM_LABEL_TOTAL = 3;
@@ -205,6 +206,7 @@ namespace cli_menu {
         mt::CR_STR emptyOutputThisSentence,
         mt::CR_STR emptyOutputNamedSentence,
         mt::CR_STR fileReadNotFoundSentence,
+        mt::CR_STR fileReadStoredToParentInputSentence,
         mt::CR_STR fileOverwriteQuestionSentence,
         mt::CR_STR fileWriteFailureSentence,
         mt::CR_STR fileWriteSucceedSentence,
