@@ -48,9 +48,27 @@ namespace cli_menu {
     else Data::printTexts(this, Console::IndentBranched(), Data::ConlorHighlightBranched);
   }
 
+  void Parameter::xresetInput(mt::CR_BOL withMessage) {
+    filled = false;
+    required.first = required.second;
+    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+  }
+
   void Parameter::resetOutput(mt::CR_BOL withMessage) {
     Data::resetTexts(this);
     if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_OUTPUT_THIS);
+  }
+
+  void Parameter::xstrargv(mt::CR_SZ vecsz) {
+    filled = true;
+    required.first = false;
+
+    // print number of new arguments
+    if (vecsz) {
+      Langu::ageMessage::printTemplateResponse(
+        SENTENCE_ARGUMENT_ADDED, { std::to_string(vecsz), keyword }
+      );
+    }
   }
 
   void Parameter::displayChildrenData(mt::CR_BOL inputOrOutput) {
@@ -208,7 +226,7 @@ namespace cli_menu {
 
   void Word::resetInput(mt::CR_BOL withMessage) {
     Data::resetWords(this);
-    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    xresetInput(withMessage);
   }
 
   void Word::strargv(mt::CR_VEC_STR rawstrs) {
@@ -222,15 +240,8 @@ namespace cli_menu {
     }
 
     // save new arguments
-    required.first = false;
     Data::addWords(this, vecstr);
-
-    // print number of new arguments
-    if (!vecstr.empty()) {
-      Langu::ageMessage::printTemplateResponse(
-        SENTENCE_ARGUMENT_ADDED, { std::to_string(vecstr.size()), keyword }
-      );
-    }
+    xstrargv(vecstr.size());
   }
 
   /** NUMBER */
@@ -282,7 +293,7 @@ namespace cli_menu {
 
   void Number::resetInput(mt::CR_BOL withMessage) {
     Data::resetNumbers(this);
-    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    xresetInput(withMessage);
   }
 
   void Number::strargv(mt::CR_VEC_STR rawstrs) {
@@ -316,15 +327,8 @@ namespace cli_menu {
     }
 
     // save new arguments
-    required.first = false;
     Data::addNumbers(this, numbers[1]);
-
-    // print number of new arguments
-    if (!numbers[1].empty()) {
-      Langu::ageMessage::printTemplateResponse(
-        SENTENCE_ARGUMENT_ADDED, { std::to_string(numbers[1].size()), keyword }
-      );
-    }
+    xstrargv(numbers[1].size());
   }
 
   /** BOOLEAN */
@@ -376,7 +380,7 @@ namespace cli_menu {
 
   void Boolean::resetInput(mt::CR_BOL withMessage) {
     Data::resetBooleans(this);
-    if (withMessage) Langu::ageMessage::printResponse(SENTENCE_RESET_INPUT_THIS);
+    xresetInput(withMessage);
   }
 
   void Boolean::strargv(mt::CR_VEC_STR rawstrs) {
@@ -401,15 +405,8 @@ namespace cli_menu {
     }
 
     // save new arguments
-    required.first = false;
     Data::addBooleans(this, conditions);
-
-    // print number of new arguments
-    if (!conditions.empty()) {
-      Langu::ageMessage::printTemplateResponse(
-        SENTENCE_ARGUMENT_ADDED, { std::to_string(conditions.size()), keyword }
-      );
-    }
+    xstrargv(conditions.size());
   }
 
   mt_uti::BOOLEANIZER_CODE Boolean::controllerTest(mt::CR_STR rawstr) {

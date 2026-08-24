@@ -34,7 +34,9 @@ namespace cli_menu {
     void selectOutputDown() override;
     void selectOutputUp() override;
     void printOutput(mt::CR_BOL withDesignedSticked) override;
+    void xresetInput(mt::CR_BOL withMessage);
     void resetOutput(mt::CR_BOL withMessage) override;
+    void xstrargv(mt::CR_SZ vecsz);
 
     void displayChildrenData(mt::CR_BOL inputOrOutput);
     void cleanDescendantData(mt::CR_BOL inputOrOutput);
