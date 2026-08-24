@@ -118,8 +118,9 @@ namespace cli_menu {
     Command *unredo(mt::CR<UNREDO_DIRECTION> dir);
 
   protected:
-    // changeable and initial reference
+    // changeable and initial reference of input status
     mt::PAIR_BOL required = {false, false};
+    bool filled = false;
 
     bool sterilized = false;
     std::string hyphens, keyword, description;
@@ -166,6 +167,17 @@ namespace cli_menu {
 
   public:
     Command() = delete;
+
+    /**
+     * Displayed at the tail of keyword for data status.
+     * Empty data will not display it.
+     */
+    inline static std::string
+      requiredIndicator = "*",
+      filledIndicator = "+";
+
+    // stringified type inside the brackets
+    inline static char stringifiedTypeBrackets[2] = {'[', ']'};
 
     /**
      * Entry point to dialog interactions.
@@ -255,7 +267,7 @@ namespace cli_menu {
 
     /**
      * Print keyword and type.
-     * Display '*' for required command.
+     * Can display required or filled indicators.
      */
     void printKeyword(
       mt::CR<CONLOR_CODE> consoleCode,

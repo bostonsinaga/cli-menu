@@ -679,9 +679,9 @@ namespace cli_menu {
   }
 
   void Command::printHelp() {
-    printKeyword(CONLOR_HINT, Console::IndentSticked());
+    printKeyword(CONLOR_TITLE, Console::IndentSticked());
 
-    // description
+    // keyword - description - list
     Console::logItalicString(
       description + '\n',
       Console::messageColors[CONLOR_DESCRIPTION]
@@ -694,10 +694,24 @@ namespace cli_menu {
     mt::CR<CONLOR_CODE> consoleCode,
     mt::CR<Console::Indent> indent
   ) {
-    Console::logString(
-      indent.get() + keyword + " ["
+    // stringified type inside the brackets
+    std::string coloredIndicator, stringifiedType(
+      Command::stringifiedTypeBrackets[0]
       + Langu::ageParameter::getStringifiedType(stringifiedTypeIndex)
-      + ']' + (required.first ? '*' : '\0') + '\n',
+      + Command::stringifiedTypeBrackets[1]
+    );
+
+    // select indicator
+    if (required.first) coloredIndicator = Color::getString(
+      Command::requiredIndicator, Console::messageColors[CONLOR_HIGHLIGHT]
+    );
+    else if (filled) coloredIndicator = Color::getString(
+      Command::filledIndicator, Console::messageColors[CONLOR_CORRECT]
+    );
+
+    // print the strings
+    Console::logString(
+      indent.get() + keyword + ' ' + stringifiedType + coloredIndicator + '\n',
       Console::messageColors[consoleCode]
     );
   }
