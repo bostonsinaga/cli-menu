@@ -39,7 +39,7 @@ namespace cli_menu {
       [](Command *self)->COMMAND_CALLBACK_CODE {
 
         static_cast<Command*>(self->getParent())->printList(
-          CONLOR_SHALLOW, Console::IndentSticked(), true
+          CONLOR_LIST, Console::IndentSticked(), true
         );
 
         return COMMAND_CALLBACK_DONE;

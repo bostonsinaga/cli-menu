@@ -52,8 +52,8 @@ namespace cli_menu {
 
     inline static ConlorHighlightCodeSet
       ConlorHighlightPlain { CONLOR_PLAIN, CONLOR_PLAIN },
-      ConlorHighlightSticked { CONLOR_SHALLOW, CONLOR_HIGHLIGHT },
-      ConlorHighlightBranched { CONLOR_DEEP, CONLOR_HIGHLIGHT };
+      ConlorHighlightSticked { CONLOR_LIST, CONLOR_HIGHLIGHT },
+      ConlorHighlightBranched { CONLOR_DESCRIPTION, CONLOR_HIGHLIGHT };
 
   private:
     inline static TextMaps textMaps {{}, {}, {""}};

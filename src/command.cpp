@@ -196,7 +196,7 @@ namespace cli_menu {
       }
       // LIST CHILDREN
       else if (Control::childrenListTest(rawstr)) {
-        printList(CONLOR_SHALLOW, Console::IndentSticked(), true);
+        printList(CONLOR_LIST, Console::IndentSticked(), true);
       }
       // CLEAR TERMINAL SCREEN
       else if (Control::clearScreenTest(rawstr)) {
@@ -684,10 +684,10 @@ namespace cli_menu {
     // description
     Console::logItalicString(
       description + '\n',
-      Console::messageColors[CONLOR_DEEP]
+      Console::messageColors[CONLOR_DESCRIPTION]
     );
 
-    printList(CONLOR_SHALLOW, Console::IndentBranched(), false);
+    printList(CONLOR_LIST, Console::IndentBranched(), false);
   }
 
   void Command::printKeyword(

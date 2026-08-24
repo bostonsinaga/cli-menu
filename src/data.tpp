@@ -260,7 +260,7 @@ namespace cli_menu {
         index = 1;
 
         text += Color::getString(
-          "...\n", Console::messageColors[CONLOR_HINT]
+          "...\n", Console::messageColors[CONLOR_TITLE]
         );
       }
       else { // data is exist

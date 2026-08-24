@@ -188,12 +188,12 @@ namespace cli_menu {
     if (withHeader) {
       Console::logString(
         Langu::ageControl::getAbbreviationsTitle() + ":\n",
-        Console::messageColors[CONLOR_HINT]
+        Console::messageColors[CONLOR_TITLE]
       );
 
       Console::logItalicString(
         Console::LimitedText::wrap(Langu::ageControl::getAbbreviationsDescription()),
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     }
 
@@ -204,12 +204,12 @@ namespace cli_menu {
 
       Console::logString(
         Control::symbols[i][0],
-        Console::messageColors[CONLOR_SHALLOW]
+        Console::messageColors[CONLOR_LIST]
       );
 
       Console::logString(
         " = " + curterm + '\n',
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     }
   }
@@ -221,12 +221,12 @@ namespace cli_menu {
     if (withHeader) {
       Console::logString(
         Langu::ageControl::getBooleanAvailableValuesTitle() + ":\n",
-        Console::messageColors[CONLOR_HINT]
+        Console::messageColors[CONLOR_TITLE]
       );
 
       Console::logItalicString(
         Console::LimitedText::wrap(Langu::ageControl::getBooleanAvailableValuesDescription()),
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     }
 
@@ -237,17 +237,17 @@ namespace cli_menu {
     std::function<void(mt::CR_CH)> printSign = [&](mt::CR_CH sign) {
       Console::logString(
         indent.get() + sign,
-        Console::messageColors[CONLOR_SHALLOW]
+        Console::messageColors[CONLOR_LIST]
       );
 
-      Console::logString(" = ", Console::messageColors[CONLOR_DEEP]);
+      Console::logString(" = ", Console::messageColors[CONLOR_DESCRIPTION]);
     };
 
     // print code
     std::function<void(mt::CR<CONTROL_CODE>)> printCode = [&](mt::CR<CONTROL_CODE> code) {
       Console::logString(
         symbols[code][0] + ' ',
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     };
 
@@ -258,14 +258,14 @@ namespace cli_menu {
     for (int i = 0; i < boolTerms.second.size(); i++) {
       Console::logString(
         boolTerms.second[i] + ' ',
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     }
 
     printCode(CONTROL_NEIGHBOR_PREVIOUS);
 
     Console::logString( // number is zero
-      "n==0\n", Console::messageColors[CONLOR_DEEP]
+      "n==0\n", Console::messageColors[CONLOR_DESCRIPTION]
     );
 
     /** True Terms */
@@ -275,7 +275,7 @@ namespace cli_menu {
     for (int i = 0; i < boolTerms.first.size(); i++) {
       Console::logString(
         boolTerms.first[i] + ' ',
-        Console::messageColors[CONLOR_DEEP]
+        Console::messageColors[CONLOR_DESCRIPTION]
       );
     }
 
@@ -283,7 +283,7 @@ namespace cli_menu {
     printCode(CONTROL_NEIGHBOR_NEXT);
 
     Console::logString( // number is not zero
-      "n!=0\n", Console::messageColors[CONLOR_DEEP]
+      "n!=0\n", Console::messageColors[CONLOR_DESCRIPTION]
     );
 
     // cancel terms

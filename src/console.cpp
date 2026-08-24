@@ -10,8 +10,9 @@ namespace cli_menu {
     Color::set[RED],      // CONLOR_ERROR
     Color::set[YELLOW],   // CONLOR_WARNING
     Color::set[CYAN],     // CONLOR_HINT
-    Color::set[SKY_BLUE], // CONLOR_SHALLOW
-    Color::set[AZURE],    // CONLOR_DEEP
+    Color::set[CYAN],     // CONLOR_TITLE
+    Color::set[AZURE],    // CONLOR_DESCRIPTION
+    Color::set[SKY_BLUE], // CONLOR_LIST
     Color::set[PINK],     // CONLOR_HIGHLIGHT
     Color::set[GREEN],    // CONLOR_CORRECT
     Color::set[ORANGE]    // CONLOR_CANCEL

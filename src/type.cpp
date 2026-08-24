@@ -63,7 +63,7 @@ namespace cli_menu {
             std::cout << '\r';
 
             static_cast<Command*>(current)->printKeyword(
-              CONLOR_HINT, Console::IndentSticked()
+              CONLOR_TITLE, Console::IndentSticked()
             );
 
             // input or output selection
