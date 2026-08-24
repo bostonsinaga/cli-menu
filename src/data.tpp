@@ -71,6 +71,14 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+  mt::VEC<U> Data::getVector(Command *comkey) {
+    if (has<T>(comkey)) {
+      return use<T>().comvec[comkey].second;
+    }
+    return {};
+  }
+
+  template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
   void Data::set(
     Command *comkey,
     mt::CR<U> value
@@ -237,7 +245,7 @@ namespace cli_menu {
 
       // directly pass the member
       text += Color::getString(
-        unormap.comvec[comkey].second[i] + separator,
+        mt_uti::StrTool::deactivateNewlines(unormap.comvec[comkey].second[i]) + separator,
         Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
       );
     }

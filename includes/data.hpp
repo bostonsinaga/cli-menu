@@ -88,6 +88,9 @@ namespace cli_menu {
     );
 
     template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
+    static mt::VEC<U> getVector(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T, PRIMITIVE_TYPE U>
     static void set(
       Command *comkey,
       mt::CR<U> value
@@ -333,6 +336,24 @@ namespace cli_menu {
       mt::CR_INT index
     ) {
       return booleanMaps.comvec[comkey].second[index];
+    }
+
+    /** Get Vector Copy (Safe) */
+
+    inline static mt::VEC_STR getTexts(Command *comkey) {
+      return getVector<TextMaps, std::string>(comkey);
+    }
+
+    inline static mt::VEC_STR getWords(Command *comkey) {
+      return getVector<WordMaps, std::string>(comkey);
+    }
+
+    inline static mt::VEC_DBL getNumbers(Command *comkey) {
+      return getVector<NumberMaps, double>(comkey);
+    }
+
+    inline static mt::VEC_BOL getBooleans(Command *comkey) {
+      return getVector<BooleanMaps, bool>(comkey);
     }
 
     /** Get Vector Reference (Unsafe) */
