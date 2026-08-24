@@ -39,7 +39,9 @@ namespace cli_menu {
   mt::VEC<U>::reference Data::getValue(Command *comkey) {
     T &unormap = use<T>();
 
-    if (has<T>(comkey)) {
+    if (has<T>(comkey) &&
+      unormap.comvec[comkey].first < unormap.comvec[comkey].second.size()
+    ) {
       return unormap.comvec[comkey].second[
         unormap.comvec[comkey].first
       ];
