@@ -273,7 +273,11 @@ namespace cli_menu {
           }
         }
 
-        COMMAND_CALLBACK_CODE callbackCode = useTextOut(self, filename);
+        // write to filename
+        COMMAND_CALLBACK_CODE callbackCode = useTextOut(
+          static_cast<Command*>(self->getParent()),
+          filename
+        );
 
         // file write failed message
         if (callbackCode == COMMAND_CALLBACK_ERROR) {
@@ -292,6 +296,7 @@ namespace cli_menu {
       owner, false,
       [](Command *self)->COMMAND_CALLBACK_CODE {
 
+        // write to filename of this recent input
         useTextOut(
           static_cast<Command*>(self->getParent()),
           Data::getWord(self)
