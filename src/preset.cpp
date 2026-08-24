@@ -142,7 +142,7 @@ namespace cli_menu {
             );
           }
           else Langu::ageMessage::printTemplateResponse(
-            SENTENCE_KEYWORD_NOT_FOUND, {filename}
+            SENTENCE_FILE_READ_NOT_FOUND, {filename}
           );
         }
 
