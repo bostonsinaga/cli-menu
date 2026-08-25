@@ -1,10 +1,10 @@
 void initWrite(cm::Parameter *cli_log) {
 
-  cm::Boolean *cli_write = cli_log->addBoolean(
+  cm::Word *cli_write = cli_log->addWord(
     "write",
     "Write input to a TXT file in 'logs' folder",
     [](cm::Command *current)->cm::COMMAND_CALLBACK_CODE {
-      std::cout << "__cli_write_called\n";
+      cm::Data::copyInputToOutputWords(current);
       return cm::COMMAND_CALLBACK_DONE;
     }
   );

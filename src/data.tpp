@@ -197,12 +197,8 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T>
-  std::string Data::stringify(
-    Command *comkey,
-    mt::CR<ConlorHighlightCodeSet> codeSet,
-    mt::CR_STR separator
-  ) {
-    std::string text;
+  mt::VEC_STR Data::vectorStringify(Command *comkey) {
+    mt::VEC_STR vecstr;
     T &unormap = use<T>();
 
     // booleans
@@ -220,13 +216,8 @@ namespace cli_menu {
       for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
 
         // select one of the stringified terms
-        if (unormap.comvec[comkey].second[i]) text += trueTerm + separator;
-        else text += falseTerm + separator;
-
-        // then colorize it
-        text = Color::getString(
-          text, Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
-        );
+        if (unormap.comvec[comkey].second[i]) vecstr.push_back(trueTerm);
+        else vecstr.push_back(falseTerm);
       }
     }
     // numbers
@@ -234,19 +225,54 @@ namespace cli_menu {
       for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
 
         // firstly convert the member to string
-        text += Color::getString(
-          std::to_string(unormap.comvec[comkey].second[i]) + separator,
-          Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
-        );
+        vecstr.push_back(std::to_string(
+          unormap.comvec[comkey].second[i]
+        ));
       }
     }
     // words or texts
     else for (int i = 0; i < unormap.comvec[comkey].second.size(); i++) {
 
-      // directly pass the member
+      // disable newline and carriage return escape characters
+      vecstr.push_back(mt_uti::StrTool::deactivateNewlines(
+        unormap.comvec[comkey].second[i]
+      ));
+    }
+
+    return vecstr;
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
+  std::string Data::stringify(
+    Command *comkey,
+    mt::CR_STR separator
+  ) {
+    if (has<T>(comkey)) {
+      return mt_uti::StrTool::joinVector(
+        vectorStringify<T>(comkey), separator
+      );
+    }
+    return "";
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
+  std::string Data::joinColorize(
+    Command *comkey,
+    mt::CR_VEC_STR vecstr,
+    mt::CR<ConlorHighlightCodeSet> conlorSet,
+    mt::CR_STR separator
+  ) {
+    T &unormap = use<T>();
+    std::string text;
+    bool isSelected;
+
+    for (int i = 0; i < vecstr.size(); i++) {
+      isSelected = i == unormap.comvec[comkey].first;
+
+      // combining the members into a string
       text += Color::getString(
-        mt_uti::StrTool::deactivateNewlines(unormap.comvec[comkey].second[i]) + separator,
-        Console::messageColors[codeSet[i == unormap.comvec[comkey].first]]
+        vecstr[i] + separator,
+        Console::messageColors[conlorSet[isSelected]]
       );
     }
 
@@ -257,7 +283,7 @@ namespace cli_menu {
   void Data::print(
     Command *comkey,
     mt::CR<Console::Indent> indent,
-    mt::CR<ConlorHighlightCodeSet> codeSet
+    mt::CR<ConlorHighlightCodeSet> conlorSet
   ) {
     if (has<T>(comkey)) {
       int index = 0;
@@ -272,11 +298,21 @@ namespace cli_menu {
         );
       }
       else { // data is exist
-        text += stringify<T>(comkey, codeSet, '\n' + indent.get());
+        text += joinColorize<T>(
+          comkey, vectorStringify<T>(comkey), conlorSet, '\n' + indent.get()
+        );
       }
 
       // print the stringified out
       std::cout << text;
+    }
+  }
+
+  template <UNORMAP_COMVEC_TYPE T>
+  void Data::copyInputToOutput(Command *comkey) {
+    if (has<T>(comkey)) {
+      resetTexts(comkey);
+      addTexts(comkey, vectorStringify<T>(comkey));
     }
   }
 }

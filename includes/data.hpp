@@ -51,7 +51,6 @@ namespace cli_menu {
     typedef mt::ARR<CONLOR_CODE, 2> ConlorHighlightCodeSet;
 
     inline static ConlorHighlightCodeSet
-      ConlorHighlightPlain { CONLOR_PLAIN, CONLOR_PLAIN },
       ConlorHighlightSticked { CONLOR_LIST, CONLOR_HIGHLIGHT },
       ConlorHighlightBranched { CONLOR_DESCRIPTION, CONLOR_HIGHLIGHT };
 
@@ -134,9 +133,19 @@ namespace cli_menu {
     );
 
     template <UNORMAP_COMVEC_TYPE T>
-    static std::string stringify(
+    static mt::VEC_STR vectorStringify(Command *comkey);
+
+    template <UNORMAP_COMVEC_TYPE T>
+    inline static std::string stringify(
       Command *comkey,
-      mt::CR<ConlorHighlightCodeSet> codeSet,
+      mt::CR_STR separator
+    );
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static std::string joinColorize(
+      Command *comkey,
+      mt::CR_VEC_STR vecstr,
+      mt::CR<ConlorHighlightCodeSet> conlorSet,
       mt::CR_STR separator
     );
 
@@ -144,8 +153,11 @@ namespace cli_menu {
     static void print(
       Command *comkey,
       mt::CR<Console::Indent> indent,
-      mt::CR<ConlorHighlightCodeSet> codeSet
+      mt::CR<ConlorHighlightCodeSet> conlorSet
     );
+
+    template <UNORMAP_COMVEC_TYPE T>
+    static void copyInputToOutput(Command *comkey);
 
     friend class Parameter;
 
@@ -242,7 +254,7 @@ namespace cli_menu {
       return hasBooleans(comkey) ? booleanMaps.comvec[comkey].second.size() : 0;
     }
 
-    /** Get Recent Index */
+    /** Get Selected Index */
 
     inline static int getTextIndex(Command *comkey) {
       return textMaps.comvec[comkey].first;
@@ -260,7 +272,7 @@ namespace cli_menu {
       return booleanMaps.comvec[comkey].first;
     }
 
-    /** Get Recent Single Value */
+    /** Get Selected Single Value */
 
     inline static mt::VEC_STR::reference getText(Command *comkey) {
       return getValue<TextMaps, std::string>(comkey);
@@ -374,7 +386,7 @@ namespace cli_menu {
       return booleanMaps.comvec[comkey].second;
     }
 
-    /** Set Recent Single Value */
+    /** Set Selected Single Value */
 
     inline static void setText(
       Command *comkey,
@@ -698,35 +710,31 @@ namespace cli_menu {
 
     inline static std::string stringifyTexts(
       Command *comkey,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<TextMaps>(comkey, codeSet, separator);
+      return stringify<TextMaps>(comkey, separator);
     }
 
     inline static std::string stringifyWords(
       Command *comkey,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<WordMaps>(comkey, codeSet, separator);
+      return stringify<WordMaps>(comkey, separator);
     }
 
     inline static std::string stringifyNumbers(
       Command *comkey,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<NumberMaps>(comkey, codeSet, separator);
+      return stringify<NumberMaps>(comkey, separator);
     }
 
     // stringified boolean is based on 'mt_uti::Booleanizer'
     inline static std::string stringifyBooleans(
       Command *comkey,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<BooleanMaps>(comkey, codeSet, separator);
+      return stringify<BooleanMaps>(comkey, separator);
     }
 
     /** Print Stringified Vector */
@@ -734,33 +742,47 @@ namespace cli_menu {
     inline static void printTexts(
       Command *comkey,
       mt::CR<Console::Indent> indent,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
+      mt::CR<ConlorHighlightCodeSet> conlorSet
     ) {
-      print<TextMaps>(comkey, indent, codeSet);
+      print<TextMaps>(comkey, indent, conlorSet);
     }
 
     inline static void printWords(
       Command *comkey,
       mt::CR<Console::Indent> indent,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
+      mt::CR<ConlorHighlightCodeSet> conlorSet
     ) {
-      print<WordMaps>(comkey, indent, codeSet);
+      print<WordMaps>(comkey, indent, conlorSet);
     }
 
     inline static void printNumbers(
       Command *comkey,
       mt::CR<Console::Indent> indent,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
+      mt::CR<ConlorHighlightCodeSet> conlorSet
     ) {
-      print<NumberMaps>(comkey, indent, codeSet);
+      print<NumberMaps>(comkey, indent, conlorSet);
     }
 
     inline static void printBooleans(
       Command *comkey,
       mt::CR<Console::Indent> indent,
-      mt::CR<ConlorHighlightCodeSet> codeSet = ConlorHighlightPlain
+      mt::CR<ConlorHighlightCodeSet> conlorSet
     ) {
-      print<BooleanMaps>(comkey, indent, codeSet);
+      print<BooleanMaps>(comkey, indent, conlorSet);
+    }
+
+    /** Copy Input To Output */
+
+    static void copyInputToOutputWords(Command *comkey) {
+      copyInputToOutput<WordMaps>(comkey);
+    }
+
+    static void copyInputToOutputNumbers(Command *comkey) {
+      copyInputToOutput<NumberMaps>(comkey);
+    }
+
+    static void copyInputToOutputBooleans(Command *comkey) {
+      copyInputToOutput<BooleanMaps>(comkey);
     }
   };
 }
