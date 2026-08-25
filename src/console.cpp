@@ -6,7 +6,6 @@
 namespace cli_menu {
 
   Color Console::messageColors[Console::totalStatus] = {
-    Color(),              // CONLOR_PLAIN
     Color::set[RED],      // CONLOR_ERROR
     Color::set[YELLOW],   // CONLOR_WARNING
     Color::set[CYAN],     // CONLOR_HINT

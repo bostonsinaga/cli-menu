@@ -7,10 +7,9 @@ namespace cli_menu {
 
   // console color code
   enum CONLOR_CODE {
-    CONLOR_PLAIN, CONLOR_ERROR, CONLOR_WARNING,
-    CONLOR_HINT, CONLOR_TITLE, CONLOR_DESCRIPTION,
-    CONLOR_LIST, CONLOR_HIGHLIGHT,
-    CONLOR_CORRECT, CONLOR_CANCEL
+    CONLOR_ERROR, CONLOR_WARNING, CONLOR_HINT,
+    CONLOR_TITLE, CONLOR_DESCRIPTION, CONLOR_LIST,
+    CONLOR_HIGHLIGHT, CONLOR_CORRECT, CONLOR_CANCEL
   };
 
   /**
@@ -18,7 +17,7 @@ namespace cli_menu {
    */
   class Console {
   private:
-    static constexpr int totalStatus = 10;
+    static constexpr int totalStatus = 9;
 
   public:
     Console() = delete;
