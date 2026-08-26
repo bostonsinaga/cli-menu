@@ -303,7 +303,7 @@ namespace cli_menu {
     // strings slicing in vector
     for (mt::CR_STR str : rawstrs) {
       mt_uti::VecTool<std::string>::concatCopy(
-        vecstr, mt_uti::StrTool::whitespaceSlice(str)
+        vecstr, mt_uti::StrTool::whitespaceSliceExceptQuotes(str)
       );
     }
 
@@ -391,7 +391,7 @@ namespace cli_menu {
     // strings slicing in vector
     for (mt::CR_STR str : rawstrs) {
       mt_uti::VecTool<std::string>::concatCopy(
-        vecstr, mt_uti::StrTool::whitespaceSlice(str)
+        vecstr, mt_uti::StrTool::whitespaceSliceExceptQuotes(str)
       );
     }
 
