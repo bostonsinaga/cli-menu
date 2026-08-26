@@ -162,6 +162,7 @@ namespace cli_menu {
         mt::CR_BOL withRemainingBrackets = true
       );
 
+      // drop part of the text to a newline after exceeding the 'maxCharacters'
       static std::string wrap(mt::CR_STR text);
     };
   };

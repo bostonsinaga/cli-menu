@@ -197,7 +197,10 @@ namespace cli_menu {
   }
 
   template <UNORMAP_COMVEC_TYPE T>
-  mt::VEC_STR Data::vectorStringify(Command *comkey) {
+  mt::VEC_STR Data::vectorStringify(
+    Command *comkey,
+    mt::CR_BOL forDisplay
+  ) {
     mt::VEC_STR vecstr;
     T &unormap = use<T>();
 
@@ -235,7 +238,8 @@ namespace cli_menu {
 
       // disable newline and carriage return escape characters
       vecstr.push_back(mt_uti::StrTool::deactivateNewlines(
-        unormap.comvec[comkey].second[i]
+        forDisplay ? Console::LimitedText::trim(unormap.comvec[comkey].second[i])
+        : unormap.comvec[comkey].second[i]
       ));
     }
 
@@ -245,11 +249,12 @@ namespace cli_menu {
   template <UNORMAP_COMVEC_TYPE T>
   std::string Data::stringify(
     Command *comkey,
+    mt::CR_BOL forDisplay,
     mt::CR_STR separator
   ) {
     if (has<T>(comkey)) {
       return mt_uti::StrTool::joinVector(
-        vectorStringify<T>(comkey), separator
+        vectorStringify<T>(comkey, forDisplay), separator
       );
     }
     return "";
@@ -299,7 +304,7 @@ namespace cli_menu {
       }
       else { // data is exist
         text += joinColorize<T>(
-          comkey, vectorStringify<T>(comkey), conlorSet, '\n' + indent.get()
+          comkey, vectorStringify<T>(comkey, true), conlorSet, '\n' + indent.get()
         );
       }
 
@@ -312,7 +317,7 @@ namespace cli_menu {
   void Data::copyInputToOutput(Command *comkey) {
     if (has<T>(comkey)) {
       resetTexts(comkey);
-      addTexts(comkey, vectorStringify<T>(comkey));
+      addTexts(comkey, vectorStringify<T>(comkey, false));
     }
   }
 }

@@ -165,7 +165,7 @@ namespace cli_menu {
     std::string filename
   ) {
     if (!filename.empty()) {
-      std::string outputText = Data::stringifyTexts(owner);
+      std::string outputText = Data::stringifyTexts(owner, false);
 
       if (!outputText.empty()) {
         BOOLEAN_INSTANT_QUESTION_CODE

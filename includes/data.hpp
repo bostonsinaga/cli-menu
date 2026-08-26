@@ -133,11 +133,15 @@ namespace cli_menu {
     );
 
     template <UNORMAP_COMVEC_TYPE T>
-    static mt::VEC_STR vectorStringify(Command *comkey);
+    static mt::VEC_STR vectorStringify(
+      Command *comkey,
+      mt::CR_BOL forDisplay
+    );
 
     template <UNORMAP_COMVEC_TYPE T>
     inline static std::string stringify(
       Command *comkey,
+      mt::CR_BOL forDisplay,
       mt::CR_STR separator
     );
 
@@ -710,31 +714,35 @@ namespace cli_menu {
 
     inline static std::string stringifyTexts(
       Command *comkey,
+      mt::CR_BOL forDisplay,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<TextMaps>(comkey, separator);
+      return stringify<TextMaps>(comkey, forDisplay, separator);
     }
 
     inline static std::string stringifyWords(
       Command *comkey,
+      mt::CR_BOL forDisplay,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<WordMaps>(comkey, separator);
+      return stringify<WordMaps>(comkey, forDisplay, separator);
     }
 
     inline static std::string stringifyNumbers(
       Command *comkey,
+      mt::CR_BOL forDisplay,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<NumberMaps>(comkey, separator);
+      return stringify<NumberMaps>(comkey, forDisplay, separator);
     }
 
     // stringified boolean is based on 'mt_uti::Booleanizer'
     inline static std::string stringifyBooleans(
       Command *comkey,
+      mt::CR_BOL forDisplay,
       mt::CR_STR separator = "\n"
     ) {
-      return stringify<BooleanMaps>(comkey, separator);
+      return stringify<BooleanMaps>(comkey, forDisplay, separator);
     }
 
     /** Print Stringified Vector */
